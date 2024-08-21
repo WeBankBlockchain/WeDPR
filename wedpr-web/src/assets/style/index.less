@@ -1,0 +1,124 @@
+@import './common.less';
+@font-face {
+  font-family: 'PingFangSC-Regular';
+  src: url('../font/pingfangsc-regular.otf') format('truetype');
+}
+// 默认样式
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: PingFangSC-Regular, PingFangSC-Medium, PingFang SC, arial, Microsoft YaHei;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+ul,
+li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+// 清除浮动
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+.db {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.fx1 {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+.v {
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.hide {
+  display: none;
+}
+.ell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*滚动条样式*/
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10x;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(55, 55, 55, 0.2);
+}
+
+input[type='number'].el-input__inner {
+  padding-right: 0px;
+}
+
+.el-button--primary {
+  background: #3071f2;
+  border-color: #3071f2;
+}
+.el-range-editor--small .el-range-input {
+  transform: translateX(4px);
+}
+.ell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.el-empty{
+  margin-top: 100px;
+}

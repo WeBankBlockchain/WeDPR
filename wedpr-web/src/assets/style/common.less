@@ -1,0 +1,154 @@
+/************** 通用样式 ******************/
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  font-family: PingFangSC-Medium, PingFangSC-Regular, PingFang SC, arial, Microsoft YaHei;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  color: #262a32;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/************** 公共样式类 ******************/
+
+.el-table th.el-table__cell {
+  background-color: #f5f7fa;
+  color: #909399;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.el-date-editor .el-range-separator {
+  width: auto;
+}
+.el-drawer__wrapper {
+  :focus {
+    outline: 0;
+  }
+}
+
+.mb15 {
+  margin-bottom: 15px;
+}
+.mt15 {
+  margin-top: 15px;
+}
+.ml15 {
+  margin-left: 15px;
+}
+.mr15 {
+  margin-right: 15px;
+}
+.ml30 {
+  margin-left: 30px;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.align-center {
+  display: flex;
+  align-items: center;
+}
+
+.c-green {
+  color: #39d67f;
+}
+.c-red {
+  color: #ff3030;
+}
+
+.table-popper {
+  white-space: pre-line;
+}
+
+.tr {
+  text-align: right;
+}
+.tl {
+  text-align: left;
+}
+.tc {
+  text-align: center;
+}
+.p24 {
+  padding: 24px;
+  background: #fff;
+  border-radius: 2px;
+  .el-form-item {
+    margin: 0;
+  }
+}
+.m16 {
+  margin: 16px;
+}
+.mt16 {
+  margin-top: 16px;
+}
+.borderR2 {
+  border-radius: 2px;
+}
+.table-css {
+  margin-top: 20px;
+}
+.remark-text {
+  font-size: 12px;
+  color: #c0c4cc;
+}
+
+/************** 自定义滚动条样式 ******************/
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #e3e3e3;
+}
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background: transparent;
+}
+
+/***************************** dialog最大高度设置 **********************/
+.el-dialog__body {
+  max-height: 60vh;
+  overflow: auto;
+  padding-bottom: 0;
+}
+
+/************************ cascader高度设置 **************************/
+.el-cascader-menu__wrap {
+  height: 240px;
+}
+.title-radius {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  text-align: left;
+  padding: 3px 16px;
+  border-radius: 0px 12px 12px 12px;
+  background: rgba(48, 113, 242, 0.2);
+  color: #262a32;
+  margin-bottom: 32px;
+}
+
