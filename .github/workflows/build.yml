@@ -8,12 +8,12 @@ env:
   CCACHE_DIR: ${{ github.workspace }}/ccache
 
 jobs:
-  build:
-    name: build
+  build-java:
+    name: build-java
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-latest]
+        os: [ubuntu-20.04, macos-12]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -24,5 +24,41 @@ jobs:
       - name: install Ubuntu dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt install -y git curl default-jdk build-essential
-      - name: compile and run ut
+      - name: compile
         run: bash ./gradlew clean build
+
+  build-web:
+    name: build-web
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-12]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.17.0'
+      - name: build web
+        run: |
+          cd wedpr-web && npm install && npm run build:pro
+
+  upload-web:
+    name: upload-web
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-12]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.17.0'
+      - name: build web
+        run: |
+          cd wedpr-web && npm install && npm run build:pro
+      - uses: actions/upload-artifact@v2
+        with:
+          name: wedpr-web.tar.gz
+          path: wedpr-web/dist
