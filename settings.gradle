@@ -1,0 +1,71 @@
+rootProject.name = "wedpr";
+
+
+// submodules
+include 'wedpr-core-utils'
+project(':wedpr-core-utils').projectDir = file('wedpr-core/utils')
+
+include ':wedpr-core-protocol'
+project(':wedpr-core-protocol').projectDir = file('wedpr-core/protocol')
+
+include ":wedpr-components-http-client"
+project(":wedpr-components-http-client").projectDir = file("wedpr-components/http-client")
+
+include ":wedpr-components-storage"
+project(":wedpr-components-storage").projectDir = file("wedpr-components/storage")
+
+include ':wedpr-components-mybatis'
+project(':wedpr-components-mybatis').projectDir = file('wedpr-components/mybatis')
+
+include ':wedpr-components-uuid'
+project(':wedpr-components-uuid').projectDir = file('wedpr-components/uuid')
+
+include(':wedpr-components-sys-config')
+project(':wedpr-components-sys-config').projectDir = file('wedpr-components/meta/sys-config')
+
+include(":wedpr-components-blockchain")
+project(":wedpr-components-blockchain").projectDir = file("wedpr-components/blockchain")
+
+include(":wedpr-components-leader-election")
+project(":wedpr-components-leader-election").projectDir = file("wedpr-components/leader-election")
+
+include ":wedpr-components-sync"
+project(":wedpr-components-sync").projectDir=file("wedpr-components/sync")
+
+include ":wedpr-components-resource-follower"
+project(":wedpr-components-resource-follower").projectDir=file("wedpr-components/meta/resource-follower")
+
+include ":wedpr-components-setting-template"
+project(":wedpr-components-setting-template").projectDir=file("wedpr-components/meta/setting-template")
+
+include ":wedpr-components-project"
+project(":wedpr-components-project").projectDir=file("wedpr-components/meta/project")
+
+include ":wedpr-components-agency"
+project(":wedpr-components-agency").projectDir=file("wedpr-components/meta/agency")
+
+include ":wedpr-components-authorization"
+project(":wedpr-components-authorization").projectDir=file("wedpr-components/authorization")
+
+include "wedpr-components-dataset"
+project(":wedpr-components-dataset").projectDir=file("wedpr-components/dataset")
+
+include ":wedpr-components-token-auth"
+project(":wedpr-components-token-auth").projectDir=file("wedpr-components/token-auth")
+
+include ":wedpr-components-scheduler"
+project(":wedpr-components-scheduler").projectDir=file("wedpr-components/scheduler")
+
+include "wedpr-components-security"
+project(":wedpr-components-security").projectDir=file("wedpr-components/security")
+
+include "wedpr-components-user"
+project(":wedpr-components-user").projectDir=file("wedpr-components/user")
+
+include ":wedpr-components-initializer"
+project(":wedpr-components-initializer").projectDir=file("wedpr-components/initializer")
+
+include "wedpr-adm"
+project(":wedpr-adm").projectDir=file("wedpr-adm")
+
+

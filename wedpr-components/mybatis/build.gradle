@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'com.github.sherter.google-java-format'
+}
+
+dependencies {
+    compile project(":wedpr-core-utils")
+    compile ("com.alibaba:druid:${druidVersion}")
+    compile ("mysql:mysql-connector-java:${mysqlConnectorVersion}")
+    compile ("com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}")
+    compile("commons-collections:commons-collections:${commonsCollectionsVersion}")
+    compile("com.github.pagehelper:pagehelper:${pageHelperVersion}")
+    compile("com.baomidou:mybatis-plus-generator:${mybatisPlusGeneratorVersion}")
+}
+googleJavaFormat {
+    //toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+    //source = *.allJava
+}

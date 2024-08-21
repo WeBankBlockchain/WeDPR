@@ -1,0 +1,312 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'com.github.sherter.google-java-format' version '0.8'
+    id 'maven-publish'
+    id 'org.ajoberstar.grgit' version '4.1.1'
+}
+println("* Notice: current gradle version is " + gradle.gradleVersion)
+// Additional attribute definition
+ext {
+    if (!project.hasProperty("ossrhUsername")) {
+        ossrhUsername="xxx"
+    }
+
+    if (!project.hasProperty("ossrhPassword")) {
+        ossrhPassword="xxx"
+    }
+
+    jacksonVersion = "2.17.1"
+    apacheCommonLangVersion = "3.14.0"
+    lombokVersion = "1.18.32"
+    junitVersion = "4.13.2"
+    hadoopVersion = "2.7.5"
+    mysqlConnectorVersion = "8.0.29"
+    // Note: pageHelper depends on jsqlParser,
+    // it's jsqlParser version should be equal to jsqlParser version of mybatis-plus
+    pageHelperVersion = "5.3.1"
+    //mybatisPlusVersion = "3.5.7"
+    mybatisPlusVersion = "3.4.1"
+    druidVersion = "1.2.23"
+    //springVersion = "5.3.34"
+    //springBootVersion = "2.7.12"
+    springVersion = "5.2.22.RELEASE"
+    springBootVersion = "2.3.12.RELEASE"
+    log4jVersion = "2.23.0"
+    commonsCollectionsVersion = "3.2.2"
+    opencsvVersion = "5.9"
+    poiVersion = "5.3.0"
+
+    httpClientVersion = "4.5.14"
+    yitterIdGeneratorVersion = "1.0.6"
+    bcosSDKVersion = "3.7.0"
+    jwtVersion = "3.5.0"
+    mybatisPlusGeneratorVersion = "3.4.1"
+    velocityVersion = "2.3"
+    springfoxVersion = "3.0.0"
+    guavaVersion = "32.0.1-jre"
+    bcprovVersion = "1.78.1"
+}
+
+// check.dependsOn integrationTest
+// integrationTest.mustRunAfter test
+allprojects {
+    group = 'com.webank.wedpr'
+    version = '1.0.0-rc1-SNAPSHOT'
+    apply plugin: 'maven-publish'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'signing'
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 30, 'seconds'
+    }
+    jacoco {
+        toolVersion = "0.8.6"
+    }
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+    tasks.withType(Javadoc).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    // In this section you declare where to find the dependencies of your project
+    repositories {
+        maven {
+            allowInsecureProtocol = true
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+        maven { url "https://oss.sonatype.org/service/local/staging/deploy/maven2"}
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven {url "https://plugins.gradle.org/m2/"}
+    }
+
+    List logger = [
+            "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-core:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}",
+    ]
+
+    List spring =[
+            "org.springframework:spring-core:${springVersion}",
+            "org.springframework:spring-beans:${springVersion}",
+            "org.springframework:spring-context:${springVersion}",
+            "org.springframework:spring-web:${springVersion}",
+            "org.springframework:spring-jdbc:${springVersion}",
+            "org.springframework:spring-tx:${springVersion}",
+            "org.springframework:spring-webmvc:${springVersion}",
+            "org.springframework:spring-jcl:${springVersion}",
+            "org.springframework:spring-aop:${springVersion}",
+    ]
+
+    List spring_boot =[
+            "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+            "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+            "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
+            "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
+            "org.springframework.boot:spring-boot-actuator:${springBootVersion}",
+    ]
+
+//    List shedlock = [
+//            "net.javacrumbs.shedlock:shedlock-spring:${versions.shedlock}",
+//            "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:${versions.shedlock}"
+//    ]
+
+    configurations.configureEach {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.slf4j", module: "log4j-over-slf4j"
+        exclude group: "org.slf4j", module: "slf4j-log4j12"
+        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+    }
+
+    dependencies {
+
+        implementation logger, spring, spring_boot
+
+        implementation("org.projectlombok:lombok:${lombokVersion}")
+        implementation("org.apache.commons:commons-lang3:${apacheCommonLangVersion}")
+        implementation("io.springfox:springfox-boot-starter:${springfoxVersion}")
+        implementation("com.google.guava:guava:${guavaVersion}")
+
+
+
+        testImplementation ("junit:junit:${junitVersion}")
+
+        annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    }
+
+    clean.doLast {
+        file("dist/").deleteDir()
+    }
+}
+
+subprojects {
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java'
+            }
+            resources {
+                srcDir 'src/main/resources'
+                srcDir 'src/main/java'
+            }
+        }
+        integrationTest {
+            java {
+                compileClasspath += main.output + test.output
+                runtimeClasspath += main.output + test.output
+                srcDir file('src/integration-test/java')
+            }
+            resources.srcDir file('src/integration-test/resources')
+        }
+    }
+    configurations {
+        integrationTestCompile.extendsFrom testCompile
+        integrationTestRuntime.extendsFrom testRuntime
+    }
+    task integrationTest(type: Test) {
+        testClassesDirs = sourceSets.integrationTest.output.classesDirs
+        classpath = sourceSets.integrationTest.runtimeClasspath
+    }
+    tasks.withType(Copy) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+    javadoc {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+
+    tasks.register('sourcesJar', Jar) {
+        from sourceSets.main.allSource
+        include '**/*.xml'
+        archiveClassifier = 'sources'
+    }
+
+    tasks.register('javadocJar', Jar) {
+        from javadoc
+        archiveClassifier = 'javadoc'
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+
+                artifactId "webank-" + project.name
+                groupId project.group
+                version project.version
+
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                pom {
+                    name = 'wedpr'
+                    description = 'wedpr'
+                    url = 'https://github.com/WeBankBlockchain/WeDPR'
+
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'zhangsan'
+                            name = 'zhangsan'
+                            email = 'zhangsan@example.com'
+                        }
+                    }
+                    scm {
+                        connection = 'https://github.com/wedpr/incubutor-wedpr.git'
+                        url = 'https://github.com/wedpr/incubutor-wedpr.git'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                def releasesRepoURL = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                def snapshotsRepoURL = "https://oss.sonatype.org/content/repositories/snapshots"
+                url = !version.endsWith("SNAPSHOT") ? releasesRepoURL : snapshotsRepoURL
+
+                credentials {
+                    username 'deployment'
+                    password 'deployment123'
+                }
+            }
+        }
+
+        /*signing {
+            sign publishing.publications.mavenJava
+        }*/
+    }
+    jar {
+        destinationDir file("dist/apps")
+        archiveName "webank-" + project.name + "-" + version + ".jar"
+
+        exclude "**/*.properties"
+        manifest {
+            try {
+                def repo = grgit.open(currentDir: project.rootDir)
+                if (repo != null) {
+                    def date = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                    def branch = repo.branch.getCurrent().getName()
+                    def commit = repo.head().getAbbreviatedId(40)
+
+                    attributes(["Implementation-Timestamp": date,
+                                "Git-Branch"              : branch,
+                                "Git-Commit"              : commit
+                    ])
+
+                    logger.info("  Commit : ")
+                    logger.info("  => date: {}", date)
+                    logger.info("  => branch: {}", branch)
+                    logger.info("  => commit: {}", commit)
+                }
+            } catch (Exception e) {
+                logger.warn(' .git not exist, cannot found commit info, e: {}', e)
+            }
+        } from sourceSets.main.output
+
+        doLast {
+            copy {
+                from file("conf/")
+                into "dist/conf"
+            }
+            copy {
+                from file("bin/")
+                into "dist/"
+            }
+            copy {
+                from configurations.runtime
+                into "dist/lib"
+            }
+            copy {
+                from file("build/libs/")
+                into "dist/apps"
+            }
+        }
+    }
+}
+
+googleJavaFormat {
+    //toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+    //source = *.allJava
+}
+
+
+check.dependsOn jacocoTestReport

@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.project.dao.ProjectMapper">
+    <resultMap id="ProjectDOMap" type="com.webank.wedpr.components.project.dao.ProjectDO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="desc" property="projectDesc"/>
+        <result column="owner" property="owner"/>
+        <result column="owner_agency" property="ownerAgency"/>
+        <result column="project_type" property="type"/>
+        <result column="label" property="label"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <resultMap id="JobDOMap" type="com.webank.wedpr.components.project.dao.JobDO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="owner" property="owner"/>
+        <result column="owner_agency" property="ownerAgency"/>
+        <result column="job_type" property="jobType"/>
+        <result column="parties" property="parties"/>
+        <result column="project_name" property="projectName"/>
+        <result column="param" property="param"/>
+        <result column="status" property="status"/>
+        <result column="job_result" property="result"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="insertProjectInfo" parameterType="com.webank.wedpr.components.project.dao.ProjectDO">
+        insert into `wedpr_project_table`(`id`, `name`, `desc`, `project_type`, `owner`, `owner_agency`, `label`, `create_time`)
+        values(#{projectDO.id}, #{projectDO.name}, #{projectDO.projectDesc}, #{projectDO.type},
+               #{projectDO.owner}, #{projectDO.ownerAgency}, #{projectDO.label},
+               NOW())
+    </insert>
+    <update id="updateProjectInfo" parameterType="com.webank.wedpr.components.project.dao.ProjectDO">
+        update `wedpr_project_table`
+        <set>
+            <if test="projectDO.name != null and projectDO.name !=''">
+                `name` = #{projectDO.name},
+            </if>
+            <if test="projectDO.projectDesc != null and projectDO.projectDesc !=''">
+                `desc` = #{projectDO.projectDesc},
+            </if>
+            <if test="projectDO.label != null and projectDO.label !=''">
+                `label` = #{projectDO.label},
+            </if>
+        </set>
+        where `id` = #{projectDO.id}
+        <if test="owner != null and owner !=''">
+            and `owner` = #{owner}
+        </if>
+    </update>
+    <delete id="deleteProjects" parameterType="java.util.List">
+        delete from `wedpr_project_table`
+        <foreach collection="projectList" item = "projectID" index = "index" separator=",">
+            where `id` = #{projectID}
+        </foreach>
+        <if test="owner != null and owner !=''">
+            and `owner` = #{owner}
+        </if>
+    </delete>
+    <select id="queryProject" resultMap="ProjectDOMap">
+        select
+        <choose>
+            <when test="onlyMeta == true">
+                `id`, `name`
+            </when>
+            <otherwise>
+                *
+            </otherwise>
+        </choose>
+        from `wedpr_project_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` = #{condition.id}
+                </if>
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.name}, "%")
+                </if>
+                <if test="condition.type != null and condition.type !=''">
+                    and `project_type` = #{condition.type}
+                </if>
+                <if test="condition.label != null and condition.label !=''">
+                    and `label` like concat(#{condition.label}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` = #{condition.ownerAgency}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryProjectCount" resultType="java.lang.Long">
+        select count(1) from `wedpr_project_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.name}, "%")
+                </if>
+                <if test="condition.type != null and condition.type !=''">
+                    and `project_type` = #{condition.type}
+                </if>
+                <if test="condition.label != null and condition.label !=''">
+                    and `label` like concat(#{condition.label}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` = #{condition.ownerAgency}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+    </select>
+    <insert id="insertJobInfo" parameterType="com.webank.wedpr.components.project.dao.JobDO">
+        insert into `wedpr_job_table`(`id`, `name`, `job_type`, `project_name`, `parties`,
+            `owner`, `owner_agency` , `param`, `status`, `job_result`, `create_time`)
+        values
+        (#{jobDO.id}, #{jobDO.name}, #{jobDO.jobType}, #{jobDO.projectName}, #{jobDO.parties}, #{jobDO.owner},
+         #{jobDO.ownerAgency}, #{jobDO.param},#{jobDO.status}, #{jobDO.result}, NOW())
+    </insert>
+    <select id="queryJobs" resultMap="JobDOMap">
+        select
+        <choose>
+            <when test="onlyMeta == true">
+                `id`, `owner`, `owner_agency`, `job_type`
+            </when>
+            <otherwise>
+                *
+            </otherwise>
+        </choose>
+        from `wedpr_job_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` = #{condition.id}
+                </if>
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.id}, "%")
+                </if>
+                <if test="condition.projectName != null and condition.projectName !=''">
+                    and `project_name` like concat(#{condition.projectName}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.jobType != null and condition.jobType !=''">
+                    and `job_type` = #{condition.jobType}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        <if test="jobIDList != null and jobIDList.size > 0">
+                and `id` in
+                <foreach item="jobID" collection="jobIDList" open="(" close=")" separator=",">
+                    #{jobID}
+                </foreach>
+        </if>
+        order by `last_update_time` desc
+        <if test="condition.limitItems != -1 and condition.limitItems !=''">
+            limit #{condition.limitItems}
+        </if>
+    </select>
+
+    <select id="queryJobCount" resultType="java.lang.Long">
+        select count(1) from `wedpr_job_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.id}, "%")
+                </if>
+                <if test="condition.projectName != null and condition.projectName !=''">
+                    and `project_name` like concat(#{condition.projectName}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.jobType != null and condition.jobType !=''">
+                    and `job_type` = #{condition.jobType}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+    </select>
+    <select id="queryFollowerJobByCondition" resultMap="JobDOMap">
+        select
+        <choose>
+            <when test="onlyMeta == true">
+                job_table.id, job_table.owner, job_table.owner_agency, job_table.job_type
+            </when>
+            <otherwise>
+                job_table.*
+            </otherwise>
+        </choose>
+        from
+        (select `user_name`, `agency`, `resource_id` from `wedpr_follower_table`
+        where `user_name` = #{followerUser} and `agency` = #{followerAgency})as follower_table
+            left join
+        (select * from `wedpr_job_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.name}, "%")
+                </if>
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` like concat(#{condition.id}, "%")
+                </if>
+                <if test="condition.projectName != null and condition.projectName !=''">
+                    and `project_name` like concat(#{condition.projectName}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.jobType != null and condition.jobType !=''">
+                    and `job_type` = #{condition.jobType}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+            and (`owner` != #{followerUser} or `owner_agency` != #{followerAgency})
+        )as job_table
+         on job_table.id = follower_table.resource_id where job_table.owner is not NULL
+        order by job_table.last_update_time desc
+    </select>
+
+    <select id="queryFollowerJobCount" resultType="java.lang.Long">
+        select count(1)
+        from
+        (select `user_name`, `agency`, `resource_id` from `wedpr_follower_table`
+        where `user_name` = #{followerUser} and `agency` = #{followerAgency})
+        as follower_table left join
+        (select * from `wedpr_job_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.name}, "%")
+                </if>
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` like concat(#{condition.id}, "%")
+                </if>
+                <if test="condition.projectName != null and condition.projectName !=''">
+                    and `project_name` like concat(#{condition.projectName}, "%")
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
+                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.jobType != null and condition.jobType !=''">
+                    and `job_type` = #{condition.jobType}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        and (`owner` != #{followerUser} or `owner_agency` != #{followerAgency})
+        )as job_table
+        on job_table.id = follower_table.resource_id where job_table.owner is not NULL
+    </select>
+
+
+    <update id="batchUpdateJobInfo" parameterType="java.util.List">
+        <foreach collection="jobDOList" item = "job" separator=";">
+            update `wedpr_job_table`
+            <set>
+                <if test="job.param != null and job.param !=''">
+                    `param` = #{job.param},
+                </if>
+                <if test="job.status != null and job.status !=''">
+                    `status` = #{job.status},
+                </if>
+                <if test="job.result != null and job.result !=''">
+                    `job_result` = #{job.result},
+                </if>
+            </set>
+            where `id` = #{job.id}
+            <if test="job.owner != null and job.owner !=''">
+                and `owner` = #{job.owner}
+            </if>
+            <if test="job.ownerAgency != null and job.ownerAgency !=''">
+                and `owner_agency` = #{job.ownerAgency}
+            </if>
+        </foreach>
+    </update>
+</mapper>

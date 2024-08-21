@@ -1,0 +1,19 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+    id 'com.github.sherter.google-java-format'
+}
+
+dependencies {
+    compile ("org.bouncycastle:bcprov-jdk18on:${bcprovVersion}")
+    compile ("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    compile ("com.opencsv:opencsv:${opencsvVersion}")
+}
+
+googleJavaFormat {
+    //toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+    //source = *.allJava
+}

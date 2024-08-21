@@ -1,0 +1,2 @@
+source ../../wedpr_ddl.sql
+source ../../wedpr_dml.sql

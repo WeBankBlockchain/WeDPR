@@ -1,0 +1,18 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+}
+
+dependencies {
+    compile project(":wedpr-core-protocol")
+    compile project(":wedpr-core-utils")
+    compile project(":wedpr-components-uuid")
+
+
+    compile("org.apache.hadoop:hadoop-common:${hadoopVersion}"){
+        exclude group: 'javax.servlet', module: 'servlet-api'
+    }
+    compile("org.apache.hadoop:hadoop-client:${hadoopVersion}"){
+        exclude group: 'javax.servlet', module: 'servlet-api'
+    }
+}

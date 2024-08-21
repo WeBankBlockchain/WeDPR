@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.authorization.dao.AuthMapper">
+    <resultMap id="AuthorizationDOMap" type="com.webank.wedpr.components.authorization.dao.AuthorizationDO">
+        <id column="id" property="id"/>
+        <result column="applicant" property="applicant"/>
+        <result column="applicant_agency" property="applicantAgency"/>
+        <result column="apply_type" property="applyType"/>
+        <result column="apply_title" property="applyTitle"/>
+        <result column="apply_desc" property="applyDesc"/>
+        <result column="auth_chain" property="applyChain"/>
+        <result column="apply_content" property="applyContent"/>
+        <result column="apply_template" property="applyTemplateName"/>
+        <result column="status" property="status"/>
+        <result column="current_auth_node" property="currentApplyNode"/>
+        <result column="current_auth_node_agency" property="currentApplyNodeAgency"/>
+        <result column="result" property="result"/>
+        <result column="execute_result" property="executeResult"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <resultMap id="AuthorizationTemplateDOMap" type="com.webank.wedpr.components.authorization.dao.AuthorizationTemplateDO">
+        <id column="id" property="templateID"/>
+        <result column="template_name" property="templateName"/>
+        <result column="template_desc" property="templateDesc"/>
+        <result column="template_setting" property="templateSetting"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+
+    <insert id="batchInsertAuthList" parameterType="java.util.List">
+        insert into wedpr_authorization_table(`id`, `applicant`, `applicant_agency`, `apply_type`,
+                            `apply_title`, `apply_desc`, `auth_chain`, `apply_content`, `apply_template`,
+                            `status`, `current_auth_node`, `current_auth_node_agency`, `result`,
+                            `create_time`) values
+        <foreach collection="authList" item = "authItem" index = "index" separator=",">
+            (#{authItem.id}, #{authItem.applicant}, #{authItem.applicantAgency}, #{authItem.applyType},
+             #{authItem.applyTitle}, #{authItem.applyDesc}, #{authItem.applyChain}, #{authItem.applyContent}, #{authItem.applyTemplateName},
+             #{authItem.status}, #{authItem.currentApplyNode}, #{authItem.currentApplyNodeAgency}, #{authItem.result},
+             NOW())
+        </foreach>
+    </insert>
+    <update id="batchUpdateAuth" parameterType="java.util.List">
+        <foreach collection="authList" item = "authItem" separator=";">
+            update `wedpr_authorization_table`
+            <set>
+                <if test="authItem.applyType != null and authItem.applyType !=''">
+                    `apply_type` = #{authItem.applyType},
+                </if>
+                <if test="authItem.applyTitle != null and authItem.applyTitle !=''">
+                    `apply_title` = #{authItem.applyTitle},
+                </if>
+                <if test="authItem.applyChain != null and authItem.applyChain !=''">
+                    `auth_chain` = #{authItem.applyChain},
+                </if>
+                <if test="authItem.applyDesc != null and authItem.applyDesc !=''">
+                    `apply_desc` = #{authItem.applyDesc},
+                </if>
+                <if test="authItem.applyContent != null and authItem.applyContent !=''">
+                    `apply_content` = #{authItem.applyContent},
+                </if>
+                <if test="authItem.applyTemplateName != null and authItem.applyTemplateName !=''">
+                    `apply_template` = #{authItem.applyTemplateName},
+                </if>
+                <if test="authItem.status != null and authItem.status !=''">
+                    `status` = #{authItem.status},
+                </if>
+                <if test="authItem.currentApplyNode != null and authItem.currentApplyNode !=''">
+                    `current_auth_node` = #{authItem.currentApplyNode},
+                </if>
+                <if test="authItem.currentApplyNodeAgency != null and authItem.currentApplyNodeAgency !=''">
+                    `current_auth_node_agency` = #{authItem.currentApplyNodeAgency},
+                </if>
+                <if test="authItem.result != null and authItem.result !=''">
+                    `result` = #{authItem.result},
+                </if>
+                <if test="authItem.executeResult != null and authItem.executeResult !=''">
+                    `execute_result` = #{authItem.executeResult},
+                </if>
+            </set>
+            where `id` = #{authItem.id}
+        </foreach>
+    </update>
+    <select id="queryAuthMetaList" resultMap="AuthorizationDOMap">
+        select `id`, `applicant`, `applicant_agency`, `apply_type`,
+               `apply_title`, `apply_template`, `status`,
+               `result`, `auth_chain`, `execute_result`, `current_auth_node`,
+               `current_auth_node_agency`, `create_time`, `last_update_time`
+        from wedpr_authorization_table where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` like concat(#{condition.id}, '%')
+                </if>
+                <if test="condition.applicant != null and condition.applicant !=''">
+                    and `applicant` like concat(#{condition.applicant}, '%')
+                </if>
+                <if test="condition.applicantAgency != null and condition.applicantAgency !=''">
+                    and `applicant_agency` like concat(#{condition.applicantAgency}, '%')
+                </if>
+                <if test="condition.applyType != null and condition.applyType !=''">
+                    and `apply_type` = #{condition.applyType}
+                </if>
+                <if test="condition.applyTitle != null and condition.applyTitle !=''">
+                    and `apply_title` like concat(#{condition.applyTitle}, '%')
+                </if>
+                <if test="condition.applyTemplateName != null and condition.applyTemplateName !=''">
+                    and `apply_template` like concat(#{condition.applyTemplateName}, '%')
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+                <if test="condition.authIDList != null and condition.authIDList.size > 0">
+                    and `id` in
+                    <foreach item="authID" collection="condition.authIDList" open="(" close=")" separator=",">
+                        #{authID}
+                    </foreach>
+                </if>
+            </when>
+        </choose>
+        <choose>
+            <when test="authStatusList != null and authStatusList.size > 0">
+                and `status` in
+                <foreach item="authStatus" collection="authStatusList" open="(" close=")" separator=",">
+                    #{authStatus}
+                </foreach>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryAuthDetail" resultMap="AuthorizationDOMap">
+        select * from `wedpr_authorization_table` where `id` = #{authID}
+        <choose>
+            <when test="applyTypeList != null and applyTypeList.size > 0">
+                and `apply_type` in
+                <foreach item="applyType" collection="applyTypeList" open="(" close=")" separator=",">
+                    #{applyType}
+                </foreach>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryAuthByCondition" resultType="java.lang.String">
+        select `id` from wedpr_authorization_table where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` like concat(#{condition.id}, '%')
+                </if>
+                <if test="condition.applicant != null and condition.applicant !=''">
+                    and `applicant` like concat(#{condition.applicant}, '%')
+                </if>
+                <if test="condition.applicantAgency != null and condition.applicantAgency !=''">
+                    and `applicant_agency` like concat(#{condition.applicantAgency}, '%')
+                </if>
+                <if test="condition.applyType != null and condition.applyType !=''">
+                    and `apply_type` = #{condition.applyType}
+                </if>
+                <if test="condition.applyTitle != null and condition.applyTitle !=''">
+                    and `apply_title` like concat(#{condition.applyTitle}, '%')
+                </if>
+                <if test="condition.applyTemplateName != null and condition.applyTemplateName !=''">
+                    and `apply_template` like concat(#{condition.applyTemplateName}, '%')
+                </if>
+                <if test="condition.status != null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+            </when>
+        </choose>
+        <choose>
+            <when test="applyTypeList != null and applyTypeList.size > 0">
+                and `apply_type` in
+                <foreach item="applyType" collection="applyTypeList" open="(" close=")" separator=",">
+                    #{applyType}
+                </foreach>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <insert id="insertAuthTemplates" parameterType="java.util.List">
+        insert into `wedpr_authorization_template_table`(`id`, `template_name`,
+                                                         `template_desc`, `template_setting`,
+                                                         `create_user`, `create_time`)
+        values
+        <foreach collection="templateList" item = "template" index = "index" separator=",">
+            (#{template.templateID}, #{template.templateName}, #{template.templateDesc},
+             #{template.templateSetting}, #{template.createUser}, NOW())
+        </foreach>
+    </insert>
+    <update id="updateAuthTemplates" parameterType="java.util.List">
+        <foreach collection="templateList" item = "template" index = "index" separator=",">
+        update `wedpr_authorization_template_table`
+            <set>
+                <if test="template.templateName != null and template.templateName !=''">
+                    `template_name` = #{template.templateName},
+                </if>
+                <if test="template.templateDesc != null and template.templateDesc !=''">
+                    `template_desc` = #{template.templateDesc},
+                </if>
+                <if test="template.templateSetting != null and template.templateSetting !=''">
+                    `template_setting` = #{template.templateSetting},
+                </if>
+            </set>
+            where `id` = #{template.templateID}
+            <if test="template.createUser != null and template.createUser !=''">
+                 and `create_user` = #{template.createUser}
+            </if>
+        </foreach>
+    </update>
+    <delete id="deleteAuthTemplates" parameterType="java.util.List">
+        <foreach collection="templates" item = "templateID" index = "index" separator=",">
+            delete from `wedpr_authorization_template_table` where `id`= #{templateID}
+            <if test="user != null and user !=''">
+                and `create_user` = #{user}
+            </if>
+        </foreach>
+    </delete>
+    <select id="queryAuthTemplateMetaList" resultMap="AuthorizationTemplateDOMap">
+        select `id`, `template_name`, `template_desc`, `create_user`, `create_time`, `last_update_time`
+        from `wedpr_authorization_template_table`
+        where 1=1
+        <choose>
+        <when test="condition != null and condition != ''">
+            <if test="condition.templateName != null and condition.templateName !=''">
+                and `template_name` like concat(#{condition.templateName}, '%')
+            </if>
+            <if test="condition.createUser != null and condition.createUser !=''">
+                and (`create_user` = #{condition.createUser} or `create_user` = "*")
+            </if>
+            <if test="condition.startTime != null and condition.startTime  != ''">
+                <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+            </if>
+            <if test="condition.endTime != null and condition.endTime  != ''">
+                <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+            </if>
+        </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryAuthTemplateDetails" resultMap="AuthorizationTemplateDOMap">
+        select * from `wedpr_authorization_template_table`
+        where
+        `template_name` in
+        <foreach item="template" collection="templates" open="(" close=")" separator=",">
+            #{template}
+        </foreach>
+        order by `last_update_time` desc
+    </select>
+</mapper>

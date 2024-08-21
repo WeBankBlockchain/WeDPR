@@ -1,0 +1,21 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+    id 'com.github.sherter.google-java-format'
+}
+
+dependencies {
+    compile project(":wedpr-core-utils")
+    compile project(":wedpr-components-uuid")
+    compile project(":wedpr-core-protocol")
+    compile project(":wedpr-components-sys-config")
+    compile project(":wedpr-components-blockchain")
+    compile project(":wedpr-components-leader-election")
+}
+googleJavaFormat {
+    //toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+    //source = *.allJava
+}

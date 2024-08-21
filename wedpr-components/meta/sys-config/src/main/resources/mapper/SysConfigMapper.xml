@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper">
+    <resultMap id="SysConfigMap" type="com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO">
+        <id column="config_key" property="configKey"/>
+        <result column="config_value" property="configValue"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="insertConfig" parameterType="com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO">
+        insert into wedpr_config_table(`config_key`, `config_value`, `create_time`)
+        values(#{sysConfig.configKey}, #{sysConfig.configValue}, NOW())
+    </insert>
+    <insert id="batchInsertConfig" parameterType="java.util.List">
+        insert into wedpr_config_table(`config_key`, `config_value`, `create_time`) values
+        <foreach collection="sysConfigList" item = "sysConfig" index = "index" separator=",">
+           (#{sysConfig.configKey}, #{sysConfig.configValue}, NOW())
+        </foreach>
+    </insert>
+    <update id="updateConfig" parameterType="com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO">
+        update wedpr_config_table set `config_value` = #{sysConfig.configValue} where `config_key`=#{sysConfig.configKey}
+    </update>
+    <update id="refresh" parameterType="com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO">
+        update wedpr_config_table set `last_update_time` = NOW() where `config_key` = #{sysConfigDO.configKey} and `config_value` = #{sysConfigDO.configValue}
+    </update>
+    <update id="tryReset">
+        update wedpr_config_table set `config_value` = #{sysConfigDO.configValue}
+                where `config_key` = #{sysConfigDO.configKey} and (config_value is null or config_value="" or timestampdiff(second, `last_update_time`, NOW()) > #{expireTimeSeconds})
+    </update>
+    <delete id = "deleteConfig">
+        delete from wedpr_config_table where `config_key` in #{configKey}
+    </delete>
+    <delete id="batchDeleteConfigs" parameterType="java.util.List">
+        delete from wedpr_config_table where `config_key` in
+        <foreach item="configKey" collection="configKeyList" open="(" close=")" separator=",">
+            #{configKey}
+        </foreach>
+    </delete>
+    <select id="queryConfig" resultMap="SysConfigMap">
+        select `config_key`, `config_value`, `create_time`, `last_update_time`
+        from wedpr_config_table where `config_key` = #{configKey}
+    </select>
+    <select id="queryAllConfig" resultMap="SysConfigMap">
+        select `config_key`, `config_value`, `create_time`, `last_update_time`
+        from wedpr_config_table order by `last_update_time` desc
+    </select>
+    <select id="getConfigCount" resultType = "java.lang.Long">
+        select count(*) from wedpr_config_table;
+    </select>
+    <select id="getUpdateEclipsedTime" resultType="java.lang.Long">
+        select timestampdiff(second, `last_update_time`, NOW()) from wedpr_config_table where `config_key` = #{configKey}
+    </select>
+    <select id="queryActiveConfig" resultMap="SysConfigMap">
+        select `config_key`, `config_value`, `create_time`, `last_update_time`
+        from `wedpr_config_table` where `config_key` = #{configKey} and timestampdiff(second, `last_update_time`, NOW()) &lt; #{expireTimeSeconds}
+    </select>
+</mapper>

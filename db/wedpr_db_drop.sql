@@ -1,0 +1,11 @@
+drop table if exists `wedpr_agency_table`;
+drop table if exists `wedpr_config_table`;
+drop table if exists `wedpr_sync_status_table`;
+drop table if exists `wedpr_authorization_table`;
+drop table if exists `wedpr_follower_table`;
+drop table if exists `wedpr_authorization_template_table`;
+drop table if exists `wedpr_project_table`;
+drop table if exists `wedpr_job_table`;
+drop table if exists `wedpr_setting_template`;
+drop table if exists `wedpr_dataset`;
+drop table if exists `wedpr_dataset_permission`;

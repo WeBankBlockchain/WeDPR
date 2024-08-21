@@ -1,0 +1,29 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+    id 'com.github.sherter.google-java-format'
+}
+
+dependencies {
+    compile project(":wedpr-core-utils")
+    compile project(":wedpr-components-uuid")
+    compile project(":wedpr-components-mybatis")
+    compile project(":wedpr-components-storage")
+    compile project(":wedpr-components-authorization")
+//    compile project(":wedpr-components-initializer")
+    compile project(":wedpr-components-token-auth")
+
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-excelant:${poiVersion}"
+    compile "com.opencsv:opencsv:${opencsvVersion}"
+}
+
+googleJavaFormat {
+    toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+//    exclude '**/*Test.java'
+//    exclude '**/Test*.java'
+//    exclude '**/Mock*.java'
+}

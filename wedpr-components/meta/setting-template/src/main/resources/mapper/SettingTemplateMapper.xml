@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateMapper">
+    <resultMap id="SettingTemplateDOMap" type="com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="owner" property="owner"/>
+        <result column="agency" property="agency"/>
+        <result column="setting" property="setting"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="insertSettings" parameterType="java.util.List">
+        insert into `wedpr_setting_template`(`id`, `name`, `type`, `owner`, `agency`, `setting`, `create_time`)
+        values
+        <foreach collection="templateList" item = "template" index = "index" separator=",">
+            (#{template.id}, #{template.name}, #{template.type}, #{template.owner}, #{template.agency},
+             #{template.setting}, #{template.createTime})
+        </foreach>
+    </insert>
+    <update id="updateSettings" parameterType="java.util.List">
+        <foreach collection="templateList" item = "template" index = "index" separator=",">
+            update `wedpr_setting_template`
+            <set>
+                <if test="template.name != null and template.name !=''">
+                    `name` = #{template.name},
+                </if>
+                <if test="template.type != null and template.type !=''">
+                    `type` = #{template.type},
+                </if>
+                <if test="template.setting != null and template.setting !=''">
+                    `setting` = #{template.setting},
+                </if>
+            </set>
+            where `id` = #{template.id}
+            <if test="template.owner != null and template.owner !=''">
+                and `owner` = #{template.owner}
+            </if>
+            <if test="template.agency != null and template.agency !=''">
+                and `agency` = #{template.agency}
+            </if>
+        </foreach>
+    </update>
+    <delete id="deleteSettings">
+        <foreach collection="templateList" item = "templateID" index = "index" separator=",">
+            delete from `wedpr_setting_template` where `id` = #{templateID}
+            <if test="owner != null and owner !=''">
+                and `owner` = #{owner}
+            </if>
+            <if test="ownerAgency != null and ownerAgency !=''">
+                and `owner_agency` = #{ownerAgency}
+            </if>
+        </foreach>
+    </delete>
+    <select id="querySetting" resultMap="SettingTemplateDOMap">
+        select
+            <choose>
+                <when test="onlyMeta == true">
+                    `id`, `name`
+                </when>
+                <otherwise>
+                    *
+                </otherwise>
+            </choose>
+        from `wedpr_setting_template` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` = #{condition.id}
+                </if>
+                <if test="condition.name != null and condition.name !=''">
+                    and `name` like concat(#{condition.name}, '%')
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.agency != null and condition.agency !=''">
+                    and `agency` = #{condition.agency}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        <choose>
+            <when test="condition.queriedOwners != null and condition.queriedOwners.size > 0">
+                and `owner` in
+                <foreach item="owner" collection="condition.queriedOwners" open="(" close=")" separator=",">
+                    #{owner}
+                </foreach>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+</mapper>

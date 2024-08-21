@@ -1,0 +1,7 @@
+.idea
+.gradle
+build
+dist
+wedpr-components/user/src/main/resources/
+wedpr-adm/src/main/resources/
+logs/

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.meta.resource.follower.dao.FollowerMapper">
+    <resultMap id="FollowerDOMap" type="com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="agency" property="agency"/>
+        <result column="resource_id" property="resourceID"/>
+        <result column="type" property="followerType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into `wedpr_follower_table`(`id`, `user_name`, `agency`, `resource_id`, `type`, `create_time`)
+        values
+        <foreach collection="followers" item = "followerItem" index = "index" separator=",">
+            (#{followerItem.id}, #{followerItem.userName}, #{followerItem.agency}, #{followerItem.resourceID}, #{followerItem.followerType}, NOW())
+        </foreach>
+    </insert>
+    <select id="queryFollowerList" resultMap="FollowerDOMap">
+        select * from `wedpr_follower_table` where 1 = 1
+        <choose>
+        <when test="condition != null and condition != ''">
+            <if test="condition.id != null and condition.id !=''">
+                and `id` like concat(#{condition.id}, '%')
+            </if>
+            <if test="condition.userName != null and condition.userName !=''">
+                and `user_name` like concat(#{condition.userName}, '%')
+            </if>
+            <if test="condition.agency != null and condition.agency !=''">
+                and `agency` = #{condition.agency}
+            </if>
+            <if test="condition.resourceID != null and condition.resourceID !=''">
+                and `resource_id` like concat(#{condition.resourceID}, '%')
+            </if>
+            <if test="condition.followerType != null and condition.followerType !=''">
+                and `type` = #{condition.followerType}
+            </if>
+            <if test="condition.startTime != null and condition.startTime  != ''">
+                <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+            </if>
+            <if test="condition.endTime != null and condition.endTime  != ''">
+                <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+            </if>
+        </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryFollowersCount" resultMap="FollowerDOMap">
+        select count(1) from `wedpr_follower_table` where 1 = 1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` like concat(#{condition.id}, '%')
+                </if>
+                <if test="condition.userName != null and condition.userName !=''">
+                    and `user_name` like concat(#{condition.userName}, '%')
+                </if>
+                <if test="condition.agency != null and condition.agency !=''">
+                    and `agency` = #{condition.agency}
+                </if>
+                <if test="condition.resourceID != null and condition.resourceID !=''">
+                    and `resource_id` like concat(#{condition.resourceID}, '%')
+                </if>
+                <if test="condition.followerType != null and condition.followerType !=''">
+                    and `type` = #{condition.followerType}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <delete id="deleteFollower" parameterType="java.lang.String">
+        delete from `wedpr_follower_table` where `resource_id` = #{resourceID}
+    </delete>
+</mapper>
