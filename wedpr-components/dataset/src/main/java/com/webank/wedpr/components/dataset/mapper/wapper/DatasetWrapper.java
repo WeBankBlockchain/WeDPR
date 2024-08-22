@@ -86,9 +86,9 @@ public class DatasetWrapper {
         int status = dataset.getStatus();
         String datasetDesc = dataset.getStatusDesc();
         if (status == DatasetCode.SUCCESS.getCode()) {
-            updateDatasetStatus(datasetId, status, datasetDesc);
-        } else {
             updateDatasetMetaInfo(dataset);
+        } else {
+            updateDatasetStatus(datasetId, status, datasetDesc);
         }
 
         long endTimeMillis = System.currentTimeMillis();
