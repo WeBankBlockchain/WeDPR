@@ -33,6 +33,7 @@ public class SQLUtils {
         }
 
         // regular expression for matching a single SELECT statement.
+        // TODO: make it configurable
         Pattern pattern =
                 Pattern.compile(
                         "^(SELECT.*?)(?<!\\G)(;|$)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);

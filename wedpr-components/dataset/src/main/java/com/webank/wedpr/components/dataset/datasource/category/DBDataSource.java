@@ -14,6 +14,8 @@ public class DBDataSource implements DataSourceMeta {
     private String sql;
     // Data is loaded once when a data source is created, or on each access
     Boolean dynamicDataSource = false;
+    // verify sql syntax and test connectivity
+    boolean verifySqlSyntaxAndTestCon = true;
 
     @Override
     public boolean dynamicDataSource() {

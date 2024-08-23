@@ -57,8 +57,12 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
 
         // check if single select
         SQLUtils.isSingleSelectStatement(sql);
-        // validate parameters, test db connectivity, validate SQL syntax
-        SQLUtils.validateDataSourceParameters(dbType, dbDataSource);
+
+        boolean verifySqlSyntaxAndTestCon = dbDataSource.isVerifySqlSyntaxAndTestCon();
+        if (verifySqlSyntaxAndTestCon) {
+            // validate parameters, test db connectivity, validate SQL syntax
+            SQLUtils.validateDataSourceParameters(dbType, dbDataSource);
+        }
 
         long endTimeMillis = System.currentTimeMillis();
         logger.info(
@@ -91,7 +95,7 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
 
         long endTimeMillis = System.currentTimeMillis();
         logger.info(
-                " ==> data source processor stage prepare data end merge chunk data, datasetId: {}, cvsFilePath: {}, cost(ms): {}",
+                " ==> data source processor stage prepare data end, datasetId: {}, cvsFilePath: {}, cost(ms): {}",
                 datasetId,
                 cvsFilePath,
                 endTimeMillis - startTimeMillis);
