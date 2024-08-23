@@ -66,8 +66,8 @@ public interface DatasetServiceApi {
      * list dataset by various conditions
      *
      * @param userInfo
-     * @param ownerAgencyId
-     * @param ownerUserId
+     * @param ownerAgency
+     * @param ownerUser
      * @param datasetTitle
      * @param permissionType
      * @param startTime
@@ -79,8 +79,8 @@ public interface DatasetServiceApi {
      */
     ListDatasetResponse listDataset(
             UserInfo userInfo,
-            String ownerAgencyId,
-            String ownerUserId,
+            String ownerAgency,
+            String ownerUser,
             String datasetTitle,
             Integer permissionType,
             String startTime,

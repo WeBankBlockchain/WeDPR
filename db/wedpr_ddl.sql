@@ -162,9 +162,7 @@ CREATE TABLE if not exists `wedpr_dataset` (
     `dataset_column_count` int DEFAULT 0 COMMENT '数据集列数目',
     `dataset_storage_type` VARCHAR(255) DEFAULT '' COMMENT '数据集存储类型',
     `dataset_storage_path` VARCHAR(1024) DEFAULT '' COMMENT '数据集存储路径',
-    `owner_agency_id` VARCHAR(255) NOT NULL COMMENT '数据集所属机构id',
     `owner_agency_name` VARCHAR(255) NOT NULL COMMENT '数据集所属机构名称',
-    `owner_user_id` VARCHAR(1024) NOT NULL COMMENT '数据集所属用户名id',
     `owner_user_name` VARCHAR(1024) NOT NULL COMMENT '数据集所属用户名',
     `data_source_type` VARCHAR(255) NOT NULL COMMENT '数据源类型 : CSV、DB、XLSX、HDFS、HIVE',
     `data_source_meta` TEXT NOT NULL COMMENT '数据源参数信息，JSON字符串',
@@ -176,7 +174,7 @@ CREATE TABLE if not exists `wedpr_dataset` (
     `update_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`dataset_id`),
     INDEX dataset_title_index (`dataset_title`(128)),
-    INDEX owner_agency_id_index (`owner_agency_id`),
+    INDEX owner_agency_name_index (`owner_agency_name`),
     INDEX owner_user_name_index (`owner_user_name`(128)),
     INDEX create_at_index (`create_at`),
     INDEX update_at_index (`update_at`)

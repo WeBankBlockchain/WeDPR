@@ -223,8 +223,8 @@ public class DatasetController {
     @GetMapping("listDataset")
     public WeDPRResponse listDataset(
             HttpServletRequest httpServletRequest,
-            @RequestParam(value = "ownerAgencyId", required = false) String ownerAgencyId,
-            @RequestParam(value = "ownerUserId", required = false) String ownerUserId,
+            @RequestParam(value = "ownerAgency", required = false) String ownerAgency,
+            @RequestParam(value = "ownerUser", required = false) String ownerUser,
             @RequestParam(value = "permissionType", required = false) String permissionType,
             @RequestParam(value = "datasetTitle", required = false) String datasetTitle,
             @RequestParam(value = "startTime", required = false) String startTime,
@@ -262,8 +262,8 @@ public class DatasetController {
             ListDatasetResponse listDatasetResponse =
                     datasetService.listDataset(
                             userInfo,
-                            ownerAgencyId,
-                            ownerUserId,
+                            ownerAgency,
+                            ownerUser,
                             datasetTitle,
                             type,
                             startTime,

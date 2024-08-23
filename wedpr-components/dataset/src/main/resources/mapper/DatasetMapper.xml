@@ -17,9 +17,7 @@
         <result property="datasetColumnCount" column="dataset_column_count" />
         <result property="datasetStorageType" column="dataset_storage_type" />
         <result property="datasetStoragePath" column="dataset_storage_path" />
-        <result property="ownerAgencyId" column="owner_agency_id" />
         <result property="ownerAgencyName" column="owner_agency_name" />
-        <result property="ownerUserId" column="owner_user_id" />
         <result property="ownerUserName" column="owner_user_name" />
         <result property="dataSourceType" column="data_source_type" />
         <result property="dataSourceMeta" column="data_source_meta" />
@@ -44,9 +42,7 @@
             dataset_column_count,
             dataset_storage_type,
             dataset_storage_path,
-            owner_agency_id,
             owner_agency_name,
-            owner_user_id,
             owner_user_name,
             data_source_type,
             data_source_meta,
@@ -139,9 +135,7 @@
             dataset_title,
             dataset_label,
             dataset_desc,
-            owner_agency_id,
             owner_agency_name,
-            owner_user_id,
             owner_user_name,
             dataset_fields,
             dataset_version_hash,
@@ -162,9 +156,7 @@
             #{datasetTitle},
             #{datasetLabel},
             #{datasetDesc},
-            #{ownerAgencyId},
             #{ownerAgencyName},
-            #{ownerUserId},
             #{ownerUserName},
             #{datasetFields},
             #{datasetVersionHash},

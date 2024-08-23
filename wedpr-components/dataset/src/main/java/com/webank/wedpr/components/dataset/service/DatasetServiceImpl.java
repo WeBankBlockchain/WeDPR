@@ -116,9 +116,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         dataset.setDatasetColumnCount(0);
         dataset.setVisibility(createDatasetRequest.getDatasetVisibility());
         dataset.setVisibilityDetails(datasetVisibilityDetails);
-        dataset.setOwnerAgencyId(userInfo.getAgency());
         dataset.setOwnerAgencyName(userInfo.getAgency());
-        dataset.setOwnerUserId(userInfo.getUser());
         dataset.setOwnerUserName(userInfo.getUser());
 
         if (dynamicDataSource) {
