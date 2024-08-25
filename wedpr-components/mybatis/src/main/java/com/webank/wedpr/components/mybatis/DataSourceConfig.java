@@ -2,7 +2,6 @@ package com.webank.wedpr.components.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

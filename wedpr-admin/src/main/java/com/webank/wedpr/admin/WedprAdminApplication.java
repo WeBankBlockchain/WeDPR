@@ -1,4 +1,4 @@
-package com.webank.wedpr;
+package com.webank.wedpr.admin;
 
 import com.webank.wedpr.components.initializer.WeDPRApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
