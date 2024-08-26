@@ -56,6 +56,9 @@ public class WedprCertServiceImpl extends ServiceImpl<WedprCertMapper, WedprCert
         }
         String agencyName = wedprAgency.getAgencyName();
         MultipartFile multipartFile = multipartRequest.getFile("csrFile");
+        if (multipartFile == null) {
+            throw new WeDPRException("Please provide agency csr file");
+        }
         // 获取文件名/
         String filename = multipartFile.getOriginalFilename();
         if (!Utils.isSafeCommand(filename)) {
