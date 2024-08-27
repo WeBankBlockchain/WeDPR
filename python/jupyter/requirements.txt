@@ -1,0 +1,7 @@
+traitlets>=4.3.2
+jupyter_server>=2.2
+pyjwt>=2
+tornado
+PyJWT
+dataclass_wizard
+
