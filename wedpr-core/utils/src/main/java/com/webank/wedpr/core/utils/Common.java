@@ -28,8 +28,13 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringSubstitutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Common {
+    private static final Logger logger = LoggerFactory.getLogger(Common.class);
+
     @SneakyThrows(WeDPRException.class)
     public static void requireNonEmpty(String fieldName, String fieldValue) {
         if (StringUtils.isBlank(fieldValue)
@@ -121,5 +126,27 @@ public class Common {
 
     public static String getCurrentTime() {
         return timeToString(LocalDateTime.now());
+    }
+
+    public static int getProcessId(Process process) throws WeDPRException {
+        try {
+            Field field = process.getClass().getField(Constant.PID_FIELD);
+            field.setAccessible(true);
+            return field.getInt(process);
+        } catch (Exception e) {
+            logger.warn("getProcessId failed, error: ", e);
+            throw new WeDPRException("getProcessId failed for " + e.getMessage(), e);
+        }
+    }
+
+    // replace the templateContent with vars
+    public static String substitutorVarsWithParameters(
+            String templateContent, Map<String, String> parameterMap) {
+        // support ${datetime}
+        if (!parameterMap.containsKey(Constant.DATE_VAR)) {
+            parameterMap.put(Constant.DATE_VAR, getCurrentTime());
+        }
+        StringSubstitutor stringSubstitutor = new StringSubstitutor(parameterMap);
+        return stringSubstitutor.replace(templateContent);
     }
 }

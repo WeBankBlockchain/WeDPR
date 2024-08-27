@@ -45,6 +45,7 @@ public class Constant {
 
     public static final String SITE_END_LOGIN_URL = WEDPR_API_PREFIX + "/login";
     public static final String ADMIN_END_LOGIN_URL = WEDPR_API_PREFIX + "/admin/login";
+
     public static final String REGISTER_URL = WEDPR_API_PREFIX + "/register";
     public static final String USER_PUBLICKEY_URL = WEDPR_API_PREFIX + "/pub";
     public static final String IMAGE_CODE_URL = WEDPR_API_PREFIX + "/image-code";
@@ -56,4 +57,8 @@ public class Constant {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DEFAULT_INIT_GROUP_ID = "1000000000000000";
+
+    public static final String PID_FIELD = "pid";
+    public static final String DATE_VAR = "datetime";
+    public static final String LOG_POSTFIX = ".log";
 }

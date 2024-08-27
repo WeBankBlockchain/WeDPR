@@ -280,3 +280,18 @@ CREATE TABLE IF NOT EXISTS wedpr_permission (
     update_by VARCHAR(20) NOT NULL DEFAULT '',
     PRIMARY KEY (permission_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- the jupyter table
+create table if not exists `wedpr_jupyter_table`(
+    `id` varchar(64) not null comment "Jupyter资源的ID",
+    `owner` varchar(255) not null comment "Jupyter属主",
+    `agency` varchar(255) not null comment "Jupyter所属机构",
+    `access_entrypoint` text comment "Jupyter访问入口",
+    `setting` longtext comment "Jupyter配置",
+    `status` int comment "Jupyter状态",
+    `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
+    `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
+    PRIMARY KEY (id),
+    index owner_index(`owner`(128)),
+    index status_index(`status`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;

@@ -45,6 +45,7 @@ ext {
     springfoxVersion = "3.0.0"
     guavaVersion = "32.0.1-jre"
     bcprovVersion = "1.78.1"
+    googleAutoServiceVersion = "1.1.1"
 }
 
 // check.dependsOn integrationTest
@@ -135,6 +136,7 @@ allprojects {
         implementation logger, spring, spring_boot
 
         implementation("org.projectlombok:lombok:${lombokVersion}")
+        implementation("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
         implementation("org.apache.commons:commons-lang3:${apacheCommonLangVersion}")
         implementation("io.springfox:springfox-boot-starter:${springfoxVersion}")
         implementation("com.google.guava:guava:${guavaVersion}")
@@ -144,6 +146,7 @@ allprojects {
         testImplementation ("junit:junit:${junitVersion}")
 
         annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+        annotationProcessor("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
     }
 
     clean.doLast {

@@ -16,10 +16,18 @@
 package com.webank.wedpr.core.utils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Properties;
 import lombok.SneakyThrows;
+import org.apache.commons.collections.MapUtils;
 
 public class PropertiesHelper {
+
+    @SneakyThrows
+    public static <T> T getValue(
+            Map<String, String> config, String key, boolean required, T defaultValue) {
+        return getValue(MapUtils.toProperties(config), key, required, defaultValue);
+    }
 
     @SneakyThrows
     public static <T> T getValue(Properties config, String key, boolean required, T defaultValue) {

@@ -59,6 +59,15 @@ project(":wedpr-components-scheduler").projectDir=file("wedpr-components/schedul
 include "wedpr-components-security"
 project(":wedpr-components-security").projectDir=file("wedpr-components/security")
 
+include ":wedpr-components-task-plugin-api"
+project(":wedpr-components-task-plugin-api").projectDir=file("wedpr-components/task-plugin/api")
+
+include ":wedpr-components-task-plugin-shell"
+project(":wedpr-components-task-plugin-shell").projectDir=file("wedpr-components/task-plugin/shell")
+
+include ":wedpr-components-spi"
+project(":wedpr-components-spi").projectDir=file("wedpr-components/spi")
+
 include "wedpr-components-user"
 project(":wedpr-components-user").projectDir=file("wedpr-components/user")
 
