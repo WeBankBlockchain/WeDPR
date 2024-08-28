@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.entity.WedprUser;
 import com.webank.wedpr.components.user.requests.LoginRequest;
+import com.webank.wedpr.components.user.requests.UserRegisterRequest;
 import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.core.utils.WeDPRResponse;
 
 /**
  * 服务类
@@ -21,4 +23,6 @@ public interface WedprUserService extends IService<WedprUser> {
     /** 检查用户登录 */
     void checkWedprUserLoginReturn(LoginRequest request, UserJwtConfig userJwtConfig)
             throws WeDPRException;
+
+    WeDPRResponse register(UserRegisterRequest userRegisterRequest);
 }

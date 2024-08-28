@@ -2,6 +2,7 @@ package com.webank.wedpr.components.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.webank.wedpr.components.user.entity.WedprUser;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
@@ -11,6 +12,7 @@ import org.apache.ibatis.annotations.Update;
  * @author caryliao
  * @since 2024-07-15
  */
+@Mapper
 public interface WedprUserMapper extends BaseMapper<WedprUser> {
 
     @Update(

@@ -9,4 +9,5 @@ dependencies {
     compile project(":wedpr-core-protocol")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
+    compile project(":wedpr-components-hook")
 }

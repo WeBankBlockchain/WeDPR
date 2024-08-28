@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.webank.wedpr.components.user.entity.WedprGroupDetail;
 import com.webank.wedpr.components.user.response.WedprUserResponse;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -13,6 +14,7 @@ import org.apache.ibatis.annotations.Param;
  * @author caryliao
  * @since 2024-07-15
  */
+@Mapper
 public interface WedprGroupDetailMapper extends BaseMapper<WedprGroupDetail> {
 
     IPage<WedprUserResponse> selectGroupUserPage(

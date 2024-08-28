@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.webank.wedpr.components.user.entity.WedprUserRole;
 import com.webank.wedpr.components.user.entity.result.WedprUserRoleResult;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,6 +14,7 @@ import org.apache.ibatis.annotations.Select;
  * @author caryliao
  * @since 2024-07-15
  */
+@Mapper
 public interface WedprUserRoleMapper extends BaseMapper<WedprUserRole> {
 
     @Select(

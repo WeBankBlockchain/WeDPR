@@ -74,6 +74,9 @@ project(":wedpr-components-transport").projectDir=file("wedpr-components/transpo
 include ":wedpr-components-jupyter-intergration"
 project(":wedpr-components-jupyter-intergration").projectDir=file("wedpr-components/env-integration/jupyter")
 
+include "wedpr-components-hook"
+project(":wedpr-components-hook").projectDir=file("wedpr-components/hook")
+
 include "wedpr-components-user"
 project(":wedpr-components-user").projectDir=file("wedpr-components/user")
 

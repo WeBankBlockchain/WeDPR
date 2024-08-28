@@ -46,6 +46,7 @@ public class JupyterServiceImpl implements JupyterService {
      * @param agency the agency of the person
      * @return success or failed
      */
+    @Override
     public String allocate(String user, String agency) throws Exception {
         return this.jupyterManager.allocateJupyter(user, agency);
     }
@@ -56,6 +57,7 @@ public class JupyterServiceImpl implements JupyterService {
      * @param condition
      * @return
      */
+    @Override
     public List<JupyterInfoDO> queryJupyters(
             boolean admin, String queryUser, JupyterInfoDO condition) throws Exception {
         if (!admin) {
@@ -71,6 +73,7 @@ public class JupyterServiceImpl implements JupyterService {
      * @param id specify the jupyter to destory
      * @return success/failed
      */
+    @Override
     public boolean destroy(boolean admin, String currentUser, String id) {
         // the admin can delete all jupyter
         if (admin) {
@@ -85,6 +88,7 @@ public class JupyterServiceImpl implements JupyterService {
      * @param id the jupyter id
      * @return success/failed
      */
+    @Override
     public JupyterInfoDO open(String currentUser, String id) throws Exception {
         return this.jupyterManager.openJupyter(currentUser, id);
     }
@@ -95,6 +99,7 @@ public class JupyterServiceImpl implements JupyterService {
      * @param id specify the jupyter to close
      * @return success/failed
      */
+    @Override
     public JupyterInfoDO close(String currentUser, String id) throws Exception {
         return this.jupyterManager.closeJupyter(currentUser, id);
     }
