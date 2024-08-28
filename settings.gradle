@@ -68,6 +68,9 @@ project(":wedpr-components-task-plugin-shell").projectDir=file("wedpr-components
 include ":wedpr-components-spi"
 project(":wedpr-components-spi").projectDir=file("wedpr-components/spi")
 
+include ":wedpr-components-jupyter-intergration"
+project(":wedpr-components-jupyter-intergration").projectDir=file("wedpr-components/env-integration/jupyter")
+
 include "wedpr-components-user"
 project(":wedpr-components-user").projectDir=file("wedpr-components/user")
 

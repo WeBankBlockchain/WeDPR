@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper">
+    <resultMap id="JupyterInfoDOMap" type="com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO">
+        <id column="id" property="id"/>
+        <result column="owner" property="owner"/>
+        <result column="agency" property="agency"/>
+        <result column="access_entrypoint" property="accessEntry"/>
+        <result column="setting" property="setting"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="insertJupyterInfo" parameterType="JupyterInfoDO">
+        insert into wedpr_jupyter_table(`id`, `owner`,
+              `agency`, `access_entrypoint`, `setting`, `status`, `create_time`) values
+               (#{jupyterInfo.id}, #{jupyterInfo.owner}, #{jupyterInfo.agency}, #{jupyterInfo.accessEntry},
+                #{jupyterInfo.setting}, #{jupyterInfo.status}, NOW())
+    </insert>
+    <update id="updateJupyterInfo" parameterType="JupyterInfoDO">
+        update `wedpr_jupyter_table`
+        <set>
+            <if test="updatedInfo.accessEntry != null and updatedInfo.accessEntry !=''">
+                `access_entrypoint` = #{updatedInfo.accessEntry},
+            </if>
+            <if test="updatedInfo.setting != null and updatedInfo.setting !=''">
+                `setting` = #{updatedInfo.setting},
+            </if>
+            <if test="updatedInfo.status != null and updatedInfo.status !=''">
+                `status` = #{updatedInfo.status},
+            </if>
+        </set>
+        where 1=1
+        <if test="updatedInfo.id != null and updatedInfo.id !=''">
+            and `id` = #{updatedInfo.id},
+        </if>
+        <if test="updatedInfo.owner != null and updatedInfo.owner !=''">
+            and `owner` = #{updatedInfo.owner},
+        </if>
+        <if test="updatedInfo.agency != null and updatedInfo.agency !=''">
+            and `agency` = #{updatedInfo.agency},
+        </if>
+    </update>
+    <delete id="deleteJupyterInfo" parameterType="java.lang.String">
+        public int deleteJupyterInfo(@Param("id")String id);
+        delete from `wedpr_jupyter_table` where `id` = #{id}
+        <if test="owner != null and owner !=''">
+            and `owner` = #{owner}
+        </if>
+    </delete>
+    <select id="queryJupyterInfos" resultMap="JupyterInfoDOMap">
+        select *
+        from wedpr_jupyter_table where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` = #{condition.id}
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.agency != null and condition.agency !=''">
+                    and `agency` like concat(#{condition.agency}, '%')
+                </if>
+                <if test="condition.status!= null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.accessEntry!= null and condition.accessEntry !=''">
+                    and `accessEntry` = #{condition.accessEntry}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+    <select id="queryJupyterRecordCount" resultType="java.lang.Integer">
+        select 1
+        from wedpr_jupyter_table where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.id != null and condition.id !=''">
+                    and `id` = #{condition.id}
+                </if>
+                <if test="condition.owner != null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.agency != null and condition.agency !=''">
+                    and `agency` like concat(#{condition.agency}, '%')
+                </if>
+                <if test="condition.status!= null and condition.status !=''">
+                    and `status` = #{condition.status}
+                </if>
+                <if test="condition.accessEntry!= null and condition.accessEntry !=''">
+                    and `accessEntry` = #{condition.accessEntry}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+</mapper>
