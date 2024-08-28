@@ -1,8 +1,10 @@
 // Apply the java-library plugin to add support for Java Library
 plugins {
-    id 'com.github.sherter.google-java-format' version '0.8'
     id 'maven-publish'
+    id 'java-library'
+    id 'java'
     id 'org.ajoberstar.grgit' version '4.1.1'
+    id 'com.github.sherter.google-java-format' version '0.8'
 }
 println("* Notice: current gradle version is " + gradle.gradleVersion)
 // Additional attribute definition
@@ -73,8 +75,6 @@ allprojects {
             html.enabled false
         }
     }
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
@@ -163,7 +163,6 @@ subprojects {
             }
             resources {
                 srcDir 'src/main/resources'
-                srcDir 'src/main/java'
             }
         }
         integrationTest {
@@ -175,6 +174,8 @@ subprojects {
             resources.srcDir file('src/integration-test/resources')
         }
     }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
     googleJavaFormat {
         //toolVersion = '1.7'
         options style: 'AOSP'
@@ -201,7 +202,6 @@ subprojects {
 
     tasks.register('sourcesJar', Jar) {
         from sourceSets.main.allSource
-        include '**/*.xml'
         archiveClassifier = 'sources'
     }
 
@@ -309,5 +309,12 @@ subprojects {
             }
         }
     }
+}
+googleJavaFormat {
+    //toolVersion = '1.7'
+    options style: 'AOSP'
+    source = sourceSets*.allJava
+    include '**/*.java'
+    //source = *.allJava
 }
 check.dependsOn jacocoTestReport
