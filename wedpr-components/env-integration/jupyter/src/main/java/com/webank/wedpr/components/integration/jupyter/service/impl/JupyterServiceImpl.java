@@ -15,8 +15,12 @@
 
 package com.webank.wedpr.components.integration.jupyter.service.impl;
 
+import com.webank.wedpr.components.hook.UserHook;
+import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
+import com.webank.wedpr.components.integration.jupyter.core.JupyterManager;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
+import com.webank.wedpr.components.integration.jupyter.hook.JupyterUserCallback;
 import com.webank.wedpr.components.integration.jupyter.service.JupyterService;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
@@ -33,11 +37,14 @@ public class JupyterServiceImpl implements JupyterService {
 
     private @Autowired SysConfigMapper sysConfigMapper;
     private @Autowired JupyterMapper jupyterMapper;
+    private @Autowired UserHook userHook;
     private JupyterManager jupyterManager;
 
     @PostConstruct
     public void init() {
         this.jupyterManager = new JupyterManager(sysConfigMapper, jupyterMapper);
+        userHook.registerUserCallback(
+                JupyterConfig.getJupyterModule(), new JupyterUserCallback(this.jupyterManager));
     }
     /**
      * allocate the jupyter environment for given user

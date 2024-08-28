@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TemplateSettingRequest {
@@ -44,9 +45,13 @@ public class TemplateSettingRequest {
         }
     }
 
-    public void setOwnerInfo(String owner) {
+    public void setOwnerInfo(boolean admin, String owner) {
         for (SettingTemplateDO template : templateList) {
-            template.setOwner(owner);
+            // non-admin user, set owner to the login user
+            // not set the owner, set the owner to the login user
+            if (!admin || StringUtils.isBlank(template.getOwner())) {
+                template.setOwner(owner);
+            }
             template.setAgency(WeDPRCommonConfig.getAgency());
         }
     }

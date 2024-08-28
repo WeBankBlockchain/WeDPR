@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.integration.jupyter.service.impl;
+package com.webank.wedpr.components.integration.jupyter.core;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
 
@@ -24,6 +24,7 @@ public class JupyterConfig {
     private static String JUPYTER_HOST_CONFIGUATINON_KEY =
             WeDPRConfig.apply("wedpr.jupyter.host_configuration_key", "jupyter_entrypoints");
     private static String JUPYTER_ENTRYPOINT_SPLITTER = ";";
+    private static String JUPYTER_MODULE = "jupyter-integration";
 
     public static String getJupyterHostConfiguatinonKey() {
         return JUPYTER_HOST_CONFIGUATINON_KEY;
@@ -35,5 +36,9 @@ public class JupyterConfig {
 
     public static String getJupyterEntrypointSplitter() {
         return JUPYTER_ENTRYPOINT_SPLITTER;
+    }
+
+    public static String getJupyterModule() {
+        return JUPYTER_MODULE;
     }
 }

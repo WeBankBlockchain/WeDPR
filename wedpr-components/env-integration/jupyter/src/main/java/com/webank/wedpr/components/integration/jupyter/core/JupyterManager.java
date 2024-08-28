@@ -12,9 +12,8 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.integration.jupyter.service.impl;
+package com.webank.wedpr.components.integration.jupyter.core;
 
-import com.webank.wedpr.components.integration.jupyter.core.JupyterStatus;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;

@@ -37,13 +37,12 @@ public class TemplateSettingServiceImpl implements TemplateSettingService {
     public WeDPRResponse batchInsertTemplateSettings(
             Boolean admin, String user, TemplateSettingRequest settings) {
         settings.checkCreate(admin);
-        if (!admin) {
-            settings.setOwnerInfo(user);
-        }
+        settings.setOwnerInfo(admin, user);
+
         int result = this.settingTemplateMapper.insertSettings(settings.getTemplateList());
         WeDPRResponse response =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
-        response.setData(response);
+        response.setData(result);
         return response;
     }
 

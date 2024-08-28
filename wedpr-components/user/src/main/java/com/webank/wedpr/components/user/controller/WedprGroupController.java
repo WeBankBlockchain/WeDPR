@@ -3,6 +3,7 @@ package com.webank.wedpr.components.user.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.webank.wedpr.components.hook.UserHook;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
 import com.webank.wedpr.components.token.auth.model.UserToken;
@@ -55,6 +56,7 @@ public class WedprGroupController {
     @Autowired private WedprUserRoleService wedprUserRoleService;
 
     @Autowired private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired private UserHook userHook;
 
     /**
      * 创建用户组，检查用户组名是否存在，创建用户组失败时记录警告日志
@@ -351,6 +353,10 @@ public class WedprGroupController {
             LambdaQueryWrapper<WedprGroupDetail> lambdaQueryWrapper2 = new LambdaQueryWrapper<>();
             lambdaQueryWrapper2.eq(WedprGroupDetail::getUsername, username);
             wedprGroupDetailService.remove(lambdaQueryWrapper2);
+
+            // call userHook
+            userHook.onUserDeleted(username);
+
             CreateWedprGroupResponse createWedprGroupResponse = new CreateWedprGroupResponse();
             createWedprGroupResponse.setGroupId(groupId);
             wedprResponse.setData(createWedprGroupResponse);

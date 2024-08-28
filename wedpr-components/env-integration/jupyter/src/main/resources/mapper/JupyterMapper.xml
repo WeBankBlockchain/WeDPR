@@ -59,8 +59,10 @@
         </if>
     </update>
     <delete id="deleteJupyterInfo" parameterType="java.lang.String">
-        public int deleteJupyterInfo(@Param("id")String id);
-        delete from `wedpr_jupyter_table` where `id` = #{id}
+        delete from `wedpr_jupyter_table` where 1 = 1
+        <if test="id != null and id !=''">
+            and `id` = #{id}
+        </if>
         <if test="owner != null and owner !=''">
             and `owner` = #{owner}
         </if>

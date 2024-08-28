@@ -33,7 +33,7 @@
         values
         <foreach collection="templateList" item = "template" index = "index" separator=",">
             (#{template.id}, #{template.name}, #{template.type}, #{template.owner}, #{template.agency},
-             #{template.setting}, #{template.createTime})
+             #{template.setting}, NOW())
         </foreach>
     </insert>
     <update id="updateSettings" parameterType="java.util.List">
