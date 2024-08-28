@@ -1,17 +1,9 @@
 // Apply the java-library plugin to add support for Java Library
 plugins {
     id 'java'
-    id 'com.github.sherter.google-java-format'
 }
 
 dependencies {
     compile ("org.apache.httpcomponents:httpclient:${httpClientVersion}")
     compile project(":wedpr-core-utils")
-}
-googleJavaFormat {
-    //toolVersion = '1.7'
-    options style: 'AOSP'
-    source = sourceSets*.allJava
-    include '**/*.java'
-    //source = *.allJava
 }

@@ -9,9 +9,9 @@ import com.webank.wedpr.components.storage.impl.local.LocalStoragePath;
 import com.webank.wedpr.core.protocol.StorageType;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
-import lombok.SneakyThrows;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.SneakyThrows;
 
 public class StoragePathBuilder {
 
@@ -41,22 +41,23 @@ public class StoragePathBuilder {
                 ObjectMapperFactory.getObjectMapper().readValue(strStoragePath, aClass);
     }
 
-    public static StoragePath getInstanceByFilePath(String storageType, String filePath)throws WeDPRException {
-        if(storageType.compareToIgnoreCase(StorageType.HDFS.getName()) == 0){
+    public static StoragePath getInstanceByFilePath(String storageType, String filePath)
+            throws WeDPRException {
+        if (storageType.compareToIgnoreCase(StorageType.HDFS.getName()) == 0) {
             return new HDFSStoragePath(filePath);
         }
-        if(storageType.compareToIgnoreCase(StorageType.LOCAL.getName()) == 0){
+        if (storageType.compareToIgnoreCase(StorageType.LOCAL.getName()) == 0) {
             return new LocalStoragePath(filePath);
         }
         throw new WeDPRException("getInstanceByFilePath: Invalid storageType: " + storageType);
     }
 
     @SneakyThrows(Exception.class)
-    public String getPathWithHome(String storageType, String filePath){
-        if(storageType.compareToIgnoreCase(StorageType.HDFS.getName()) == 0){
+    public String getPathWithHome(String storageType, String filePath) {
+        if (storageType.compareToIgnoreCase(StorageType.HDFS.getName()) == 0) {
             return hdfsConfig.getAbsPathInHdfs(filePath);
         }
-        if(storageType.compareToIgnoreCase(StorageType.LOCAL.getName()) == 0){
+        if (storageType.compareToIgnoreCase(StorageType.LOCAL.getName()) == 0) {
             return localStorageConfig.getStorageAbsPath(filePath);
         }
         throw new WeDPRException("getPathWithHome: Invalid storageType: " + storageType);

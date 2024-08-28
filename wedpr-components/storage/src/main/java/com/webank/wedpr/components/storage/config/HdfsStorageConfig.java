@@ -1,11 +1,9 @@
 package com.webank.wedpr.components.storage.config;
 
+import java.io.File;
 import lombok.Data;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.File;
 
 @ConfigurationProperties(prefix = "wedpr.storage.hdfs")
 @Configuration
@@ -16,9 +14,6 @@ public class HdfsStorageConfig {
     private String baseDir = "/user";
 
     public String getAbsPathInHdfs(String path) {
-        return getBaseDir()
-                + File.separator
-                + getUser()
-                + File.separator + path;
+        return getBaseDir() + File.separator + getUser() + File.separator + path;
     }
 }

@@ -17,7 +17,6 @@ public class StorageInitializer {
     @Autowired(required = false)
     private LocalStorageConfig localStorageConfig;
 
-
     @Autowired(required = false)
     private HdfsStorageConfig hdfsStorageConfig;
 

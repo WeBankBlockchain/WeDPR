@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.github.sherter.google-java-format'
 }
 
 dependencies {
@@ -12,11 +11,4 @@ dependencies {
     compile("com.github.pagehelper:pagehelper:${pageHelperVersion}")
     compile("com.baomidou:mybatis-plus-generator:${mybatisPlusGeneratorVersion}")
     compile("org.apache.velocity:velocity-engine-core:${velocityVersion}")
-}
-googleJavaFormat {
-    //toolVersion = '1.7'
-    options style: 'AOSP'
-    source = sourceSets*.allJava
-    include '**/*.java'
-    //source = *.allJava
 }

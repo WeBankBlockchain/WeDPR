@@ -18,14 +18,13 @@ package com.webank.wedpr.components.storage.impl.hdfs;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StorageMeta;
 import com.webank.wedpr.components.storage.api.StoragePath;
-import com.webank.wedpr.components.storage.stream.HdfsStorageStream;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
+import com.webank.wedpr.components.storage.stream.HdfsStorageStream;
 import com.webank.wedpr.core.protocol.StorageType;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.Closeable;
 import java.io.IOException;
-
 import lombok.SneakyThrows;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -147,9 +146,7 @@ public class HDFSStorage implements FileStorageInterface {
                 "getMetaInfo",
                 (fsHandlerArgs, fsActionResult) ->
                         fsActionResult.setFileStatus(
-                                fsHandlerArgs
-                                        .getFileSystem()
-                                        .getFileStatus(new Path(path))));
+                                fsHandlerArgs.getFileSystem().getFileStatus(new Path(path))));
         return result.getFileStatus();
     }
 
@@ -162,7 +159,8 @@ public class HDFSStorage implements FileStorageInterface {
      */
     @SneakyThrows(Exception.class)
     @Override
-    public StoragePath upload(boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath) {
+    public StoragePath upload(
+            boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath) {
         logger.debug("update file: {}=>{}", localPath, remotePath);
 
         String remoteAbsPath;
@@ -261,7 +259,8 @@ public class HDFSStorage implements FileStorageInterface {
 
         FileStatus metaInfo = getMetaInfo(filePath);
 
-        logger.error("get hdfs storage meta, filePath: {}, length: {}", filePath, metaInfo.getLen());
+        logger.error(
+                "get hdfs storage meta, filePath: {}, length: {}", filePath, metaInfo.getLen());
 
         StorageMeta storageMeta = new StorageMeta();
         storageMeta.setLength(metaInfo.getLen());
@@ -289,7 +288,6 @@ public class HDFSStorage implements FileStorageInterface {
         logger.info("open hdfs storage stream, filePath: {}, ", filePath);
         return new HdfsStorageStream(fileSystem, fsDataInputStream);
     }
-
 
     @Override
     public StorageType type() {

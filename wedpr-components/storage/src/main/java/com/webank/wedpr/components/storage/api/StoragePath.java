@@ -1,11 +1,9 @@
 package com.webank.wedpr.components.storage.api;
 
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -21,8 +19,8 @@ public abstract class StoragePath {
         return this.filePath.toString();
     }
 
-    public void setFilePath(String filePath){
-        if(filePath == null){
+    public void setFilePath(String filePath) {
+        if (filePath == null) {
             return;
         }
         this.filePath = Paths.get(filePath);

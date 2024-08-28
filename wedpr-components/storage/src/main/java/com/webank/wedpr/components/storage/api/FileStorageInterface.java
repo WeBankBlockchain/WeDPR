@@ -16,16 +16,19 @@
 package com.webank.wedpr.components.storage.api;
 
 import com.webank.wedpr.core.protocol.StorageType;
+
 public interface FileStorageInterface {
 
     /**
      * base dir
+     *
      * @return
      */
     String getBaseDir();
 
     /**
      * open storage for input stream
+     *
      * @param storagePath
      * @return
      */
@@ -46,7 +49,8 @@ public interface FileStorageInterface {
      * @param remotePath the remote dest-path
      * @param isAbsPath
      */
-    StoragePath upload(boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath);
+    StoragePath upload(
+            boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath);
 
     /**
      * download the file from remotePath to localPath
@@ -64,7 +68,6 @@ public interface FileStorageInterface {
     void delete(StoragePath storagePath);
 
     /**
-     *
      * @param storagePath
      * @return
      */

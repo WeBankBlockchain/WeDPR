@@ -10,10 +10,3 @@ dependencies {
     compile ("com.opencsv:opencsv:${opencsvVersion}")
 }
 
-googleJavaFormat {
-    //toolVersion = '1.7'
-    options style: 'AOSP'
-    source = sourceSets*.allJava
-    include '**/*.java'
-    //source = *.allJava
-}

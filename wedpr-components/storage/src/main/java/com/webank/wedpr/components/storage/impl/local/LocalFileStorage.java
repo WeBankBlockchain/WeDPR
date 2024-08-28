@@ -3,10 +3,11 @@ package com.webank.wedpr.components.storage.impl.local;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StorageMeta;
 import com.webank.wedpr.components.storage.api.StoragePath;
-import com.webank.wedpr.components.storage.stream.LocalStorageStream;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
+import com.webank.wedpr.components.storage.stream.LocalStorageStream;
 import com.webank.wedpr.core.protocol.StorageType;
-
+import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -60,7 +58,8 @@ public class LocalFileStorage implements FileStorageInterface {
     }
 
     @Override
-    public StoragePath upload(boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath) {
+    public StoragePath upload(
+            boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath) {
         LocalStoragePath localStoragePath = new LocalStoragePath();
 
         String remoteAbsPath;
@@ -122,7 +121,7 @@ public class LocalFileStorage implements FileStorageInterface {
 
         String filePath = localStoragePath.getFilePath();
         File file = new File(filePath);
-        if(!file.delete()){
+        if (!file.delete()) {
             throw new WeDPRException("delete " + storagePath + " failed!");
         }
     }
@@ -152,7 +151,8 @@ public class LocalFileStorage implements FileStorageInterface {
     @Override
     public void rename(StoragePath sourceStoragePath, StoragePath destStoragePath) {
         LocalStoragePath destLocalStoragePath = (LocalStoragePath) destStoragePath;
-        String destStorageAbsPath = localStorageConfig.getStorageAbsPath(destLocalStoragePath.getFilePath());
+        String destStorageAbsPath =
+                localStorageConfig.getStorageAbsPath(destLocalStoragePath.getFilePath());
         download(sourceStoragePath, destStorageAbsPath);
         delete(sourceStoragePath);
     }
@@ -177,7 +177,8 @@ public class LocalFileStorage implements FileStorageInterface {
 
         logger.info("open local storage stream, filePath: {}", filePath);
 
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(Paths.get(filePath)));
+        BufferedInputStream bufferedInputStream =
+                new BufferedInputStream(Files.newInputStream(Paths.get(filePath)));
         return new LocalStorageStream(bufferedInputStream);
     }
 

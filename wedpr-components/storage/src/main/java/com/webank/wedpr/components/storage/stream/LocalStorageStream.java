@@ -1,12 +1,11 @@
 package com.webank.wedpr.components.storage.stream;
 
 import com.webank.wedpr.components.storage.api.StorageStreamApi;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Data
 public class LocalStorageStream implements StorageStreamApi {

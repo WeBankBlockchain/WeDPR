@@ -9,10 +9,3 @@ dependencies {
     compile project(":wedpr-components-security")
     compile project(":wedpr-components-admin")
 }
-googleJavaFormat {
-    //toolVersion = '1.7'
-    options style: 'AOSP'
-    source = sourceSets*.allJava
-    include '**/*.java'
-    //source = *.allJava
-}

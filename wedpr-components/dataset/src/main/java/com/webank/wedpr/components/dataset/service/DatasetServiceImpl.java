@@ -253,7 +253,8 @@ public class DatasetServiceImpl implements DatasetServiceApi {
 
         // sort and distinct
         List<String> newDatasetIdList =
-                datasetIdList.stream()
+                datasetIdList
+                        .stream()
                         .distinct()
                         .sorted(String::compareTo)
                         .collect(Collectors.toList());

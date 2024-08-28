@@ -54,6 +54,7 @@ allprojects {
     group = 'com.webank.wedpr'
     version = '1.0.0-rc1-SNAPSHOT'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'java'
@@ -173,6 +174,13 @@ subprojects {
             }
             resources.srcDir file('src/integration-test/resources')
         }
+    }
+    googleJavaFormat {
+        //toolVersion = '1.7'
+        options style: 'AOSP'
+        source = sourceSets*.allJava
+        include '**/*.java'
+        //source = *.allJava
     }
     configurations {
         integrationTestCompile.extendsFrom testCompile

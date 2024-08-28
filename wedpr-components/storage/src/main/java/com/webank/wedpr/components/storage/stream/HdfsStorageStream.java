@@ -1,15 +1,14 @@
 package com.webank.wedpr.components.storage.stream;
 
 import com.webank.wedpr.components.storage.api.StorageStreamApi;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-public class HdfsStorageStream implements StorageStreamApi  {
+public class HdfsStorageStream implements StorageStreamApi {
 
     private static final Logger logger = LoggerFactory.getLogger(HdfsStorageStream.class);
 
