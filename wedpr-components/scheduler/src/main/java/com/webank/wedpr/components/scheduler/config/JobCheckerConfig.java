@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.adm.config;
+package com.webank.wedpr.components.scheduler.config;
 
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;

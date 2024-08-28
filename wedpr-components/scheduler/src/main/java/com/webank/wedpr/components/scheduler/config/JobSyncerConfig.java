@@ -14,13 +14,14 @@
 *
 */
 
-package com.webank.wedpr.adm.config;
+package com.webank.wedpr.components.scheduler.config;
 
-import com.webank.wedpr.components.authorization.dao.AuthMapperWrapper;
-import com.webank.wedpr.components.authorization.service.impl.AuthSyncer;
+import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
+import com.webank.wedpr.components.scheduler.core.JobSyncer;
+import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
 import com.webank.wedpr.components.sync.ResourceSyncer;
+import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -30,22 +31,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@AutoConfigureAfter(ResourceSyncerConfig.class)
-public class AuthSyncConfig {
+@AutoConfigureAfter({ResourceSyncerConfig.class, SchedulerLoader.class})
+public class JobSyncerConfig {
     @Autowired private ResourceSyncer resourceSyncer;
-    @Autowired private ThreadPoolService syncWorkerThreadPool;
-    @Autowired private AuthMapperWrapper authMapperWrapper;
+    @Autowired private ProjectMapperWrapper projectMapperWrapper;
+    @Autowired private SchedulerTaskImpl schedulerTaskImpl;
 
-    // Note: the authSyncer should be inited before start the ResourceSyncer
-    @Bean(name = "authSync")
+    // Note: the jobSyncer should be inited before start the ResourceSyncer
+    @Bean(name = "jobSyncer")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public AuthSyncer authSync() {
-        return new AuthSyncer(
+    public JobSyncer jobSyncer() {
+        return new JobSyncer(
                 WeDPRCommonConfig.getAgency(),
-                ResourceSyncer.ResourceType.Authorization.getType(),
-                syncWorkerThreadPool,
+                ResourceSyncer.ResourceType.Job.getType(),
                 resourceSyncer,
-                authMapperWrapper);
+                schedulerTaskImpl.getScheduler(),
+                projectMapperWrapper);
     }
 }

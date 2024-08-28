@@ -310,14 +310,4 @@ subprojects {
         }
     }
 }
-
-googleJavaFormat {
-    //toolVersion = '1.7'
-    options style: 'AOSP'
-    source = sourceSets*.allJava
-    include '**/*.java'
-    //source = *.allJava
-}
-
-
 check.dependsOn jacocoTestReport

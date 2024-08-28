@@ -12,9 +12,10 @@
  * the License.
  *
  */
-package com.webank.wedpr.adm.config;
+package com.webank.wedpr.components.sync.config;
 
 import com.webank.wedpr.components.leader.election.LeaderElection;
+import com.webank.wedpr.components.leader.election.config.LeaderElectionConfig;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapper;
@@ -34,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@AutoConfigureAfter(LeaderElection.class)
+@AutoConfigureAfter(LeaderElectionConfig.class)
 public class ResourceSyncerConfig {
     private static final Logger logger = LoggerFactory.getLogger(ResourceSyncerConfig.class);
 

@@ -13,15 +13,23 @@
  *
  */
 
-package com.webank.wedpr.adm.config;
+package com.webank.wedpr.components.scheduler.config;
 
+import com.webank.wedpr.components.project.JobChecker;
+import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
+import com.webank.wedpr.components.scheduler.SchedulerBuilder;
+import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
+import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
+import com.webank.wedpr.components.sync.ResourceSyncer;
+import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,17 +38,33 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-@AutoConfigureAfter(ResourceSyncerConfig.class)
-public class FileMetaBuilderConfig {
-    private static final Logger logger = LoggerFactory.getLogger(FileMetaBuilderConfig.class);
+@AutoConfigureAfter({ResourceSyncerConfig.class, JobCheckerConfig.class})
+public class SchedulerLoader {
+    private static final Logger logger = LoggerFactory.getLogger(SchedulerLoader.class);
+    @Autowired private ProjectMapperWrapper projectMapperWrapper;
+
     @Autowired private LocalStorageConfig localStorageConfig;
     @Autowired private HdfsStorageConfig hdfsConfig;
 
-    @Bean(name = "fileMetaBuilder")
+    @Qualifier("fileStorage")
+    @Autowired
+    private FileStorageInterface storage;
+
+    @Autowired private ResourceSyncer resourceSyncer;
+    @Autowired private JobChecker jobChecker;
+
+    @Bean(name = "schedulerTaskImpl")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public FileMetaBuilder fileMetaBuilder() throws Exception {
-
-        return new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig));
+    public SchedulerTaskImpl schedulerTaskImpl() throws Exception {
+        SchedulerTaskImpl schedulerTask =
+                SchedulerBuilder.build(
+                        projectMapperWrapper,
+                        storage,
+                        resourceSyncer,
+                        new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig)),
+                        jobChecker);
+        schedulerTask.start();
+        return schedulerTask;
     }
 }

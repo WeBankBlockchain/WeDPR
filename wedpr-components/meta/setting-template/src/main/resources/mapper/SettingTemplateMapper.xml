@@ -90,7 +90,7 @@
                     and `name` like concat(#{condition.name}, '%')
                 </if>
                 <if test="condition.type != null and condition.type !=''">
-                    and `type` = condition.type
+                    and `type` = #{condition.type}
                 </if>
                  <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}

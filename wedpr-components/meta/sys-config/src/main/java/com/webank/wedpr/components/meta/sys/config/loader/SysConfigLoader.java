@@ -12,7 +12,7 @@
  * the License.
  *
  */
-package com.webank.wedpr.adm.config;
+package com.webank.wedpr.components.meta.sys.config.loader;
 
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
