@@ -9,3 +9,5 @@ drop table if exists `wedpr_job_table`;
 drop table if exists `wedpr_setting_template`;
 drop table if exists `wedpr_dataset`;
 drop table if exists `wedpr_dataset_permission`;
+drop table if exists `wedpr_publish`;
+drop table if exists `wedpr_publish_record`;
