@@ -21,12 +21,13 @@ import com.webank.wedpr.components.token.auth.model.HeaderInfo;
 import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.core.utils.Constant;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TokenGenerator {
     public static void main(String[] args) throws Exception {
-        String user = "yujiechen";
+        String user = "zachma";
         if (args.length > 0) {
             user = args[0];
         }
@@ -34,7 +35,7 @@ public class TokenGenerator {
         if (args.length > 1) {
             secret = args[1];
         }
-        String groupId = "SGD";
+        String groupId = "9159243068155909";
         if (args.length > 2) {
             groupId = args[2];
         }
@@ -42,6 +43,7 @@ public class TokenGenerator {
         TokenContents tokenContents = new TokenContents();
         UserToken userToken = new UserToken();
         userToken.setUsername(user);
+        userToken.setRoleName("admin_user");
         List<GroupInfo> groupInfos = new ArrayList<>();
         GroupInfo groupInfo = new GroupInfo();
         groupInfo.setGroupId(groupId);
@@ -49,7 +51,7 @@ public class TokenGenerator {
         tokenContents.addTokenContents(Constant.USER_TOKEN_CLAIM, userToken.serialize());
         System.out.println("====== generate token for user: " + user + ", groupId: " + groupId);
         String token =
-                TokenUtils.generateJWTToken(new HeaderInfo(), tokenContents, secret, 36000L * 1000);
+                TokenUtils.generateJWTToken(new HeaderInfo(), tokenContents, secret, 10 * 60 * 60 * 1000);
         System.out.println("token: " + token);
     }
 }

@@ -95,7 +95,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } catch (Exception e) {
             logger.info("认证已过期或token错误，请重新登录: ", e);
             String wedprResponse =
-                    new WeDPRResponse(Constant.WEDPR_FAILED, "认证已过期或token错误，请重新登录").serialize();
+                    new WeDPRResponse(Constant.WEDPR_FAILED, "认证已过期或，请重新登录").serialize();
             TokenUtils.responseToClient(response, wedprResponse, HttpServletResponse.SC_FORBIDDEN);
         }
     }
