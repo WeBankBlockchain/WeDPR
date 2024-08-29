@@ -14,24 +14,6 @@
  */
 package com.webank.wedpr.components.crypto;
 
-public class CryptoToolkit {
-    private final SymmetricCrypto symmetricCrypto;
-    private final HashCrypto hashCrypto;
-
-    public CryptoToolkit(SymmetricCrypto symmetricCrypto, HashCrypto hashCrypto) {
-        this.symmetricCrypto = symmetricCrypto;
-        this.hashCrypto = hashCrypto;
-    }
-
-    public String encrypt(String plain) throws Exception {
-        return this.symmetricCrypto.encrypt(plain);
-    }
-
-    public String decrypt(String cipher) throws Exception {
-        return this.symmetricCrypto.decrypt(cipher);
-    }
-
-    public String hash(String input) throws Exception {
-        return this.hashCrypto.hash(input);
-    }
+public interface HashCrypto {
+    String hash(String input) throws Exception;
 }

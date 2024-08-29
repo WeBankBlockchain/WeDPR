@@ -13,10 +13,10 @@
  *
  */
 
-package com.webank.wedpr.components.crypto;
+package com.webank.wedpr.components.api.credential.core;
 
-import com.webank.wedpr.components.api.credential.core.CredentialStatus;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
+import com.webank.wedpr.components.crypto.CryptoToolkit;
 import com.webank.wedpr.core.utils.Common;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -41,10 +41,10 @@ public class CredentialToolkit {
         if (credential.getCredentialStatus() == null) {
             credential.setCredentialStatus(CredentialStatus.Disable);
         }
-        // set the accessID
-        credential.setAccessID(Common.generateRandomKey());
-        // set the accessSecret(encrypted)
-        credential.setAccessSecret(cryptoToolkit.encrypt(Common.generateRandomKey()));
+        // set the accessKeyID
+        credential.setAccessKeyID(Common.generateRandomKey());
+        // set the accessKeySecret(encrypted)
+        credential.setAccessKeySecret(cryptoToolkit.encrypt(Common.generateRandomKey()));
     }
 
     /**
@@ -57,10 +57,10 @@ public class CredentialToolkit {
         if (credentialDO == null) {
             return;
         }
-        if (StringUtils.isBlank(credentialDO.getAccessSecret())) {
+        if (StringUtils.isBlank(credentialDO.getAccessKeySecret())) {
             return;
         }
-        credentialDO.setAccessSecret(cryptoToolkit.decrypt(credentialDO.getAccessSecret()));
+        credentialDO.setAccessKeySecret(cryptoToolkit.decrypt(credentialDO.getAccessKeySecret()));
     }
 
     public void decryptCredentials(List<ApiCredentialDO> credentialDOList) throws Exception {

@@ -31,6 +31,14 @@ public class UserToken {
     private String roleName;
     private List<String> permissions;
 
+    public UserToken() {}
+
+    public UserToken(String userName, String roleName, List<GroupInfo> groupInfos) {
+        this.username = userName;
+        this.roleName = roleName;
+        this.groupInfos = groupInfos;
+    }
+
     public Boolean isAdmin() {
         if (StringUtils.isBlank(roleName)) {
             return Boolean.FALSE;

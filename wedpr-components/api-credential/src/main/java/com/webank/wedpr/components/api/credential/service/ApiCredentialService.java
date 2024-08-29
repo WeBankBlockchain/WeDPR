@@ -34,7 +34,7 @@ public interface ApiCredentialService {
      * @param condition the condition
      * @return the queried result
      */
-    List<ApiCredentialDO> queryCredentials(String user, ApiCredentialDO condition);
+    List<ApiCredentialDO> queryCredentials(String user, ApiCredentialDO condition) throws Exception;
 
     /**
      * delete the specified credential

@@ -2,20 +2,16 @@ package com.webank.wedpr.components.security.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.token.auth.TokenUtils;
-import com.webank.wedpr.components.token.auth.model.GroupInfo;
 import com.webank.wedpr.components.token.auth.model.HeaderInfo;
 import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
-import com.webank.wedpr.components.user.entity.WedprGroup;
-import com.webank.wedpr.components.user.entity.WedprGroupDetail;
 import com.webank.wedpr.components.user.entity.WedprUser;
 import com.webank.wedpr.components.user.helper.PasswordHelper;
 import com.webank.wedpr.components.user.requests.LoginRequest;
 import com.webank.wedpr.components.user.requests.LoginResponse;
-import com.webank.wedpr.components.user.service.WedprGroupDetailService;
-import com.webank.wedpr.components.user.service.WedprGroupService;
 import com.webank.wedpr.components.user.service.WedprUserService;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
@@ -23,11 +19,7 @@ import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +31,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -48,25 +39,20 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     private static final ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
     private final AuthenticationManager authenticationManager;
     private final UserJwtConfig userJwtConfig;
-    private final WedprGroupDetailService wedprGroupDetailService;
-    private final WedprGroupService wedprGroupService;
     private final WedprUserService wedprUserService;
-    private final String loginUrl;
+    private final UserCache userCache;
 
     public JwtLoginFilter(
             AuthenticationManager authenticationManager,
             UserJwtConfig userJwtConfig,
-            WedprGroupDetailService wedprGroupDetailService,
-            WedprGroupService wedprGroupService,
             WedprUserService wedprUserService,
+            UserCache userCache,
             String loginUrl) {
         super.setFilterProcessesUrl(loginUrl);
         this.authenticationManager = authenticationManager;
         this.userJwtConfig = userJwtConfig;
-        this.wedprGroupDetailService = wedprGroupDetailService;
-        this.wedprGroupService = wedprGroupService;
         this.wedprUserService = wedprUserService;
-        this.loginUrl = loginUrl;
+        this.userCache = userCache;
     }
 
     String getRequestBodyString(HttpServletRequest request) throws Exception {
@@ -120,35 +106,13 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         String wedprResponse = "";
         try {
             User user = (User) authResult.getPrincipal();
-            String username = user.getUsername();
-            wedprUserService.updateAllowedTimeAndTryCount(username, 0L, 0);
+            UserToken userToken = this.userCache.getUserToken(user.getUsername());
+            if (userToken == null) {
+                throw new WeDPRException("The user " + user.getUsername() + " not registered!");
+            }
             // 生成jwt
             HeaderInfo headerInfo = new HeaderInfo();
             TokenContents tokenContents = new TokenContents();
-            UserToken userToken = new UserToken();
-            Collection<GrantedAuthority> authorities = user.getAuthorities();
-            String authoritiesStr =
-                    authorities
-                            .stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.joining(userJwtConfig.getDelimiter()));
-            userToken.setRoleName(authoritiesStr);
-            userToken.setUsername(username);
-            LambdaQueryWrapper<WedprGroupDetail> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-            lambdaQueryWrapper.eq(WedprGroupDetail::getUsername, username);
-            List<WedprGroupDetail> wedprGroupDetailList =
-                    wedprGroupDetailService.list(lambdaQueryWrapper);
-            List<GroupInfo> groupInfos = new ArrayList<>(wedprGroupDetailList.size());
-            for (WedprGroupDetail wedprGroupDetail : wedprGroupDetailList) {
-                GroupInfo groupInfo = new GroupInfo();
-                String groupId = wedprGroupDetail.getGroupId();
-                groupInfo.setGroupId(groupId);
-                WedprGroup wedprGroup = wedprGroupService.getById(groupId);
-                groupInfo.setGroupName(wedprGroup.getGroupName());
-                groupInfo.setGroupAdminName(wedprGroup.getAdminName());
-                groupInfos.add(groupInfo);
-            }
-            userToken.setGroupInfos(groupInfos);
             tokenContents.addTokenContents(Constant.USER_TOKEN_CLAIM, userToken.serialize());
             String jwt =
                     TokenUtils.generateJWTToken(
@@ -164,7 +128,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
                                     Constant.WEDPR_SUCCESS_MSG,
                                     loginResponse)
                             .serialize();
-            logger.info("{} login success, credential: {}", username, jwt);
+            logger.info("{} login success, credential: {}", user.getUsername(), jwt);
             response.setStatus(HttpStatus.OK.value());
         } catch (Exception e) {
             logger.warn("生成jwt失败", e);

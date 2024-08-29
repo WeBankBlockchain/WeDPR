@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.crypto.impl;
 
-import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.SymmetricCrypto;
 import com.webank.wedpr.components.crypto.config.CryptoConfig;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.nio.charset.StandardCharsets;
@@ -27,13 +27,13 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AESCryptoToolkit implements CryptoToolkit {
+public class AESCrypto implements SymmetricCrypto {
     private final String key;
     private final byte[] iv;
     // TODO: support more algorithms
     private static final String algorithm = "AES/GCM/NoPadding";
 
-    public AESCryptoToolkit(String key, byte[] iv) {
+    public AESCrypto(String key, byte[] iv) {
         this.key = key;
         this.iv = iv;
     }

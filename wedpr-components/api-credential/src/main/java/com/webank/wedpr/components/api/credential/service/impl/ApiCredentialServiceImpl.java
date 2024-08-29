@@ -15,10 +15,10 @@
 
 package com.webank.wedpr.components.api.credential.service.impl;
 
+import com.webank.wedpr.components.api.credential.core.CredentialToolkit;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.api.credential.service.ApiCredentialService;
-import com.webank.wedpr.components.crypto.CredentialToolkit;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -58,9 +58,12 @@ public class ApiCredentialServiceImpl implements ApiCredentialService {
      * @return the queried result
      */
     @Override
-    public List<ApiCredentialDO> queryCredentials(String user, ApiCredentialDO condition) {
+    public List<ApiCredentialDO> queryCredentials(String user, ApiCredentialDO condition)
+            throws Exception {
         condition.setOwner(user);
-        return this.credentialMapper.queryCredentials(condition);
+        List<ApiCredentialDO> result = this.credentialMapper.queryCredentials(condition);
+        this.credentialToolkit.decryptCredentials(result);
+        return result;
     }
 
     /**

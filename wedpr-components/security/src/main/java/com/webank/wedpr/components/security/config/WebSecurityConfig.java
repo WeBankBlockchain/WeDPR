@@ -1,10 +1,9 @@
 package com.webank.wedpr.components.security.config;
 
-import com.google.common.cache.LoadingCache;
+import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
-import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.user.service.WedprUserService;
 import com.webank.wedpr.core.protocol.ServerTypeEnum;
 import com.webank.wedpr.core.utils.Constant;
@@ -37,9 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired private WedprGroupService wedprGroupService;
 
-    @Autowired private WedprUserRoleService wedprUserRoleService;
-
-    @Autowired private LoadingCache<String, UserJwtInfo> loadingCache;
+    @Autowired private UserCache userCache;
 
     @Value("${server.type:site_end}")
     private String serverType;
@@ -90,13 +87,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 new JwtLoginFilter(
                         authenticationManager,
                         userJwtConfig,
-                        wedprGroupDetailService,
-                        wedprGroupService,
                         wedprUserService,
+                        userCache,
                         loginUrl);
         JwtAuthenticationFilter jwtAuthenticationFilter =
-                new JwtAuthenticationFilter(
-                        authenticationManager, userJwtConfig, wedprUserService, loadingCache);
+                new JwtAuthenticationFilter(authenticationManager, userJwtConfig, userCache);
+
         http.cors()
                 .and()
                 .csrf()

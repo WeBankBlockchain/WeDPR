@@ -24,8 +24,8 @@ import lombok.Data;
 @Data
 public class ApiCredentialDO extends TimeRange {
     private String id = WeDPRUuidGenerator.generateID();
-    private String accessID;
-    private String accessSecret;
+    private String accessKeyID;
+    private String accessKeySecret;
     private String owner;
     private String status;
     private String desc;
@@ -54,7 +54,7 @@ public class ApiCredentialDO extends TimeRange {
     public void setCredentialStatus(CredentialStatus credentialStatus) {
         this.credentialStatus = credentialStatus;
         if (this.credentialStatus != null) {
-            this.status = status;
+            this.status = this.credentialStatus.getStatus();
         }
     }
 }

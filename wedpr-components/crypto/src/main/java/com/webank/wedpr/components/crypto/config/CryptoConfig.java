@@ -18,8 +18,13 @@ import com.webank.wedpr.core.config.WeDPRConfig;
 
 public class CryptoConfig {
     public static final String AES_ALGORITHM = "AES";
+    public static final String SHA256_ALGORITHM = "SHA-256";
+
     private static String SYMMETRIC_ALGORITHM_TYPE =
             WeDPRConfig.apply("wedpr.crypto.symmetric.algorithm", AES_ALGORITHM);
+    private static String HASH_ALGORITHM_TYPE =
+            WeDPRConfig.apply("wedpr.crypto.hash.algorithm", SHA256_ALGORITHM);
+
     private static String SYMMETRIC_ALGORITHM_KEY =
             WeDPRConfig.apply("wedpr.crypto.symmetric.key", null);
     private static String SYMMETRIC_ALGORITHM_IV =
@@ -35,5 +40,9 @@ public class CryptoConfig {
 
     public static byte[] getSymmetricAlgorithmIv() {
         return SYMMETRIC_ALGORITHM_IV.getBytes();
+    }
+
+    public static String getHashAlgorithmType() {
+        return HASH_ALGORITHM_TYPE;
     }
 }

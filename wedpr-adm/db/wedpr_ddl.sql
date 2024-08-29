@@ -309,15 +309,15 @@ create table if not exists `wedpr_jupyter_table`(
 -- the api credential table
 create table if not exists `wedpr_api_credential_table`(
     `id` varchar(64) not null comment "id",
-    `access_id` varchar(255) not null comment "访问ID(用于标志用户)",
-    `access_secret` VARCHAR(1024) not null comment "访问密钥",
+    `access_key_id` varchar(255) not null comment "访问ID(用于标志用户)",
+    `access_key_secret` VARCHAR(1024) not null comment "访问密钥",
     `owner` varchar(255) not null comment "属主",
     `status` varchar(1024) not null comment "状态",
     `desc` text comment "描述信息",
     `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
     primary key (`id`),
-    index access_id_index(`access_id`(128)),
+    index access_key_id_index(`access_key_id`(128)),
     index owner_index(`owner`(128)),
     index status_index(`status`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;

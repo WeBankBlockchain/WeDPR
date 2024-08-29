@@ -12,26 +12,25 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.crypto;
+package com.webank.wedpr.components.crypto.impl;
 
-public class CryptoToolkit {
-    private final SymmetricCrypto symmetricCrypto;
-    private final HashCrypto hashCrypto;
+import com.webank.wedpr.components.crypto.HashCrypto;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import org.bouncycastle.util.encoders.Hex;
 
-    public CryptoToolkit(SymmetricCrypto symmetricCrypto, HashCrypto hashCrypto) {
-        this.symmetricCrypto = symmetricCrypto;
-        this.hashCrypto = hashCrypto;
+public class HashCryptoImpl implements HashCrypto {
+    private final String hashAlgorithm;
+
+    public HashCryptoImpl(String hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
     }
 
-    public String encrypt(String plain) throws Exception {
-        return this.symmetricCrypto.encrypt(plain);
-    }
-
-    public String decrypt(String cipher) throws Exception {
-        return this.symmetricCrypto.decrypt(cipher);
-    }
-
+    @Override
     public String hash(String input) throws Exception {
-        return this.hashCrypto.hash(input);
+        byte[] hash =
+                MessageDigest.getInstance(this.hashAlgorithm)
+                        .digest(input.getBytes(StandardCharsets.UTF_8));
+        return Hex.toHexString(hash);
     }
 }

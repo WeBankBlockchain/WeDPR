@@ -15,18 +15,27 @@
 package com.webank.wedpr.components.crypto;
 
 import com.webank.wedpr.components.crypto.config.CryptoConfig;
-import com.webank.wedpr.components.crypto.impl.AESCryptoToolkit;
+import com.webank.wedpr.components.crypto.impl.AESCrypto;
+import com.webank.wedpr.components.crypto.impl.HashCryptoImpl;
 import com.webank.wedpr.core.utils.WeDPRException;
 
 public class CryptoToolkitFactory {
-    public static CryptoToolkit build() throws WeDPRException {
+    public static SymmetricCrypto buildSymmetricCrypto() throws WeDPRException {
         if (CryptoConfig.getSymmetricAlgorithmType().compareToIgnoreCase(CryptoConfig.AES_ALGORITHM)
                 == 0) {
-            return new AESCryptoToolkit(
+            return new AESCrypto(
                     CryptoConfig.getSymmetricAlgorithmKey(),
                     CryptoConfig.getSymmetricAlgorithmIv());
         }
         throw new WeDPRException(
                 "Not supported symmetric algorithm: " + CryptoConfig.getSymmetricAlgorithmType());
+    }
+
+    public static HashCrypto buildHashCrypto() {
+        return new HashCryptoImpl(CryptoConfig.getHashAlgorithmType());
+    }
+
+    public static CryptoToolkit build() throws Exception {
+        return new CryptoToolkit(buildSymmetricCrypto(), buildHashCrypto());
     }
 }
