@@ -25,7 +25,8 @@ public interface ResourceSyncer {
     public static enum ResourceType {
         Authorization("Authorization"),
         Job("Job"),
-        Dataset("Dataset");
+        Dataset("Dataset"),
+        Publish("Publish");
         private final String type;
 
         ResourceType(String type) {
@@ -56,13 +57,16 @@ public interface ResourceSyncer {
 
     // sync the resource
     public abstract void sync(String trigger, ResourceActionRecord record);
+
     // register the commitHandler
     @FunctionalInterface
     public interface CommitAfterHook {
         void call(ResourceActionResult result) throws WeDPRException;
     }
+
     // register the resource-commit-handler
     public abstract void registerCommitHandler(String resourceType, CommitHandler commitHandler);
+
     // register the hook called after commit
     public abstract void registerCommitAfterHook(String resourceType, CommitAfterHook hook);
 
