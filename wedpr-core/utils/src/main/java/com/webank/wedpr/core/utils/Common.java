@@ -23,9 +23,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -148,5 +146,9 @@ public class Common {
         }
         StringSubstitutor stringSubstitutor = new StringSubstitutor(parameterMap);
         return stringSubstitutor.replace(templateContent);
+    }
+
+    public static String generateRandomKey() {
+        return Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
     }
 }

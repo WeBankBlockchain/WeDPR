@@ -71,6 +71,12 @@ project(":wedpr-components-spi").projectDir=file("wedpr-components/spi")
 include "wedpr-components-transport"
 project(":wedpr-components-transport").projectDir=file("wedpr-components/transport")
 
+include "wedpr-components-crypto"
+project(":wedpr-components-crypto").projectDir=file("wedpr-components/crypto")
+
+include "wedpr-components-api-credential"
+project(":wedpr-components-api-credential").projectDir=file("wedpr-components/api-credential")
+
 include ":wedpr-components-jupyter-intergration"
 project(":wedpr-components-jupyter-intergration").projectDir=file("wedpr-components/env-integration/jupyter")
 

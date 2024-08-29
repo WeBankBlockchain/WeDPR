@@ -58,7 +58,7 @@
             and `agency` = #{updatedInfo.agency},
         </if>
     </update>
-    <delete id="deleteJupyterInfo" parameterType="java.lang.String">
+    <delete id="deleteJupyterInfo">
         delete from `wedpr_jupyter_table` where 1 = 1
         <if test="id != null and id !=''">
             and `id` = #{id}
@@ -125,6 +125,5 @@
                 </if>
             </when>
         </choose>
-        order by `last_update_time` desc
     </select>
 </mapper>
