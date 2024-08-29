@@ -101,6 +101,6 @@ project(":wedpr-admin").projectDir=file("wedpr-admin")
 include "wedpr-components-report"
 project(":wedpr-components-report").projectDir=file("wedpr-components/report")
 
-include ":wedpr-components-publish"
-project(":wedpr-components-publish").projectDir=file("wedpr-components/publish")
+include ":wedpr-components-service-publish"
+project(":wedpr-components-service-publish").projectDir=file("wedpr-components/service-publish")
 

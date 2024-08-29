@@ -12,7 +12,7 @@ dependencies {
     compile project(":wedpr-components-project")
     compile project(":wedpr-components-scheduler")
     compile project(":wedpr-components-user")
-    compile project(":wedpr-components-publish")
+    compile project(":wedpr-components-service-publish")
     compile project(":wedpr-components-dataset")
     compile project(":wedpr-components-agency")
     compile project(":wedpr-components-security")
