@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.security.config;
+package com.webank.wedpr.components.security.filter;
 
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;

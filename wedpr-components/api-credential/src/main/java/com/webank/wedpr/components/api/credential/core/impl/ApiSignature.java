@@ -12,7 +12,7 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.api.credential.core;
+package com.webank.wedpr.components.api.credential.core.impl;
 
 import com.webank.wedpr.components.crypto.CryptoToolkit;
 import com.webank.wedpr.core.utils.Common;

@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.api.credential.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webank.wedpr.components.api.credential.core.CredentialStatus;
+import com.webank.wedpr.components.api.credential.core.impl.CredentialStatus;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import com.webank.wedpr.core.utils.TimeRange;
 import lombok.Data;
@@ -44,6 +44,13 @@ public class ApiCredentialDO extends TimeRange {
         if (resetID) {
             this.id = null;
         }
+    }
+
+    public ApiCredentialDO(String accessKeyID, String user, String status) {
+        setAccessKeyID(accessKeyID);
+        setOwner(user);
+        this.owner = user;
+        setStatus(status);
     }
 
     public void setStatus(String status) {

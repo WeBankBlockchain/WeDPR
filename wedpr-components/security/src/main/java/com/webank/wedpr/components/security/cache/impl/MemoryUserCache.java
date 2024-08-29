@@ -31,9 +31,11 @@ import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
 import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.user.service.WedprUserService;
+import com.webank.wedpr.core.config.WeDPRCommonConfig;
+import com.webank.wedpr.core.utils.NoValueInCacheException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
@@ -52,7 +54,7 @@ public class MemoryUserCache implements UserCache {
     private final WedprUserService wedprUserService;
     private final UserJwtConfig userJwtConfig;
     // Note: LoadingCache is thread-safe
-    private LoadingCache<String, Optional<UserToken>> userCache;
+    private LoadingCache<String, UserToken> userCache;
 
     public MemoryUserCache(
             WedprUserRoleService wedprUserRoleService,
@@ -67,41 +69,43 @@ public class MemoryUserCache implements UserCache {
         this.userJwtConfig = userJwtConfig;
 
         // create CacheLoader
-        CacheLoader<String, Optional<UserToken>> loader =
-                new CacheLoader<String, Optional<UserToken>>() {
+        CacheLoader<String, UserToken> loader =
+                new CacheLoader<String, UserToken>() {
                     @Override
-                    public Optional<UserToken> load(String username) {
+                    public UserToken load(String username) throws NoValueInCacheException {
                         logger.info("从数据库查询用户信息：{}", username);
                         // check the existence of user
-                        UserToken userToken = null;
                         if (wedprUserService.getWedprUserByNameService(username) != null) {
-                            userToken = fetchUserToken(username);
+                            return fetchUserToken(username);
                         }
-                        return Optional.ofNullable(userToken);
+                        throw new NoValueInCacheException("The user " + username + " not exists!");
                     }
                 };
         // 创建LoadingCache
         userCache =
-                CacheBuilder.newBuilder().maximumSize(CacheConfig.getUserCacheSize()).build(loader);
+                CacheBuilder.newBuilder()
+                        .maximumSize(WeDPRCommonConfig.getAuthCacheSize())
+                        .expireAfterWrite(
+                                WeDPRCommonConfig.getAuthCacheExpireTime(), TimeUnit.MINUTES)
+                        .build(loader);
     }
 
     @Override
     public UserToken getUserToken(HttpServletRequest request) throws Exception {
         UserToken userToken = TokenUtils.getLoginUser(request);
         String username = userToken.getUsername();
-        Optional<UserToken> latestUserToken = userCache.get(username);
+        UserToken latestUserToken = userCache.getIfPresent(username);
         // the user not exists
-        if (!latestUserToken.isPresent()) {
+        if (latestUserToken == null) {
             return null;
         }
-        boolean hasRoleNameUpdate =
-                !userToken.getRoleName().equals(latestUserToken.get().getRoleName());
+        boolean hasRoleNameUpdate = !userToken.getRoleName().equals(latestUserToken.getRoleName());
         boolean hasGroupInfoUpdate =
                 !CollectionUtils.isEqualCollection(
-                        userToken.getGroupInfos(), latestUserToken.get().getGroupInfos());
+                        userToken.getGroupInfos(), latestUserToken.getGroupInfos());
         if (hasRoleNameUpdate || hasGroupInfoUpdate) {
-            userToken.setRoleName(latestUserToken.get().getRoleName());
-            userToken.setGroupInfos(latestUserToken.get().getGroupInfos());
+            userToken.setRoleName(latestUserToken.getRoleName());
+            userToken.setGroupInfos(latestUserToken.getGroupInfos());
         }
         return userToken;
     }
@@ -109,8 +113,7 @@ public class MemoryUserCache implements UserCache {
     @Override
     public UserToken getUserToken(String userName) throws Exception {
         wedprUserService.updateAllowedTimeAndTryCount(userName, 0L, 0);
-        Optional<UserToken> userToken = userCache.get(userName);
-        return userToken.orElse(null);
+        return userCache.getIfPresent(userName);
     }
 
     @Override

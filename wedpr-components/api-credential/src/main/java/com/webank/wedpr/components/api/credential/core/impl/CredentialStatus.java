@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.api.credential.core;
+package com.webank.wedpr.components.api.credential.core.impl;
 
 import org.apache.commons.lang3.StringUtils;
 

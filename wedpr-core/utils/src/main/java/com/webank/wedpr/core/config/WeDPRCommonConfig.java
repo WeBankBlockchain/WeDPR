@@ -30,6 +30,11 @@ public class WeDPRCommonConfig {
             WeDPRConfig.apply("wedpr.file.write.lines", DEFAULT_WRITE_TRUNK_SIZE);
     private static final String CACHE_DIR = WeDPRConfig.apply("wedpr.cache.dir", "/home/cache");
 
+    private static final Integer AUTH_CACHE_SIZE =
+            WeDPRConfig.apply("wedpr.auth.cache.size", 10000);
+    private static final Integer AUTH_CACHE_EXPIRE_TIME =
+            WeDPRConfig.apply("wedpr.auth.cache.expire.minutes", 30);
+
     public static String getAgency() {
         return AGENCY;
     }
@@ -64,5 +69,13 @@ public class WeDPRCommonConfig {
 
     public static String getUserDatasetPath(String user, String datasetId) {
         return Common.joinPath(user, datasetId);
+    }
+
+    public static Integer getAuthCacheSize() {
+        return AUTH_CACHE_SIZE;
+    }
+
+    public static Integer getAuthCacheExpireTime() {
+        return AUTH_CACHE_EXPIRE_TIME;
     }
 }

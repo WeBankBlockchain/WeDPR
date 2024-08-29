@@ -1,4 +1,4 @@
-package com.webank.wedpr.components.security.config;
+package com.webank.wedpr.components.security.filter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;

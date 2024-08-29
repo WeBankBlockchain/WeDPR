@@ -12,12 +12,16 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.api.credential.core;
+package com.webank.wedpr.core.utils;
 
-import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
-import javax.servlet.http.HttpServletRequest;
+public class NoValueInCacheException extends Exception {
+    public NoValueInCacheException(String msg) {
+        super(msg);
+    }
 
-public interface CredentialVerifier {
-    // verify the request
-    ApiCredentialDO verify(HttpServletRequest request) throws Exception;
+    // No need to careful the stacktrace information
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }

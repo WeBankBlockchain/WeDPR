@@ -12,14 +12,10 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.security.cache.impl;
+package com.webank.wedpr.components.api.credential.core;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 
-public class CacheConfig {
-    private static Integer USER_CACHE_SIZE = WeDPRConfig.apply("wedpr.user.cache.size", 100000);
-
-    public static Integer getUserCacheSize() {
-        return USER_CACHE_SIZE;
-    }
+public interface CredentialCache {
+    ApiCredentialDO getAccessKey(String accessKeyID);
 }

@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.api.credential.service.impl;
 
-import com.webank.wedpr.components.api.credential.core.CredentialToolkit;
+import com.webank.wedpr.components.api.credential.core.impl.CredentialToolkit;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.api.credential.service.ApiCredentialService;

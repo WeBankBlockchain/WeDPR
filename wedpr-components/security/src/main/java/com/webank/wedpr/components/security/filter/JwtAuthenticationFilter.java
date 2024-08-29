@@ -1,4 +1,4 @@
-package com.webank.wedpr.components.security.config;
+package com.webank.wedpr.components.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedpr.components.security.cache.UserCache;
@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.util.StringUtils;
 
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
-    private static final ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
     private final UserJwtConfig userJwtConfig;
     private final UserCache userCache;
 

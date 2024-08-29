@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.api.credential.core;
+package com.webank.wedpr.components.api.credential.core.impl;
 
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
@@ -32,7 +32,7 @@ public class CredentialToolkit {
      * init the credential
      *
      * @param owner the owner
-     * @param credential the credential need to be intialized
+     * @param credential the credential need to be initialized
      * @throws Exception throws when failed
      */
     public void initCredential(String owner, ApiCredentialDO credential) throws Exception {

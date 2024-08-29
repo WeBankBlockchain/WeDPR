@@ -1,6 +1,8 @@
 package com.webank.wedpr.components.security.config;
 
 import com.webank.wedpr.components.security.cache.UserCache;
+import com.webank.wedpr.components.security.filter.JwtAuthenticationFilter;
+import com.webank.wedpr.components.security.filter.JwtLoginFilter;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
@@ -93,6 +95,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         JwtAuthenticationFilter jwtAuthenticationFilter =
                 new JwtAuthenticationFilter(authenticationManager, userJwtConfig, userCache);
 
+        //
         http.cors()
                 .and()
                 .csrf()
