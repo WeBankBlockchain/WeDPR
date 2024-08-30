@@ -1,6 +1,8 @@
 package com.webank.wedpr.components.security.config;
 
+import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.security.cache.UserCache;
+import com.webank.wedpr.components.security.filter.APISignatureAuthFilter;
 import com.webank.wedpr.components.security.filter.JwtAuthenticationFilter;
 import com.webank.wedpr.components.security.filter.JwtLoginFilter;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
@@ -39,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private WedprGroupService wedprGroupService;
 
     @Autowired private UserCache userCache;
+    @Autowired private CredentialVerifier credentialVerifier;
 
     @Value("${server.type:site_end}")
     private String serverType;
@@ -94,8 +97,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         loginUrl);
         JwtAuthenticationFilter jwtAuthenticationFilter =
                 new JwtAuthenticationFilter(authenticationManager, userJwtConfig, userCache);
+        // the api credential filter
+        APISignatureAuthFilter apiSignatureAuthFilter =
+                new APISignatureAuthFilter(authenticationManager, credentialVerifier, userCache);
 
-        //
+        // the filter order is: jwtLoginFilter, jwtAuthenticationFilter, APISignatureAuthFilter
         http.cors()
                 .and()
                 .csrf()
@@ -113,6 +119,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(jwtLoginFilter)
                 .addFilter(jwtAuthenticationFilter)
+                .addFilter(apiSignatureAuthFilter)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

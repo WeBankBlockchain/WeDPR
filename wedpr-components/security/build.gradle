@@ -6,4 +6,5 @@ plugins {
 dependencies {
     compile project(":wedpr-components-token-auth")
     compile project(":wedpr-components-user")
+    compile project(":wedpr-components-api-credential")
 }

@@ -1,6 +1,5 @@
 package com.webank.wedpr.components.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.HeaderInfo;
@@ -9,13 +8,13 @@ import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.token.auth.utils.SecurityUtils;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.StringUtils;
@@ -40,19 +39,26 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         try {
             String jwt = request.getHeader(Constant.TOKEN_FIELD);
             if (StringUtils.isEmpty(jwt)) {
-                String wedprResponse =
-                        new WeDPRResponse(Constant.WEDPR_FAILED, "未登录，请先登录").serialize();
-                TokenUtils.responseToClient(
-                        response, wedprResponse, HttpServletResponse.SC_FORBIDDEN);
+                logger.trace(
+                        "With no jwt authentication information, try to call the APISignatureFilter");
+                chain.doFilter(request, response);
                 return;
-            } else {
-                TokenUtils.verify(SecurityUtils.HMAC_HS256, this.userJwtConfig.getSecret(), jwt);
             }
-            UserToken userToken = userCache.getUserToken(request);
-            if (userToken == null) {
+            TokenUtils.verify(SecurityUtils.HMAC_HS256, this.userJwtConfig.getSecret(), jwt);
+            Pair<Boolean, UserToken> result = userCache.getUserToken(request);
+            if (result == null) {
                 throw new WeDPRException(Constant.WEDPR_FAILED, "用户不存在");
             }
-            // set the token information into the response header
+            boolean updated = result.getKey();
+            // the content not updated, use the original jwt
+            if (!updated) {
+                // set the token information into the response header
+                response.setHeader(Constant.TOKEN_FIELD, jwt);
+                chain.doFilter(request, response);
+                return;
+            }
+            // the content updated, generate new jwt
+            UserToken userToken = result.getRight();
             HeaderInfo headerInfo = new HeaderInfo();
             TokenContents tokenContents = new TokenContents();
             tokenContents.addTokenContents(Constant.USER_TOKEN_CLAIM, userToken.serialize());

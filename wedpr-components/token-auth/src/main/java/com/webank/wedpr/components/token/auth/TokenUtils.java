@@ -24,6 +24,7 @@ import com.webank.wedpr.components.token.auth.model.HeaderInfo;
 import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.token.auth.utils.SecurityUtils;
+import com.webank.wedpr.core.protocol.RequestAuthType;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class TokenUtils {
     }
 
     // get information from the jwt-token
-    public static TokenContents getTokenContent(String token) {
+    public static TokenContents getJWTTokenContent(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
             Map<String, Claim> claimMap = jwt.getClaims();
@@ -87,15 +88,37 @@ public class TokenUtils {
     public static UserToken getLoginUser(HttpServletRequest request) throws WeDPRException {
         // get the user from the request
         try {
-            String token = request.getHeader(Constant.TOKEN_FIELD);
-            if (StringUtils.isBlank(token)) {
-                throw new WeDPRException("getLoginUser failed for no token set!");
+            RequestAuthType authType =
+                    RequestAuthType.deserialize(
+                            request.getHeader(Constant.REQUEST_AUTH_TYPE_FIELD));
+            switch (authType) {
+                    // the jwt auth
+                case JWT:
+                    {
+                        String token = request.getHeader(Constant.TOKEN_FIELD);
+                        if (StringUtils.isBlank(token)) {
+                            throw new WeDPRException("getLoginUser failed for no token set!");
+                        }
+                        TokenContents tokenContents = getJWTTokenContent(token);
+                        if (tokenContents == null) {
+                            throw new WeDPRException("getLoginUser failed for no token set!");
+                        }
+                        return tokenContents.getUserToken();
+                    }
+                    // the api auth
+                case ApiSignature:
+                    {
+                        return UserToken.deserialize(
+                                request.getHeader(Constant.REQUEST_USER_TOKEN_FIELD));
+                    }
+                default:
+                    {
+                        logger.warn(
+                                "getLoginUser failed for unsupported authType: {}",
+                                authType.getType());
+                        return null;
+                    }
             }
-            TokenContents tokenContents = getTokenContent(token);
-            if (tokenContents == null) {
-                throw new WeDPRException("getLoginUser failed for no token set!");
-            }
-            return tokenContents.getUserToken();
         } catch (Exception e) {
             logger.warn("getLoginUser failed for " + e);
             throw new WeDPRException(e);

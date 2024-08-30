@@ -18,9 +18,10 @@ import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.user.config.UserInfoUpdateEvent;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.tuple.Pair;
 
 public interface UserCache {
-    UserToken getUserToken(HttpServletRequest request) throws Exception;
+    Pair<Boolean, UserToken> getUserToken(HttpServletRequest request) throws Exception;
 
     UserToken getUserToken(String userName) throws Exception;
 

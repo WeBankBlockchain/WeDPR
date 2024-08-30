@@ -39,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -91,7 +93,7 @@ public class MemoryUserCache implements UserCache {
     }
 
     @Override
-    public UserToken getUserToken(HttpServletRequest request) throws Exception {
+    public Pair<Boolean, UserToken> getUserToken(HttpServletRequest request) throws Exception {
         UserToken userToken = TokenUtils.getLoginUser(request);
         String username = userToken.getUsername();
         UserToken latestUserToken = userCache.getIfPresent(username);
@@ -106,8 +108,9 @@ public class MemoryUserCache implements UserCache {
         if (hasRoleNameUpdate || hasGroupInfoUpdate) {
             userToken.setRoleName(latestUserToken.getRoleName());
             userToken.setGroupInfos(latestUserToken.getGroupInfos());
+            return new ImmutablePair<>(true, userToken);
         }
-        return userToken;
+        return new ImmutablePair<>(false, userToken);
     }
 
     @Override

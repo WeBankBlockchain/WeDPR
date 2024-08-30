@@ -29,7 +29,11 @@ public class Constant {
     public static final String WEDPR_API_PREFIX = "/api/wedpr/v3";
 
     public static final String TOKEN_FIELD = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
+    // the userToken information defined in the request header
+    public static final String REQUEST_USER_TOKEN_FIELD = "UserToken";
+    // the auth type field defined in the request header
+    public static final String REQUEST_AUTH_TYPE_FIELD = "AuthType";
+
     public static final String USER_TOKEN_CLAIM = "user";
 
     public static final String SYS_USER = "sys";

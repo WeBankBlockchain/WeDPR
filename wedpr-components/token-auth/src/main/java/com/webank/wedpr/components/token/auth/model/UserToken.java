@@ -30,6 +30,8 @@ public class UserToken {
     private List<GroupInfo> groupInfos;
     private String roleName;
     private List<String> permissions;
+    // used for service access auth
+    private String accessKeyID;
 
     public UserToken() {}
 
