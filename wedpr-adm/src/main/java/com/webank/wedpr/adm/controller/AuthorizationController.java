@@ -18,6 +18,7 @@ package com.webank.wedpr.adm.controller;
 import com.webank.wedpr.components.authorization.model.*;
 import com.webank.wedpr.components.authorization.service.AuthorizationService;
 import com.webank.wedpr.components.token.auth.TokenUtils;
+import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.PageRequest;
@@ -67,6 +68,32 @@ public class AuthorizationController {
                     Constant.WEDPR_FAILED, "updateAuth error for " + e.getMessage());
         }
     }
+
+    /**
+     * query the todoList
+     *
+     * @param condition the condition
+     * @param request the request to obtain the user information
+     * @return the queried result
+     */
+    @PostMapping("/queryTODOList")
+    public WeDPRResponse queryTODOList(
+            @RequestBody SingleAuthRequest condition, HttpServletRequest request) {
+        try {
+            UserToken userToken = TokenUtils.getLoginUser(request);
+            AuthListResponse authList =
+                    this.authorizationService.queryTODOList(userToken.getUsername(), condition);
+            WeDPRResponse response =
+                    new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
+            response.setData(authList);
+            return response;
+        } catch (Exception e) {
+            logger.warn("queryTODOList error, condition: {}, error: ", condition.toString(), e);
+            return new WeDPRResponse(
+                    Constant.WEDPR_FAILED, "queryTODOList failed for " + e.getMessage());
+        }
+    }
+
     // query the authorization-meta-information according to given condition
     @PostMapping("/queryAuthList")
     public WeDPRResponse queryAuthList(

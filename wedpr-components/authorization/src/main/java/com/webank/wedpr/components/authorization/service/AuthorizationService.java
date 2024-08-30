@@ -56,4 +56,7 @@ public interface AuthorizationService {
     // query the auth-template-details according to the templateIDs
     public abstract WeDPRResponse queryAuthTemplateDetails(
             String user, List<String> templateIDList);
+
+    public abstract AuthListResponse queryTODOList(String user, SingleAuthRequest condition)
+            throws Exception;
 }

@@ -15,11 +15,13 @@
 
 package com.webank.wedpr.components.authorization.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.webank.wedpr.components.authorization.dao.AuthMapperWrapper;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.authorization.model.*;
 import com.webank.wedpr.components.authorization.service.AuthorizationService;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
+import com.webank.wedpr.components.mybatis.PageHelperWrapper;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.PageRequest;
@@ -276,5 +278,29 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public WeDPRResponse queryAuthTemplateDetails(String user, List<String> templateNameList) {
         return this.authMapperWrapper.queryAuthTemplateDetails(user, templateNameList);
+    }
+
+    @Override
+    public AuthListResponse queryTODOList(String user, SingleAuthRequest condition)
+            throws Exception {
+        condition.getAuthorizationDO().setCurrentApplyNode(user);
+        condition.getAuthorizationDO().setCurrentApplyNodeAgency(WeDPRCommonConfig.getAgency());
+        List<String> authStatusList = new ArrayList<>();
+        authStatusList.add(AuthorizationDO.AuthStatus.ToConfirm.getStatus());
+        authStatusList.add(AuthorizationDO.AuthStatus.Approving.getStatus());
+        try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(condition)) {
+            List<AuthorizationDO> result =
+                    this.authMapperWrapper
+                            .getAuthMapper()
+                            .queryAuthMetaList(condition.getAuthorizationDO(), authStatusList);
+            return new AuthListResponse(new PageInfo<AuthorizationDO>(result).getTotal(), result);
+        } catch (Exception e) {
+            logger.warn(
+                    "queryTODOList failed, user: {}, condition: {}, error: ",
+                    user,
+                    condition.toString(),
+                    e);
+            throw e;
+        }
     }
 }
