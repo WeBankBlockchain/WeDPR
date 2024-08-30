@@ -321,3 +321,45 @@ create table if not exists `wedpr_api_credential_table`(
     index owner_index(`owner`(128)),
     index status_index(`status`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+-- the service publish related tables
+create table if not exists wedpr_published_service(
+    `service_id` varchar(64) not null comment "发布的服务ID",
+    `service_name` varchar(1024) not null comment "服务名称",
+    `service_desc` text default null comment "服务描述",
+    `service_type` varchar(1024) not null comment "发布的服务类型, 如pir/lr/xgb",
+    `service_config` longtext comment "服务配置",
+    `owner` varchar(255) not null comment "属主",
+    `agency` varchar(255) not null comment "所属机构",
+    `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
+    `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
+     primary key (`service_id`),
+     index service_name_index(`service_name`(128)),
+     index service_type_index(`service_type`(128)),
+     index owner_index(`owner`(128)),
+     index agency_index(`agency`(128))
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+create table if not exists wedpr_service_auth_table(
+    `id` varchar(64) not null comment "ID",
+    `service_id` varchar(64) not null comment "服务ID",
+    `access_key_id` varchar(255) not null comment "访问ID(用于标志用户)",
+    `expire_time` DATETIME not null comment "过期时间",
+    `apply_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "申请时间",
+    `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
+    primary key (`id`),
+    index service_id_index(`service_id`(128)),
+    index access_key_id_index(`access_key_id`(128))
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+create table if not exists wedpr_service_invoke_table(
+    `invoke_id` varchar(64) not null comment "调用ID",
+    `service_id` varchar(64) not null comment "调用的服务ID",
+    `invoke_user` varchar(1024) not null comment "调用者",
+    `invoke_agency` varchar(1024) not null comment "调用方所属机构",
+    `invoke_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "调用时间",
+    `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
+    primary key (`invoke_id`),
+    index service_id_index(`service_id`),
+    index invoker_index(`invoke_agency`(64), `invoke_user`(64))
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
