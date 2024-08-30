@@ -74,8 +74,7 @@ public class ApiCredentialServiceImpl implements ApiCredentialService {
      * @return success/failed
      */
     @Override
-    public boolean deleteCredential(String user, String id) {
-        ApiCredentialDO condition = new ApiCredentialDO(id);
+    public boolean deleteCredential(String user, ApiCredentialDO condition) {
         condition.setOwner(user);
         return (this.credentialMapper.deleteCredentialByCondition(condition) > 0);
     }

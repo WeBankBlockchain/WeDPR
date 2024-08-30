@@ -43,7 +43,7 @@ public interface ApiCredentialService {
      * @param id the credential to delete
      * @return success/failed
      */
-    boolean deleteCredential(String user, String id);
+    boolean deleteCredential(String user, ApiCredentialDO condition);
 
     /**
      * update the credential state by condition
