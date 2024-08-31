@@ -305,3 +305,30 @@ create table if not exists `wedpr_jupyter_table`(
     index status_index(`status`(128)),
     index access_entrypoint_index(`access_entrypoint`(128))
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE IF NOT EXISTS wedpr_publish (
+	publish_id VARCHAR(64) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_name VARCHAR(50) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_content TEXT NOT NULL COLLATE 'utf8mb4_bin',
+	dataset_id VARCHAR(64) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_type VARCHAR(10) NOT NULL COMMENT 'pir/lr/xgb' COLLATE 'utf8mb4_bin',
+	search_rule TEXT NOT NULL COLLATE 'utf8mb4_bin',
+	publish_user VARCHAR(50) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_agency VARCHAR(50) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_time TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY (publish_id) USING BTREE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+
+CREATE TABLE IF NOT EXISTS wedpr_publish_record (
+	invoke_id VARCHAR(64) NOT NULL COLLATE 'utf8mb4_bin',
+	publish_id VARCHAR(64) NOT NULL COLLATE 'utf8mb4_bin',
+	invoke_agency VARCHAR(64) NOT NULL COLLATE 'utf8mb4_bin',
+	invoke_user VARCHAR(64) NULL DEFAULT NULL COLLATE 'utf8mb4_bin',
+	invoke_status VARCHAR(10) NULL DEFAULT NULL COLLATE 'utf8mb4_bin',
+	invoke_time TIMESTAMP NOT NULL,
+	apply_time TIMESTAMP NOT NULL,
+	expire_time TIMESTAMP NOT NULL,
+	PRIMARY KEY (`invoke_id`) USING BTREE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+

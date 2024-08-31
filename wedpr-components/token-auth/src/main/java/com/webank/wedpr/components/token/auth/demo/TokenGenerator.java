@@ -21,6 +21,7 @@ import com.webank.wedpr.components.token.auth.model.HeaderInfo;
 import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.core.utils.Constant;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +51,12 @@ public class TokenGenerator {
         tokenContents.addTokenContents(Constant.USER_TOKEN_CLAIM, userToken.serialize());
         System.out.println("====== generate token for user: " + user + ", groupId: " + groupId);
         String token =
+<<<<<<< HEAD
                 TokenUtils.generateJWTToken(
                         new HeaderInfo(), tokenContents, secret, 10 * 60 * 60 * 1000);
+=======
+                TokenUtils.generateJWTToken(new HeaderInfo(), tokenContents, secret, 10 * 60 * 60 * 1000);
+>>>>>>> c0ce0d5bc82d8ee00533f54c5ed4ad108ea0cd96
         System.out.println("token: " + token);
     }
 }
