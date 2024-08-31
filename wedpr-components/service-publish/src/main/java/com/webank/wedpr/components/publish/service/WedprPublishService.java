@@ -1,7 +1,6 @@
 package com.webank.wedpr.components.publish.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.webank.wedpr.components.publish.entity.WedprPublish;
 import com.webank.wedpr.components.publish.entity.request.PublishRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
 import com.webank.wedpr.components.publish.sync.PublishSyncAction;
@@ -14,11 +13,11 @@ import com.webank.wedpr.core.utils.WeDPRResponse;
  * @author zachma
  * @since 2024-08-28
  */
-public interface WedprPublishService extends IService<WedprPublish> {
+public interface WedprPublishService extends IService<com.webank.wedpr.components.publish.entity.WedprPublishService> {
     WeDPRResponse createPublishService(String username, PublishRequest request)
             throws WeDPRException;
 
-    void syncPublishService(PublishSyncAction action, WedprPublish wedprPublish)
+    void syncPublishService(PublishSyncAction action, com.webank.wedpr.components.publish.entity.WedprPublishService wedprPublishService)
             throws WeDPRException;
 
     WeDPRResponse updatePublishService(String username, PublishRequest request);

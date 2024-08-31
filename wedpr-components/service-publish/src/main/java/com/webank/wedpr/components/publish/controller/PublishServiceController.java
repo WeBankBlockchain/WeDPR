@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
         path = Constant.WEDPR_API_PREFIX + "/publish",
         produces = {"application/json"})
 @Slf4j
-public class PublishController {
-    private static final Logger logger = LoggerFactory.getLogger(PublishController.class);
+public class PublishServiceController {
+    private static final Logger logger = LoggerFactory.getLogger(PublishServiceController.class);
 
     @Autowired private WedprPublishService wedprPublishService;
 

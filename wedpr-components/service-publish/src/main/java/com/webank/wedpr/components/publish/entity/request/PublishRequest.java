@@ -8,10 +8,9 @@ import lombok.Data;
  */
 @Data
 public class PublishRequest {
-    private String publishId;
-    private String publishName;
-    private String publishContent;
-    private String datasetId;
-    private String publishType;
-    private String searchRule;
+    private String serviceId;
+    private String serviceName;
+    private String serviceDesc;
+    private String serviceConfig;
+    private String serviceType;
 }

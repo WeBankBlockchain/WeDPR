@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class WedprPublishResponse {
-    private String publishId;
+    private String serviceId;
 }

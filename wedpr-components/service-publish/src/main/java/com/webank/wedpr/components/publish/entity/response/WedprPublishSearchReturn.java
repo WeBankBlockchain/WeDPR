@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.publish.entity.response;
 
-import com.webank.wedpr.components.publish.entity.WedprPublish;
+import com.webank.wedpr.components.publish.entity.WedprPublishService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class WedprPublishSearchReturn {
-    private WedprPublish wedprPublish;
+    private WedprPublishService wedprPublishService;
 }

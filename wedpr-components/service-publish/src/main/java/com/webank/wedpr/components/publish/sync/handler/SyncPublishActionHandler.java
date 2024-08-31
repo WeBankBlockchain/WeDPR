@@ -1,7 +1,6 @@
 package com.webank.wedpr.components.publish.sync.handler;
 
-import com.webank.wedpr.components.publish.entity.WedprPublish;
-import com.webank.wedpr.components.publish.service.WedprPublishService;
+import com.webank.wedpr.components.publish.entity.WedprPublishService;
 import com.webank.wedpr.components.publish.sync.PublishSyncAction;
 import com.webank.wedpr.components.publish.utils.JsonUtils;
 import com.webank.wedpr.core.utils.WeDPRException;
@@ -18,8 +17,8 @@ public class SyncPublishActionHandler implements PublishActionHandler {
     @Override
     public void handle(String content, PublishActionContext context) throws WeDPRException {
         try {
-            WedprPublish wedprPublish = JsonUtils.jsonString2Object(content, WedprPublish.class);
-            WedprPublishService wedprPublishService = context.getWedprPublishService();
+            WedprPublishService wedprPublish = JsonUtils.jsonString2Object(content, WedprPublishService.class);
+            com.webank.wedpr.components.publish.service.WedprPublishService wedprPublishService = context.getWedprPublishService();
             wedprPublishService.syncPublishService(PublishSyncAction.SYNC, wedprPublish);
         } catch (Exception e) {
             logger.error("sync publish service failed: " + content);

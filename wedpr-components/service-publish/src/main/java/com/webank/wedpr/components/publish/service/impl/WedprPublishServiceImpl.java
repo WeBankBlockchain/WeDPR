@@ -5,15 +5,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.webank.wedpr.components.dataset.dao.Dataset;
 import com.webank.wedpr.components.dataset.mapper.DatasetMapper;
-import com.webank.wedpr.components.publish.entity.WedprPublish;
+import com.webank.wedpr.components.publish.entity.WedprPublishService;
 import com.webank.wedpr.components.publish.entity.request.PublishRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishResponse;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishSearchResponse;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishSearchReturn;
 import com.webank.wedpr.components.publish.helper.PublishHelper;
-import com.webank.wedpr.components.publish.mapper.WedprPublishMapper;
-import com.webank.wedpr.components.publish.service.WedprPublishService;
+import com.webank.wedpr.components.publish.mapper.WedprPublishServiceMapper;
 import com.webank.wedpr.components.publish.sync.PublishSyncAction;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
@@ -37,8 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 2024-08-28
  */
 @Service
-public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, WedprPublish>
-        implements WedprPublishService {
+public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishServiceMapper, WedprPublishService>
+        implements com.webank.wedpr.components.publish.service.WedprPublishService {
     @Autowired private DatasetMapper datasetMapper;
 
     @Qualifier("publishSyncer")
@@ -51,25 +50,23 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
             throws WeDPRException {
         try {
             checkCreatePublishRequest(request);
-            String publishId = PublishHelper.newPublishId();
-            WedprPublish wedprPublish = new WedprPublish();
-            wedprPublish.setPublishUser(username);
-            wedprPublish.setPublishAgency(WeDPRCommonConfig.getAgency());
-            wedprPublish.setPublishContent(request.getPublishContent());
-            wedprPublish.setPublishName(request.getPublishName());
-            wedprPublish.setPublishTime(LocalDateTime.now());
-            wedprPublish.setPublishId(publishId);
-            wedprPublish.setDatasetId(request.getDatasetId());
-            wedprPublish.setSearchRule(request.getSearchRule());
-            wedprPublish.setPublishType(request.getPublishType());
-            if (this.save(wedprPublish)) {
-                publishSyncer.publishSync(wedprPublish.serialize());
+            String serviceId = PublishHelper.newServiceId();
+            WedprPublishService wedprPublishService = new WedprPublishService();
+            wedprPublishService.setOwner(username);
+            wedprPublishService.setAgency(WeDPRCommonConfig.getAgency());
+            wedprPublishService.setServiceDesc(request.getServiceDesc());
+            wedprPublishService.setServiceType(request.getServiceType());
+            wedprPublishService.setCreateTime(LocalDateTime.now());
+            wedprPublishService.setServiceId(serviceId);
+            wedprPublishService.setSearchConfig(request.getServiceConfig());
+            if (this.save(wedprPublishService)) {
+                publishSyncer.publishSync(wedprPublishService.serialize());
                 return new WeDPRResponse(
                         Constant.WEDPR_SUCCESS,
                         Constant.WEDPR_SUCCESS_MSG,
-                        new WedprPublishResponse(publishId));
+                        new WedprPublishResponse(serviceId));
             } else {
-                return new WeDPRResponse(Constant.WEDPR_FAILED, publishId + "服务创建失败");
+                return new WeDPRResponse(Constant.WEDPR_FAILED, serviceId + "服务创建失败");
             }
         } catch (Exception e) {
             throw new WeDPRException(e.getMessage());
@@ -77,24 +74,24 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
     }
 
     @Override
-    public void syncPublishService(PublishSyncAction action, WedprPublish wedprPublish) {
-        String publishId = wedprPublish.getPublishId();
-        String publishUser = wedprPublish.getPublishUser();
+    public void syncPublishService(PublishSyncAction action, WedprPublishService wedprPublishService) {
+        String publishId = wedprPublishService.getPublishId();
+        String publishUser = wedprPublishService.getPublishUser();
         if (action == PublishSyncAction.SYNC) {
             if (isPublishNotExist(publishId, publishUser)) {
-                this.save(wedprPublish);
+                this.save(wedprPublishService);
             } else {
-                LambdaQueryWrapper<WedprPublish> wrapper =
-                        new LambdaQueryWrapper<WedprPublish>()
-                                .eq(WedprPublish::getPublishId, publishId);
-                this.update(wedprPublish, wrapper);
+                LambdaQueryWrapper<WedprPublishService> wrapper =
+                        new LambdaQueryWrapper<WedprPublishService>()
+                                .eq(WedprPublishService::getPublishId, publishId);
+                this.update(wedprPublishService, wrapper);
             }
         }
 
         if (action == PublishSyncAction.REVOKE) {
             if (!isPublishNotExist(publishId, publishUser)) {
-                LambdaQueryWrapper<WedprPublish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-                lambdaQueryWrapper.eq(WedprPublish::getPublishId, publishId);
+                LambdaQueryWrapper<WedprPublishService> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                lambdaQueryWrapper.eq(WedprPublishService::getPublishId, publishId);
                 this.remove(lambdaQueryWrapper);
             }
         }
@@ -107,15 +104,15 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
             return new WeDPRResponse(
                     Constant.WEDPR_FAILED, request.getPublishId() + "无法撤销，不属于用户" + username);
         }
-        LambdaQueryWrapper<WedprPublish> wrapper =
-                new LambdaQueryWrapper<WedprPublish>()
-                        .eq(WedprPublish::getPublishId, request.getPublishId());
-        WedprPublish wedprPublish = new WedprPublish();
-        wedprPublish.setPublishContent(request.getPublishContent());
-        wedprPublish.setSearchRule(request.getSearchRule());
-        boolean updated = this.update(wedprPublish, wrapper);
+        LambdaQueryWrapper<WedprPublishService> wrapper =
+                new LambdaQueryWrapper<WedprPublishService>()
+                        .eq(WedprPublishService::getPublishId, request.getPublishId());
+        WedprPublishService wedprPublishService = new WedprPublishService();
+        wedprPublishService.setPublishContent(request.getPublishContent());
+        wedprPublishService.setSearchRule(request.getSearchRule());
+        boolean updated = this.update(wedprPublishService, wrapper);
         if (updated) {
-            publishSyncer.publishSync(wedprPublish.serialize());
+            publishSyncer.publishSync(wedprPublishService.serialize());
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } else {
             return new WeDPRResponse(Constant.WEDPR_FAILED, request.getPublishId() + "服务更新失败");
@@ -128,15 +125,15 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
         if (isPublishNotExist(publishId, username)) {
             return new WeDPRResponse(Constant.WEDPR_FAILED, publishId + "无法撤销，不属于用户" + username);
         }
-        LambdaQueryWrapper<WedprPublish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<WedprPublishService> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper
-                .eq(WedprPublish::getPublishId, publishId)
-                .eq(WedprPublish::getPublishUser, username);
+                .eq(WedprPublishService::getPublishId, publishId)
+                .eq(WedprPublishService::getPublishUser, username);
         boolean removed = this.remove(lambdaQueryWrapper);
         if (removed) {
-            WedprPublish wedprPublish = new WedprPublish();
-            wedprPublish.setPublishId(publishId);
-            publishSyncer.revokeSync(wedprPublish.serialize());
+            WedprPublishService wedprPublishService = new WedprPublishService();
+            wedprPublishService.setPublishId(publishId);
+            publishSyncer.revokeSync(wedprPublishService.serialize());
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } else {
             return new WeDPRResponse(Constant.WEDPR_FAILED, publishId + "服务删除失败");
@@ -151,25 +148,25 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
         String agency = request.getPublishAgency();
         String publishType = request.getPublishType();
         String publishDate = request.getPublishDate();
-        LambdaQueryWrapper<WedprPublish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<WedprPublishService> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {
-            lambdaQueryWrapper.like(WedprPublish::getPublishUser, username);
+            lambdaQueryWrapper.like(WedprPublishService::getPublishUser, username);
         }
         if (StringUtils.isNotBlank(publishName)) {
-            lambdaQueryWrapper.like(WedprPublish::getPublishName, publishName);
+            lambdaQueryWrapper.like(WedprPublishService::getPublishName, publishName);
         }
         if (StringUtils.isNotBlank(agency)) {
-            lambdaQueryWrapper.eq(WedprPublish::getPublishAgency, agency);
+            lambdaQueryWrapper.eq(WedprPublishService::getPublishAgency, agency);
         }
         if (StringUtils.isNotBlank(publishType)) {
-            lambdaQueryWrapper.eq(WedprPublish::getPublishType, publishType);
+            lambdaQueryWrapper.eq(WedprPublishService::getPublishType, publishType);
         }
         if (StringUtils.isNotBlank(publishDate)) {
             lambdaQueryWrapper.apply("DATE_FORMAT(publish_time, '%Y-%m-%d') = {0}", publishDate);
         }
-        Page<WedprPublish> wedprPublishPage =
+        Page<WedprPublishService> wedprPublishPage =
                 new Page<>(request.getPageNum(), request.getPageSize());
-        Page<WedprPublish> page = this.page(wedprPublishPage, lambdaQueryWrapper);
+        Page<WedprPublishService> page = this.page(wedprPublishPage, lambdaQueryWrapper);
         return new WeDPRResponse(
                 Constant.WEDPR_SUCCESS,
                 Constant.WEDPR_SUCCESS_MSG,
@@ -178,23 +175,23 @@ public class WedprPublishServiceImpl extends ServiceImpl<WedprPublishMapper, Wed
 
     @Override
     public WeDPRResponse searchPublishService(String publishId) {
-        LambdaQueryWrapper<WedprPublish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(WedprPublish::getPublishId, publishId);
-        WedprPublish wedprPublish = this.getOne(lambdaQueryWrapper);
+        LambdaQueryWrapper<WedprPublishService> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(WedprPublishService::getPublishId, publishId);
+        WedprPublishService wedprPublishService = this.getOne(lambdaQueryWrapper);
         return new WeDPRResponse(
                 Constant.WEDPR_SUCCESS,
                 Constant.WEDPR_SUCCESS_MSG,
-                new WedprPublishSearchReturn(wedprPublish));
+                new WedprPublishSearchReturn(wedprPublishService));
     }
 
     public Boolean isPublishNotExist(String publishId, String userName) {
-        LambdaQueryWrapper<WedprPublish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<WedprPublishService> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper
-                .eq(WedprPublish::getPublishId, publishId)
-                .eq(WedprPublish::getPublishAgency, WeDPRCommonConfig.getAgency())
-                .eq(WedprPublish::getPublishUser, userName);
-        WedprPublish queriedWedprPublish = this.getOne(lambdaQueryWrapper);
-        return Objects.isNull(queriedWedprPublish);
+                .eq(WedprPublishService::getPublishId, publishId)
+                .eq(WedprPublishService::getPublishAgency, WeDPRCommonConfig.getAgency())
+                .eq(WedprPublishService::getPublishUser, userName);
+        WedprPublishService queriedWedprPublishService = this.getOne(lambdaQueryWrapper);
+        return Objects.isNull(queriedWedprPublishService);
     }
 
     private void checkCreatePublishRequest(PublishRequest request) throws WeDPRException {

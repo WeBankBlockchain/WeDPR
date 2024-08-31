@@ -28,11 +28,11 @@ public class PublishHelper {
         private final String value;
     }
 
-    protected static final String PUBLISH_ID_PREFIX = "s-";
+    protected static final String SERVICE_ID_PREFIX = "s-";
 
     public static final String PUBLISH_PIR_NEED_COLUMN = "id";
 
-    public static String newPublishId() {
-        return PUBLISH_ID_PREFIX + WeDPRUuidGenerator.generateID();
+    public static String newServiceId() {
+        return SERVICE_ID_PREFIX + WeDPRUuidGenerator.generateID();
     }
 }
