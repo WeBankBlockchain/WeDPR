@@ -170,6 +170,7 @@ public class BlockChainResourceSyncImpl extends ResourceSyncerImpl implements Re
         EventSubParams eventSubParams = new EventSubParams();
         eventSubParams.setFromBlock(blockNumber);
         eventSubParams.setToBlock(BigInteger.valueOf(-1));
+        eventSubParams.addAddress(WeDPRSyncConfig.getResourceLogRecordFactoryContractAddress());
         int i = 0;
         for (String topic : topics) {
             eventSubParams.addTopic(i, topic);

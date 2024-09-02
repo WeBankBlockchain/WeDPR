@@ -74,9 +74,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             response.setHeader(Constant.TOKEN_FIELD, newJwt);
             chain.doFilter(request, response);
         } catch (Exception e) {
-            logger.info("认证已过期或token错误，请重新登录: ", e);
+            logger.info("jwt auth failed, error: ", e);
             String wedprResponse =
-                    new WeDPRResponse(Constant.WEDPR_FAILED, "认证已过期或token错误，请重新登录").serialize();
+                    new WeDPRResponse(Constant.WEDPR_FAILED, "auth failed for " + e.getMessage())
+                            .serialize();
             TokenUtils.responseToClient(response, wedprResponse, HttpServletResponse.SC_FORBIDDEN);
         }
     }

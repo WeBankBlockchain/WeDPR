@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MemoryCredentialCache implements CredentialCache {
-    private static Logger logger = LoggerFactory.getLogger(MemoryCredentialCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemoryCredentialCache.class);
 
     private final ApiCredentialMapper credentialMapper;
     private final CredentialToolkit credentialToolkit;
@@ -55,9 +55,18 @@ public class MemoryCredentialCache implements CredentialCache {
         this.credentialToolkit = credentialToolkit;
     }
 
+    private ApiCredentialDO loadCache(String accessKeyID) {
+        try {
+            return cache.get(accessKeyID);
+        } catch (Exception e) {
+            logger.warn("get {} failed for ", accessKeyID, e);
+            return null;
+        }
+    }
+
     @Override
     public ApiCredentialDO getAccessKey(String accessKeyID) {
-        return cache.getIfPresent(accessKeyID);
+        return loadCache(accessKeyID);
     }
 
     public ApiCredentialDO fetchCredential(String accessKeyID) throws NoValueInCacheException {

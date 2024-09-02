@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.util.StringUtils;
 
 public class APISignatureAuthFilter extends BasicAuthenticationFilter {
     private final CredentialVerifier credentialVerifier;
@@ -47,6 +48,11 @@ public class APISignatureAuthFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         try {
+            // auth by token
+            if (!StringUtils.isEmpty(request.getHeader(Constant.TOKEN_FIELD))) {
+                chain.doFilter(request, response);
+                return;
+            }
             ApiCredentialDO credential = this.credentialVerifier.verify(request);
             UserToken userToken = userCache.getUserToken(credential.getOwner());
             if (userToken == null) {

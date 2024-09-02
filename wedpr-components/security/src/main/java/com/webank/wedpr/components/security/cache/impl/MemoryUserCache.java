@@ -75,7 +75,7 @@ public class MemoryUserCache implements UserCache {
                 new CacheLoader<String, UserToken>() {
                     @Override
                     public UserToken load(String username) throws NoValueInCacheException {
-                        logger.info("从数据库查询用户信息：{}", username);
+                        logger.info("fetch userInformation from DB：{}", username);
                         // check the existence of user
                         if (wedprUserService.getWedprUserByNameService(username) != null) {
                             return fetchUserToken(username);
@@ -96,7 +96,7 @@ public class MemoryUserCache implements UserCache {
     public Pair<Boolean, UserToken> getUserToken(HttpServletRequest request) throws Exception {
         UserToken userToken = TokenUtils.getLoginUser(request);
         String username = userToken.getUsername();
-        UserToken latestUserToken = userCache.getIfPresent(username);
+        UserToken latestUserToken = loadUserToken(username);
         // the user not exists
         if (latestUserToken == null) {
             return null;
@@ -113,10 +113,19 @@ public class MemoryUserCache implements UserCache {
         return new ImmutablePair<>(false, userToken);
     }
 
+    private UserToken loadUserToken(String userName) {
+        try {
+            return userCache.get(userName);
+        } catch (Exception e) {
+            logger.warn("get record for {} failed, error: ", e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     public UserToken getUserToken(String userName) throws Exception {
         wedprUserService.updateAllowedTimeAndTryCount(userName, 0L, 0);
-        return userCache.getIfPresent(userName);
+        return loadUserToken(userName);
     }
 
     @Override
