@@ -92,6 +92,9 @@ project(":wedpr-components-admin").projectDir=file("wedpr-components/admin")
 include ":wedpr-components-initializer"
 project(":wedpr-components-initializer").projectDir=file("wedpr-components/initializer")
 
+include "wedpr-worker"
+project(":wedpr-worker").projectDir=file("wedpr-worker")
+
 include "wedpr-adm"
 project(":wedpr-adm").projectDir=file("wedpr-adm")
 
