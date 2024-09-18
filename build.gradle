@@ -48,6 +48,7 @@ ext {
     guavaVersion = "32.0.1-jre"
     bcprovVersion = "1.78.1"
     googleAutoServiceVersion = "1.1.1"
+    wedprGatewaySDKVersion = "1.0.0-SNAPSHOT"
 }
 
 // check.dependsOn integrationTest

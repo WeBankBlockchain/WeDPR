@@ -58,7 +58,7 @@ jobs:
       - name: build web
         run: |
           cd wedpr-web && npm install && npm run build:pro
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: wedpr-web.tar.gz
           path: wedpr-web/dist

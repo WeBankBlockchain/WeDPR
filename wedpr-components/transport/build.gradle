@@ -3,5 +3,6 @@ plugins {
     id 'java'
 }
 dependencies{
+    compile ("com.webank.wedpr:wedpr-gateway-sdk:${wedprGatewaySDKVersion}")
     compile project(":wedpr-core-utils")
 }

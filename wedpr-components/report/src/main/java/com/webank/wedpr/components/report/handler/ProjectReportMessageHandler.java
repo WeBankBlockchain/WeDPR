@@ -2,20 +2,24 @@ package com.webank.wedpr.components.report.handler;
 
 import com.webank.wedpr.components.project.dao.ProjectDO;
 import com.webank.wedpr.components.project.dao.ProjectMapper;
-import com.webank.wedpr.components.transport.Transport;
-import com.webank.wedpr.components.transport.model.Message;
 import com.webank.wedpr.core.protocol.ReportStatusEnum;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.sdk.jni.generated.Error;
+import com.webank.wedpr.sdk.jni.generated.SendResponseHandler;
+import com.webank.wedpr.sdk.jni.transport.IMessage;
+import com.webank.wedpr.sdk.jni.transport.handlers.MessageCallback;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Created by caryliao on 2024/9/4 10:54 */
 @Slf4j
-public class ProjectReportMessageHandler implements Transport.MessageHandler {
+public class ProjectReportMessageHandler extends MessageCallback {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectReportMessageHandler.class);
     private ProjectMapper projectMapper;
 
     public ProjectReportMessageHandler(ProjectMapper projectMapper) {
@@ -23,7 +27,14 @@ public class ProjectReportMessageHandler implements Transport.MessageHandler {
     }
 
     @Override
-    public void call(Message msg) throws WeDPRException {
+    public void onMessage(Error error, IMessage msg, SendResponseHandler sendResponseHandler) {
+        if (error != null && error.errorCode() != 0) {
+            logger.warn(
+                    "ProjectReportMessageHandler exception, code: {}, msg: {}",
+                    error.errorCode(),
+                    error.errorMessage());
+            return;
+        }
         byte[] payload = msg.getPayload();
         try {
             ProjectReportResponse projectReportResponse =

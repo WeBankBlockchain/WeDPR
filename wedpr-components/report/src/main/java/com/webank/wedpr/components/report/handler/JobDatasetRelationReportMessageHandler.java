@@ -2,19 +2,25 @@ package com.webank.wedpr.components.report.handler;
 
 import com.webank.wedpr.components.project.dao.JobDatasetDO;
 import com.webank.wedpr.components.project.dao.ProjectMapper;
-import com.webank.wedpr.components.transport.Transport;
-import com.webank.wedpr.components.transport.model.Message;
 import com.webank.wedpr.core.protocol.ReportStatusEnum;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.sdk.jni.generated.Error;
+import com.webank.wedpr.sdk.jni.generated.SendResponseHandler;
+import com.webank.wedpr.sdk.jni.transport.IMessage;
+import com.webank.wedpr.sdk.jni.transport.handlers.MessageCallback;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Created by caryliao on 2024/9/4 10:54 */
 @Slf4j
-public class JobDatasetRelationReportMessageHandler implements Transport.MessageHandler {
+public class JobDatasetRelationReportMessageHandler extends MessageCallback {
+    private static final Logger logger =
+            LoggerFactory.getLogger(JobDatasetRelationReportMessageHandler.class);
     private ProjectMapper projectMapper;
 
     public JobDatasetRelationReportMessageHandler(ProjectMapper projectMapper) {
@@ -22,7 +28,14 @@ public class JobDatasetRelationReportMessageHandler implements Transport.Message
     }
 
     @Override
-    public void call(Message msg) {
+    public void onMessage(Error error, IMessage msg, SendResponseHandler sendResponseHandler) {
+        if (error != null && error.errorCode() != 0) {
+            logger.warn(
+                    "JobDatasetRelationReportMessageHandler exception, code: {}, msg: {}",
+                    error.errorCode(),
+                    error.errorMessage());
+            return;
+        }
         byte[] payload = msg.getPayload();
         try {
             JobDatasetReportResponse jobDatasetReportResponse =
