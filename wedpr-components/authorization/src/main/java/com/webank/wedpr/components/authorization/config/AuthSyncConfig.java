@@ -38,10 +38,10 @@ public class AuthSyncConfig {
     @Autowired private AuthMapperWrapper authMapperWrapper;
 
     // Note: the authSyncer should be inited before start the ResourceSyncer
-    @Bean(name = "authSync")
+    @Bean(name = "authSyncer")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public AuthSyncer authSync() {
+    public AuthSyncer authSyncer() {
         return new AuthSyncer(
                 WeDPRCommonConfig.getAgency(),
                 ResourceSyncer.ResourceType.Authorization.getType(),

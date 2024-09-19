@@ -171,7 +171,13 @@ public class CsvDataSourceProcessor implements DataSourceProcessor {
             String userDatasetPath =
                     datasetConfig.getDatasetStoragePath(userInfo.getUser(), datasetId, false);
 
-            StoragePath storagePath = fileStorage.upload(true, csvFilePath, userDatasetPath, false);
+            StoragePath storagePath =
+                    fileStorage.upload(
+                            this.dataSourceProcessorContext.getFilePermissionInfo(),
+                            true,
+                            csvFilePath,
+                            userDatasetPath,
+                            false);
 
             String storagePathStr =
                     ObjectMapperFactory.getObjectMapper().writeValueAsString(storagePath);

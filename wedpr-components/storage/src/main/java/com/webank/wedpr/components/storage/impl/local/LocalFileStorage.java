@@ -64,7 +64,11 @@ public class LocalFileStorage implements FileStorageInterface {
 
     @Override
     public StoragePath upload(
-            boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath) {
+            FilePermissionInfo filePermissionInfo,
+            boolean enforceOverwrite,
+            String localPath,
+            String remotePath,
+            boolean isAbsPath) {
         LocalStoragePath localStoragePath = new LocalStoragePath();
 
         String remoteAbsPath;

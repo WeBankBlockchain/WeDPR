@@ -6,7 +6,6 @@ plugins {
 dependencies {
     compile ("org.bouncycastle:bcprov-jdk18on:${bcprovVersion}")
     compile ("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
     compile ("com.opencsv:opencsv:${opencsvVersion}")
 }
 

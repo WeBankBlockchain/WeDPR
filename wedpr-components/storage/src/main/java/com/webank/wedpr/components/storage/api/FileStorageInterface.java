@@ -16,8 +16,15 @@
 package com.webank.wedpr.components.storage.api;
 
 import com.webank.wedpr.core.protocol.StorageType;
+import lombok.Data;
 
 public interface FileStorageInterface {
+
+    @Data
+    public static class FilePermissionInfo {
+        private String owner;
+        private String group;
+    }
 
     /**
      * base dir
@@ -50,7 +57,11 @@ public interface FileStorageInterface {
      * @param isAbsPath
      */
     StoragePath upload(
-            boolean enforceOverwrite, String localPath, String remotePath, boolean isAbsPath);
+            FilePermissionInfo filePermissionInfo,
+            boolean enforceOverwrite,
+            String localPath,
+            String remotePath,
+            boolean isAbsPath);
 
     /**
      * download the file from remotePath to localPath

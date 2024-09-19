@@ -46,7 +46,7 @@ public class WeDPRTransportBuilder {
                         WeDPRTransportConfig.getListenIp(),
                         WeDPRTransportConfig.getListenPort());
         config.setSelfEndPoint(selfEndPoint);
-
+        logger.info("Begin to create wedpr transport with config: {}", config.toString());
         // build transport through config
         WeDPRTransport transport = TransportImpl.build(config);
         transport.start();

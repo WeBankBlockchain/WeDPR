@@ -261,7 +261,7 @@ public class PSIJobParam {
                     "Begin to upload the extracted psi file from {}=>{}",
                     extractFilePath,
                     updatedInput.getPath());
-            storage.upload(Boolean.TRUE, extractFilePath, updatedInput.getPath(), true);
+            storage.upload(null, Boolean.TRUE, extractFilePath, updatedInput.getPath(), true);
             partyInfo.setDataset(updatedInput);
             logger.info(
                     "Upload the extracted psi file from {}=>{} success, timecost: {}",

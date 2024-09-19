@@ -207,6 +207,9 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                 "DataSourceProcessor.processData",
                 datasetId,
                 () -> {
+                    FileStorageInterface.FilePermissionInfo filePermissionInfo =
+                            new FileStorageInterface.FilePermissionInfo();
+                    filePermissionInfo.setOwner(userInfo.getUser());
                     DataSourceProcessorContext context =
                             DataSourceProcessorContext.builder()
                                     .dataset(dataset)
@@ -216,6 +219,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                                     .datasetTransactionalWrapper(datasetTransactionalWrapper)
                                     .chunkUpload(chunkUpload)
                                     .fileStorage(fileStorage)
+                                    .filePermissionInfo(filePermissionInfo)
                                     .build();
 
                     try {

@@ -162,7 +162,13 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
                     datasetConfig.getDatasetStoragePath(
                             userInfo.getUser(), datasetId, dataSourceMeta.dynamicDataSource());
 
-            StoragePath storagePath = fileStorage.upload(true, csvFilePath, userDatasetPath, false);
+            StoragePath storagePath =
+                    fileStorage.upload(
+                            this.dataSourceProcessorContext.getFilePermissionInfo(),
+                            true,
+                            csvFilePath,
+                            userDatasetPath,
+                            false);
 
             String storagePathStr =
                     ObjectMapperFactory.getObjectMapper().writeValueAsString(storagePath);

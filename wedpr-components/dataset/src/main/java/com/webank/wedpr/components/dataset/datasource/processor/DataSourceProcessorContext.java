@@ -19,6 +19,7 @@ public class DataSourceProcessorContext {
     private DataSourceMeta dataSourceMeta;
     private ChunkUploadApi chunkUpload;
     private FileStorageInterface fileStorage;
+    private FileStorageInterface.FilePermissionInfo filePermissionInfo;
     private DatasetTransactionalWrapper datasetTransactionalWrapper;
     private DatasetConfig datasetConfig;
     private UserInfo userInfo;
