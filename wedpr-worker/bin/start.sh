@@ -13,11 +13,16 @@ STATUS_STARTING="Starting"
 STATUS_RUNNING="Running"
 STATUS_STOPPED="Stopped"
 start_success_log="start.*success"
-
+ENABLE_DOCKER_MODE="false"
 
 if [ "${JAVA_HOME}" = "" ];then
     JAVA_HOME=/nemo/jdk8u382-b05
     echo "JAVA_HOME has not been configured, set  to default: ${JAVA_HOME}"
+fi
+
+JAVA_CMD=$JAVA_HOME/bin/java
+if [ ! -f "${JAVA_HOME}" ];then
+  JAVA_CMD=java
 fi
 
 LOG_INFO()
@@ -44,7 +49,11 @@ JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+Pri
 JAVA_OPTS+=" -DserviceName=${SERVER_NAME}"
 run_app()
 {
-    nohup $JAVA_HOME/bin/java $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1 &
+    if [ "$ENABLE_DOCKER_MODE" = "true" ]; then
+        exec ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1
+    else
+        nohup ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1 &
+    fi
 }
 
 app_status()
@@ -138,7 +147,11 @@ after_start()
             ;;
     esac
 }
+if [ $# -eq 1 ]; then
+  ENABLE_DOCKER_MODE="${1}"
+fi
 
+echo "ENABLE_DOCKER_MODE: ${ENABLE_DOCKER_MODE}"
 before_start
 start
 after_start

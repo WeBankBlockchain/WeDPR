@@ -120,7 +120,7 @@ public class JupyterManager {
         JupyterInfoDO condition = new JupyterInfoDO(true);
         String allocatedEntrypoint = null;
         for (String entrypoint : accessEntryPoints) {
-            condition.setAgency(entrypoint);
+            condition.setAccessEntry(entrypoint);
             Integer allocatedCount = jupyterMapper.queryJupyterRecordCount(condition);
             if (allocatedCount >= JupyterConfig.getMaxJupyterPerHost()) {
                 continue;
@@ -141,6 +141,7 @@ public class JupyterManager {
         allocatedJupyter.setAgency(agency);
         allocatedJupyter.setOwner(user);
         allocatedJupyter.setAccessEntry(allocatedEntrypoint);
+
         // TODO: set the settings
         allocatedJupyter.setStatus(JupyterStatus.Ready.getStatus());
         jupyterMapper.insertJupyterInfo(allocatedJupyter);
