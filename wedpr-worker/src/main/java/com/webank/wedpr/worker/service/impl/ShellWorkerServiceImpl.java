@@ -20,7 +20,9 @@ import com.webank.wedpr.components.task.plugin.shell.ShellTask;
 import com.webank.wedpr.worker.service.ShellWorkerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ShellWorkerServiceImpl implements ShellWorkerService {
     private static final Logger logger = LoggerFactory.getLogger(ShellWorkerServiceImpl.class);
 

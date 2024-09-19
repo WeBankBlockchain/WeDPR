@@ -23,7 +23,7 @@ public class WorkerApplication {
     private static final Logger logger = LoggerFactory.getLogger(WorkerApplication.class);
 
     public static void main(String[] args) throws Exception {
-        System.out.println("start AdmServiceApplication");
+        System.out.println("start WorkerApplication");
         long startT = System.currentTimeMillis();
         WeDPRApplication.main(args, "WEDPR-WORKER");
         System.out.println(

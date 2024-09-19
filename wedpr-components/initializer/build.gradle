@@ -5,7 +5,5 @@ plugins {
 
 dependencies {
     compile project(":wedpr-core-utils")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-mybatis")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
