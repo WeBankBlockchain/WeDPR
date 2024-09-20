@@ -20,13 +20,14 @@ import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommandTaskExecutionContext extends TaskExecutionContext {
-
+    private static String DEFAULT_APP_NAME = "app";
     // the appName
     private String appName;
 
@@ -55,4 +56,18 @@ public class CommandTaskExecutionContext extends TaskExecutionContext {
     // transient
     @JsonIgnore private transient Process process;
     @JsonIgnore private transient int processId;
+
+    public void setAppName(String appName) {
+        if (StringUtils.isBlank(appName)) {
+            return;
+        }
+        this.appName = appName;
+    }
+
+    public String getAppName() {
+        if (this.appName != null) {
+            return this.appName;
+        }
+        return DEFAULT_APP_NAME + "-" + taskID;
+    }
 }

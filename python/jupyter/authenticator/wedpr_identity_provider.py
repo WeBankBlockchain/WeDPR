@@ -29,12 +29,12 @@ class WeDPRIdentityProvider(IdentityProvider):
 
     @default("auth_secret")
     def _auth_secret_default(self):
-        secret_file = os.path.abspath(
-            os.path.expanduser(self.auth_secret_file))
+        secret_file = self.auth_secret_file
         if os.path.exists(secret_file):
             self.log.info(f"init auth secret, load from: {secret_file}")
             with open(secret_file) as f:
                 return f.read().strip()
+        self.log.warn(f"init auth secret failed, the securet file not defined")
         return None
 
     def _get_token_from_header(self, handler: web.RequestHandler):

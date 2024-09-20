@@ -101,10 +101,10 @@ public class JupyterInfoDO extends TimeRange {
         if (this.jupyterSetting == null) {
             return;
         }
+        String accessHost = (this.getAccessEntry().split(":")[0]);
         this.jupyterAccessUrl =
                 Common.getUrl(
                         String.format(
-                                "%s:%s/lab?",
-                                this.getAccessEntry(), this.jupyterSetting.getListenPort()));
+                                "%s:%s/lab?", accessHost, this.jupyterSetting.getListenPort()));
     }
 }

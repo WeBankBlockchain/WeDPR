@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.components.task.plugin.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webank.wedpr.core.protocol.task.TaskResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CommandTaskResponse extends TaskResponse {
     private int processId;
-    private Process process;
+    // Note: the process can't been serialized
+    @JsonIgnore private Process process;
     private Integer exitCode;
 
     public CommandTaskResponse(String taskID) {

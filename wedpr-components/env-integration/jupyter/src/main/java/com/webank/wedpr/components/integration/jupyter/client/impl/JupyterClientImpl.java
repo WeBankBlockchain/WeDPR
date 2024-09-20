@@ -28,10 +28,7 @@ import com.webank.wedpr.core.protocol.task.ShellParameters;
 import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
 import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.core.protocol.task.TaskType;
-import com.webank.wedpr.core.utils.BaseResponseFactory;
-import com.webank.wedpr.core.utils.ShellConstant;
-import com.webank.wedpr.core.utils.WeDPRException;
-import com.webank.wedpr.core.utils.WeDPRResponseFactory;
+import com.webank.wedpr.core.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +70,7 @@ public class JupyterClientImpl implements JupyterClient {
                 responseFactory);
     }
 
-    protected TaskResponse submitTask(String method, JupyterInfoDO jupyterInfoDO, String code)
+    protected WeDPRResponse submitTask(String method, JupyterInfoDO jupyterInfoDO, String code)
             throws Exception {
         logger.info("Submit code to: {}", jupyterInfoDO.getAccessEntry());
         HttpClientImpl httpClient = generateHttpClient(jupyterInfoDO.getAccessEntry());
@@ -83,16 +80,22 @@ public class JupyterClientImpl implements JupyterClient {
         ShellParameters shellParameters = new ShellParameters(code);
         taskRequest.setTaskParameters(shellParameters.serialize());
         taskRequest.setParameterMap(JupyterClient.generateParamMap(jupyterInfoDO));
-        TaskResponse response = (TaskResponse) httpClient.executePost(taskRequest);
+        WeDPRResponse response = (WeDPRResponse) httpClient.executePost(taskRequest);
         if (response != null && response.statusOk()) {
-            logger.info(
-                    "submitTask for method {} success, taskID: {}, jupyterInfo: {}, code: {}, response: {}",
-                    method,
-                    taskRequest.getTaskID(),
-                    jupyterInfoDO.toString(),
-                    code,
-                    response);
-            return response;
+            // Note: here can't convert Object to TaskResponse directly
+            TaskResponse taskResponse =
+                    ObjectMapperFactory.getObjectMapper()
+                            .convertValue(response.getData(), TaskResponse.class);
+            if (taskResponse != null && taskResponse.statusOk()) {
+                logger.info(
+                        "submitTask for method {} success, taskID: {}, jupyterInfo: {}, code: {}, response: {}",
+                        method,
+                        taskRequest.getTaskID(),
+                        jupyterInfoDO.toString(),
+                        code,
+                        response);
+                return response;
+            }
         }
         logger.error(
                 "submitTask for method {} failed, taskID: {}, jupyterInfo: {}, code: {}, response: {}",
@@ -113,7 +116,7 @@ public class JupyterClientImpl implements JupyterClient {
     }
 
     @Override
-    public TaskResponse create(JupyterInfoDO jupyterInfo) throws Exception {
+    public WeDPRResponse create(JupyterInfoDO jupyterInfo) throws Exception {
         // create user and start jupyter
         String code =
                 getCodeTemplate(WeDPRCommonConfig.getCodeTemplateKeyCreateUser(), true)
@@ -124,7 +127,7 @@ public class JupyterClientImpl implements JupyterClient {
     }
 
     @Override
-    public TaskResponse start(JupyterInfoDO jupyterInfo) throws Exception {
+    public WeDPRResponse start(JupyterInfoDO jupyterInfo) throws Exception {
         // Note: should check the existence firstly
         List<String> commands = new ArrayList<>();
         commands.add(ShellConstant.BASH_HEADER);
@@ -146,7 +149,7 @@ public class JupyterClientImpl implements JupyterClient {
     }
 
     @Override
-    public TaskResponse stop(JupyterInfoDO jupyterInfo) throws Exception {
+    public WeDPRResponse stop(JupyterInfoDO jupyterInfo) throws Exception {
         List<String> commands = new ArrayList<>();
         commands.add(ShellConstant.BASH_HEADER);
         commands.add(ShellConstant.BASE_DIR_CMD);

@@ -128,7 +128,7 @@ public class Common {
 
     public static int getProcessId(Process process) throws WeDPRException {
         try {
-            Field field = process.getClass().getField(Constant.PID_FIELD);
+            Field field = process.getClass().getDeclaredField(Constant.PID_FIELD);
             field.setAccessible(true);
             return field.getInt(process);
         } catch (Exception e) {

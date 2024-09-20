@@ -17,17 +17,17 @@ package com.webank.wedpr.components.integration.jupyter.client;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
+import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.HashMap;
 import java.util.Map;
 
 public interface JupyterClient {
 
-    TaskResponse create(JupyterInfoDO jupyterInfo) throws Exception;
+    WeDPRResponse create(JupyterInfoDO jupyterInfo) throws Exception;
 
-    TaskResponse start(JupyterInfoDO jupyterInfo) throws Exception;
+    WeDPRResponse start(JupyterInfoDO jupyterInfo) throws Exception;
 
-    TaskResponse stop(JupyterInfoDO jupyterInfo) throws Exception;
+    WeDPRResponse stop(JupyterInfoDO jupyterInfo) throws Exception;
 
     static Map<String, String> generateParamMap(JupyterInfoDO jupyterInfoDO) {
         Map<String, String> paramMap = new HashMap<>();
@@ -53,6 +53,10 @@ public interface JupyterClient {
         paramMap.put(
                 JupyterConfig.getParamKeyJupyterProjectPath(),
                 jupyterInfoDO.getJupyterSetting().getNoteBookPath());
+        // the secret information
+        paramMap.put(
+                JupyterConfig.getParamKeyJupyterAuthSecretFilePath(),
+                JupyterConfig.getJupyterAuthSecretFilePath());
         return paramMap;
     }
 }

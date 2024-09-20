@@ -25,6 +25,9 @@ public class FileUtils {
             PosixFilePermissions.fromString("rwxr-xr-x");
 
     public static void createExecutableFile(@NotNull Path path) throws Exception {
+        if (Files.notExists(path.getParent())) {
+            Files.createDirectories(path.getParent());
+        }
         Files.createFile(path);
         Files.setPosixFilePermissions(path, EXECUTABLE_PERMISSION);
     }

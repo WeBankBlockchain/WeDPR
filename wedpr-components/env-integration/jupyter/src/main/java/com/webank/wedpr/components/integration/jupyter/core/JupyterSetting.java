@@ -26,8 +26,10 @@ public class JupyterSetting {
     private String jupyterBinary = JupyterConfig.getDefaultJupyterBinary();
     private String configPath = JupyterConfig.getDefaultJupyterConfigPath();
     private String listenIp = JupyterConfig.getDefaultJupyterListenIp();
-    private final Integer listenPort;
-    private final String noteBookPath;
+    private Integer listenPort;
+    private String noteBookPath;
+
+    public JupyterSetting() {}
 
     public JupyterSetting(String userName, Integer listenPort) {
         this.listenPort = listenPort;
