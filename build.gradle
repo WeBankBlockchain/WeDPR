@@ -117,7 +117,6 @@ allprojects {
             "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
-            "org.springframework.boot:spring-boot-starter-security:${springBootVersion}",
             "org.springframework.boot:spring-boot-actuator:${springBootVersion}",
     ]
 

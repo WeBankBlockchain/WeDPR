@@ -10,4 +10,5 @@ dependencies {
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
     compile project(":wedpr-components-hook")
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
 }

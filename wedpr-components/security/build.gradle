@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
     compile project(":wedpr-components-token-auth")
     compile project(":wedpr-components-user")
     compile project(":wedpr-components-api-credential")
