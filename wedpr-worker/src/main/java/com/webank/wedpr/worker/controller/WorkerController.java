@@ -14,8 +14,8 @@
  */
 package com.webank.wedpr.worker.controller;
 
-import com.webank.wedpr.components.task.plugin.api.TaskExecutionContext;
-import com.webank.wedpr.components.task.plugin.api.TaskResponse;
+import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
+import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.worker.service.ShellWorkerService;

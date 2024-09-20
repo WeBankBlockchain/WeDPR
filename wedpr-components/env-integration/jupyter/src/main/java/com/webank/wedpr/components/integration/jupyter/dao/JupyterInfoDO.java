@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.integration.jupyter.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.components.integration.jupyter.core.JupyterSetting;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterStatus;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import com.webank.wedpr.core.utils.TimeRange;
@@ -32,6 +33,7 @@ public class JupyterInfoDO extends TimeRange {
     private String agency;
     private String accessEntry;
     private String setting;
+    @JsonIgnore private JupyterSetting jupyterSetting;
     private String status;
     private String createTime;
     private String lastUpdateTime;
@@ -63,5 +65,23 @@ public class JupyterInfoDO extends TimeRange {
             return;
         }
         this.status = jupyterStatus.getStatus();
+    }
+
+    public String getSetting() {
+        return setting;
+    }
+
+    public void setSetting(String setting) {
+        this.setting = setting;
+        this.jupyterSetting = JupyterSetting.deserialize(setting);
+    }
+
+    public JupyterSetting getJupyterSetting() {
+        return jupyterSetting;
+    }
+
+    public void setJupyterSetting(JupyterSetting jupyterSetting) {
+        this.jupyterSetting = jupyterSetting;
+        this.setting = jupyterSetting.serialize();
     }
 }

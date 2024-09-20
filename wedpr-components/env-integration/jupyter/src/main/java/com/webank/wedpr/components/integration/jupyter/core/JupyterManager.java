@@ -19,7 +19,6 @@ import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.WeDPRException;
-import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +33,17 @@ public class JupyterManager {
         this.jupyterMapper = jupyterMapper;
     }
 
-    protected List<String> getJupyterEntryPoints() {
-        List<String> entryPoints =
-                Arrays.asList(
+    protected JupyterHostSetting fetchJupyterHostSettings() throws Exception {
+        JupyterHostSetting jupyterHostSetting =
+                JupyterHostSetting.deserialize(
                         this.sysConfigMapper
-                                .queryConfig(JupyterConfig.getJupyterHostConfiguatinonKey())
-                                .getConfigValue()
-                                .split(JupyterConfig.getJupyterEntrypointSplitter()));
-        // TODO: check the entryPoints
-        entryPoints.removeIf(s -> s.trim().isEmpty());
-        return entryPoints;
+                                .queryConfig(JupyterConfig.getJupyterHostConfigurationKey())
+                                .getConfigValue());
+        if (jupyterHostSetting == null) {
+            return null;
+        }
+        jupyterHostSetting.setJupyterMapper(jupyterMapper);
+        return jupyterHostSetting;
     }
 
     protected List<JupyterInfoDO> queryJupyter(String user, String agency, String id) {
@@ -112,39 +112,15 @@ public class JupyterManager {
                             + " has already allocated the jupyter, one user can only occupy one jupyter-notebook!");
         }
         // try to allocate the jupyter for new user
-        List<String> accessEntryPoints = getJupyterEntryPoints();
-        if (accessEntryPoints.isEmpty()) {
+        JupyterHostSetting jupyterHostSetting = fetchJupyterHostSettings();
+        if (jupyterHostSetting == null) {
             throw new WeDPRException("No jupyter resource now!");
         }
-        // query the allocated jupyter
-        JupyterInfoDO condition = new JupyterInfoDO(true);
-        String allocatedEntrypoint = null;
-        for (String entrypoint : accessEntryPoints) {
-            condition.setAccessEntry(entrypoint);
-            Integer allocatedCount = jupyterMapper.queryJupyterRecordCount(condition);
-            if (allocatedCount >= JupyterConfig.getMaxJupyterPerHost()) {
-                continue;
-            } else {
-                allocatedEntrypoint = entrypoint;
-            }
-        }
-        if (allocatedEntrypoint == null) {
-            throw new WeDPRException("Insufficient jupyter resources!");
-        }
-        logger.info(
-                "allocateJupyter, user: {}, agency: {}, entrypoint: {}",
-                user,
-                agency,
-                allocatedEntrypoint);
-        // insert the information
-        JupyterInfoDO allocatedJupyter = new JupyterInfoDO();
-        allocatedJupyter.setAgency(agency);
-        allocatedJupyter.setOwner(user);
-        allocatedJupyter.setAccessEntry(allocatedEntrypoint);
+        // try to obtain the jupyter
+        // Note: allocateJupyter will throw exception when allocate failed
+        JupyterInfoDO allocatedJupyter = jupyterHostSetting.allocateJupyter(user, agency);
+        // TODO: allocate the host
 
-        // TODO: set the settings
-        allocatedJupyter.setStatus(JupyterStatus.Ready.getStatus());
-        jupyterMapper.insertJupyterInfo(allocatedJupyter);
         return allocatedJupyter.getId();
     }
 }

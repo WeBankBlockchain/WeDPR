@@ -15,8 +15,8 @@
 package com.webank.wedpr.components.task.plugin.shell;
 
 import com.webank.wedpr.components.task.plugin.api.TaskBuilder;
-import com.webank.wedpr.components.task.plugin.api.TaskExecutionContext;
 import com.webank.wedpr.components.task.plugin.api.TaskInterface;
+import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
 
 public class ShellTaskBuilder implements TaskBuilder {
     @Override

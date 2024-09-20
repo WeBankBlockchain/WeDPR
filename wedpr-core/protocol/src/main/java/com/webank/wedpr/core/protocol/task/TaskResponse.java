@@ -12,7 +12,7 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.task.plugin.api;
+package com.webank.wedpr.core.protocol.task;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

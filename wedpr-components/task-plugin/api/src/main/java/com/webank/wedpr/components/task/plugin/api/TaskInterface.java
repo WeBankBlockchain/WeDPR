@@ -14,6 +14,8 @@
  */
 package com.webank.wedpr.components.task.plugin.api;
 
+import com.webank.wedpr.core.protocol.task.TaskResponse;
+
 public interface TaskInterface {
     /** init the task */
     public abstract void init();

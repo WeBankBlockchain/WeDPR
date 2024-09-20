@@ -16,18 +16,31 @@
 package com.webank.wedpr.components.integration.jupyter.core;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.core.utils.Common;
 
 public class JupyterConfig {
 
     private static Integer MAX_JUPYTER_PER_HOST =
             WeDPRConfig.apply("wedpr.jupyter.max_count_per_host", 3);
-    private static String JUPYTER_HOST_CONFIGUATINON_KEY =
+    private static String JUPYTER_HOST_CONFIGURATION_KEY =
             WeDPRConfig.apply("wedpr.jupyter.host_configuration_key", "jupyter_entrypoints");
     private static String JUPYTER_ENTRYPOINT_SPLITTER = ";";
     private static String JUPYTER_MODULE = "jupyter-integration";
+    private static String DEFAULT_JUPYTER_BINARY =
+            WeDPRConfig.apply("wedpr.jupyter.binary", "jupyter-lab");
+    private static String DEFAULT_JUPYTER_CONFIG_PATH =
+            WeDPRConfig.apply(
+                    "wedpr.juypter.config.path", "/home/share/.jupyter/jupyter_lab_config.py");
+    private static String DEFAULT_JUPYTER_LISTEN_IP =
+            WeDPRConfig.apply("wedpr.jupyter.listen.ip", "0.0.0.0");
+    private static String DEFAULT_JUPYTER_PROJECT_DIR =
+            WeDPRConfig.apply("wedpr.jupyter.project.dir", "project");
+    private static Integer DEFAULT_JUPYTER_START_PORT =
+            WeDPRConfig.apply("wedpr.jupyter.jupyter.default.startPort", 14001);
+    private static String DEFAULT_HOME_DIR = "/home";
 
-    public static String getJupyterHostConfiguatinonKey() {
-        return JUPYTER_HOST_CONFIGUATINON_KEY;
+    public static String getJupyterHostConfigurationKey() {
+        return JUPYTER_HOST_CONFIGURATION_KEY;
     }
 
     public static Integer getMaxJupyterPerHost() {
@@ -40,5 +53,30 @@ public class JupyterConfig {
 
     public static String getJupyterModule() {
         return JUPYTER_MODULE;
+    }
+
+    public static String getDefaultJupyterBinary() {
+        return DEFAULT_JUPYTER_BINARY;
+    }
+
+    public static String getDefaultJupyterConfigPath() {
+        return DEFAULT_JUPYTER_CONFIG_PATH;
+    }
+
+    public static String getDefaultJupyterListenIp() {
+        return DEFAULT_JUPYTER_LISTEN_IP;
+    }
+
+    public static String getDefaultJupyterProjectDir() {
+        return DEFAULT_JUPYTER_PROJECT_DIR;
+    }
+
+    public static String getUserJupyterProjectPath(String userName) {
+        return Common.joinPath(
+                Common.joinPath(DEFAULT_HOME_DIR, userName), getDefaultJupyterProjectDir());
+    }
+
+    public static Integer getDefaultJupyterStartPort() {
+        return DEFAULT_JUPYTER_START_PORT;
     }
 }
