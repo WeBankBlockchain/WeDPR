@@ -38,7 +38,7 @@ class WeDPRIdentityProvider(IdentityProvider):
         return None
 
     def _get_token_from_header(self, handler: web.RequestHandler):
-       try:
+        try:
             token = handler.request.headers.get(
                 WeDPRIdentityProvider.AUTH_TOKEN_FIELD, "")
             self.log.info(f"#### _get_token_from_header: {token}")
@@ -48,7 +48,8 @@ class WeDPRIdentityProvider(IdentityProvider):
 
     def _get_token_from_cookie(self, handler: web.RequestHandler):
         try:
-            token = handler.get_cookie(WeDPRIdentityProvider.AUTH_TOKEN_FIELD)
+            token = handler.get_secure_cookie(
+                WeDPRIdentityProvider.AUTH_TOKEN_FIELD)
             self.log.info(f"#### _get_token_from_cookie: {token}")
         except KeyError as e:
             token = None
@@ -57,12 +58,13 @@ class WeDPRIdentityProvider(IdentityProvider):
     def _get_token_from_param(self, handler: web.RequestHandler):
         token = None
         try:
-            token = handler.get_query_argument(WeDPRIdentityProvider.AUTH_TOKEN_FIELD)
+            token = handler.get_query_argument(
+                WeDPRIdentityProvider.AUTH_TOKEN_FIELD)
             self.log.info(f"#### _get_token_from_param: {token}")
         except Exception as e:
             token = None
         return token
-        
+
     def _get_token(self, handler: web.RequestHandler):
         token = self._get_token_from_param(handler)
         if token is None:
@@ -83,9 +85,11 @@ class WeDPRIdentityProvider(IdentityProvider):
             secure_cookie = handler.request.protocol == "https"
         if secure_cookie:
             cookie_options.setdefault("secure", True)
-        cookie_options.setdefault("path", handler.base_url)  # type:ignore[attr-defined]
+        # type:ignore[attr-defined]
+        cookie_options.setdefault("path", handler.base_url)
         cookie_name = self.get_cookie_name(handler)
-        handler.set_secure_cookie(WeDPRIdentityProvider.AUTH_TOKEN_FIELD, token, **cookie_options)
+        handler.set_secure_cookie(
+            WeDPRIdentityProvider.AUTH_TOKEN_FIELD, token, **cookie_options)
 
     def get_user(self, handler: web.RequestHandler):
         """Authenticate with jwt token, and return the username if login is successful.
