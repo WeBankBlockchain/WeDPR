@@ -19,6 +19,7 @@ import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionCon
 import com.webank.wedpr.components.task.plugin.api.shell.ShellBuilder;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellBuilderFactory;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellCommandExecutor;
+import com.webank.wedpr.core.protocol.task.ShellParameters;
 import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
 import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.core.utils.WeDPRException;

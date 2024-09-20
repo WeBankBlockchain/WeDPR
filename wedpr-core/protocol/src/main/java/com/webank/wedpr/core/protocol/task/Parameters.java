@@ -12,10 +12,10 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.task.plugin.api.parameters;
+package com.webank.wedpr.core.protocol.task;
 
 /** interface used to check and handle the parameter */
 public interface Parameters {
     // check the parameter
-    public void checkParameters();
+    void checkParameters();
 }

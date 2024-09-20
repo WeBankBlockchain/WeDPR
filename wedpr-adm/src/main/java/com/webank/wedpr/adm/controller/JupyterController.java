@@ -162,7 +162,11 @@ public class JupyterController {
         try {
             UserToken userToken = TokenUtils.getLoginUser(request);
             boolean success =
-                    this.jupyterService.destroy(userToken.isAdmin(), userToken.getUsername(), id);
+                    this.jupyterService.destroy(
+                            userToken.isAdmin(),
+                            userToken.getUsername(),
+                            WeDPRCommonConfig.getAgency(),
+                            id);
             WeDPRResponse response =
                     new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
             response.setData(success);

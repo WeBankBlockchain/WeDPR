@@ -164,6 +164,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
+    @SneakyThrows(Exception.class)
     private void authenticationExceptionAndReturn(HttpServletResponse response, String errorMessage)
             throws IOException {
         String wedprResponse = new WeDPRResponse(Constant.WEDPR_FAILED, errorMessage).serialize();

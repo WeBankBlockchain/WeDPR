@@ -1,12 +1,16 @@
 -- the Wizard algorithm template
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_algorithm_templates", '{"version":"1.0","templates":[{"name":"PSI","title":"数据对齐","detail":"","version":"1.0"},{"name":"XGB_TRAINING","title":"SecureLGBM训练","detail":"","version":"1.0"},{"name":"XGB_PREDICTING","title":"SecureLGBM预测","detail":"","version":"1.0"}]}');
 
+
+-- the jupyter related host settings
+-- insert into `wedpr_config_table`(`config_key`, `config_value`) values("jupyter_entrypoints", '{"hostSettings":[{"entryPoint":"192.168.0.238","maxJupyterCount":5,"jupyterStartPort":14000}]}');
+
 -- the  jupyter related code template
 -- command to create user
-insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_create_user", 'useradd -m ${user_name} -p ${user_pass}');
+insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_create_user", 'useradd -m ${user_name}');
 -- command to start jupyter
-insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_start_jupyter", 'su ${user_name} && mkdir -p  ~/project && jupyter-lab --config=/home/share/.jupyter/jupyter_lab_config.py --ip ${listen_ip} --port ${listen_port} --notebook-dir ~/project');
-insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_stop_jupyter", 'ps aux | grep -i jupyter-lab | grep -i ${user_name} | grep -v grep | awk -F\' \' \'{print $2}\' | xargs kill');
+insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_start_jupyter", 'su ${user_name} && mkdir -p  ${jupyter_project_path} && nohup ${jupyter_binary} --config=${jupyter_config_path} --ip ${listen_ip} --port ${listen_port} --notebook-dir ${jupyter_project_path} >> ${user_name}.jupyter.out 2>&1 &');
+insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_get_jupyter_pid", 'ps aux | grep -i ${jupyter_binary} | grep -i ${jupyter_project_path} | grep -v grep | awk -F\' \' \'{print $2}\'');
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_delete_user", 'userdel -m ${user_name}');
 
 

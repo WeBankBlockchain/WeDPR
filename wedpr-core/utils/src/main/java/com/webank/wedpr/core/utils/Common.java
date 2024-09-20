@@ -151,4 +151,11 @@ public class Common {
     public static String generateRandomKey() {
         return Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
     }
+
+    public static String getUrl(String url) {
+        if (url.startsWith("http://")) {
+            return url;
+        }
+        return String.format("http://%s", url);
+    }
 }

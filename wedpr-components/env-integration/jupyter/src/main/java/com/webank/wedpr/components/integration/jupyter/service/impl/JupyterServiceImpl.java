@@ -81,12 +81,12 @@ public class JupyterServiceImpl implements JupyterService {
      * @return success/failed
      */
     @Override
-    public boolean destroy(boolean admin, String currentUser, String id) {
+    public boolean destroy(boolean admin, String currentUser, String agency, String id) {
         // the admin can delete all jupyter
         if (admin) {
-            return jupyterManager.deleteJupyter(null, id) > 0 ? true : false;
+            return jupyterManager.deleteJupyter(null, null, id) > 0;
         }
-        return jupyterMapper.deleteJupyterInfo(currentUser, id) > 0 ? true : false;
+        return jupyterMapper.deleteJupyterInfo(currentUser, id) > 0;
     }
 
     /**

@@ -18,6 +18,7 @@ package com.webank.wedpr.components.integration.jupyter.core;
 import org.apache.commons.lang3.StringUtils;
 
 public enum JupyterStatus {
+    Allocating("Allocating"),
     Ready("Ready"),
     Running("Running"),
     OpenFailed("OpenFailed"),

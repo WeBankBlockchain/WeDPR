@@ -80,7 +80,7 @@ public class JupyterHostSetting {
         allocatedJupyter.setOwner(userName);
         allocatedJupyter.setAccessEntry(allocatedHost.getEntryPoint());
         allocatedJupyter.setJupyterSetting(jupyterSetting);
-        allocatedJupyter.setStatus(JupyterStatus.Ready.getStatus());
+        allocatedJupyter.setStatus(JupyterStatus.Allocating.getStatus());
         jupyterMapper.insertJupyterInfo(allocatedJupyter);
         return allocatedJupyter;
     }
@@ -90,6 +90,10 @@ public class JupyterHostSetting {
             return;
         }
         this.hostSettings = hostSettings;
+    }
+
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 
     public static JupyterHostSetting deserialize(String data) throws Exception {

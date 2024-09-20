@@ -60,5 +60,5 @@ public interface JupyterService {
      * @param id specify the jupyter to destory
      * @return success/failed
      */
-    public abstract boolean destroy(boolean admin, String currentUser, String id);
+    public abstract boolean destroy(boolean admin, String currentUser, String agency, String id);
 }

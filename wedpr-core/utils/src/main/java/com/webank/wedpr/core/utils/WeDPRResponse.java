@@ -14,6 +14,8 @@
  */
 package com.webank.wedpr.core.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class WeDPRResponse implements BaseResponse {
     private Integer code;
     private String msg;
@@ -64,6 +66,13 @@ public class WeDPRResponse implements BaseResponse {
     @Override
     public String serialize() throws Exception {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
+    }
+
+    public static WeDPRResponse deserialize(String data) throws Exception {
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, WeDPRResponse.class);
     }
 
     @Override

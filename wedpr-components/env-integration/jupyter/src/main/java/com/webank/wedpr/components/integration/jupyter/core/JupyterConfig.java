@@ -17,6 +17,7 @@ package com.webank.wedpr.components.integration.jupyter.core;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
 import com.webank.wedpr.core.utils.Common;
+import org.apache.http.client.config.RequestConfig;
 
 public class JupyterConfig {
 
@@ -55,6 +56,17 @@ public class JupyterConfig {
             WeDPRConfig.apply(
                     "wedpr.code.template.key.wedpr_get_jupyter_pid", "wedpr_get_jupyter_pid");
     //// the key to store the jupyter code template
+
+    /// the jupyter worker client config ///
+    private static final Integer CONNECTION_REQUEST_TIME_OUT =
+            WeDPRConfig.apply("wedpr.jupyter.connect.request.timeout.ms", 10000);
+    private static final Integer CONNECTION_TIME_OUT =
+            WeDPRConfig.apply("wedpr.jupyter.connect.timeout.ms", 5000);
+    private static final Integer REQUEST_TIMEOUT =
+            WeDPRConfig.apply("wedpr.jupyter.request.timeout.ms", 60000);
+    private static final Integer MAX_TOTAL_CONNECTION =
+            WeDPRConfig.apply("wedpr.jupyter.max.total.connection", 5);
+    /// the jupyter worker client config ///
 
     private static String DEFAULT_HOME_DIR = "/home";
 
@@ -117,5 +129,17 @@ public class JupyterConfig {
 
     public static String getCodeTemplateKeyGetJupyterPid() {
         return CODE_TEMPLATE_KEY_GET_JUPYTER_PID;
+    }
+
+    public static RequestConfig buildConfig() {
+        return RequestConfig.custom()
+                .setConnectionRequestTimeout(CONNECTION_REQUEST_TIME_OUT)
+                .setConnectTimeout(CONNECTION_TIME_OUT)
+                .setSocketTimeout(REQUEST_TIMEOUT)
+                .build();
+    }
+
+    public static Integer getMaxTotalConnection() {
+        return MAX_TOTAL_CONNECTION;
     }
 }

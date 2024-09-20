@@ -12,9 +12,8 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.task.plugin.shell;
+package com.webank.wedpr.core.protocol.task;
 
-import com.webank.wedpr.components.task.plugin.api.parameters.Parameters;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.Getter;
@@ -27,10 +26,20 @@ public class ShellParameters implements Parameters {
     // the script code
     private String code;
 
+    public ShellParameters() {}
+
+    public ShellParameters(String code) {
+        this.code = code;
+    }
+
     @Override
     // check the parameter
     public void checkParameters() {
         Common.requireNonEmpty("code", this.code);
+    }
+
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 
     public static ShellParameters deserialize(String parameter) throws Exception {

@@ -47,6 +47,6 @@ public class JupyterUserCallback implements UserHook.UserCallback {
         if (StringUtils.isBlank(user)) {
             throw new WeDPRException("Delete jupyter failed, must specify the jupyter user");
         }
-        this.jupyterManager.deleteJupyter(user, null);
+        this.jupyterManager.deleteJupyter(user, WeDPRCommonConfig.getAgency(), null);
     }
 }

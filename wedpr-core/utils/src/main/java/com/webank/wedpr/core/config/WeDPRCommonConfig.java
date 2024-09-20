@@ -57,6 +57,8 @@ public class WeDPRCommonConfig {
 
     private static String WEDPR_WORKER_API_PATH =
             WeDPRConfig.apply("wedpr.worker.api.path", "/api/wedpr/v3/worker");
+    private static String WEDPR_WORKER_SUBMIT_TASK_METHOD =
+            WeDPRConfig.apply("wedpr.worker.api.method.submit", "submit");
 
     private static String SHELL_CODE_CONNECTOR = " && ";
 
@@ -138,5 +140,9 @@ public class WeDPRCommonConfig {
 
     public static String getWedprWorkerApiPath() {
         return WEDPR_WORKER_API_PATH;
+    }
+
+    public static String getWedprWorkerSubmitTaskMethod() {
+        return WEDPR_WORKER_SUBMIT_TASK_METHOD;
     }
 }
