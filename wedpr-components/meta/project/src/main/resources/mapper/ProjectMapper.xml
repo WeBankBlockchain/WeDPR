@@ -60,9 +60,6 @@
                 </if>
             </when>
         </choose>
-        <if test="condition.limitItems != -1 and condition.limitItems !=''">
-            limit #{condition.limitItems}
-        </if>
     </select>
 
     <insert id="insertProjectInfo" parameterType="com.webank.wedpr.components.project.dao.ProjectDO">
@@ -153,9 +150,6 @@
             </when>
         </choose>
         order by `last_update_time` desc
-        <if test="condition.limitItems != -1 and condition.limitItems !=''">
-            limit #{condition.limitItems}
-        </if>
     </select>
 
     <select id="queryProjectCount" resultType="java.lang.Long">
@@ -252,9 +246,6 @@
                 </foreach>
         </if>
         order by `last_update_time` desc
-        <if test="condition.limitItems != -1 and condition.limitItems !=''">
-            limit #{condition.limitItems}
-        </if>
     </select>
 
     <select id="queryJobsByDatasetID" resultMap="JobDOMap">

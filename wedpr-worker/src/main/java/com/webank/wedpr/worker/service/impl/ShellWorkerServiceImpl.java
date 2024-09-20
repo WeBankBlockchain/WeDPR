@@ -14,8 +14,8 @@
  */
 package com.webank.wedpr.worker.service.impl;
 
+import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.task.plugin.shell.ShellTask;
-import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
 import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.worker.service.ShellWorkerService;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class ShellWorkerServiceImpl implements ShellWorkerService {
     private static final Logger logger = LoggerFactory.getLogger(ShellWorkerServiceImpl.class);
 
     @Override
-    public TaskResponse submit(TaskExecutionContext context) {
+    public TaskResponse submit(CommandTaskExecutionContext context) {
         logger.info("Submit task: {}", context.toString());
         ShellTask shellTask = new ShellTask(context);
         return shellTask.run();

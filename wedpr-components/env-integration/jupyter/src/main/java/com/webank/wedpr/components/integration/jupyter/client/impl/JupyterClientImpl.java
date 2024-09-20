@@ -21,6 +21,7 @@ import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
+import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.protocol.task.ShellParameters;
@@ -76,7 +77,7 @@ public class JupyterClientImpl implements JupyterClient {
             throws Exception {
         logger.info("Submit code to: {}", jupyterInfoDO.getAccessEntry());
         HttpClientImpl httpClient = generateHttpClient(jupyterInfoDO.getAccessEntry());
-        TaskExecutionContext taskRequest = new TaskExecutionContext();
+        TaskExecutionContext taskRequest = new CommandTaskExecutionContext();
         taskRequest.setTaskID(WeDPRUuidGenerator.generateID());
         taskRequest.setTaskType(TaskType.SHELL.getType());
         ShellParameters shellParameters = new ShellParameters(code);

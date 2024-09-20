@@ -8,4 +8,5 @@ dependencies{
     compile project(":wedpr-components-sys-config")
     compile project(":wedpr-components-http-client")
     compile project(":wedpr-components-hook")
+    compile project(":wedpr-components-task-plugin-api")
 }

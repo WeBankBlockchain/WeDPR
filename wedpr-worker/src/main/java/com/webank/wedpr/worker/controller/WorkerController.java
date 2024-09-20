@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.worker.controller;
 
-import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
+import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
@@ -40,7 +40,8 @@ public class WorkerController {
     // create the authorization request
     @PostMapping("/submit")
     public WeDPRResponse submit(
-            @RequestBody TaskExecutionContext taskExecutionContext, HttpServletRequest request) {
+            @RequestBody CommandTaskExecutionContext taskExecutionContext,
+            HttpServletRequest request) {
         try {
             TaskResponse taskResult = shellWorkerService.submit(taskExecutionContext);
             WeDPRResponse response =
