@@ -17,8 +17,8 @@ package com.webank.wedpr.components.scheduler.executor.impl.ml.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.components.http.client.model.BaseResponse;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
+import com.webank.wedpr.core.utils.BaseResponse;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 

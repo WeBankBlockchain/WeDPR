@@ -17,6 +17,7 @@ package com.webank.wedpr.components.http.client.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.core.utils.BaseResponse;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.SneakyThrows;
 

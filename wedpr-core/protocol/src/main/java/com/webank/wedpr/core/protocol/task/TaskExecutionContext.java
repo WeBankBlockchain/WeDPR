@@ -15,7 +15,8 @@
 package com.webank.wedpr.core.protocol.task;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.io.Serializable;
+import com.webank.wedpr.core.utils.BaseRequest;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TaskExecutionContext implements Serializable {
+public class TaskExecutionContext implements BaseRequest {
     private static final long serialVersionUID = -1L;
 
     // the taskID
@@ -53,5 +54,10 @@ public class TaskExecutionContext implements Serializable {
             return;
         }
         this.startTime = startTime;
+    }
+
+    @Override
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 }

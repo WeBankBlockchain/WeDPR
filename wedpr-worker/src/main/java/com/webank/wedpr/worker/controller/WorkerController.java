@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        path = Constant.WEDPR_API_PREFIX + "/worker/shell",
+        path = Constant.WEDPR_API_PREFIX + "/worker",
         produces = {"application/json"})
 public class WorkerController {
     private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);

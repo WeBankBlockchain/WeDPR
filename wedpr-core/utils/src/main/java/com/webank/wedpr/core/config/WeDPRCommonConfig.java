@@ -39,6 +39,27 @@ public class WeDPRCommonConfig {
     private static final Integer REPORT_TIMEOUT =
             WeDPRConfig.apply("wedpr.report.timeout.seconds", 30);
 
+    //// the param key configuration
+    private static String PARAM_KEY_USER_NAME =
+            WeDPRConfig.apply("wedpr.param.key.user", "user_name");
+    private static String PARAM_KEY_LISTEN_IP =
+            WeDPRConfig.apply("wedpr.param.key.listen_ip", "listen_ip");
+    private static String PARAM_KEY_LISTEN_PORT =
+            WeDPRConfig.apply("wedpr.param.key.listen_port", "listen_port");
+    //// the param key configuration
+
+    //// the key to store the jupyter code template
+    private static String CODE_TEMPLATE_KEY_CREATE_USER =
+            WeDPRConfig.apply("wedpr.code.template.key.create_user", "wedpr_create_user");
+    private static String CODE_TEMPLATE_KEY_DELETE_USER =
+            WeDPRConfig.apply("wedpr.code.template.key.delete", "wedpr_delete_user");
+    //// the key to store the jupyter code template
+
+    private static String WEDPR_WORKER_API_PATH =
+            WeDPRConfig.apply("wedpr.worker.api.path", "/api/wedpr/v3/worker");
+
+    private static String SHELL_CODE_CONNECTOR = " && ";
+
     public static String getAgency() {
         return AGENCY;
     }
@@ -89,5 +110,33 @@ public class WeDPRCommonConfig {
 
     public static Integer getReportTimeout() {
         return REPORT_TIMEOUT;
+    }
+
+    public static String getParamKeyUserName() {
+        return PARAM_KEY_USER_NAME;
+    }
+
+    public static String getParamKeyListenIp() {
+        return PARAM_KEY_LISTEN_IP;
+    }
+
+    public static String getParamKeyListenPort() {
+        return PARAM_KEY_LISTEN_PORT;
+    }
+
+    public static String getCodeTemplateKeyCreateUser() {
+        return CODE_TEMPLATE_KEY_CREATE_USER;
+    }
+
+    public static String getCodeTemplateKeyDeleteUser() {
+        return CODE_TEMPLATE_KEY_DELETE_USER;
+    }
+
+    public static String getShellCodeConnector() {
+        return SHELL_CODE_CONNECTOR;
+    }
+
+    public static String getWedprWorkerApiPath() {
+        return WEDPR_WORKER_API_PATH;
     }
 }

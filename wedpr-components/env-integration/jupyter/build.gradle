@@ -6,5 +6,6 @@ dependencies{
     compile project(":wedpr-components-mybatis")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-sys-config")
+    compile project(":wedpr-components-http-client")
     compile project(":wedpr-components-hook")
 }

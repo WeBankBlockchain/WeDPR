@@ -14,6 +14,8 @@
  */
 package com.webank.wedpr.core.protocol.task;
 
+import com.webank.wedpr.core.utils.BaseResponse;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +23,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskResponse {
+public class TaskResponse implements BaseResponse {
     protected String taskID;
     protected Boolean success;
     protected String resultDetail;
 
     public TaskResponse(String taskID) {
         this.taskID = taskID;
+    }
+
+    @Override
+    public Boolean statusOk() {
+        return success;
+    }
+
+    @Override
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 }

@@ -13,10 +13,8 @@
  *
  */
 
-package com.webank.wedpr.components.http.client.model;
+package com.webank.wedpr.core.utils;
 
-public interface BaseResponse {
-    public abstract Boolean statusOk();
-
+public interface BaseRequest {
     public abstract String serialize() throws Exception;
 }

@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.http.client;
 
-import com.webank.wedpr.components.http.client.model.BaseRequest;
-import com.webank.wedpr.components.http.client.model.BaseResponse;
-import com.webank.wedpr.components.http.client.model.BaseResponseFactory;
+import com.webank.wedpr.core.utils.BaseRequest;
+import com.webank.wedpr.core.utils.BaseResponse;
+import com.webank.wedpr.core.utils.BaseResponseFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;

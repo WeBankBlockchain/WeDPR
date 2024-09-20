@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.task.plugin.api.shell;
+package com.webank.wedpr.core.utils;
 
 public class ShellConstant {
     public static String BASE_DIR_CMD = "BASEDIR=$(cd `dirname $0`; pwd) && cd ${BASEDIR}";
@@ -24,7 +24,7 @@ public class ShellConstant {
     public static String CPU_QUOTA = "CPUQuota";
     public static String MEMORY_LIMIT = "MemoryLimit";
     public static String INFINITY = "infinity";
+    public static String SHELL_POSTFIX = ".sh";
 
     public static String BASH_HEADER = "#!/bin/bash";
-    public static String SHELL_POSTFIX = ".sh";
 }

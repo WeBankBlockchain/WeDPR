@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.http.client.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.core.utils.BaseRequest;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.Random;
 
