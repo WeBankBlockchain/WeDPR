@@ -25,8 +25,8 @@ public class GenerateJupyterHostSetting {
         JupyterHostSetting.SingleHostSetting singleHostSetting =
                 new JupyterHostSetting.SingleHostSetting();
         // wedpr-0004
-        singleHostSetting.setEntryPoint("192.168.0.238");
-        singleHostSetting.setJupyterStartPort(14000);
+        singleHostSetting.setEntryPoint("192.168.0.238:14000");
+        singleHostSetting.setJupyterStartPort(14001);
         singleHostSetting.setMaxJupyterCount(5);
 
         List<JupyterHostSetting.SingleHostSetting> hosts = new ArrayList<>();

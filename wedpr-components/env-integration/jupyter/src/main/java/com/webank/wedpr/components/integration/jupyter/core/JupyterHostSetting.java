@@ -56,7 +56,8 @@ public class JupyterHostSetting {
         Integer listenPort = 0;
         for (SingleHostSetting host : hostSettings) {
             condition.setAccessEntry(host.getEntryPoint());
-            Integer allocatedCount = jupyterMapper.queryJupyterRecordCount(condition);
+            Integer count = jupyterMapper.queryJupyterRecordCount(condition);
+            Integer allocatedCount = (count != null ? count : 0);
             if (allocatedCount >= host.getMaxJupyterCount()) {
                 continue;
             } else {

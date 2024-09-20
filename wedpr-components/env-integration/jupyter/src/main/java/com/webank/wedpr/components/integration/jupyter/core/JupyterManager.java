@@ -153,7 +153,14 @@ public class JupyterManager {
         // try to obtain the jupyter
         // Note: allocateJupyter will throw exception when allocate failed
         JupyterInfoDO allocatedJupyter = jupyterHostSetting.allocateJupyter(user, agency);
-        this.jupyterClient.create(allocatedJupyter);
+        try {
+            this.jupyterClient.create(allocatedJupyter);
+        } catch (Exception e) {
+            // delete the record if start failed
+            this.jupyterMapper.deleteJupyterInfo(allocatedJupyter.getId(), user);
+            throw e;
+        }
+
         logger.info(
                 "Allocate the jupyter success, make it as ready, jupyterInfo: {}",
                 allocatedJupyter.toString());

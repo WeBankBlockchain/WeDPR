@@ -85,7 +85,7 @@
                     and `status` = #{condition.status}
                 </if>
                 <if test="condition.accessEntry!= null and condition.accessEntry !=''">
-                    and `accessEntry` = #{condition.accessEntry}
+                    and `access_entrypoint` = #{condition.accessEntry}
                 </if>
                 <if test="condition.startTime != null and condition.startTime  != ''">
                     <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
@@ -115,7 +115,7 @@
                     and `status` = #{condition.status}
                 </if>
                 <if test="condition.accessEntry!= null and condition.accessEntry !=''">
-                    and `accessEntry` = #{condition.accessEntry}
+                    and `access_entrypoint` = #{condition.accessEntry}
                 </if>
                 <if test="condition.startTime != null and condition.startTime  != ''">
                     <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
