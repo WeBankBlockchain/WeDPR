@@ -116,6 +116,12 @@
                 <if test="condition.applicantAgency != null and condition.applicantAgency !=''">
                     and `applicant_agency` like concat(#{condition.applicantAgency}, '%')
                 </if>
+                <if test="condition.currentApplyNode != null and condition.currentApplyNode !=''">
+                    and `current_auth_node` = #{condition.currentApplyNode}
+                </if>
+                <if test="condition.currentApplyNodeAgency != null and condition.currentApplyNodeAgency !=''">
+                    and `current_auth_node_agency` = #{condition.currentApplyNodeAgency}
+                </if>
                 <if test="condition.applyType != null and condition.applyType !=''">
                     and `apply_type` = #{condition.applyType}
                 </if>
