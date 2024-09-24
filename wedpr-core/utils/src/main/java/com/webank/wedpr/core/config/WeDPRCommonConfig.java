@@ -38,6 +38,7 @@ public class WeDPRCommonConfig {
             WeDPRConfig.apply("wedpr.auth.cache.expire.minutes", 30);
     private static final Integer REPORT_TIMEOUT =
             WeDPRConfig.apply("wedpr.report.timeout.seconds", 30);
+    private static final Integer REPORT_TIMEOUT_MS = REPORT_TIMEOUT * 1000;
 
     //// the param key configuration
     private static String PARAM_KEY_USER_NAME =
@@ -110,8 +111,8 @@ public class WeDPRCommonConfig {
         return AUTH_CACHE_EXPIRE_TIME;
     }
 
-    public static Integer getReportTimeout() {
-        return REPORT_TIMEOUT;
+    public static Integer getReportTimeoutMs() {
+        return REPORT_TIMEOUT_MS;
     }
 
     public static String getParamKeyUserName() {

@@ -96,7 +96,7 @@ public class TopicSubscriber implements CommandLineRunner {
                                 }
                                 configKeyList.add(configKey);
                             }
-                            response.setCode(Constant.WEDPR_FAILED);
+                            response.setCode(Constant.WEDPR_SUCCESS);
                             response.setMsg(Constant.WEDPR_SUCCESS_MSG);
                             response.setConfigKeyList(configKeyList);
                             responsePayload =
@@ -108,6 +108,11 @@ public class TopicSubscriber implements CommandLineRunner {
                             response.setMsg("handle error" + e.getMessage());
                         }
                         IMessage.IMessageHeader messageHeader = message.getHeader();
+                        logger.debug(
+                                "asyncSendSysConfigResponse, dstNode: {}, traceID: {}, data: {}",
+                                new String(messageHeader.getSrcNode()),
+                                messageHeader.getTraceID(),
+                                response.toString());
                         weDPRTransport.asyncSendResponse(
                                 messageHeader.getSrcNode(),
                                 messageHeader.getTraceID(),

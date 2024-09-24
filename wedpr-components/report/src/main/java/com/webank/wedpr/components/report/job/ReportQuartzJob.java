@@ -73,7 +73,7 @@ public class ReportQuartzJob implements Job {
                 TransportComponentEnum.REPORT.name(),
                 payload,
                 0,
-                WeDPRCommonConfig.getReportTimeout(),
+                WeDPRCommonConfig.getReportTimeoutMs(),
                 new CommonErrorCallback("reportSysConfig"),
                 sysConfigReportMessageHandler);
     }
@@ -96,7 +96,7 @@ public class ReportQuartzJob implements Job {
                 TransportComponentEnum.REPORT.name(),
                 payload,
                 0,
-                WeDPRCommonConfig.getReportTimeout(),
+                WeDPRCommonConfig.getReportTimeoutMs(),
                 new CommonErrorCallback("reportSysConfig"),
                 jobDatasetRelationReportMessageHandler);
     }
@@ -119,7 +119,7 @@ public class ReportQuartzJob implements Job {
                 TransportComponentEnum.REPORT.name(),
                 payload,
                 0,
-                WeDPRCommonConfig.getReportTimeout(),
+                WeDPRCommonConfig.getReportTimeoutMs(),
                 new CommonErrorCallback("reportJobInfo"),
                 jobReportMessageHandler);
     }
@@ -142,7 +142,7 @@ public class ReportQuartzJob implements Job {
                 TransportComponentEnum.REPORT.name(),
                 payload,
                 0,
-                WeDPRCommonConfig.getReportTimeout(),
+                WeDPRCommonConfig.getReportTimeoutMs(),
                 new CommonErrorCallback("reportProjectInfo"),
                 projectReportMessageHandler);
     }

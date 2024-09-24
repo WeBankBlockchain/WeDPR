@@ -31,6 +31,7 @@ public class CommonErrorCallback extends MessageErrorCallback {
     @Override
     public void onErrorResult(Error error) {
         if (error == null || error.errorCode() == 0) {
+            logger.trace("call {} success", method);
             return;
         }
         logger.warn("call {} failed for: {}", method, error.errorMessage());
