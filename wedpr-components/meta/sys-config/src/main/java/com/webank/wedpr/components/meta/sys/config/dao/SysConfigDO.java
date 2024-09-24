@@ -16,14 +16,10 @@
 
 package com.webank.wedpr.components.meta.sys.config.dao;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.webank.wedpr.core.utils.WeDPRException;
 import org.apache.commons.lang3.StringUtils;
 
-@TableName("wedpr_config_table")
 public class SysConfigDO {
-    @TableId("config_key")
     private String configKey;
 
     private String configValue;

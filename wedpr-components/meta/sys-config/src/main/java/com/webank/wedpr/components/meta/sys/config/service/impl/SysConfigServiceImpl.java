@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.meta.sys.config.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.meta.sys.config.service.SysConfigService;
@@ -27,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfigDO>
-        implements SysConfigService {
+public class SysConfigServiceImpl implements SysConfigService {
     private static final Logger logger = LoggerFactory.getLogger(SysConfigService.class);
 
     @Autowired private SysConfigMapper sysConfigMapper;

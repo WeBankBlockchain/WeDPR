@@ -15,11 +15,10 @@
 
 package com.webank.wedpr.components.meta.sys.config.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 
-public interface SysConfigService extends IService<SysConfigDO> {
+public interface SysConfigService {
     public abstract WeDPRResponse getSystemConfig(String key);
 
     public abstract WeDPRResponse insertSystemConfig(SysConfigDO sysConfig);

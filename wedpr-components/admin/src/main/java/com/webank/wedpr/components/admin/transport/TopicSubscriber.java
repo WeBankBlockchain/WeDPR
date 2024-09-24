@@ -10,7 +10,7 @@ import com.webank.wedpr.components.admin.service.WedprJobDatasetRelationService;
 import com.webank.wedpr.components.admin.service.WedprJobTableService;
 import com.webank.wedpr.components.admin.service.WedprProjectTableService;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
-import com.webank.wedpr.components.meta.sys.config.service.SysConfigService;
+import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.transport.CommonErrorCallback;
 import com.webank.wedpr.components.transport.message.JobDatasetReportResponse;
 import com.webank.wedpr.components.transport.message.JobReportResponse;
@@ -43,7 +43,7 @@ public class TopicSubscriber implements CommandLineRunner {
     @Autowired private WedprProjectTableService wedprProjectTableService;
     @Autowired private WedprJobTableService wedprJobTableService;
     @Autowired private WedprJobDatasetRelationService wedprJobDatasetRelationService;
-    @Autowired private SysConfigService sysConfigService;
+    @Autowired private SysConfigMapper sysConfigMapper;
 
     @Override
     public void run(String... args) throws Exception {
@@ -88,11 +88,11 @@ public class TopicSubscriber implements CommandLineRunner {
                             for (SysConfigDO sysConfigDO : sysConfigDOList) {
                                 String configKey = sysConfigDO.getConfigKey();
                                 SysConfigDO queriedSysConfigDO =
-                                        sysConfigService.getById(configKey);
+                                        sysConfigMapper.queryConfig(configKey);
                                 if (queriedSysConfigDO == null) {
-                                    sysConfigService.save(sysConfigDO);
+                                    sysConfigMapper.insertConfig(sysConfigDO);
                                 } else {
-                                    sysConfigService.updateById(sysConfigDO);
+                                    sysConfigMapper.updateConfig(sysConfigDO);
                                 }
                                 configKeyList.add(configKey);
                             }
@@ -107,15 +107,14 @@ public class TopicSubscriber implements CommandLineRunner {
                             response.setCode(Constant.WEDPR_FAILED);
                             response.setMsg("handle error" + e.getMessage());
                         }
-                        IMessage.IMessageHeader messageHeader = message.getHeader();
                         logger.debug(
                                 "asyncSendSysConfigResponse, dstNode: {}, traceID: {}, data: {}",
-                                new String(messageHeader.getSrcNode()),
-                                messageHeader.getTraceID(),
+                                new String(message.getHeader().getSrcNode()),
+                                message.getHeader().getTraceID(),
                                 response.toString());
                         weDPRTransport.asyncSendResponse(
-                                messageHeader.getSrcNode(),
-                                messageHeader.getTraceID(),
+                                message.getHeader().getSrcNode(),
+                                message.getHeader().getTraceID(),
                                 responsePayload,
                                 0,
                                 new CommonErrorCallback("asyncSendSysConfigResponse"));

@@ -52,7 +52,7 @@
                     `report_status` = #{sysConfigDO.reportStatus},
                 </if>
             </set>
-            where `config_key` = #{sysConfigDO.config_key}
+            where `config_key` = #{sysConfigDO.configKey}
         </foreach>
     </update>
     <delete id = "deleteConfig">
