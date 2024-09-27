@@ -15,10 +15,14 @@
 
 package com.webank.wedpr.components.meta.setting.template.service.impl;
 
+import com.github.pagehelper.PageInfo;
+import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateMapper;
+import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingList;
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingQueryRequest;
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingRequest;
 import com.webank.wedpr.components.meta.setting.template.service.TemplateSettingService;
+import com.webank.wedpr.components.mybatis.PageHelperWrapper;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
@@ -78,10 +82,14 @@ public class TemplateSettingServiceImpl implements TemplateSettingService {
         // the admin can query any records
         WeDPRResponse response =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
+        PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(request);
         request.setOwnerCondition(admin, user);
-        response.setData(
+        List<SettingTemplateDO> settings =
                 this.settingTemplateMapper.querySetting(
-                        request.getOnlyMeta(), request.getCondition()));
+                        request.getOnlyMeta(), request.getCondition());
+        response.setData(
+                new TemplateSettingList(
+                        settings, new PageInfo<SettingTemplateDO>(settings).getTotal()));
         return response;
     }
 }

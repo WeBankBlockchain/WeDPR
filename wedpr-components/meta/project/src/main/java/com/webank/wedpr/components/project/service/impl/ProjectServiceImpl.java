@@ -73,7 +73,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .queryProject(Boolean.TRUE, condition);
             if (existedProjects != null && !existedProjects.isEmpty()) {
                 throw new WeDPRException(
-                        "createProject failed for the project "
+                        "The project "
                                 + project.getName()
                                 + " already exists, please try another project name!");
             }
@@ -88,11 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
                     projectDetail.toString(),
                     e);
             response.setCode(Constant.WEDPR_FAILED);
-            response.setMsg(
-                    "Create project failed for "
-                            + e.getMessage()
-                            + ", project information: "
-                            + projectDetail.toString());
+            response.setMsg(e.getMessage());
         }
         return response;
     }

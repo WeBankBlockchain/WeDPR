@@ -16,11 +16,12 @@
 package com.webank.wedpr.components.meta.setting.template.model;
 
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
+import com.webank.wedpr.core.utils.PageRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
-public class TemplateSettingQueryRequest {
+public class TemplateSettingQueryRequest extends PageRequest {
     private Boolean onlyMeta = true;
     private SettingTemplateDO condition;
 

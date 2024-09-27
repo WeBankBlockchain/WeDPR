@@ -252,15 +252,15 @@ subprojects {
                 url = !version.endsWith("SNAPSHOT") ? releasesRepoURL : snapshotsRepoURL
 
                 credentials {
-                    username 'deployment'
-                    password 'deployment123'
+                    username ossrhUsername
+                    password ossrhPassword
                 }
             }
         }
 
-        /*signing {
+        signing {
             sign publishing.publications.mavenJava
-        }*/
+        }
     }
     jar {
         destinationDir file("dist/apps")
