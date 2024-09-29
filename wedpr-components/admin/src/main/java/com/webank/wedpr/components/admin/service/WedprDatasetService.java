@@ -5,8 +5,8 @@ import com.webank.wedpr.components.admin.request.GetDatasetDateLineRequest;
 import com.webank.wedpr.components.admin.request.GetWedprDatasetListRequest;
 import com.webank.wedpr.components.admin.response.GetDatasetLineResponse;
 import com.webank.wedpr.components.admin.response.GetDatasetStatisticsResponse;
-import com.webank.wedpr.components.dataset.dao.Dataset;
 import com.webank.wedpr.components.dataset.message.ListDatasetResponse;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 
 /**
  * 数据集记录表 服务类

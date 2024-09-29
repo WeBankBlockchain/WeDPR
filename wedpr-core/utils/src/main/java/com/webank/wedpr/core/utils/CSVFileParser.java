@@ -18,6 +18,7 @@ package com.webank.wedpr.core.utils;
 import com.opencsv.CSVReaderHeaderAware;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,5 +199,34 @@ public class CSVFileParser {
                         return null;
                     }
                 });
+    }
+
+    public static List<List<String>> processCsv2SqlMap(String[] tableFields, String csvFilePath)
+            throws Exception {
+        return (List<List<String>>)
+                loadCSVFile(
+                        csvFilePath,
+                        WeDPRCommonConfig.getReadChunkSize(),
+                        reader -> {
+                            List<List<String>> resultValue = new ArrayList<>();
+                            Map<String, String> row;
+                            while ((row = reader.readMap()) != null) {
+                                List<String> rowValue = new ArrayList<>();
+                                for (String field : tableFields) {
+                                    if (!row.keySet().contains(field.trim())) {
+                                        String errorMsg =
+                                                "extractFields failed for the field "
+                                                        + field
+                                                        + " not existed in the file "
+                                                        + tableFields.toString();
+                                        logger.warn(errorMsg);
+                                        throw new WeDPRException(-1, errorMsg);
+                                    }
+                                    rowValue.add(row.get(field));
+                                }
+                                resultValue.add(rowValue);
+                            }
+                            return resultValue;
+                        });
     }
 }

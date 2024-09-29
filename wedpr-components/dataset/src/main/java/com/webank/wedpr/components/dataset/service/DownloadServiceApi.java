@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.dataset.service;
 
-import com.webank.wedpr.components.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.OutputStream;
 

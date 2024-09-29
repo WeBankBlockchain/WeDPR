@@ -2,7 +2,7 @@ package com.webank.wedpr.components.dataset.sqlutils;
 
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;

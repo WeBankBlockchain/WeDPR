@@ -17,7 +17,7 @@ package com.webank.wedpr.components.dataset.config;
 
 import static com.webank.wedpr.components.dataset.service.ChunkUploadImpl.UPLOAD_CHUNK_FILE_NAME_PREFIX;
 
-import com.webank.wedpr.components.dataset.common.DatasetConstant;
+import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
 import com.webank.wedpr.core.utils.Common;
 import java.io.File;
 import lombok.Data;

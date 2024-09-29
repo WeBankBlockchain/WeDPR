@@ -11,12 +11,9 @@ ext {
 }
 
 dependencies {
-    compile project(":wedpr-core-utils")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-mybatis")
+    compile project(":wedpr-components-db-mapper-dataset")
     compile project(":wedpr-components-storage")
     compile project(":wedpr-components-authorization")
-    compile project(":wedpr-components-token-auth")
 
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-excelant:${poiVersion}"

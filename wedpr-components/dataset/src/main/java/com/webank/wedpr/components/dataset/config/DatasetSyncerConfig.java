@@ -1,9 +1,9 @@
 package com.webank.wedpr.components.dataset.config;
 
-import com.webank.wedpr.components.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.dataset.sync.DatasetSyncer;
 import com.webank.wedpr.components.dataset.sync.DatasetSyncerCommitHandler;
 import com.webank.wedpr.components.dataset.sync.api.DatasetSyncerApi;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.ResourceSyncer.ResourceType;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;

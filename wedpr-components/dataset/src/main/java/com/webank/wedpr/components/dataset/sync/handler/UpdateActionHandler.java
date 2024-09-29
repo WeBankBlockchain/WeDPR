@@ -1,12 +1,12 @@
 package com.webank.wedpr.components.dataset.sync.handler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.webank.wedpr.components.dataset.dao.Dataset;
-import com.webank.wedpr.components.dataset.dao.DatasetPermission;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
-import com.webank.wedpr.components.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.dataset.permission.DatasetPermissionGenerator;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetPermission;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.ArrayList;
 import java.util.List;

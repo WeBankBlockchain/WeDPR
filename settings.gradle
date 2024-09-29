@@ -65,6 +65,9 @@ project(":wedpr-components-task-plugin-api").projectDir=file("wedpr-components/t
 include ":wedpr-components-task-plugin-shell"
 project(":wedpr-components-task-plugin-shell").projectDir=file("wedpr-components/task-plugin/shell")
 
+//include ":wedpr-components-task-plugin-pir"
+//project(":wedpr-components-task-plugin-pir").projectDir=file("wedpr-components/task-plugin/pir")
+
 include ":wedpr-components-spi"
 project(":wedpr-components-spi").projectDir=file("wedpr-components/spi")
 
@@ -76,6 +79,9 @@ project(":wedpr-components-crypto").projectDir=file("wedpr-components/crypto")
 
 include "wedpr-components-api-credential"
 project(":wedpr-components-api-credential").projectDir=file("wedpr-components/api-credential")
+
+include "wedpr-components-db-mapper-dataset"
+project(":wedpr-components-db-mapper-dataset").projectDir=file("wedpr-components/db-mapper/dataset")
 
 include ":wedpr-components-jupyter-intergration"
 project(":wedpr-components-jupyter-intergration").projectDir=file("wedpr-components/env-integration/jupyter")
@@ -106,3 +112,6 @@ project(":wedpr-components-report").projectDir=file("wedpr-components/report")
 
 include ":wedpr-components-service-publish"
 project(":wedpr-components-service-publish").projectDir=file("wedpr-components/service-publish")
+
+include ":wedpr-components-service-sdk-pir"
+project(":wedpr-components-service-sdk-pir").projectDir=file("wedpr-components/service-sdk/pir")

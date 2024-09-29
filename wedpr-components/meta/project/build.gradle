@@ -7,5 +7,5 @@ dependencies{
     compile project(":wedpr-core-protocol")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-resource-follower")
-    compile project(":wedpr-components-dataset")
+    compile project(":wedpr-components-db-mapper-dataset")
 }

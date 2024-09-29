@@ -1,14 +1,13 @@
 package com.webank.wedpr.components.dataset.service;
 
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetPermissionType;
-import com.webank.wedpr.components.dataset.dao.DatasetAuthContent;
-import com.webank.wedpr.components.dataset.dao.DatasetUserPermissions;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
-import com.webank.wedpr.components.dataset.mapper.DatasetPermissionMapper;
-import com.webank.wedpr.components.dataset.mapper.wapper.DatasetTransactionalWrapper;
-import com.webank.wedpr.components.dataset.permission.DatasetUserPermissionValidator;
-import com.webank.wedpr.components.dataset.utils.TimeUtils;
+import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetPermissionMapper;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
+import com.webank.wedpr.components.db.mapper.dataset.permission.DatasetUserPermissionValidator;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
 import com.webank.wedpr.core.utils.Common;
 import java.util.ArrayList;
@@ -85,13 +84,15 @@ public class DatasetAuthImpl implements DatasetAuthApi {
                 Common.requireNonEmpty("datasetId", datasetId);
                 String authTime = datasetAuthContent.getAuthTime();
                 Common.requireNonEmpty("authTime", authTime);
-                TimeUtils.isValidDateFormat(authTime);
+                Common.isValidDateFormat(authTime);
 
                 Integer permissionType = datasetAuthContent.getPermissionType();
                 if (permissionType == null) {
-                    datasetAuthContent.setPermissionType(DatasetPermissionType.USABLE.getType());
+                    datasetAuthContent.setPermissionType(
+                            DatasetConstant.DatasetPermissionType.USABLE.getType());
                 } else {
-                    DatasetPermissionType.isValidDatasetPermissionType(permissionType);
+                    DatasetConstant.DatasetPermissionType.isValidDatasetPermissionType(
+                            permissionType);
                 }
             }
 

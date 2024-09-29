@@ -1,12 +1,12 @@
 package com.webank.wedpr.components.dataset.service;
 
-import com.webank.wedpr.components.dataset.dao.Dataset;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.message.CreateDatasetRequest;
 import com.webank.wedpr.components.dataset.message.CreateDatasetResponse;
 import com.webank.wedpr.components.dataset.message.ListDatasetResponse;
 import com.webank.wedpr.components.dataset.message.UpdateDatasetRequest;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import java.util.List;
 

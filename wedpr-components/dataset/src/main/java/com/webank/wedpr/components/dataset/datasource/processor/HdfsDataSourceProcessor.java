@@ -1,13 +1,13 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
-import com.webank.wedpr.components.dataset.dao.Dataset;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.category.HdfsDataSource;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.utils.CsvUtils;
 import com.webank.wedpr.components.dataset.utils.FileUtils;
 import com.webank.wedpr.components.dataset.utils.JsonUtils;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.impl.hdfs.HDFSStoragePath;
 import com.webank.wedpr.core.protocol.StorageType;

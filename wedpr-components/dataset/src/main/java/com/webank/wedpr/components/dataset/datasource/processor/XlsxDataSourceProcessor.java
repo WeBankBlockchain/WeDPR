@@ -1,9 +1,9 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
-import com.webank.wedpr.components.dataset.dao.Dataset;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.utils.CsvUtils;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

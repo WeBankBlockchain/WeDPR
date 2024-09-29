@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.dataset.message;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.webank.wedpr.components.dataset.json.Json2StringDeserializer;
+import com.webank.wedpr.core.utils.Json2StringDeserializer;
 import lombok.Data;
 
 @Data

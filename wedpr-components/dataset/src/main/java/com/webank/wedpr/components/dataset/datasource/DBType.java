@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.dataset.datasource;
 
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import lombok.Getter;
 
 // supported database types

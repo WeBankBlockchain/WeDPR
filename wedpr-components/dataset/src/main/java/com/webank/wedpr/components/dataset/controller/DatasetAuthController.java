@@ -1,13 +1,12 @@
 package com.webank.wedpr.components.dataset.controller;
 
-import com.webank.wedpr.components.dataset.common.DatasetConstant;
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetPermissionType;
-import com.webank.wedpr.components.dataset.dao.DatasetAuthContent;
-import com.webank.wedpr.components.dataset.dao.DatasetUserPermissions;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.message.QueryAuthRequest;
 import com.webank.wedpr.components.dataset.service.DatasetAuthApi;
+import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
@@ -58,9 +57,9 @@ public class DatasetAuthController {
 
             Integer permissionType = datasetAuthContent.getPermissionType();
             if (permissionType == null) {
-                permissionType = DatasetPermissionType.USABLE.getType();
+                permissionType = DatasetConstant.DatasetPermissionType.USABLE.getType();
             } else {
-                DatasetPermissionType.isValidDatasetPermissionType(permissionType);
+                DatasetConstant.DatasetPermissionType.isValidDatasetPermissionType(permissionType);
             }
 
             String id = UUID.randomUUID().toString();
@@ -109,9 +108,9 @@ public class DatasetAuthController {
 
             Integer permissionType = datasetAuthContent.getPermissionType();
             if (permissionType == null) {
-                permissionType = DatasetPermissionType.USABLE.getType();
+                permissionType = DatasetConstant.DatasetPermissionType.USABLE.getType();
             } else {
-                DatasetPermissionType.isValidDatasetPermissionType(permissionType);
+                DatasetConstant.DatasetPermissionType.isValidDatasetPermissionType(permissionType);
             }
 
             String id = UUID.randomUUID().toString();

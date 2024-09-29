@@ -2,8 +2,8 @@ package com.webank.wedpr.components.dataset.service;
 
 import com.webank.wedpr.components.dataset.dao.FileChunk;
 import com.webank.wedpr.components.dataset.dao.MergeChunkResult;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.message.MergeChunkRequest;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 
 public interface ChunkUploadApi {
     /**

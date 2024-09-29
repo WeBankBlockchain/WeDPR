@@ -4,9 +4,10 @@ plugins {
     id 'com.github.sherter.google-java-format'
 }
 dependencies{
-    compile project(":wedpr-components-dataset")
+    compile project(":wedpr-components-db-mapper-dataset")
     compile project(":wedpr-core-utils")
     compile project(":wedpr-core-protocol")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
+    compile project(":wedpr-components-sync")
 }

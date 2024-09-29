@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.dataset.sync.handler;
 
-import com.webank.wedpr.components.dataset.mapper.wapper.DatasetTransactionalWrapper;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import lombok.Builder;
 import lombok.Data;
 

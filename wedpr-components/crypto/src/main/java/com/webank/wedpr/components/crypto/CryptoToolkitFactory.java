@@ -31,6 +31,10 @@ public class CryptoToolkitFactory {
                 "Not supported symmetric algorithm: " + CryptoConfig.getSymmetricAlgorithmType());
     }
 
+    public static SymmetricCrypto buildAESSymmetricCrypto(String key, byte[] iv) {
+        return new AESCrypto(key, iv);
+    }
+
     public static HashCrypto buildHashCrypto() {
         return new HashCryptoImpl(CryptoConfig.getHashAlgorithmType());
     }

@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.scheduler.local.config;
 
-import com.webank.wedpr.components.dataset.service.DatasetServiceApi;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.SchedulerBuilder;
@@ -51,10 +50,6 @@ public class SchedulerLoader {
     @Autowired
     private FileStorageInterface storage;
 
-    @Qualifier("datasetService")
-    @Autowired
-    private DatasetServiceApi datasetService;
-
     @Autowired private ResourceSyncer resourceSyncer;
     @Autowired private JobChecker jobChecker;
 
@@ -67,9 +62,7 @@ public class SchedulerLoader {
                         projectMapperWrapper,
                         storage,
                         resourceSyncer,
-                        new FileMetaBuilder(
-                                new StoragePathBuilder(hdfsConfig, localStorageConfig),
-                                datasetService),
+                        new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig)),
                         jobChecker);
         schedulerTask.start();
         return schedulerTask;

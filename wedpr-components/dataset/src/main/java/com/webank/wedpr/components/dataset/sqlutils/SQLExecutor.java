@@ -4,7 +4,7 @@ import com.alibaba.druid.util.JdbcUtils;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

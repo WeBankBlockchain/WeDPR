@@ -2,8 +2,8 @@ package com.webank.wedpr.components.dataset.sqlutils.demo;
 
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.sqlutils.SQLExecutor;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 
 public class Main {
     public static void main(String[] args) throws DatasetException {

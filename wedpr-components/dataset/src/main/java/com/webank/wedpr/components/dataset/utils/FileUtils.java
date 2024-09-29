@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.dataset.utils;
 
 import com.alibaba.druid.util.HexBin;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;

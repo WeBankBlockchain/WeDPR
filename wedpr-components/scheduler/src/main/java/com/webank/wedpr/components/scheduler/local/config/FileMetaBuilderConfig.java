@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.scheduler.local.config;
 
-import com.webank.wedpr.components.dataset.service.DatasetServiceApi;
 import com.webank.wedpr.components.scheduler.local.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
@@ -24,7 +23,6 @@ import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,16 +37,11 @@ public class FileMetaBuilderConfig {
     @Autowired private LocalStorageConfig localStorageConfig;
     @Autowired private HdfsStorageConfig hdfsConfig;
 
-    @Qualifier("datasetService")
-    @Autowired
-    private DatasetServiceApi datasetService;
-
     @Bean(name = "fileMetaBuilder")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
     public FileMetaBuilder fileMetaBuilder() throws Exception {
 
-        return new FileMetaBuilder(
-                new StoragePathBuilder(hdfsConfig, localStorageConfig), datasetService);
+        return new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig));
     }
 }

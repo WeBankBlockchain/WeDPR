@@ -1,0 +1,9 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+}
+dependencies{
+    compile ("com.github.yitter:yitter-idgenerator:${yitterIdGeneratorVersion}")
+    compile project(":wedpr-core-utils")
+    compile project(":wedpr-components-crypto")
+}

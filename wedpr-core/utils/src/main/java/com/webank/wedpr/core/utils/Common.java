@@ -19,10 +19,12 @@ import static com.webank.wedpr.core.utils.Constant.DEFAULT_TIMESTAMP_FORMAT;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -157,5 +159,46 @@ public class Common {
             return url;
         }
         return String.format("http://%s", url);
+    }
+
+    public static BigInteger bytesToBigInteger(byte[] bytes) {
+        return new BigInteger(1, bytes);
+    }
+
+    public static byte[] bigIntegerToBytes(BigInteger number) {
+        byte[] bytes = number.toByteArray();
+        if (bytes[0] == 0) {
+            byte[] tmpBytes = new byte[bytes.length - 1];
+            System.arraycopy(bytes, 1, tmpBytes, 0, tmpBytes.length);
+            return tmpBytes;
+        }
+        return bytes;
+    }
+
+    public static void isValidTimestamp(String timestamp) throws WeDPRException {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+            formatter.parse(timestamp);
+        } catch (DateTimeParseException e) {
+            logger.error("illegal timestamp string, timestamp: {}", timestamp);
+            throw new WeDPRException("illegal timestamp string, value: " + timestamp);
+        }
+    }
+
+    public static void isValidDateFormat(String timestamp) throws WeDPRException {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+            formatter.parse(timestamp);
+        } catch (DateTimeParseException e) {
+            logger.error("illegal date string, timestamp: {}", timestamp);
+            throw new WeDPRException("illegal date string, value: " + timestamp);
+        }
+    }
+
+    public static boolean isDateExpired(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(dateString, formatter);
+        LocalDate currentDate = LocalDate.now();
+        return date.isBefore(currentDate);
     }
 }

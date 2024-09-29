@@ -1,16 +1,9 @@
 package com.webank.wedpr.components.dataset.controller;
 
-import com.webank.wedpr.components.dataset.common.DatasetConstant;
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetPermissionType;
 import com.webank.wedpr.components.dataset.config.DataSourceTypeConfig;
 import com.webank.wedpr.components.dataset.config.DataSourceTypeConfig.LabelValue;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
-import com.webank.wedpr.components.dataset.dao.Dataset;
-import com.webank.wedpr.components.dataset.dao.DatasetVisibilityDetails;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
 import com.webank.wedpr.components.dataset.datasource.DataSourceType;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
-import com.webank.wedpr.components.dataset.mapper.DatasetPermissionMapper;
 import com.webank.wedpr.components.dataset.message.CreateDatasetRequest;
 import com.webank.wedpr.components.dataset.message.CreateDatasetResponse;
 import com.webank.wedpr.components.dataset.message.DeleteDatasetListRequest;
@@ -22,8 +15,13 @@ import com.webank.wedpr.components.dataset.message.UpdateDatasetRequest;
 import com.webank.wedpr.components.dataset.service.ChunkUploadApi;
 import com.webank.wedpr.components.dataset.service.DatasetServiceApi;
 import com.webank.wedpr.components.dataset.utils.JsonUtils;
-import com.webank.wedpr.components.dataset.utils.TimeUtils;
 import com.webank.wedpr.components.dataset.utils.UserTokenUtils;
+import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetVisibilityDetails;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetPermissionMapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.core.utils.Common;
@@ -241,11 +239,11 @@ public class DatasetController {
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         try {
             if (startTime != null) {
-                TimeUtils.isValidDateFormat(startTime);
+                Common.isValidDateFormat(startTime);
             }
 
             if (endTime != null) {
-                TimeUtils.isValidDateFormat(endTime);
+                Common.isValidDateFormat(endTime);
             }
 
             /*
@@ -257,9 +255,9 @@ public class DatasetController {
             },
             */
 
-            int type = DatasetPermissionType.VISIBLE.getType();
+            int type = DatasetConstant.DatasetPermissionType.VISIBLE.getType();
             if (permissionType != null) {
-                type = DatasetPermissionType.fromString(permissionType);
+                type = DatasetConstant.DatasetPermissionType.fromString(permissionType);
             }
 
             UserInfo userInfo = UserTokenUtils.getUserInfo(datasetConfig, httpServletRequest);

@@ -1,9 +1,9 @@
 package com.webank.wedpr.components.dataset.service;
 
-import com.webank.wedpr.components.dataset.dao.DatasetAuthContent;
-import com.webank.wedpr.components.dataset.dao.DatasetUserPermissions;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.util.List;
 
 public interface DatasetAuthApi {

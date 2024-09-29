@@ -1,15 +1,12 @@
 package com.webank.wedpr.components.dataset.permission;
 
-import com.webank.wedpr.components.dataset.common.DatasetConstant;
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetPermissionScope;
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetPermissionType;
-import com.webank.wedpr.components.dataset.common.DatasetConstant.DatasetVisibilityType;
-import com.webank.wedpr.components.dataset.dao.DatasetPermission;
-import com.webank.wedpr.components.dataset.dao.DatasetVisibilityDetails;
-import com.webank.wedpr.components.dataset.dao.DatasetVisibilityDetails.AgencyUser;
-import com.webank.wedpr.components.dataset.dao.UserInfo;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
 import com.webank.wedpr.components.dataset.utils.JsonUtils;
+import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetPermission;
+import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetVisibilityDetails;
+import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.permission.DatasetPermissionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +48,7 @@ public class DatasetPermissionGenerator {
             DatasetPermission datasetPermission =
                     DatasetPermission.createEntity(
                             datasetId,
-                            DatasetPermissionType.WRITABLE.getType(),
+                            DatasetConstant.DatasetPermissionType.WRITABLE.getType(),
                             DatasetConstant.DatasetPermissionScope.USER.getValue(),
                             subjectStr);
             datasetPermissionList.add(datasetPermission);
@@ -104,7 +101,7 @@ public class DatasetPermissionGenerator {
             datasetPermissionList = new ArrayList<>();
         }
 
-        if (datasetVisibility == DatasetVisibilityType.PRIVATE.getValue()) {
+        if (datasetVisibility == DatasetConstant.DatasetVisibilityType.PRIVATE.getValue()) {
             return datasetPermissionList;
         }
 
@@ -177,13 +174,14 @@ public class DatasetPermissionGenerator {
                 }
             }
 
-            List<AgencyUser> agencyUserList = datasetVisibilityDetails.getUserList();
+            List<DatasetVisibilityDetails.AgencyUser> agencyUserList =
+                    datasetVisibilityDetails.getUserList();
             // user list
             if (agencyUserList != null && !agencyUserList.isEmpty()) {
-                List<AgencyUser> distinctUserList =
+                List<DatasetVisibilityDetails.AgencyUser> distinctUserList =
                         agencyUserList.stream().distinct().collect(Collectors.toList());
 
-                for (AgencyUser agencyUser : distinctUserList) {
+                for (DatasetVisibilityDetails.AgencyUser agencyUser : distinctUserList) {
 
                     String subjectStr =
                             DatasetPermissionUtils.toSubjectStr(
@@ -193,7 +191,7 @@ public class DatasetPermissionGenerator {
                             DatasetPermission.createEntity(
                                     datasetId,
                                     DatasetConstant.DatasetPermissionType.VISIBLE.getType(),
-                                    DatasetPermissionScope.USER.getValue(),
+                                    DatasetConstant.DatasetPermissionScope.USER.getValue(),
                                     subjectStr);
                     datasetPermissionList.add(datasetPermission);
                 }

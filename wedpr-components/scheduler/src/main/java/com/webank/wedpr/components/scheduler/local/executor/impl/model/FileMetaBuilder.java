@@ -15,28 +15,15 @@
 
 package com.webank.wedpr.components.scheduler.local.executor.impl.model;
 
-import com.webank.wedpr.components.dataset.service.DatasetServiceApi;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.core.protocol.StorageType;
 import lombok.SneakyThrows;
 
 public class FileMetaBuilder {
     private final StoragePathBuilder storagePathBuilder;
-    private final DatasetServiceApi datasetService;
-
-    public FileMetaBuilder(
-            StoragePathBuilder storagePathBuilder, DatasetServiceApi datasetService) {
-        this.storagePathBuilder = storagePathBuilder;
-        this.datasetService = datasetService;
-    }
 
     public FileMetaBuilder(StoragePathBuilder storagePathBuilder) {
         this.storagePathBuilder = storagePathBuilder;
-        this.datasetService = null;
-    }
-
-    public DatasetServiceApi getDatasetService() {
-        return datasetService;
     }
 
     @SneakyThrows(Exception.class)

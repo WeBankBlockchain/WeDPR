@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetPermissionMapper">
+    <resultMap id="DatasetPermissionResultMap" type="com.webank.wedpr.components.db.mapper.dataset.dao.DatasetPermission">
+        <id property="id" column="id" />
+        <result property="datasetId" column="dataset_id" />
+        <result property="permissionType" column="permission_type" />
+        <result property="permissionScope" column="permission_scope" />
+        <result property="permissionSubjectId" column="permission_subject_id" />
+        <result property="authTime" column="expired_at" />
+    </resultMap>
+
+    <select id = "queryPermissionListForDataset" resultMap="DatasetPermissionResultMap">
+        SELECT
+            permission_type, permission_scope, permission_subject_id, expired_at
+        FROM
+            wedpr_dataset_permission
+        WHERE
+            dataset_id = #{datasetId}
+<!--            AND permission_type = #{permissionType}-->
+            AND
+                    CURDATE() &lt;= expired_at
+            AND
+            (
+                (permission_scope = 'global')
+                OR (
+                    permission_scope = 'agency' and permission_subject_id = #{agency}
+                )
+                OR (
+                    permission_scope = 'user_group' and permission_subject_id LIKE CONCAT(#{agency}, '%')
+                )
+                OR (
+                    permission_scope = 'user' and permission_subject_id LIKE CONCAT(#{agency}, '%')
+                )
+            )
+
+        <if test="isTx == true">
+            for update
+        </if>
+    </select>
+
+    <insert id="insertDatasetPermissionList"  parameterType="java.util.List">
+        INSERT INTO wedpr_dataset_permission
+            ( id, dataset_id, permission_type, permission_scope, permission_subject_id, expired_at)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.datasetId}, #{item.permissionType}, #{item.permissionScope}, #{item.permissionSubjectId}, #{item.authTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteDatasetPermissionListByDatasetId" parameterType="String">
+        DELETE FROM wedpr_dataset_permission WHERE dataset_id = #{datasetId}
+    </delete>
+
+    <delete id="deleteDatasetPermission" parameterType="com.webank.wedpr.components.db.mapper.dataset.dao.DatasetPermission">
+        DELETE FROM
+            wedpr_dataset_permission
+        WHERE
+                dataset_id = #{datasetId}
+            AND
+                permission_type = #{permissionType}
+            AND
+                permission_scope = #{permissionScope}
+            AND
+                permission_subject_id = #{permissionSubjectId}
+    </delete>
+</mapper>

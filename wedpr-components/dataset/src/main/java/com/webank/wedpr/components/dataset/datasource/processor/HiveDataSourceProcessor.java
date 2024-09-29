@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
-import com.webank.wedpr.components.dataset.exception.DatasetException;
+import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 
 public class HiveDataSourceProcessor implements DataSourceProcessor {
 
