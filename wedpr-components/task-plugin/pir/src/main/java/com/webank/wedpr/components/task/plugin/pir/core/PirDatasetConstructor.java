@@ -13,12 +13,8 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk;
+package com.webank.wedpr.components.task.plugin.pir.core;
 
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
-
-public interface PirSDK {
-
-    public abstract PirResult query(PirJobParam pirJobParam) throws Exception;
+public interface PirDatasetConstructor {
+    public abstract void construct(String datasetID) throws Exception;
 }

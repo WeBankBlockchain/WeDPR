@@ -34,12 +34,12 @@ public class PirJobParam extends PirBaseRequest {
     private ServiceConfigBody serviceConfigBody;
 
     public void check() throws WeDPRException {
-        if (Arrays.stream(PIRParamEnum.JobType.values())
+        if (Arrays.stream(PirParamEnum.JobType.values())
                 .noneMatch(enumValue -> enumValue.getValue().equals(getJobType()))) {
             throw new WeDPRException(-1, "jobType输入错误");
         }
 
-        if (Arrays.stream(PIRParamEnum.AlgorithmType.values())
+        if (Arrays.stream(PirParamEnum.AlgorithmType.values())
                 .noneMatch(enumValue -> enumValue.getValue().equals(getJobAlgorithmType()))) {
             throw new WeDPRException(-1, "jobAlgorithmType输入错误");
         }
@@ -47,7 +47,7 @@ public class PirJobParam extends PirBaseRequest {
         if (Objects.isNull(searchIdList) || searchIdList.size() == 0) {
             throw new WeDPRException(-1, "searchId列表不能为空");
         }
-        if (getPirInvokeType().equals(PIRParamEnum.JobMode.DirectorMode.getValue())
+        if (getPirInvokeType().equals(PirParamEnum.JobMode.DirectorMode.getValue())
                 && Objects.isNull(serviceConfigBody)) {
             throw new WeDPRException(-1, "向导模式下serviceConfigBody不能为空");
         }

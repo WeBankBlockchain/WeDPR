@@ -13,17 +13,13 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk.core;
-
-import java.util.List;
-import lombok.Data;
+package com.webank.wedpr.components.task.plugin.pir.utils;
 
 /** @author zachma */
-@Data
-public class ObfuscateParam {
-    int filterLength = 4;
+public class Constant {
+    public static String PIR_TEMP_TABLE_PREFIX = "wedpr_pir_";
 
-    int obfuscationOrder;
-
-    List<String> dataBodyList;
+    public static String datasetId2tableId(String datasetId) {
+        return PIR_TEMP_TABLE_PREFIX + datasetId.substring(2);
+    }
 }

@@ -18,8 +18,12 @@ import com.webank.wedpr.components.crypto.config.CryptoConfig;
 import com.webank.wedpr.components.crypto.impl.AESCrypto;
 import com.webank.wedpr.components.crypto.impl.HashCryptoImpl;
 import com.webank.wedpr.core.utils.WeDPRException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class CryptoToolkitFactory {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     public static SymmetricCrypto buildSymmetricCrypto() throws WeDPRException {
         if (CryptoConfig.getSymmetricAlgorithmType().compareToIgnoreCase(CryptoConfig.AES_ALGORITHM)
                 == 0) {
@@ -41,5 +45,12 @@ public class CryptoToolkitFactory {
 
     public static CryptoToolkit build() throws Exception {
         return new CryptoToolkit(buildSymmetricCrypto(), buildHashCrypto());
+    }
+
+    public static String generateRandomKey() {
+        // 随机生成 16 位字符串格式的密钥
+        byte[] keyBytes = new byte[16];
+        SECURE_RANDOM.nextBytes(keyBytes);
+        return Base64.getEncoder().encodeToString(keyBytes);
     }
 }

@@ -15,18 +15,22 @@
 
 package com.webank.wedpr.components.pir.sdk.core;
 
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * @author zachma
- * @date 2024/8/18
- */
 @Data
-public class ObfuscateDataItem {
-    BigInteger z0;
-    String filter;
-    int idIndex;
-    List<String> idHashList;
+@NoArgsConstructor
+@AllArgsConstructor
+public class ObfuscateQueryResult {
+    List<OtResult> otResultList = new ArrayList<>();
+    String datasetID;
+    String algorithmType;
+
+    public ObfuscateQueryResult(String datasetID, String algorithmType) {
+        this.datasetID = datasetID;
+        this.algorithmType = algorithmType;
+    }
 }

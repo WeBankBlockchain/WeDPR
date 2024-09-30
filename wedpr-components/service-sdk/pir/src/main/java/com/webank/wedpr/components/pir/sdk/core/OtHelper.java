@@ -70,7 +70,7 @@ public class OtHelper {
     public static List<String> getIdHashVec(int obfuscationOrder, Integer idIndex, String searchId)
             throws WeDPRException {
 
-        List<String> clientDataBodyList = new ArrayList<>();
+        List<String> obfuscateDataList = new ArrayList<>();
         String searchIdTemp;
         for (int i = 0; i < obfuscationOrder + 1; i++) {
             if (idIndex == i) {
@@ -79,9 +79,9 @@ public class OtHelper {
                 String uuid = UUID.randomUUID().toString();
                 searchIdTemp = makeHash(uuid.getBytes());
             }
-            clientDataBodyList.add(searchIdTemp);
+            obfuscateDataList.add(searchIdTemp);
         }
-        return clientDataBodyList;
+        return obfuscateDataList;
     }
 
     private static String makeHash(byte[] data) throws WeDPRException {

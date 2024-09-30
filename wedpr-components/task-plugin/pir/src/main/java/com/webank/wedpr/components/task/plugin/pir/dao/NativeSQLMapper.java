@@ -13,12 +13,19 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk;
+package com.webank.wedpr.components.task.plugin.pir.dao;
 
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
+import java.util.List;
+import org.apache.ibatis.annotations.*;
 
-public interface PirSDK {
+@Mapper
+public interface NativeSQLMapper {
+    @Update(value = "${nativeSql}")
+    public void executeNativeUpdateSql(@Param("nativeSql") String nativeSql);
 
-    public abstract PirResult query(PirJobParam pirJobParam) throws Exception;
+    @Select("SHOW TABLES")
+    public List<String> showAllTables();
+
+    @Select(value = "${nativeSql}")
+    public List executeNativeQuerySql(@Param("nativeSql") String nativeSql);
 }

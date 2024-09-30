@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author zachma
  * @date 2024/8/18
  */
-public class PIRParamEnum {
+public class PirParamEnum {
     @Getter
     @AllArgsConstructor
     public enum JobType {

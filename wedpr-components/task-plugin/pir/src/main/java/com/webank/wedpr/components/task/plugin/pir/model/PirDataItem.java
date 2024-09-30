@@ -13,12 +13,17 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk;
+package com.webank.wedpr.components.task.plugin.pir.model;
 
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
+import lombok.Data;
 
-public interface PirSDK {
+/** @author zachma */
+@Data
+public class PirDataItem {
 
-    public abstract PirResult query(PirJobParam pirJobParam) throws Exception;
+    private Integer id;
+
+    private String pirKey;
+
+    private String pirValue;
 }

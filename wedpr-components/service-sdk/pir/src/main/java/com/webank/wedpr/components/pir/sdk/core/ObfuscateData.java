@@ -27,8 +27,26 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ObfuscateData {
+    @Data
+    public static class ObfuscateDataItem {
+        BigInteger z0;
+        String filter;
+        int idIndex;
+        List<String> idHashList;
+    }
+
     BigInteger b;
     BigInteger x;
     BigInteger y;
-    List<ObfuscateDataItem> dataBodyList;
+    List<ObfuscateDataItem> obfuscateDataItems;
+    // the searched fields
+    String[] params;
+
+    public ObfuscateData(
+            BigInteger b, BigInteger x, BigInteger y, List<ObfuscateDataItem> obfuscateDataItems) {
+        setB(b);
+        setX(x);
+        setY(y);
+        setObfuscateDataItems(obfuscateDataItems);
+    }
 }

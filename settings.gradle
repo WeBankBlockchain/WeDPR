@@ -65,8 +65,8 @@ project(":wedpr-components-task-plugin-api").projectDir=file("wedpr-components/t
 include ":wedpr-components-task-plugin-shell"
 project(":wedpr-components-task-plugin-shell").projectDir=file("wedpr-components/task-plugin/shell")
 
-//include ":wedpr-components-task-plugin-pir"
-//project(":wedpr-components-task-plugin-pir").projectDir=file("wedpr-components/task-plugin/pir")
+include ":wedpr-components-task-plugin-pir"
+project(":wedpr-components-task-plugin-pir").projectDir=file("wedpr-components/task-plugin/pir")
 
 include ":wedpr-components-spi"
 project(":wedpr-components-spi").projectDir=file("wedpr-components/spi")

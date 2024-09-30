@@ -6,4 +6,5 @@ dependencies{
     compile ("com.github.yitter:yitter-idgenerator:${yitterIdGeneratorVersion}")
     compile project(":wedpr-core-utils")
     compile project(":wedpr-components-crypto")
+    //compile project(":wedpr-components-transport")
 }

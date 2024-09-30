@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.pir.sdk.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -23,8 +24,14 @@ public class PirBaseRequest {
     // 数据方机构id
     // 匿踪算法类型(0: hash披露算法, 1: hash混淆算法)
     String jobAlgorithmType;
+    @JsonIgnore PirParamEnum.AlgorithmType algorithmType;
     // 查询范围
     Integer obfuscationOrder = 9;
 
-    Integer pirInvokeType = PIRParamEnum.JobMode.SDKMode.getValue();
+    Integer pirInvokeType = PirParamEnum.JobMode.SDKMode.getValue();
+
+    public void setJobAlgorithmType(String jobAlgorithmType) {
+        this.jobAlgorithmType = jobAlgorithmType;
+        this.algorithmType = PirParamEnum.AlgorithmType.deserialize(jobAlgorithmType);
+    }
 }

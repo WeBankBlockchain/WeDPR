@@ -17,10 +17,11 @@ package com.webank.wedpr.components.pir.sdk.core;
 
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
-import com.webank.wedpr.components.pir.sdk.model.PIRParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
+import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
 import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +31,8 @@ import java.util.Random;
 
 public class OtCrypto {
     public static ObfuscateData generateOtParam(
-            PIRParamEnum.AlgorithmType algorithmType, PirJobParam jobParam) throws WeDPRException {
-        if (algorithmType == PIRParamEnum.AlgorithmType.idFilter) {
+            PirParamEnum.AlgorithmType algorithmType, PirJobParam jobParam) throws WeDPRException {
+        if (algorithmType == PirParamEnum.AlgorithmType.idFilter) {
             return OtCrypto.generateOtParamForIDFilter(
                     jobParam.getFilterLength(), jobParam.getSearchIdList());
         }
@@ -55,14 +56,14 @@ public class OtCrypto {
         BigInteger y = OtHelper.powMod(blindingB);
         BigInteger blindingC = OtHelper.mulMod(blindingA, blindingB);
 
-        List<ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
+        List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         for (String searchId : searchIDList) {
             String filter =
                     searchId.length() < filterLength
                             ? searchId
                             : searchId.substring(0, filterLength);
             BigInteger z0 = calculateZ0(searchId, blindingC);
-            ObfuscateDataItem pirDataBody = new ObfuscateDataItem();
+            ObfuscateData.ObfuscateDataItem pirDataBody = new ObfuscateData.ObfuscateDataItem();
             pirDataBody.setFilter(filter);
             pirDataBody.setZ0(z0);
             obfuscateDataItems.add(pirDataBody);
@@ -80,14 +81,15 @@ public class OtCrypto {
         BigInteger y = OtHelper.powMod(blindingB);
         BigInteger blindingC = OtHelper.mulMod(blindingA, blindingB);
 
-        List<ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
+        List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         Random rand = new Random();
         for (String searchId : searchIDList) {
             int idIndex = rand.nextInt(obfuscationOrder + 1);
             BigInteger z0 = calculateIndexZ0(idIndex, blindingC);
             List<String> idHashVecList = OtHelper.getIdHashVec(obfuscationOrder, idIndex, searchId);
 
-            ObfuscateDataItem obfuscateDataItem = new ObfuscateDataItem();
+            ObfuscateData.ObfuscateDataItem obfuscateDataItem =
+                    new ObfuscateData.ObfuscateDataItem();
             obfuscateDataItem.setZ0(z0);
             obfuscateDataItem.setIdIndex(idIndex);
             obfuscateDataItem.setIdHashList(idHashVecList);
@@ -121,7 +123,8 @@ public class OtCrypto {
                 byte[] keyBytes = Common.bigIntegerToBytes(messageRecover);
                 String key = new String(keyBytes, StandardCharsets.UTF_8);
                 SymmetricCrypto symmetricCrypto =
-                        CryptoToolkitFactory.buildAESSymmetricCrypto(key, null);
+                        CryptoToolkitFactory.buildAESSymmetricCrypto(
+                                key, Constant.DEFAULT_IV.getBytes(StandardCharsets.UTF_8));
                 String decryptedText = symmetricCrypto.decrypt(cipherStr);
                 pirResultItem.setSearchValue(decryptedText);
             } catch (Exception ignored) {

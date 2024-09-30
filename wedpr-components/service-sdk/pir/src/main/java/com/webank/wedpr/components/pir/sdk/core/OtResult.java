@@ -27,12 +27,17 @@ import lombok.NoArgsConstructor;
 public class OtResult {
     /** @author zachma */
     @Data
-    @AllArgsConstructor
     @NoArgsConstructor
     public static class OtResultItem {
         BigInteger e;
         BigInteger w;
         String c;
+
+        public OtResultItem(BigInteger e, BigInteger w, String c) {
+            this.e = e;
+            this.w = w;
+            this.c = c;
+        }
     }
 
     private List<OtResultItem> otResultItems;

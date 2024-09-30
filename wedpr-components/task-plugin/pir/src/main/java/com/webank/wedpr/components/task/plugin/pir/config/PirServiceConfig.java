@@ -13,12 +13,14 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk;
+package com.webank.wedpr.components.task.plugin.pir.config;
 
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
+import com.webank.wedpr.core.config.WeDPRConfig;
 
-public interface PirSDK {
+public class PirServiceConfig {
+    private static String PIR_CACHE_DIR = WeDPRConfig.apply("wedpr.pir.cache.dir", ".cache");
 
-    public abstract PirResult query(PirJobParam pirJobParam) throws Exception;
+    public static String getPirCacheDir() {
+        return PIR_CACHE_DIR;
+    }
 }

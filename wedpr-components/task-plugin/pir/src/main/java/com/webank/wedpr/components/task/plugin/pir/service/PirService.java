@@ -13,21 +13,29 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk.impl;
+package com.webank.wedpr.components.task.plugin.pir.service;
 
-import com.webank.wedpr.components.pir.sdk.PirSDK;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
-import com.webank.wedpr.components.pir.sdk.core.OtCrypto;
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
+import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
+import com.webank.wedpr.core.utils.WeDPRResponse;
 
-public class PirSDKImpl implements PirSDK {
+public interface PirService {
+    /**
+     * query the data
+     *
+     * @param obfuscateData the query parm
+     * @return the result
+     */
+    public abstract WeDPRResponse query(
+            PirParamEnum.AlgorithmType algorithmType,
+            String datasetID,
+            ObfuscateData obfuscateData);
 
-    @Override
-    public PirResult query(PirJobParam pirJobParam) throws Exception {
-        pirJobParam.check();
-        ObfuscateData obfuscateData =
-                OtCrypto.generateOtParam(pirJobParam.getAlgorithmType(), pirJobParam);
-        return null;
-    }
+    /**
+     * publish pir service
+     *
+     * @param datasetID the datasetID
+     * @return the result
+     */
+    public abstract WeDPRResponse publish(String datasetID);
 }

@@ -15,7 +15,8 @@ package com.webank.wedpr.core.utils;
 
 public class Constant {
     public static final String STR_SEPARATOR = ",";
-    public static final String AGENCY_CRT_SUFFIX = "agency.crt";
+    public static final String DEFAULT_IV = "1234567890";
+
     public static final String CERT_SCRIPT_EXECUTE_OK = "successful";
     public static final String ZIP_FILE_SUFFIX = ".zip";
     public static Integer WEDPR_SUCCESS = 0;
