@@ -18,9 +18,10 @@ package com.webank.wedpr.components.pir.sdk.config;
 import com.webank.wedpr.core.config.WeDPRConfig;
 
 public class PirSDKConfig {
-    private static String PIR_TOPIC_PREFIX = WeDPRConfig.apply("wedpr.service.pir.topic", "PIR_");
+    private static String PIR_TOPIC_PREFIX =
+            WeDPRConfig.apply("wedpr.service.pir.topic.prefix", "PIR_");
     private static String PIR_COMPONENT_PREFIX =
-            WeDPRConfig.apply("wedpr.service.pir.topic", "PIR_COMPONENT_");
+            WeDPRConfig.apply("wedpr.service.pir.topic.prefix", "PIR_COMPONENT_");
     private static Integer PIR_QUERY_TIMEOUT_MS =
             WeDPRConfig.apply("wedpr.service.pir.timeout_ms", 30000);
 

@@ -24,6 +24,7 @@ import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
+import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import com.webank.wedpr.core.utils.CSVFileParser;
 import com.webank.wedpr.core.utils.Common;
@@ -53,8 +54,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
     }
 
     @Override
-    public void construct(String datasetID) throws Exception {
+    public void construct(PirServiceSetting serviceSetting) throws Exception {
         List<String> allTables = this.nativeSQLMapper.showAllTables();
+        String datasetID = serviceSetting.getDatasetId();
         String tableId = Constant.datasetId2tableId(datasetID);
         if (allTables.contains(tableId)) {
             logger.info("The dataset {} has already been constructed into {}", datasetID, tableId);

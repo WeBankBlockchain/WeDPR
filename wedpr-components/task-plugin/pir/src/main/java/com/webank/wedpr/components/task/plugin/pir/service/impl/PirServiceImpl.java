@@ -35,8 +35,11 @@ import com.webank.wedpr.components.task.plugin.pir.model.ObfuscationParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
+import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
+import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
+import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -47,7 +50,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PirServiceImpl implements PirService {
-    private static Logger logger = LoggerFactory.getLogger(PirServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PirServiceImpl.class);
 
     private @Autowired NativeSQLMapper nativeSQLMapper;
     private @Autowired DatasetMapper datasetMapper;
@@ -58,10 +61,14 @@ public class PirServiceImpl implements PirService {
     @Autowired
     private FileStorageInterface fileStorage;
 
-    private NativeSQLMapperWrapper nativeSQLMapperWrapper;
+    @Qualifier("weDPRTransport")
+    @Autowired
+    private WeDPRTransport weDPRTransport;
 
+    private NativeSQLMapperWrapper nativeSQLMapperWrapper;
     private Obfuscator obfuscator;
     private PirDatasetConstructor pirDatasetConstructor;
+    private PirTopicSubscriber pirTopicSubscriber;
 
     @PostConstruct
     public void init() {
@@ -73,6 +80,7 @@ public class PirServiceImpl implements PirService {
                         fileStorage,
                         new StoragePathBuilder(hdfsConfig, localStorageConfig),
                         nativeSQLMapper);
+        this.pirTopicSubscriber = new PirTopicSubscriberImpl(weDPRTransport);
     }
 
     @Override
@@ -128,18 +136,35 @@ public class PirServiceImpl implements PirService {
     /**
      * publish pir service
      *
-     * @param datasetID the datasetID
+     * @param serviceSetting the serviceSetting
      * @return the result
      */
     @Override
-    public WeDPRResponse publish(String datasetID) {
+    public WeDPRResponse publish(String serviceID, PirServiceSetting serviceSetting) {
         try {
-            logger.info("Publish dataset: {}", datasetID);
-            this.pirDatasetConstructor.construct(datasetID);
-            logger.info("Publish dataset: {} success", datasetID);
+            logger.info(
+                    "Publish dataset: {}, serviceID: {}", serviceSetting.getDatasetId(), serviceID);
+            this.pirDatasetConstructor.construct(serviceSetting);
+            this.pirTopicSubscriber.registerService(
+                    serviceID,
+                    new PirTopicSubscriber.QueryHandler() {
+                        @Override
+                        public WeDPRResponse onQuery(PirQueryRequest pirQueryRequest)
+                                throws Exception {
+                            return query(pirQueryRequest);
+                        }
+                    });
+            logger.info(
+                    "Publish dataset: {} success, serviceId: {}",
+                    serviceSetting.getDatasetId(),
+                    serviceID);
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } catch (Exception e) {
-            logger.warn("publish dataset {} failed for ", datasetID, e);
+            logger.warn(
+                    "publish dataset {} failed, serviceID: {}, error: ",
+                    serviceSetting.getDatasetId(),
+                    serviceID,
+                    e);
             return new WeDPRResponse(
                     Constant.WEDPR_FAILED, "Publish dataset {} failed for " + e.getMessage());
         }

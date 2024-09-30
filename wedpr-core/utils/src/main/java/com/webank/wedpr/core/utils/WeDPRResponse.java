@@ -68,6 +68,14 @@ public class WeDPRResponse implements BaseResponse {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 
+    public byte[] serializeToBytes() {
+        try {
+            return ObjectMapperFactory.getObjectMapper().writeValueAsBytes(this);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static WeDPRResponse deserialize(String data) throws Exception {
         if (StringUtils.isBlank(data)) {
             return null;

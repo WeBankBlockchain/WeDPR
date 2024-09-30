@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.task.plugin.pir.service;
 
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
+import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface PirService {
@@ -33,5 +34,5 @@ public interface PirService {
      * @param datasetID the datasetID
      * @return the result
      */
-    public abstract WeDPRResponse publish(String datasetID);
+    public abstract WeDPRResponse publish(String serviceID, PirServiceSetting pirServiceSetting);
 }

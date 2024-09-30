@@ -13,10 +13,16 @@
  *
  */
 
-package com.webank.wedpr.components.task.plugin.pir.core;
+package com.webank.wedpr.components.task.plugin.pir.transport;
 
-import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
+import com.webank.wedpr.core.utils.WeDPRResponse;
 
-public interface PirDatasetConstructor {
-    public abstract void construct(PirServiceSetting serviceSetting) throws Exception;
+public interface PirTopicSubscriber {
+    interface QueryHandler {
+        public abstract WeDPRResponse onQuery(PirQueryRequest pirQueryRequest) throws Exception;
+    }
+
+    public abstract void registerService(String serviceID, QueryHandler queryHandler)
+            throws Exception;
 }

@@ -20,7 +20,6 @@ import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -33,8 +32,8 @@ public class PirQueryRequest {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 
-    public static PirQueryRequest deserialize(String data) throws Exception {
-        if (StringUtils.isBlank(data)) {
+    public static PirQueryRequest deserialize(byte[] data) throws Exception {
+        if (data == null) {
             return null;
         }
         return ObjectMapperFactory.getObjectMapper().readValue(data, PirQueryRequest.class);
