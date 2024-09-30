@@ -49,6 +49,27 @@ ext {
     bcprovVersion = "1.78.1"
     googleAutoServiceVersion = "1.1.1"
     wedprGatewaySDKVersion = "1.0.0-SNAPSHOT"
+
+    libraries = [
+            spring: [
+                    "org.springframework:spring-core:${springVersion}",
+                    "org.springframework:spring-beans:${springVersion}",
+                    "org.springframework:spring-context:${springVersion}",
+                    "org.springframework:spring-web:${springVersion}",
+                    "org.springframework:spring-jdbc:${springVersion}",
+                    "org.springframework:spring-tx:${springVersion}",
+                    "org.springframework:spring-webmvc:${springVersion}",
+                    "org.springframework:spring-jcl:${springVersion}",
+                    "org.springframework:spring-aop:${springVersion}",
+            ],
+            spring_boot: [
+                    "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+                    "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
+                    "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
+                    "org.springframework.boot:spring-boot-actuator:${springBootVersion}",
+                    "io.springfox:springfox-boot-starter:${springfoxVersion}",
+            ]
+    ]
 }
 
 // check.dependsOn integrationTest
@@ -101,30 +122,6 @@ allprojects {
             "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}",
     ]
 
-    List spring =[
-            "org.springframework:spring-core:${springVersion}",
-            "org.springframework:spring-beans:${springVersion}",
-            "org.springframework:spring-context:${springVersion}",
-            "org.springframework:spring-web:${springVersion}",
-            "org.springframework:spring-jdbc:${springVersion}",
-            "org.springframework:spring-tx:${springVersion}",
-            "org.springframework:spring-webmvc:${springVersion}",
-            "org.springframework:spring-jcl:${springVersion}",
-            "org.springframework:spring-aop:${springVersion}",
-    ]
-
-    List spring_boot =[
-            "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
-            "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
-            "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
-            "org.springframework.boot:spring-boot-actuator:${springBootVersion}",
-    ]
-
-//    List shedlock = [
-//            "net.javacrumbs.shedlock:shedlock-spring:${versions.shedlock}",
-//            "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:${versions.shedlock}"
-//    ]
-
     configurations.configureEach {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
         exclude group: "org.slf4j", module: "log4j-over-slf4j"
@@ -133,21 +130,13 @@ allprojects {
     }
 
     dependencies {
-
-        implementation logger, spring, spring_boot
-
+        implementation logger
         implementation("org.projectlombok:lombok:${lombokVersion}")
-        implementation("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
         implementation("org.apache.commons:commons-lang3:${apacheCommonLangVersion}")
-        implementation("io.springfox:springfox-boot-starter:${springfoxVersion}")
         implementation("com.google.guava:guava:${guavaVersion}")
 
-
-
         testImplementation ("junit:junit:${junitVersion}")
-
         annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-        annotationProcessor("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
     }
 
     clean.doLast {

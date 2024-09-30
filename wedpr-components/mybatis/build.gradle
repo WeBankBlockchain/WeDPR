@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
+
 dependencies {
+    compile libraries.spring, libraries.spring_boot
     compile project(":wedpr-core-utils")
     compile ("com.alibaba:druid:${druidVersion}")
     compile ("mysql:mysql-connector-java:${mysqlConnectorVersion}")

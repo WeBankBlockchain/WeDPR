@@ -20,6 +20,7 @@ import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.api.credential.service.ApiCredentialService;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApiCredentialServiceImpl implements ApiCredentialService {
 
-    @Autowired private CryptoToolkit cryptoToolkit;
+    private CryptoToolkit cryptoToolkit;
     @Autowired private ApiCredentialMapper credentialMapper;
 
     private CredentialToolkit credentialToolkit;
 
     @PostConstruct
-    public void init() {
+    public void init() throws Exception {
+        this.cryptoToolkit = CryptoToolkitFactory.build();
         this.credentialToolkit = new CredentialToolkit(cryptoToolkit);
     }
     /**

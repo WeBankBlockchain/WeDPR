@@ -4,4 +4,6 @@ plugins {
 }
 dependencies{
     compile project(":wedpr-core-utils")
+    compile("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
+    annotationProcessor("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
 }

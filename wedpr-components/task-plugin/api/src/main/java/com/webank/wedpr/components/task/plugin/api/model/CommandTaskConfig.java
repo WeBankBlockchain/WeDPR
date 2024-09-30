@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 public class CommandTaskConfig {
@@ -53,7 +52,7 @@ public class CommandTaskConfig {
         return DEFAULT_EXECUTE_DIR;
     }
 
-    public static String getLogPath(@NotNull String appName) {
+    public static String getLogPath(String appName) {
         return Common.joinPath(DEFAULT_LOG_BASE_PATH, appName + Constant.LOG_POSTFIX);
     }
     // the system env files

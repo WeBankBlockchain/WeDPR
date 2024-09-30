@@ -20,6 +20,7 @@ import com.webank.wedpr.components.api.credential.core.impl.CredentialVerifierIm
 import com.webank.wedpr.components.api.credential.core.impl.MemoryCredentialCache;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,13 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class CredentialVerifierConfig {
     private static final Logger logger = LoggerFactory.getLogger(CredentialVerifierConfig.class);
-    @Autowired private CryptoToolkit cryptoToolkit;
     @Autowired private ApiCredentialMapper credentialMapper;
 
     @Bean(name = "credentialVerifier")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public CredentialVerifier credentialVerifier() {
+    public CredentialVerifier credentialVerifier() throws Exception {
+        CryptoToolkit cryptoToolkit = CryptoToolkitFactory.build();
         CredentialToolkit toolkit = new CredentialToolkit(cryptoToolkit);
         return new CredentialVerifierImpl(
                 cryptoToolkit, new MemoryCredentialCache(credentialMapper, toolkit));

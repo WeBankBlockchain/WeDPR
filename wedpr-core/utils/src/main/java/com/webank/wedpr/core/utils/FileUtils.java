@@ -18,13 +18,15 @@ import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
-import javax.validation.constraints.NotNull;
 
 public class FileUtils {
     public static final Set<PosixFilePermission> EXECUTABLE_PERMISSION =
             PosixFilePermissions.fromString("rwxr-xr-x");
 
-    public static void createExecutableFile(@NotNull Path path) throws Exception {
+    public static void createExecutableFile(Path path) throws Exception {
+        if (path == null) {
+            throw new WeDPRException("Must define the path!");
+        }
         if (Files.notExists(path.getParent())) {
             Files.createDirectories(path.getParent());
         }
