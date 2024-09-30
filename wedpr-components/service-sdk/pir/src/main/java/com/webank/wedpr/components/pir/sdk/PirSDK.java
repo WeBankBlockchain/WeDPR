@@ -15,10 +15,12 @@
 
 package com.webank.wedpr.components.pir.sdk;
 
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
+import com.webank.wedpr.core.utils.WeDPRResponse;
+import org.apache.commons.lang3.tuple.Pair;
 
 public interface PirSDK {
 
-    public abstract PirResult query(PirJobParam pirJobParam) throws Exception;
+    public abstract Pair<WeDPRResponse, PirResult> query(PirQueryParam queryParam) throws Exception;
 }

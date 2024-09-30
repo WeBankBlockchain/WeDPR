@@ -19,7 +19,8 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateQueryResult;
 import com.webank.wedpr.components.pir.sdk.core.OtResult;
-import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
@@ -32,12 +33,12 @@ import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapperWrapper;
 import com.webank.wedpr.components.task.plugin.pir.model.ObfuscationParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
+import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,25 +75,32 @@ public class PirServiceImpl implements PirService {
                         nativeSQLMapper);
     }
 
+    @Override
+    public WeDPRResponse query(PirQueryRequest pirQueryRequest) {
+        // TODO: obtain the serviceSetting
+        return query(pirQueryRequest.getQueryParam(), null, pirQueryRequest.getObfuscateData());
+    }
+
     /**
      * query the data
      *
      * @param obfuscateData the query parm
      * @return the result
      */
-    @Override
-    public WeDPRResponse query(
-            PirParamEnum.AlgorithmType algorithmType,
-            String datasetID,
+    protected WeDPRResponse query(
+            PirQueryParam pirQueryParam,
+            PirServiceSetting serviceSetting,
             ObfuscateData obfuscateData) {
         try {
-            ObfuscationParam obfuscationParam = new ObfuscationParam(obfuscateData, algorithmType);
+            ObfuscationParam obfuscationParam =
+                    new ObfuscationParam(obfuscateData, pirQueryParam.getAlgorithmType());
             ObfuscateQueryResult obfuscateQueryResult =
-                    new ObfuscateQueryResult(datasetID, algorithmType.getValue());
+                    new ObfuscateQueryResult(
+                            serviceSetting.getDatasetId(),
+                            pirQueryParam.getAlgorithmType().toString());
             for (ObfuscateData.ObfuscateDataItem dataItem : obfuscateData.getObfuscateDataItems()) {
                 List<PirDataItem> queriedResult =
-                        this.nativeSQLMapperWrapper.query(
-                                algorithmType, datasetID, obfuscateData.getParams(), dataItem);
+                        this.nativeSQLMapperWrapper.query(serviceSetting, pirQueryParam, dataItem);
                 obfuscationParam.setIndex(dataItem.getIdIndex());
                 List<OtResult.OtResultItem> otResultItems =
                         this.obfuscator.obfuscate(obfuscationParam, queriedResult, dataItem);
@@ -104,14 +112,16 @@ public class PirServiceImpl implements PirService {
             return response;
         } catch (Exception e) {
             logger.warn(
-                    "query exception, dataset: {}, algorithm: {}, params: {}, e: ",
-                    datasetID,
-                    algorithmType.getValue(),
-                    StringUtils.join(obfuscateData.getParams(), ","),
+                    "query exception, dataset: {}, queryParam: {}, e: ",
+                    serviceSetting.getDatasetId(),
+                    pirQueryParam.toString(),
                     e);
             return new WeDPRResponse(
                     Constant.WEDPR_FAILED,
-                    "Pir query failed for " + e.getMessage() + ", datasetID: " + datasetID);
+                    "Pir query failed for "
+                            + e.getMessage()
+                            + ", datasetID: "
+                            + serviceSetting.getDatasetId());
         }
     }
 

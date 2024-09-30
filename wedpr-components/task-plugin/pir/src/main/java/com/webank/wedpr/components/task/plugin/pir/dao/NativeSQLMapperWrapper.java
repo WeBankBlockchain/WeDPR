@@ -17,7 +17,9 @@ package com.webank.wedpr.components.task.plugin.pir.dao;
 
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
+import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -35,41 +37,53 @@ public class NativeSQLMapperWrapper {
     }
 
     public List<PirDataItem> query(
-            PirParamEnum.AlgorithmType algorithmType,
-            String datasetID,
-            String[] params,
+            PirServiceSetting serviceSetting,
+            PirQueryParam queryParam,
             ObfuscateData.ObfuscateDataItem obfuscateDataItem)
             throws WeDPRException {
-        if (algorithmType == PirParamEnum.AlgorithmType.idFilter) {
-            return executeFuzzyMatchQuery(datasetID, obfuscateDataItem.getFilter(), params);
+        List<String> queriedFields =
+                serviceSetting.obtainQueriedFields(
+                        queryParam.getSearchTypeObject(), queryParam.getQueriedFields());
+        logger.trace(
+                "query, origin queriedFields: [{}], intersection fields: [{}]",
+                StringUtils.join(queryParam.getQueriedFields(), ","),
+                StringUtils.join(queriedFields, ","));
+        if (queryParam.getAlgorithmType() == PirParamEnum.AlgorithmType.idFilter) {
+            return executeFuzzyMatchQuery(
+                    serviceSetting, queriedFields, obfuscateDataItem.getFilter());
         }
-        if (algorithmType == PirParamEnum.AlgorithmType.idObfuscation) {
-            return executeQuery(datasetID, obfuscateDataItem.getIdHashList(), params);
+        if (queryParam.getAlgorithmType() == PirParamEnum.AlgorithmType.idObfuscation) {
+            return executeQuery(serviceSetting, queriedFields, obfuscateDataItem.getIdHashList());
         }
         throw new WeDPRException(
                 "query "
-                        + datasetID
+                        + serviceSetting.getDatasetId()
                         + " failed for encounter unsupported algorithmType: "
-                        + algorithmType.getValue());
+                        + queryParam.getAlgorithmType().getValue());
     }
 
-    public List<PirDataItem> executeQuery(String datasetID, List<String> filters, String[] params) {
+    public List<PirDataItem> executeQuery(
+            PirServiceSetting serviceSetting, List<String> queriedFields, List<String> filters) {
         String condition = String.format("where t.id in (%s)", StringUtils.join(filters, ","));
         String sql =
                 String.format(
                         "select t.id as t_id, %s from %s t %s",
-                        StringUtils.join(params, ","), datasetID, condition);
+                        StringUtils.join(queriedFields, ","),
+                        serviceSetting.getDatasetId(),
+                        condition);
         logger.debug("executeQuery: {}", sql);
         return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
     }
 
     public List<PirDataItem> executeFuzzyMatchQuery(
-            String datasetID, String filter, String[] params) {
+            PirServiceSetting serviceSetting, List<String> queriedFields, String filter) {
         String condition = String.format("where t.id like concat(%s, '%%')", filter);
         String sql =
                 String.format(
                         "select t.id as t_id, %s from %s t %s",
-                        StringUtils.join(params, ","), datasetID, condition);
+                        StringUtils.join(queriedFields, ","),
+                        serviceSetting.getDatasetId(),
+                        condition);
         logger.debug("executeQuery: {}", sql);
         return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
     }

@@ -30,13 +30,13 @@ public class PirResult {
     @Data
     public static class PirResultItem {
         String searchId;
-        Boolean searchExist = false;
-        String searchValue;
+        Boolean isExists = false;
+        String value;
 
-        public void setSearchValue(String searchValue) {
-            this.searchValue = searchValue;
-            if (StringUtils.isNotBlank(this.searchValue)) {
-                this.searchExist = true;
+        public void setValue(String value) {
+            this.value = value;
+            if (StringUtils.isNotBlank(this.value)) {
+                this.isExists = true;
             }
         }
     }

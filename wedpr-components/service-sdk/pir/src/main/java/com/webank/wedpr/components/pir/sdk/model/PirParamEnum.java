@@ -26,10 +26,22 @@ import org.apache.commons.lang3.StringUtils;
 public class PirParamEnum {
     @Getter
     @AllArgsConstructor
-    public enum JobType {
-        SearchValue("0"),
-        SearchExist("1");
+    public enum SearchType {
+        SearchValue("SearchValue"),
+        SearchExist("SearchExist");
         private String value;
+
+        public static SearchType deserialize(String value) {
+            if (StringUtils.isBlank(value)) {
+                return null;
+            }
+            for (SearchType searchType : SearchType.values()) {
+                if (searchType.value.compareToIgnoreCase(value) == 0) {
+                    return searchType;
+                }
+            }
+            return null;
+        }
     }
 
     @Getter
@@ -51,21 +63,5 @@ public class PirParamEnum {
             }
             return null;
         }
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum HttpType {
-        HttpTimeout(180),
-        HttpMaxRetries(1);
-        private Integer value;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public enum JobMode {
-        SDKMode(0),
-        DirectorMode(1);
-        private Integer value;
     }
 }

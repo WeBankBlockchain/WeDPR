@@ -75,6 +75,13 @@ public class WeDPRResponse implements BaseResponse {
         return ObjectMapperFactory.getObjectMapper().readValue(data, WeDPRResponse.class);
     }
 
+    public static WeDPRResponse deserialize(byte[] data) throws Exception {
+        if (data == null) {
+            return null;
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, WeDPRResponse.class);
+    }
+
     @Override
     public String toString() {
         return "WeDPRResponse{"

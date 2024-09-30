@@ -17,8 +17,8 @@ package com.webank.wedpr.components.pir.sdk.core;
 
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
-import com.webank.wedpr.components.pir.sdk.model.PirJobParam;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
+import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
@@ -31,31 +31,39 @@ import java.util.Random;
 
 public class OtCrypto {
     public static ObfuscateData generateOtParam(
-            PirParamEnum.AlgorithmType algorithmType, PirJobParam jobParam) throws WeDPRException {
-        if (algorithmType == PirParamEnum.AlgorithmType.idFilter) {
-            return OtCrypto.generateOtParamForIDFilter(
-                    jobParam.getFilterLength(), jobParam.getSearchIdList());
-        }
-        return OtCrypto.generateOtParamForIDObfuscation(
-                jobParam.getObfuscationOrder(), jobParam.getSearchIdList());
-    }
-
-    public static PirResult decryptAndGetResult(
-            ObfuscateData obfuscateData, PirJobParam pirJobParam, List<OtResult> otResultList) {
-        return decryptResultAndObtainResult(
-                obfuscateData.getB(), pirJobParam.getSearchIdList(), otResultList);
-    }
-
-    /* hash披露, 请求方选择id，生成随机数a、b */
-    protected static ObfuscateData generateOtParamForIDFilter(
-            Integer filterLength, List<String> searchIDList) {
+            PirParamEnum.AlgorithmType algorithmType, PirQueryParam queryParam)
+            throws WeDPRException {
         BigInteger blindingA = OtHelper.getRandomInt();
         BigInteger blindingB = OtHelper.getRandomInt();
 
         BigInteger x = OtHelper.powMod(blindingA);
         BigInteger y = OtHelper.powMod(blindingB);
         BigInteger blindingC = OtHelper.mulMod(blindingA, blindingB);
+        if (algorithmType == PirParamEnum.AlgorithmType.idFilter) {
+            return new ObfuscateData(
+                    blindingB,
+                    x,
+                    y,
+                    OtCrypto.generateOtParamForIDFilter(
+                            blindingC, queryParam.getFilterLength(), queryParam.getSearchIdList()));
+        }
+        return new ObfuscateData(
+                blindingB,
+                x,
+                y,
+                OtCrypto.generateOtParamForIDObfuscation(
+                        blindingC, queryParam.getObfuscationOrder(), queryParam.getSearchIdList()));
+    }
 
+    public static PirResult decryptAndGetResult(
+            ObfuscateData obfuscateData, PirQueryParam queryParam, List<OtResult> otResultList) {
+        return decryptResultAndObtainResult(
+                obfuscateData.getB(), queryParam.getSearchIdList(), otResultList);
+    }
+
+    /* hash披露, 请求方选择id，生成随机数a、b */
+    protected static List<ObfuscateData.ObfuscateDataItem> generateOtParamForIDFilter(
+            BigInteger blindingC, Integer filterLength, List<String> searchIDList) {
         List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         for (String searchId : searchIDList) {
             String filter =
@@ -68,19 +76,13 @@ public class OtCrypto {
             pirDataBody.setZ0(z0);
             obfuscateDataItems.add(pirDataBody);
         }
-        return new ObfuscateData(blindingB, x, y, obfuscateDataItems);
+        return obfuscateDataItems;
     }
 
     /* hash筛选, 请求方选择顺序\delta\in \{0,1,..,m-1\}，生成随机数a、b */
-    protected static ObfuscateData generateOtParamForIDObfuscation(
-            Integer obfuscationOrder, List<String> searchIDList) throws WeDPRException {
-        BigInteger blindingA = OtHelper.getRandomInt();
-        BigInteger blindingB = OtHelper.getRandomInt();
-
-        BigInteger x = OtHelper.powMod(blindingA);
-        BigInteger y = OtHelper.powMod(blindingB);
-        BigInteger blindingC = OtHelper.mulMod(blindingA, blindingB);
-
+    protected static List<ObfuscateData.ObfuscateDataItem> generateOtParamForIDObfuscation(
+            BigInteger blindingC, Integer obfuscationOrder, List<String> searchIDList)
+            throws WeDPRException {
         List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         Random rand = new Random();
         for (String searchId : searchIDList) {
@@ -95,7 +97,7 @@ public class OtCrypto {
             obfuscateDataItem.setIdHashList(idHashVecList);
             obfuscateDataItems.add(obfuscateDataItem);
         }
-        return new ObfuscateData(blindingB, x, y, obfuscateDataItems);
+        return obfuscateDataItems;
     }
 
     private static BigInteger calculateZ0(String searchId, BigInteger blindingC) {
@@ -105,9 +107,7 @@ public class OtCrypto {
     }
 
     private static BigInteger calculateIndexZ0(Integer idIndex, BigInteger blindingC) {
-        // 将整数转长整数
-        BigInteger idNumber = BigInteger.valueOf(idIndex);
-        return OtHelper.powMod(blindingC.subtract(idNumber));
+        return OtHelper.powMod(blindingC.subtract(BigInteger.valueOf(idIndex)));
     }
 
     private static void decryptServerResultList(
@@ -118,15 +118,13 @@ public class OtCrypto {
             String cipherStr = result.getC();
             BigInteger w1 = OtHelper.OTPow(w, b);
             try {
-                // 对整数AES密钥OT解密，报错后不处理
-                BigInteger messageRecover = w1.xor(e);
-                byte[] keyBytes = Common.bigIntegerToBytes(messageRecover);
-                String key = new String(keyBytes, StandardCharsets.UTF_8);
+                String key =
+                        new String(Common.bigIntegerToBytes(w1.xor(e)), StandardCharsets.UTF_8);
                 SymmetricCrypto symmetricCrypto =
                         CryptoToolkitFactory.buildAESSymmetricCrypto(
                                 key, Constant.DEFAULT_IV.getBytes(StandardCharsets.UTF_8));
                 String decryptedText = symmetricCrypto.decrypt(cipherStr);
-                pirResultItem.setSearchValue(decryptedText);
+                pirResultItem.setValue(decryptedText);
             } catch (Exception ignored) {
 
             }
