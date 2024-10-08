@@ -49,6 +49,7 @@ public class PirSDKImpl implements PirSDK {
     @Override
     public Pair<WeDPRResponse, PirResult> query(PirQueryParam queryParam) throws Exception {
         queryParam.check();
+
         ObfuscateData obfuscateData =
                 OtCrypto.generateOtParam(queryParam.getAlgorithmType(), queryParam);
         PirQueryRequest pirQueryRequest = new PirQueryRequest(queryParam, obfuscateData);

@@ -14,10 +14,13 @@
  */
 package com.webank.wedpr.components.api.credential.core;
 
+import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import javax.servlet.http.HttpServletRequest;
 
 public interface CredentialVerifier {
     // verify the request
     ApiCredentialDO verify(HttpServletRequest request) throws Exception;
+
+    CredentialInfo verify(CredentialInfo credentialInfo) throws Exception;
 }

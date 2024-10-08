@@ -21,14 +21,20 @@
     <resultMap id="PublishedServiceInfoMap" type="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">
         <id column="service_id" property="serviceId"/>
         <result column="service_name" property="serviceName"/>
-        <result column="service_type" property="serviceDesc"/>
-        <result column="service_config" property="serviceType"/>
-        <result column="owner" property="serviceConfig"/>
-        <result column="last_update_time" property="owner"/>
+        <result column="service_desc" property="serviceDesc"/>
+        <result column="service_type" property="serviceType"/>
+        <result column="service_config" property="serviceConfig"/>
+        <result column="owner" property="owner"/>
         <result column="agency" property="agency"/>
         <result column="create_time" property="createTime"/>
         <result column="last_update_time" property="lastUpdateTime"/>
     </resultMap>
+    <insert id="insertServiceInfo" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">
+        insert into wedpr_published_service(`service_id`, `service_name`, `service_desc`,
+                                        `service_type`, `service_config`, `owner`, `agency`, `create_time`) values
+            (#{serviceInfo.serviceId}, #{serviceInfo.serviceName}, #{serviceInfo.serviceDesc}, #{serviceInfo.serviceType},
+             #{serviceInfo.serviceConfig}, #{serviceInfo.owner}, #{serviceInfo.agency}, NOW())
+    </insert>
     <select id="queryPublishedService" resultMap="PublishedServiceInfoMap">
         select *
         from wedpr_published_service where 1=1
@@ -41,7 +47,7 @@
                     and `service_name` = #{condition.serviceName}
                 </if>
                 <if test="condition.serviceType != null and condition.serviceType !=''">
-                    and `service_type` = #{condition.service_type}
+                    and `service_type` = #{condition.serviceType}
                 </if>
                 <if test="condition.agency!= null and condition.agency !=''">
                     and `agency` = #{condition.agency}
@@ -59,4 +65,41 @@
         </choose>
         order by `last_update_time` desc
     </select>
+    <update id="updateServiceInfo" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">
+        update `wedpr_published_service`
+        <set>
+            <if test="updatedInfo.serviceName != null and updatedInfo.serviceName !=''">
+                `service_name` = #{updatedInfo.serviceName},
+            </if>
+            <if test="updatedInfo.serviceDesc != null and updatedInfo.serviceDesc !=''">
+                `service_desc` = #{updatedInfo.serviceDesc},
+            </if>
+            <if test="updatedInfo.serviceConfig != null and updatedInfo.serviceConfig !=''">
+                `service_config` = #{updatedInfo.serviceConfig},
+            </if>
+        </set>
+        where 1=1
+        <if test="updatedInfo.serviceId != null and updatedInfo.serviceId !=''">
+            and `service_id` = #{updatedInfo.serviceId}
+        </if>
+        <if test="updatedInfo.owner != null and updatedInfo.owner !=''">
+            and `owner` = #{updatedInfo.owner}
+        </if>
+        <if test="updatedInfo.agency != null and updatedInfo.agency !=''">
+            and `agency` = #{updatedInfo.agency}
+        </if>
+    </update>
+
+    <delete id="deleteServiceInfo">
+        delete from `wedpr_published_service` where 1 = 1
+        <if test="serviceId != null and serviceId !=''">
+            and `service_id` = #{serviceId}
+        </if>
+        <if test="owner != null and owner !=''">
+            and `owner` = #{owner}
+        </if>
+        <if test="agency != null and agency !=''">
+            and `agency` = #{agency}
+        </if>
+    </delete>
 </mapper>

@@ -16,6 +16,8 @@
 package com.webank.wedpr.components.pir.sdk.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
@@ -26,6 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 /** @author zachma */
 @Data
 public class PirQueryParam {
+    // the credential information
+    private CredentialInfo credentialInfo;
+
     private List<String> searchIdList;
 
     // the serviceId
@@ -35,8 +40,8 @@ public class PirQueryParam {
     private List<String> queriedFields;
 
     // the search type, default is search exist
-    private String searchType = PirParamEnum.SearchType.SearchExist.getValue();
-    @JsonIgnore private PirParamEnum.SearchType searchTypeObject;
+    private String searchType = PirSearchType.SearchExist.getValue();
+    @JsonIgnore private PirSearchType searchTypeObject;
 
     // the pir algorithm, default use id-filter algorithm
     private String pirAlgorithmType = PirParamEnum.AlgorithmType.idFilter.getValue();
@@ -46,12 +51,16 @@ public class PirQueryParam {
     // the filter length
     private Integer filterLength = 4;
 
+    public void generateCredentialInfo() {
+        this.credentialInfo = new CredentialInfo();
+    }
+
     public void setSearchType(String searchType) {
         if (StringUtils.isBlank(searchType)) {
             return;
         }
         this.searchType = searchType;
-        this.searchTypeObject = PirParamEnum.SearchType.deserialize(searchType);
+        this.searchTypeObject = PirSearchType.deserialize(searchType);
     }
 
     public void setPirAlgorithmType(String pirAlgorithmType) {

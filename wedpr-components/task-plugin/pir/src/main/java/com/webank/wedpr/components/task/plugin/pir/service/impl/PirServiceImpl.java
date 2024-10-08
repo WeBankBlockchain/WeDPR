@@ -16,6 +16,9 @@
 package com.webank.wedpr.components.task.plugin.pir.service.impl;
 
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateQueryResult;
 import com.webank.wedpr.components.pir.sdk.core.OtResult;
@@ -33,11 +36,11 @@ import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapperWrapper;
 import com.webank.wedpr.components.task.plugin.pir.model.ObfuscationParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
-import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
 import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import java.util.List;
@@ -65,6 +68,8 @@ public class PirServiceImpl implements PirService {
     @Autowired
     private WeDPRTransport weDPRTransport;
 
+    @Autowired private PublishedServiceMapper publishedServiceMapper;
+
     private NativeSQLMapperWrapper nativeSQLMapperWrapper;
     private Obfuscator obfuscator;
     private PirDatasetConstructor pirDatasetConstructor;
@@ -84,9 +89,26 @@ public class PirServiceImpl implements PirService {
     }
 
     @Override
-    public WeDPRResponse query(PirQueryRequest pirQueryRequest) {
-        // TODO: obtain the serviceSetting
-        return query(pirQueryRequest.getQueryParam(), null, pirQueryRequest.getObfuscateData());
+    public WeDPRResponse query(PirQueryRequest pirQueryRequest) throws Exception {
+        PublishedServiceInfo condition =
+                new PublishedServiceInfo(pirQueryRequest.getQueryParam().getServiceId());
+        // check the service
+        List<PublishedServiceInfo> result =
+                this.publishedServiceMapper.queryPublishedService(condition);
+        if (result == null || result.isEmpty()) {
+            throw new WeDPRException(
+                    "The service "
+                            + pirQueryRequest.getQueryParam().getServiceId()
+                            + " not exists!");
+        }
+        // TODO: check the auth
+        // get the serviceSetting
+        PirServiceSetting serviceSetting =
+                PirServiceSetting.deserialize(result.get(0).getServiceConfig());
+        return query(
+                pirQueryRequest.getQueryParam(),
+                serviceSetting,
+                pirQueryRequest.getObfuscateData());
     }
 
     /**

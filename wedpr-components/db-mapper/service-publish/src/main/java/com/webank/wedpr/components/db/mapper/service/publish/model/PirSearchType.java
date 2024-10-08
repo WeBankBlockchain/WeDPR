@@ -13,35 +13,29 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk.model;
+package com.webank.wedpr.components.db.mapper.service.publish.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @author zachma
- * @date 2024/8/18
- */
-public class PirParamEnum {
-    @Getter
-    @AllArgsConstructor
-    public enum AlgorithmType {
-        idFilter("idFilter"),
-        idObfuscation("idObfuscation");
+@Getter
+@AllArgsConstructor
+public enum PirSearchType {
+    SearchValue("SearchValue"),
+    SearchExist("SearchExist"),
+    ALL("ALL");
+    private String value;
 
-        private String value;
-
-        public static AlgorithmType deserialize(String value) {
-            if (StringUtils.isBlank(value)) {
-                return null;
-            }
-            for (AlgorithmType algorithmType : AlgorithmType.values()) {
-                if (algorithmType.value.compareToIgnoreCase(value) == 0) {
-                    return algorithmType;
-                }
-            }
+    public static PirSearchType deserialize(String value) {
+        if (StringUtils.isBlank(value)) {
             return null;
         }
+        for (PirSearchType searchType : PirSearchType.values()) {
+            if (searchType.value.compareToIgnoreCase(value) == 0) {
+                return searchType;
+            }
+        }
+        return null;
     }
 }

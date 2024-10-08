@@ -12,7 +12,7 @@
  * the License.
  *
  */
-package com.webank.wedpr.components.api.credential.config;
+package com.webank.wedpr.components.security.config;
 
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialToolkit;

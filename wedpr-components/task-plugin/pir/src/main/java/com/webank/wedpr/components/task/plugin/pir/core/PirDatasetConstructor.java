@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.task.plugin.pir.core;
 
-import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 
 public interface PirDatasetConstructor {
     public abstract void construct(PirServiceSetting serviceSetting) throws Exception;

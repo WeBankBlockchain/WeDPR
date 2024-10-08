@@ -1,0 +1,8 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+}
+dependencies{
+    compile project(":wedpr-components-mybatis")
+    compile project(":wedpr-components-uuid")
+}

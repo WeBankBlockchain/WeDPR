@@ -1,11 +1,9 @@
 package com.webank.wedpr.components.publish.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.webank.wedpr.components.publish.entity.WedprPublishedService;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
 import com.webank.wedpr.components.publish.sync.PublishSyncAction;
-import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 
 /**
@@ -14,20 +12,16 @@ import com.webank.wedpr.core.utils.WeDPRResponse;
  * @author caryliao
  * @since 2024-08-31
  */
-public interface WedprPublishedServiceService extends IService<WedprPublishedService> {
+public interface WedprPublishedServiceService {
     WeDPRResponse createPublishService(String username, PublishCreateRequest publishCreate)
-            throws WeDPRException;
+            throws Exception;
 
-    WeDPRResponse updatePublishService(String username, PublishCreateRequest publishCreate)
-            throws WeDPRException;
+    WeDPRResponse updatePublishService(String username, PublishedServiceInfo publishedServiceInfo)
+            throws Exception;
 
-    WeDPRResponse revokePublishService(String username, String serviceId) throws WeDPRException;
+    WeDPRResponse revokePublishService(String username, String serviceId) throws Exception;
 
-    void syncPublishService(PublishSyncAction action, WedprPublishedService wedprPublish);
+    void syncPublishService(PublishSyncAction action, PublishedServiceInfo publishedServiceInfo);
 
     WeDPRResponse listPublishService(PublishSearchRequest request);
-
-    WeDPRResponse searchPublishService(String publishId);
-
-    WedprPublishedService getPublishService(String serviceId);
 }

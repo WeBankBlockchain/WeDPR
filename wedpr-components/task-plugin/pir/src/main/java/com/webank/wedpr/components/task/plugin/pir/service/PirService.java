@@ -15,23 +15,24 @@
 
 package com.webank.wedpr.components.task.plugin.pir.service;
 
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
-import com.webank.wedpr.components.task.plugin.pir.model.PirServiceSetting;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface PirService {
+
     /**
      * query the data
      *
      * @param pirQueryRequest the pir query request
      * @return the query result
      */
-    public abstract WeDPRResponse query(PirQueryRequest pirQueryRequest);
+    public abstract WeDPRResponse query(PirQueryRequest pirQueryRequest) throws Exception;
 
     /**
      * publish pir service
      *
-     * @param datasetID the datasetID
+     * @param serviceID the serviceID
      * @return the result
      */
     public abstract WeDPRResponse publish(String serviceID, PirServiceSetting pirServiceSetting);

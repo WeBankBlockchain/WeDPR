@@ -31,10 +31,18 @@ public class CredentialVerifierImpl implements CredentialVerifier {
     }
 
     @Override
+    public CredentialInfo verify(CredentialInfo credentialInfo) throws Exception {
+        ApiSignature apiSignature = new ApiSignature(credentialInfo);
+        // verify the signature
+        if (!apiSignature.verifySignature(cryptoToolkit, credentialInfo.getAccessSecret())) {
+            throw new WeDPRException("access forbidden for invalid signature!");
+        }
+        return credentialInfo;
+    }
+
+    @Override
     public ApiCredentialDO verify(HttpServletRequest request) throws Exception {
         ApiSignature apiSignature = new ApiSignature(request);
-        // check the content
-        apiSignature.check();
         // obtain the accessKeySecret by accessKeyID
         ApiCredentialDO apiCredentialDO =
                 credentialCache.getAccessKey(apiSignature.getAccessKeyID());

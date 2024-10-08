@@ -56,9 +56,6 @@ public class HDFSStorage implements FileStorageInterface {
                 Configuration hadoopConf = new Configuration();
                 hadoopConf.set(StorageConstant.FS_URI_CONFIG_KEY, hdfsConfig.getUrl());
                 this.fileSystem = FileSystem.get(hadoopConf);
-                // TODO: add hdfs account config
-                // this.fileSystem = FileSystem.get(new URI(hdfsConfig.getUrl()), hadoopConf,
-                // "root");
                 this.hdfsConfig = hdfsConfig;
                 logger.info("connect to hdfs success, hdfsConfig: {}", hdfsConfig);
             } catch (Exception e) {

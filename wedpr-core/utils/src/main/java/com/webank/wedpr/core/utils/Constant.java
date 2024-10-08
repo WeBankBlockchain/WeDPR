@@ -71,4 +71,6 @@ public class Constant {
     public static final String PID_FIELD = "pid";
     public static final String DATE_VAR = "datetime";
     public static final String LOG_POSTFIX = ".log";
+
+    public static final String PUBLISH_ID_PREFIX = "s-";
 }

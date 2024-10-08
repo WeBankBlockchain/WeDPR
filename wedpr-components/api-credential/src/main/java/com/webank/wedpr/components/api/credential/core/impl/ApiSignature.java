@@ -36,11 +36,20 @@ public class ApiSignature {
     private String timestamp;
     private String signature;
 
-    public ApiSignature(HttpServletRequest request) {
+    public ApiSignature(CredentialInfo credentialInfo) throws Exception {
+        this.accessKeyID = credentialInfo.getAccessKeyID();
+        this.nonce = credentialInfo.getNonce();
+        this.timestamp = credentialInfo.getTimestamp();
+        this.signature = credentialInfo.getSignature();
+    }
+
+    public ApiSignature(HttpServletRequest request) throws Exception {
         this.accessKeyID = request.getParameter(ACCESS_ID_KEY);
         this.nonce = request.getParameter(NONCE_KEY);
         this.timestamp = request.getParameter(TIMESTAMP_KEY);
         this.signature = request.getParameter(SIGNATURE_KEY);
+        // check the content
+        check();
     }
 
     public void check() throws Exception {

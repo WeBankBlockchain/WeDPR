@@ -1,8 +1,11 @@
 package com.webank.wedpr.components.publish.entity.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
+import com.webank.wedpr.core.utils.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * @author zachma
@@ -10,16 +13,15 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PublishSearchRequest extends BasePageRequest {
+@NoArgsConstructor
+@ToString
+public class PublishSearchRequest extends PageRequest {
+    private PublishedServiceInfo condition = new PublishedServiceInfo();
 
-    private String serviceName;
-
-    private String agency;
-
-    private String serviceType;
-
-    private String owner;
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private String createDate;
+    public void setCondition(PublishedServiceInfo condition) {
+        if (condition == null) {
+            return;
+        }
+        this.condition = condition;
+    }
 }

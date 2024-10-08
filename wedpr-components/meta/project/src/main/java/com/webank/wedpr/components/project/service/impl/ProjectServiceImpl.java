@@ -78,7 +78,6 @@ public class ProjectServiceImpl implements ProjectService {
                                 + " already exists, please try another project name!");
             }
             this.projectMapperWrapper.getProjectMapper().insertProjectInfo(project);
-            // TODO: init the project resource
             logger.info("createProject success, detail: {}", projectDetail.toString());
             response.setData(project.getId());
         } catch (Exception e) {

@@ -3,7 +3,9 @@ plugins {
     id 'java'
 }
 dependencies{
+    compile project(":wedpr-components-db-mapper-service-publish")
     compile project(":wedpr-core-utils")
     compile project(":wedpr-components-crypto")
+    compile project(":wedpr-components-api-credential")
     compile ("com.webank.wedpr:wedpr-gateway-sdk:${wedprGatewaySDKVersion}")
 }

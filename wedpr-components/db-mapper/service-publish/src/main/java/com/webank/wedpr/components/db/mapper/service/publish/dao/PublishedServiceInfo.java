@@ -15,18 +15,40 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.TimeRange;
+import com.webank.wedpr.core.utils.WeDPRException;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PublishedServiceInfo extends TimeRange {
-    private String serviceId;
-    private String serviceName;
-    private String serviceDesc;
-    private String serviceType;
-    private String serviceConfig;
-    private String owner;
-    private String agency;
-    private String createTime;
-    private String lastUpdateTime;
+    protected String serviceId;
+    protected String serviceName;
+    protected String serviceDesc;
+    protected String serviceType;
+    protected String serviceConfig;
+    protected String owner;
+    protected String agency;
+    protected String createTime;
+    protected String lastUpdateTime;
+
+    public PublishedServiceInfo(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
+    }
+
+    public static PublishedServiceInfo deserialize(String data) throws Exception {
+        if (StringUtils.isBlank(data)) {
+            throw new WeDPRException("Invalid empty publish request!");
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, PublishedServiceInfo.class);
+    }
 }

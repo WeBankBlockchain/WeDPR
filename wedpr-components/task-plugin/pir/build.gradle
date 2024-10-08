@@ -6,6 +6,7 @@ dependencies{
     compile project(":wedpr-components-storage")
     compile project(":wedpr-core-utils")
     compile project(":wedpr-components-db-mapper-dataset")
+    compile project(":wedpr-components-db-mapper-service-publish")
     compile project(":wedpr-components-storage")
     compile project(":wedpr-components-service-sdk-pir")
     compile project(":wedpr-components-service-publish")

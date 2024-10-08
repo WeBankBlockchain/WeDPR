@@ -1,8 +1,8 @@
 package com.webank.wedpr.components.publish.helper;
 
-import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author zachma
@@ -17,6 +17,18 @@ public class PublishServiceHelper {
         XGB("xgb"),
         LR("lr");
         private final String type;
+
+        public static PublishType deserialize(String type) {
+            if (StringUtils.isBlank(type)) {
+                return null;
+            }
+            for (PublishType publishType : PublishType.values()) {
+                if (publishType.type.compareToIgnoreCase(type) == 0) {
+                    return publishType;
+                }
+            }
+            return null;
+        }
     }
 
     @Getter
@@ -27,16 +39,4 @@ public class PublishServiceHelper {
         EXPIRED("expired");
         private final String value;
     }
-
-    protected static final String PUBLISH_ID_PREFIX = "s-";
-
-    public static final String PUBLISH_PIR_NEED_COLUMN = "id";
-
-    public static String newPublishServiceId() {
-        return PUBLISH_ID_PREFIX + WeDPRUuidGenerator.generateID();
-    }
-
-    public static final String PIR_TEMP_DIR = "pir";
-
-    public static final String PIR_TEMP_TABLE_PREFIX = "wedpr_pir_";
 }
