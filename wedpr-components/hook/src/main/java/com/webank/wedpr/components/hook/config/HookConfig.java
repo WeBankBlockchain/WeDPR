@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.hook.config;
 
+import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.hook.UserHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
-public class UserHookConfig {
-    private static final Logger logger = LoggerFactory.getLogger(UserHookConfig.class);
+public class HookConfig {
+    private static final Logger logger = LoggerFactory.getLogger(HookConfig.class);
 
     @Bean(name = "userHook")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
     public UserHook userHook() {
         return new UserHook();
+    }
+
+    @Bean(name = "serviceHook")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    @ConditionalOnMissingBean
+    public ServiceHook serviceHook() {
+        return new ServiceHook();
     }
 }

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
+import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
 import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
@@ -41,6 +42,10 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     @Autowired
     private PublishSyncerApi publishSyncer;
 
+    @Qualifier("serviceHook")
+    @Autowired
+    private ServiceHook serviceHook;
+
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private PublishedServiceMapper publishedServiceMapper;
 
@@ -50,6 +55,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
             throws Exception {
         publishCreate.setAgency(WeDPRCommonConfig.getAgency());
         publishCreate.checkServiceConfig(datasetMapper, username, WeDPRCommonConfig.getAgency());
+        this.serviceHook.onPublish(publishCreate);
         this.publishedServiceMapper.insertServiceInfo(publishCreate);
         publishSyncer.publishSync(publishCreate.serialize());
         return new WeDPRResponse(

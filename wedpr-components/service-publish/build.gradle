@@ -11,4 +11,5 @@ dependencies{
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
     compile project(":wedpr-components-sync")
+    compile project(":wedpr-components-hook")
 }
