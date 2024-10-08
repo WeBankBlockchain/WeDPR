@@ -45,16 +45,18 @@ public class PublishCreateRequest extends PublishedServiceInfo {
         this.serviceId = serviceId;
     }
 
-    public void checkServiceConfig(DatasetMapper datasetMapper) throws Exception {
+    public void checkServiceConfig(DatasetMapper datasetMapper, String user, String agency)
+            throws Exception {
         if (this.publishType == null) {
             throw new WeDPRException("The serviceType must be one of pir/xgb/lr");
         }
         if (this.serviceType == PublishServiceHelper.PublishType.PIR.getType()) {
-            this.checkPirServiceConfig(datasetMapper);
+            this.checkPirServiceConfig(datasetMapper, user, agency);
         }
     }
 
-    protected void checkPirServiceConfig(DatasetMapper datasetMapper) throws Exception {
+    protected void checkPirServiceConfig(DatasetMapper datasetMapper, String user, String agency)
+            throws Exception {
         PirServiceSetting pirServiceSetting = PirServiceSetting.deserialize(this.serviceConfig);
         // check the datasetId
         Dataset dataset =
@@ -64,6 +66,11 @@ public class PublishCreateRequest extends PublishedServiceInfo {
                     "Publish pir service failed for the dataset "
                             + pirServiceSetting.getDatasetId()
                             + " not exists!");
+        }
+        // check the permission
+        if (dataset.getOwnerAgencyName().compareToIgnoreCase(agency) != 0
+                || dataset.getOwnerUserName().compareToIgnoreCase(user) != 0) {
+            throw new WeDPRException("Only the owner can publish the dataset!");
         }
         // check the idField
         List<String> datasetFields =

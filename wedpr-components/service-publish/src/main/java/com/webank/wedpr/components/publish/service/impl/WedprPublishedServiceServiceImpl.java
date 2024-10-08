@@ -18,7 +18,6 @@ import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
-import java.util.concurrent.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +41,6 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     @Autowired
     private PublishSyncerApi publishSyncer;
 
-    @Autowired
-    @Qualifier("datasetAsyncExecutor")
-    private Executor executor;
-
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private PublishedServiceMapper publishedServiceMapper;
 
@@ -54,7 +49,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     public WeDPRResponse createPublishService(String username, PublishCreateRequest publishCreate)
             throws Exception {
         publishCreate.setAgency(WeDPRCommonConfig.getAgency());
-        publishCreate.checkServiceConfig(datasetMapper);
+        publishCreate.checkServiceConfig(datasetMapper, username, WeDPRCommonConfig.getAgency());
         this.publishedServiceMapper.insertServiceInfo(publishCreate);
         publishSyncer.publishSync(publishCreate.serialize());
         return new WeDPRResponse(
