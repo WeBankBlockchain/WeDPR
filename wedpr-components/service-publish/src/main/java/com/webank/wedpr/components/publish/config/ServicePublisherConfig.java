@@ -16,13 +16,43 @@
 package com.webank.wedpr.components.publish.config;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
+import org.apache.http.client.config.RequestConfig;
 
 public class ServicePublisherConfig {
     // default 30
     private static final Integer SERVICE_SYNCER_BATCH_SIZE =
             WeDPRConfig.apply("wedpr.service.syncer.batch.size", 30);
 
+    private static final String PIR_PUBLISH_SERVICE_URI_PATH =
+            WeDPRConfig.apply("wedpr.service.uri.path.pir_publish", "/pir/publish");
+
+    /// the service worker client config ///
+    private static final Integer CONNECTION_REQUEST_TIME_OUT =
+            WeDPRConfig.apply("wedpr.service.connect.request.timeout.ms", 10000);
+    private static final Integer CONNECTION_TIME_OUT =
+            WeDPRConfig.apply("wedpr.service.connect.timeout.ms", 5000);
+    private static final Integer REQUEST_TIMEOUT =
+            WeDPRConfig.apply("wedpr.service.request.timeout.ms", 60000);
+    private static final Integer MAX_TOTAL_CONNECTION =
+            WeDPRConfig.apply("wedpr.service.max.total.connection", 5);
+    /// the service worker client config ///
     public static Integer getServiceSyncerBatchSize() {
         return SERVICE_SYNCER_BATCH_SIZE;
+    }
+
+    public static RequestConfig buildConfig() {
+        return RequestConfig.custom()
+                .setConnectionRequestTimeout(CONNECTION_REQUEST_TIME_OUT)
+                .setConnectTimeout(CONNECTION_TIME_OUT)
+                .setSocketTimeout(REQUEST_TIMEOUT)
+                .build();
+    }
+
+    public static String getPirPublishServiceUriPath() {
+        return PIR_PUBLISH_SERVICE_URI_PATH;
+    }
+
+    public static Integer getMaxTotalConnection() {
+        return MAX_TOTAL_CONNECTION;
     }
 }

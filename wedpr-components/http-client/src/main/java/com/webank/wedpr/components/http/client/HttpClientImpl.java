@@ -56,7 +56,11 @@ public class HttpClientImpl {
     }
 
     public BaseResponse executePost(BaseRequest request) throws Exception {
-        return factory.build(executePostAndGetString(request, null));
+        return executePost(request, null);
+    }
+
+    public BaseResponse executePost(BaseRequest request, Integer successCode) throws Exception {
+        return factory.build(executePostAndGetString(request, successCode));
     }
 
     public String executePostAndGetString(String url, String request, Integer successCode)

@@ -27,7 +27,7 @@ public class ServiceHook {
     private static final Logger logger = LoggerFactory.getLogger(UserHook.class);
 
     public interface ServiceCallback {
-        void onPublish(Object serviceInfo) throws Exception;
+        abstract void onPublish(Object serviceInfo) throws Exception;
     }
 
     public enum ServiceAction {

@@ -22,9 +22,11 @@ import com.webank.wedpr.core.utils.TimeRange;
 import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -60,6 +62,7 @@ public class PublishedServiceInfo extends TimeRange {
         this.serviceStatus = ServiceStatus.deserialize(status);
     }
 
+    @Override
     public String serialize() throws Exception {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }

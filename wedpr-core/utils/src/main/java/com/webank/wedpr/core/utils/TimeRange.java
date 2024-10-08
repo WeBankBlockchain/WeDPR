@@ -20,7 +20,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class TimeRange {
+public class TimeRange implements BaseRequest {
     protected String startTime;
     protected String endTime;
     protected Integer step = 1;
@@ -104,5 +104,10 @@ public class TimeRange {
                 + ", step="
                 + step
                 + '}';
+    }
+
+    @Override
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 }
