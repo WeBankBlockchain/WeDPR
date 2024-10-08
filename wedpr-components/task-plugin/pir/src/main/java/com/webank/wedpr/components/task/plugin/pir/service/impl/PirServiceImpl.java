@@ -19,6 +19,7 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
+import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateQueryResult;
 import com.webank.wedpr.components.pir.sdk.core.OtResult;
@@ -28,6 +29,7 @@ import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
+import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.Obfuscator;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.core.impl.ObfuscatorImpl;
@@ -40,6 +42,7 @@ import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
 import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.core.utils.ThreadPoolService;
 import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
@@ -69,6 +72,7 @@ public class PirServiceImpl implements PirService {
     private WeDPRTransport weDPRTransport;
 
     @Autowired private PublishedServiceMapper publishedServiceMapper;
+    private final ThreadPoolService threadPoolService = PirServiceConfig.getThreadPoolService();
 
     private NativeSQLMapperWrapper nativeSQLMapperWrapper;
     private Obfuscator obfuscator;
@@ -166,20 +170,53 @@ public class PirServiceImpl implements PirService {
         try {
             logger.info(
                     "Publish dataset: {}, serviceID: {}", serviceSetting.getDatasetId(), serviceID);
-            this.pirDatasetConstructor.construct(serviceSetting);
-            this.pirTopicSubscriber.registerService(
-                    serviceID,
-                    new PirTopicSubscriber.QueryHandler() {
-                        @Override
-                        public WeDPRResponse onQuery(PirQueryRequest pirQueryRequest)
-                                throws Exception {
-                            return query(pirQueryRequest);
-                        }
-                    });
-            logger.info(
-                    "Publish dataset: {} success, serviceId: {}",
-                    serviceSetting.getDatasetId(),
-                    serviceID);
+            serviceSetting.check();
+            // Note: the publish operation maybe time-consuming, async here
+            threadPoolService
+                    .getThreadPool()
+                    .execute(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    PublishedServiceInfo updatedInfo =
+                                            new PublishedServiceInfo(serviceID);
+                                    try {
+                                        pirDatasetConstructor.construct(serviceSetting);
+                                        pirTopicSubscriber.registerService(
+                                                serviceID,
+                                                new PirTopicSubscriber.QueryHandler() {
+                                                    @Override
+                                                    public WeDPRResponse onQuery(
+                                                            PirQueryRequest pirQueryRequest)
+                                                            throws Exception {
+                                                        return query(pirQueryRequest);
+                                                    }
+                                                });
+                                        updatedInfo.setStatus(
+                                                ServiceStatus.PublishSuccess.getStatus());
+                                        updatedInfo.setStatusMsg(Constant.WEDPR_SUCCESS_MSG);
+                                        logger.info(
+                                                "Publish dataset: {} success, serviceId: {}",
+                                                serviceSetting.getDatasetId(),
+                                                serviceID);
+                                    } catch (Exception e) {
+                                        logger.warn(
+                                                "Publish failed, serviceId: {}, setting: {}, e: ",
+                                                serviceID,
+                                                serviceSetting.toString(),
+                                                e);
+                                        updatedInfo.setStatus(
+                                                ServiceStatus.PublishFailed.getStatus());
+                                        updatedInfo.setStatusMsg(
+                                                "Publish PIR service "
+                                                        + serviceID
+                                                        + " failed for "
+                                                        + e.getMessage());
+                                    }
+                                    publishedServiceMapper.updateServiceInfo(updatedInfo);
+                                }
+                            });
+
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } catch (Exception e) {
             logger.warn(

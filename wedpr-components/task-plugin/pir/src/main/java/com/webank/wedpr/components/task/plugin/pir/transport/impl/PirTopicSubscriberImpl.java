@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
 public class PirTopicSubscriberImpl implements PirTopicSubscriber {
     private static final Logger logger = LoggerFactory.getLogger(PirTopicSubscriberImpl.class);
     private final WeDPRTransport transport;
-    private final ThreadPoolService threadPoolService =
-            new ThreadPoolService("pir-workers", PirServiceConfig.getPirThreadPoolQueueSizeLimit());
+    private final ThreadPoolService threadPoolService = PirServiceConfig.getThreadPoolService();
 
     public PirTopicSubscriberImpl(WeDPRTransport transport) {
         this.transport = transport;

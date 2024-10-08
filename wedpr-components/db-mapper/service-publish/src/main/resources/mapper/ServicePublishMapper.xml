@@ -26,14 +26,16 @@
         <result column="service_config" property="serviceConfig"/>
         <result column="owner" property="owner"/>
         <result column="agency" property="agency"/>
+        <result column="status" property="status"/>
+        <result column="status_msg" property="statusMsg"/>
         <result column="create_time" property="createTime"/>
         <result column="last_update_time" property="lastUpdateTime"/>
     </resultMap>
     <insert id="insertServiceInfo" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">
         insert into wedpr_published_service(`service_id`, `service_name`, `service_desc`,
-                                        `service_type`, `service_config`, `owner`, `agency`, `create_time`) values
+                                        `service_type`, `service_config`, `owner`, `agency`, `status`, `create_time`) values
             (#{serviceInfo.serviceId}, #{serviceInfo.serviceName}, #{serviceInfo.serviceDesc}, #{serviceInfo.serviceType},
-             #{serviceInfo.serviceConfig}, #{serviceInfo.owner}, #{serviceInfo.agency}, NOW())
+             #{serviceInfo.serviceConfig}, #{serviceInfo.owner}, #{serviceInfo.agency}, #{serviceInfo.status}, NOW())
     </insert>
     <select id="queryPublishedService" resultMap="PublishedServiceInfoMap">
         select *
@@ -51,6 +53,9 @@
                 </if>
                 <if test="condition.agency!= null and condition.agency !=''">
                     and `agency` = #{condition.agency}
+                </if>
+                <if test="condition.status!= null and condition.status !=''">
+                    and `status` = #{condition.status}
                 </if>
                 <if test="condition.owner!= null and condition.owner !=''">
                     and `owner` = #{condition.owner}
@@ -70,6 +75,9 @@
         <set>
             <if test="updatedInfo.serviceName != null and updatedInfo.serviceName !=''">
                 `service_name` = #{updatedInfo.serviceName},
+            </if>
+            <if test="updatedInfo.status != null and updatedInfo.status !=''">
+                `status` = #{updatedInfo.status},
             </if>
             <if test="updatedInfo.serviceDesc != null and updatedInfo.serviceDesc !=''">
                 `service_desc` = #{updatedInfo.serviceDesc},

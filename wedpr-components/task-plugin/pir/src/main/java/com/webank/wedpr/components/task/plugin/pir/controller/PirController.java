@@ -15,8 +15,10 @@
 
 package com.webank.wedpr.components.task.plugin.pir.controller;
 
-import com.webank.wedpr.components.task.plugin.pir.model.PublishServiceRequest;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
+import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import org.slf4j.Logger;
@@ -36,15 +38,15 @@ public class PirController {
     @Autowired private PirService pirService;
 
     @PostMapping("/publish")
-    public WeDPRResponse publish(@RequestBody PublishServiceRequest publishServiceRequest) {
+    public WeDPRResponse publish(@RequestBody PublishedServiceInfo publishedServiceInfo) {
         try {
-            publishServiceRequest.check();
-            this.pirService.publish(
-                    publishServiceRequest.getServiceId(),
-                    publishServiceRequest.getPirServiceSetting());
+            Common.requireNonEmpty("serviceId", publishedServiceInfo.getServiceId());
+            PirServiceSetting pirServiceSetting =
+                    PirServiceSetting.deserialize(publishedServiceInfo.getServiceConfig());
+            this.pirService.publish(publishedServiceInfo.getServiceId(), pirServiceSetting);
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } catch (Exception e) {
-            logger.warn("publish service {} failed, error: ", publishServiceRequest.toString(), e);
+            logger.warn("publish service {} failed, error: ", publishedServiceInfo.toString(), e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, e.getMessage());
         }
     }

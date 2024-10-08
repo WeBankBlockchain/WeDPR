@@ -34,6 +34,8 @@ public class PublishedServiceInfo extends TimeRange {
     protected String serviceConfig;
     protected String owner;
     protected String agency;
+    protected String status;
+    protected String statusMsg;
     protected String createTime;
     protected String lastUpdateTime;
 

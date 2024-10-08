@@ -375,11 +375,14 @@ create table if not exists wedpr_published_service(
     `service_config` longtext comment "服务配置",
     `owner` varchar(255) not null comment "属主",
     `agency` varchar(255) not null comment "所属机构",
+    `status` varchar(1024) not null comment "服务状态",
+    `status_msg` text comment "服务状态说明" default "",
     `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
      primary key (`service_id`),
      index service_name_index(`service_name`(128)),
      index service_type_index(`service_type`(128)),
+    index status_index(`status`(128)),
      index owner_index(`owner`(128)),
      index agency_index(`agency`(128))
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;

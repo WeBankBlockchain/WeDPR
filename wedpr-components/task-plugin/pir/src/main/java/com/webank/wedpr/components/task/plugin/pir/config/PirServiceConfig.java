@@ -16,11 +16,15 @@
 package com.webank.wedpr.components.task.plugin.pir.config;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.core.utils.ThreadPoolService;
 
 public class PirServiceConfig {
     private static String PIR_CACHE_DIR = WeDPRConfig.apply("wedpr.pir.cache.dir", ".cache");
     private static Integer PIR_THREAD_POOL_QUEUE_SIZE_LIMIT =
             WeDPRConfig.apply("wedpr.pir.threadpool.queue.size.limit", 10000);
+
+    private static final ThreadPoolService threadPoolService =
+            new ThreadPoolService("pir-workers", PirServiceConfig.getPirThreadPoolQueueSizeLimit());
 
     public static String getPirCacheDir() {
         return PIR_CACHE_DIR;
@@ -28,5 +32,9 @@ public class PirServiceConfig {
 
     public static Integer getPirThreadPoolQueueSizeLimit() {
         return PIR_THREAD_POOL_QUEUE_SIZE_LIMIT;
+    }
+
+    public static ThreadPoolService getThreadPoolService() {
+        return threadPoolService;
     }
 }
