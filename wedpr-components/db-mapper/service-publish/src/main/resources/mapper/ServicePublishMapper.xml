@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper">
+    <resultMap id="PublishedServiceInfoMap" type="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">
+        <id column="service_id" property="serviceId"/>
+        <result column="service_name" property="serviceName"/>
+        <result column="service_type" property="serviceDesc"/>
+        <result column="service_config" property="serviceType"/>
+        <result column="owner" property="serviceConfig"/>
+        <result column="last_update_time" property="owner"/>
+        <result column="agency" property="agency"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <select id="queryPublishedService" resultMap="PublishedServiceInfoMap">
+        select *
+        from wedpr_published_service where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.serviceId != null and condition.serviceId !=''">
+                    and `service_id` = #{condition.serviceId}
+                </if>
+                <if test="condition.serviceName != null and condition.serviceName !=''">
+                    and `service_name` = #{condition.serviceName}
+                </if>
+                <if test="condition.serviceType != null and condition.serviceType !=''">
+                    and `service_type` = #{condition.service_type}
+                </if>
+                <if test="condition.agency!= null and condition.agency !=''">
+                    and `agency` = #{condition.agency}
+                </if>
+                <if test="condition.owner!= null and condition.owner !=''">
+                    and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+</mapper>
