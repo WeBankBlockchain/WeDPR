@@ -105,6 +105,15 @@ public class PirServiceImpl implements PirService {
                             + pirQueryRequest.getQueryParam().getServiceId()
                             + " not exists!");
         }
+        // check the service status
+        if (result.get(0).getServiceStatus() == null
+                || !result.get(0).getServiceStatus().isReady()) {
+            throw new WeDPRException(
+                    "The service "
+                            + pirQueryRequest.getQueryParam().getServiceId()
+                            + " is not ready yet, status: "
+                            + result.get(0).getStatus());
+        }
         // TODO: check the auth
         // get the serviceSetting
         PirServiceSetting serviceSetting =

@@ -1,5 +1,5 @@
 /** Copyright (C) @2014-2022 Webank */
-package com.webank.wedpr.components.report.config;
+package com.webank.wedpr.components.quartz.config;
 
 import java.io.IOException;
 import java.util.Properties;

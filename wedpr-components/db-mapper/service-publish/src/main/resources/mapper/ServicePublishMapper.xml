@@ -27,6 +27,7 @@
         <result column="owner" property="owner"/>
         <result column="agency" property="agency"/>
         <result column="status" property="status"/>
+        <result column="sync_status" property="syncStatus"/>
         <result column="status_msg" property="statusMsg"/>
         <result column="create_time" property="createTime"/>
         <result column="last_update_time" property="lastUpdateTime"/>
@@ -47,6 +48,9 @@
                 </if>
                 <if test="condition.serviceName != null and condition.serviceName !=''">
                     and `service_name` = #{condition.serviceName}
+                </if>
+                <if test="condition.syncStatus != null and condition.syncStatus !=''">
+                    and `sync_status` = #{condition.syncStatus}
                 </if>
                 <if test="condition.serviceType != null and condition.serviceType !=''">
                     and `service_type` = #{condition.serviceType}
@@ -78,6 +82,12 @@
             </if>
             <if test="updatedInfo.status != null and updatedInfo.status !=''">
                 `status` = #{updatedInfo.status},
+            </if>
+            <if test="updatedInfo.statusMsg != null and updatedInfo.statusMsg !=''">
+                `status_msg` = #{updatedInfo.statusMsg},
+            </if>
+            <if test="updatedInfo.syncStatus != null and updatedInfo.syncStatus !=''">
+                `sync_status` = #{updatedInfo.syncStatus},
             </if>
             <if test="updatedInfo.serviceDesc != null and updatedInfo.serviceDesc !=''">
                 `service_desc` = #{updatedInfo.serviceDesc},

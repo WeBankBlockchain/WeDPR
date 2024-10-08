@@ -17,6 +17,10 @@ public enum ServiceStatus {
         return this.status;
     }
 
+    public boolean isReady() {
+        return ordinal() == ServiceStatus.PublishSuccess.ordinal();
+    }
+
     public static ServiceStatus deserialize(String status) {
         if (StringUtils.isBlank(status)) {
             return null;

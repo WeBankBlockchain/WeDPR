@@ -1,0 +1,9 @@
+// Apply the java-library plugin to add support for Java Library
+plugins {
+    id 'java'
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-quartz:${springBootVersion}")
+    compile libraries.spring, libraries.spring_boot
+}

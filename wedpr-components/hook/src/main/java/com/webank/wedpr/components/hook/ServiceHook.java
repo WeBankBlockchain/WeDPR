@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.hook;
 
+import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -26,8 +27,6 @@ public class ServiceHook {
     private static final Logger logger = LoggerFactory.getLogger(UserHook.class);
 
     public interface ServiceCallback {
-        boolean interruptOnException();
-
         void onPublish(Object serviceInfo) throws Exception;
     }
 
@@ -41,33 +40,31 @@ public class ServiceHook {
         callbacks.put(serviceType, callback);
     }
 
-    private synchronized void triggerCallback(ServiceHook.ServiceAction action, Object serviceInfo)
+    private synchronized boolean triggerCallback(
+            ServiceHook.ServiceAction action, String serviceType, Object serviceInfo)
             throws Exception {
         if (callbacks.isEmpty()) {
-            return;
+            return false;
         }
-        for (String serviceType : callbacks.keySet()) {
-            ServiceHook.ServiceCallback callback = callbacks.get(serviceType);
-            try {
-                switch (action) {
-                    case PUBLISH:
-                        {
-                            callback.onPublish(serviceInfo);
-                            continue;
-                        }
-                    default:
-                        continue;
-                }
-            } catch (Exception e) {
-                logger.warn("Trigger callback for module {} failed, reason: ", serviceType, e);
-                if (callback.interruptOnException()) {
-                    throw e;
-                }
-            }
+        if (!callbacks.containsKey(serviceType)) {
+            return false;
         }
+        ServiceHook.ServiceCallback callback = callbacks.get(serviceType);
+        switch (action) {
+            case PUBLISH:
+                {
+                    callback.onPublish(serviceInfo);
+                    break;
+                }
+            default:
+                throw new WeDPRException("Unsupported action: " + action);
+        }
+
+        return true;
     }
 
-    public synchronized void onPublish(Object publishedService) throws Exception {
-        triggerCallback(ServiceAction.PUBLISH, publishedService);
+    public synchronized boolean onPublish(String serviceType, Object publishedService)
+            throws Exception {
+        return triggerCallback(ServiceAction.PUBLISH, serviceType, publishedService);
     }
 }

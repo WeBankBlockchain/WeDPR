@@ -1,5 +1,5 @@
 /** Copyright (C) @2014-2022 Webank */
-package com.webank.wedpr.components.report.config;
+package com.webank.wedpr.components.quartz.config;
 
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;

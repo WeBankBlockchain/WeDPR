@@ -377,6 +377,7 @@ create table if not exists wedpr_published_service(
     `agency` varchar(255) not null comment "所属机构",
     `status` varchar(1024) not null comment "服务状态",
     `status_msg` text comment "服务状态说明" default "",
+    `sync_status` tinyint default 0 comment "同步状态",
     `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
      primary key (`service_id`),

@@ -1,7 +1,7 @@
 /** Copyright (C) @2014-2022 Webank */
-package com.webank.wedpr.components.report.config;
+package com.webank.wedpr.components.quartz.config;
 
-import com.webank.wedpr.components.report.job.ReportQuartzJob;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +17,31 @@ public class QuartzBindJobConfig {
     @Value("${quartz-cron-report-job:0/2 * * * * ? *}")
     private String quartzCronReportJob;
 
-    private final String jobGroup = "wedpr";
-
-    public void scheduleBind() {
-        try {
-            scheduler.setJobFactory(quartzJobFactory);
-            scheduleReportQuartzJob();
-            scheduler.start();
-        } catch (SchedulerException e) {
-            log.error("scheduleBind error", e);
-        }
+    @PostConstruct
+    public void init() throws SchedulerException {
+        scheduler.setJobFactory(quartzJobFactory);
     }
 
-    private void scheduleReportQuartzJob() throws SchedulerException {
+    public void start() throws Exception {
+        scheduler.start();
+    }
+
+    public void registerQuartzJob(
+            String jobGroup,
+            String jobName,
+            String jobDesc,
+            Class<? extends org.quartz.Job> jobClass)
+            throws Exception {
         JobDetail jobDetail =
-                JobBuilder.newJob(ReportQuartzJob.class)
-                        .withIdentity("ReportQuartzJob", jobGroup)
-                        .withDescription("定时任务ReportQuartzJob")
+                JobBuilder.newJob(jobClass)
+                        .withIdentity(jobName, jobGroup)
+                        .withDescription(jobDesc)
                         .build();
         CronScheduleBuilder cronScheduleBuilder =
                 CronScheduleBuilder.cronSchedule(quartzCronReportJob);
         CronTrigger cronTrigger =
                 TriggerBuilder.newTrigger()
-                        .withIdentity("ReportQuartzJobTrigger", jobGroup)
+                        .withIdentity(jobName + "Trigger", jobGroup)
                         .withSchedule(cronScheduleBuilder)
                         .build();
         JobKey jobKey = jobDetail.getKey();

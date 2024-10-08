@@ -17,7 +17,10 @@ package com.webank.wedpr.adm.main;
 
 import com.webank.wedpr.components.initializer.WeDPRApplication;
 import com.webank.wedpr.components.leader.election.LeaderElection;
+import com.webank.wedpr.components.publish.sync.PublishQuartzJob;
+import com.webank.wedpr.components.quartz.config.QuartzBindJobConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
+import com.webank.wedpr.core.utils.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
@@ -41,10 +44,25 @@ public class AdmServiceApplication {
         logger.info("start leaderElection");
         leaderElection.start();
         logger.info("start leaderElection success");
-
+        startQuartz();
         System.out.println(
                 "PPCS-MODELADM: start AdmServiceApplication success, timecost: "
                         + (System.currentTimeMillis() - startT)
                         + " ms.");
+    }
+
+    public static void startQuartz() throws Exception {
+        QuartzBindJobConfig quartzBindJobConfig =
+                WeDPRApplication.getApplicationContext().getBean(QuartzBindJobConfig.class);
+        logger.info("Register Quartz job for service-publish...");
+        quartzBindJobConfig.registerQuartzJob(
+                Constant.DEFAULT_JOB_GROUP,
+                "ServicePublishQuartzJob",
+                "ServicePublishQuartzJob",
+                PublishQuartzJob.class);
+        logger.info("Register Quartz job for service-publish success");
+        logger.info("Start Quartz...");
+        quartzBindJobConfig.start();
+        logger.info("Start Quartz success");
     }
 }

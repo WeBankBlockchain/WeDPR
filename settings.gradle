@@ -32,6 +32,9 @@ project(":wedpr-components-leader-election").projectDir = file("wedpr-components
 include ":wedpr-components-sync"
 project(":wedpr-components-sync").projectDir=file("wedpr-components/sync")
 
+include ":wedpr-components-quartz"
+project(":wedpr-components-quartz").projectDir=file("wedpr-components/quartz")
+
 include ":wedpr-components-resource-follower"
 project(":wedpr-components-resource-follower").projectDir=file("wedpr-components/meta/resource-follower")
 

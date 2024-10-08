@@ -73,4 +73,5 @@ public class Constant {
     public static final String LOG_POSTFIX = ".log";
 
     public static final String PUBLISH_ID_PREFIX = "s-";
+    public static final String DEFAULT_JOB_GROUP = "wedpr";
 }

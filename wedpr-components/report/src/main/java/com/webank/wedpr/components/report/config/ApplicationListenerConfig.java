@@ -1,6 +1,10 @@
 /** Copyright (C) @2014-2022 Webank */
 package com.webank.wedpr.components.report.config;
 
+import com.webank.wedpr.components.quartz.config.QuartzBindJobConfig;
+import com.webank.wedpr.components.report.job.ReportQuartzJob;
+import com.webank.wedpr.core.utils.Constant;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +18,15 @@ public class ApplicationListenerConfig implements ApplicationListener<ContextRef
     private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired private QuartzBindJobConfig quartzBindJobConfig;
 
+    @SneakyThrows(Exception.class)
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        quartzBindJobConfig.scheduleBind();
+        logger.info("Register Quartz job for report...");
+        quartzBindJobConfig.registerQuartzJob(
+                Constant.DEFAULT_JOB_GROUP,
+                "ReportQuartzJob",
+                "Quartz-ReportQuartzJob",
+                ReportQuartzJob.class);
+        logger.info("Register Quartz job for report success");
     }
 }

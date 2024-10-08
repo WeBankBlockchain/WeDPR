@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.TimeRange;
 import com.webank.wedpr.core.utils.WeDPRException;
@@ -32,6 +34,7 @@ public class PublishedServiceInfo extends TimeRange {
     protected String serviceDesc;
     protected String serviceType;
     protected String serviceConfig;
+    protected Integer syncStatus;
     protected String owner;
     protected String agency;
     protected String status;
@@ -39,8 +42,22 @@ public class PublishedServiceInfo extends TimeRange {
     protected String createTime;
     protected String lastUpdateTime;
 
+    @JsonIgnore protected ServiceStatus serviceStatus;
+
     public PublishedServiceInfo(String serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public void setServiceStatus(ServiceStatus serviceStatus) {
+        this.serviceStatus = serviceStatus;
+        if (this.serviceStatus != null) {
+            this.status = serviceStatus.getStatus();
+        }
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+        this.serviceStatus = ServiceStatus.deserialize(status);
     }
 
     public String serialize() throws Exception {
