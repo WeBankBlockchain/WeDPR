@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +156,7 @@ public class CSVFileParser {
                     public Object call(CSVReaderHeaderAware reader) throws Exception {
                         // check the fields
                         Map<String, String> headerInfo = reader.readMap();
-                        Set<String> fields = headerInfo.keySet();
+                        Set<String> fields = Common.trim(headerInfo.keySet());
                         for (String field : extractConfig.getExtractFields()) {
                             if (!fields.contains(field.trim())) {
                                 String errorMsg =
@@ -213,12 +214,13 @@ public class CSVFileParser {
                             while ((row = reader.readMap()) != null) {
                                 List<String> rowValue = new ArrayList<>();
                                 for (String field : tableFields) {
-                                    if (!row.keySet().contains(field.trim())) {
+                                    Set<String> rowFields = Common.trim(row.keySet());
+                                    if (!rowFields.contains(field.trim())) {
                                         String errorMsg =
                                                 "extractFields failed for the field "
                                                         + field
                                                         + " not existed in the file "
-                                                        + tableFields.toString();
+                                                        + ArrayUtils.toString(rowFields);
                                         logger.warn(errorMsg);
                                         throw new WeDPRException(-1, errorMsg);
                                     }

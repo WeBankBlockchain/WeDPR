@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -200,5 +201,9 @@ public class Common {
         LocalDate date = LocalDate.parse(dateString, formatter);
         LocalDate currentDate = LocalDate.now();
         return date.isBefore(currentDate);
+    }
+
+    public static Set<String> trim(Set<String> data) {
+        return data.stream().map(String::trim).collect(Collectors.toCollection(HashSet::new));
     }
 }
