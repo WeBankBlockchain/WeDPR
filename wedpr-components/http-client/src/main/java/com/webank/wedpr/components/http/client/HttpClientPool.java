@@ -48,11 +48,4 @@ public class HttpClientPool {
             inStream.close();
         }
     }
-
-    public static String getUrl(String url) {
-        if (url.startsWith("http://")) {
-            return url;
-        }
-        return String.format("http://%s", url);
-    }
 }

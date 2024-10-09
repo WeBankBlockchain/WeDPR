@@ -15,10 +15,7 @@
 
 package com.webank.wedpr.components.http.client;
 
-import com.webank.wedpr.core.utils.BaseRequest;
-import com.webank.wedpr.core.utils.BaseResponse;
-import com.webank.wedpr.core.utils.BaseResponseFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.core.utils.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -45,7 +42,7 @@ public class HttpClientImpl {
             Integer maxConnTotal,
             RequestConfig requestConfig,
             BaseResponseFactory factory) {
-        this.url = HttpClientPool.getUrl(url);
+        this.url = Common.getUrl(url);
         this.maxConnTotal = maxConnTotal;
         this.requestConfig = requestConfig;
         this.factory = factory;

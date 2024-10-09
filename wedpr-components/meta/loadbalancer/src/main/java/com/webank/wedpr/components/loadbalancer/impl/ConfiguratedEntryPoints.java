@@ -13,13 +13,15 @@
  *
  */
 
-package com.webank.wedpr.components.loadbalancer;
+package com.webank.wedpr.components.loadbalancer.impl;
 
-public interface LoadBalancer {
-    public static enum Policy {
-        ROUND_ROBIN,
-        HASH,
-    }
+import java.util.List;
+import lombok.Data;
+import lombok.ToString;
 
-    EntryPointInfo selectService(Policy policy, String serviceType);
+@Data
+@ToString
+public class ConfiguratedEntryPoints {
+    private String serviceName;
+    private List<String> entryPoints;
 }

@@ -14,6 +14,7 @@
 package com.webank.wedpr.core.utils;
 
 public class Constant {
+    public static final String URI_SPLITER = "/";
     public static final String STR_SEPARATOR = ",";
     public static final String DEFAULT_IV = "1234567890";
 

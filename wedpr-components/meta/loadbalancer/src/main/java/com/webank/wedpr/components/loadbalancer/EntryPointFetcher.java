@@ -15,6 +15,9 @@
 
 package com.webank.wedpr.components.loadbalancer;
 
+import java.util.List;
+
+// TODO: add service-discovery implementation
 public interface EntryPointFetcher {
     List<EntryPointInfo> getAliveEntryPoints(String serviceName);
 }

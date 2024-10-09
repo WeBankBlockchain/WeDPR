@@ -15,7 +15,6 @@
 package com.webank.wedpr.components.integration.jupyter.client.impl;
 
 import com.webank.wedpr.components.http.client.HttpClientImpl;
-import com.webank.wedpr.components.http.client.HttpClientPool;
 import com.webank.wedpr.components.integration.jupyter.client.JupyterClient;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
@@ -64,7 +63,7 @@ public class JupyterClientImpl implements JupyterClient {
                         WeDPRCommonConfig.getWedprWorkerApiPath(),
                         WeDPRCommonConfig.getWedprWorkerSubmitTaskMethod());
         return new HttpClientImpl(
-                HttpClientPool.getUrl(apiUri),
+                Common.getUrl(apiUri),
                 JupyterConfig.getMaxTotalConnection(),
                 JupyterConfig.buildConfig(),
                 responseFactory);

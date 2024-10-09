@@ -18,6 +18,7 @@ package com.webank.wedpr.components.publish.hook;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
+import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.config.ServicePublisherConfig;
 import com.webank.wedpr.core.utils.BaseResponse;
@@ -42,11 +43,19 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
     @Override
     public void onPublish(Object serviceInfo) throws Exception {
         PublishedServiceInfo publishedServiceInfo = (PublishedServiceInfo) serviceInfo;
-        String url =
+        EntryPointInfo selectedEntryPoint =
                 loadBalancer.selectService(
-                        LoadBalancer.Policy.ROUND_ROBIN,
-                        publishedServiceInfo.getServiceType(),
-                        ServicePublisherConfig.getPirPublishServiceUriPath());
+                        LoadBalancer.Policy.ROUND_ROBIN, publishedServiceInfo.getServiceType());
+        if (selectedEntryPoint == null) {
+            throw new WeDPRException(
+                    "Publish service "
+                            + publishedServiceInfo.getServiceId()
+                            + " failed for not found "
+                            + publishedServiceInfo.getServiceId()
+                            + " service!");
+        }
+        String url =
+                selectedEntryPoint.getUrl(ServicePublisherConfig.getPirPublishServiceUriPath());
         logger.info("onPublish, serviceInfo: {}, target: {}", publishedServiceInfo.toString(), url);
         HttpClientImpl httpClient =
                 new HttpClientImpl(
