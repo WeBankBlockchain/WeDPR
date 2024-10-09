@@ -1,4 +1,4 @@
-package com.webank.wedpr.core.crypto;
+package com.webank.wedpr.components.crypto;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

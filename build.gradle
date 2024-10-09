@@ -107,6 +107,7 @@ allprojects {
 
     // In this section you declare where to find the dependencies of your project
     repositories {
+        mavenCentral()
         maven {
             allowInsecureProtocol = true
             url "http://maven.aliyun.com/nexus/content/groups/public/"

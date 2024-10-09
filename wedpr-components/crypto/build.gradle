@@ -4,4 +4,5 @@ plugins {
 }
 dependencies{
     compile project(":wedpr-core-utils")
+    compile ("org.bouncycastle:bcprov-jdk18on:${bcprovVersion}")
 }

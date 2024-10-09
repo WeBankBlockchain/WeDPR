@@ -1,4 +1,4 @@
-package com.webank.wedpr.core.crypto;
+package com.webank.wedpr.components.crypto;
 
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.nio.charset.StandardCharsets;

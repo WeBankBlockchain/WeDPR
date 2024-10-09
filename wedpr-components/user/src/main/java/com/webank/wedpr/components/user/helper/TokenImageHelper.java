@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.user.helper;
 
+import com.webank.wedpr.components.crypto.AESHelper;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
-import com.webank.wedpr.core.crypto.AESHelper;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
