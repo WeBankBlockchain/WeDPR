@@ -58,8 +58,8 @@ import org.springframework.stereotype.Service;
 public class PirServiceImpl implements PirService {
     private static final Logger logger = LoggerFactory.getLogger(PirServiceImpl.class);
 
-    private @Autowired NativeSQLMapper nativeSQLMapper;
-    private @Autowired DatasetMapper datasetMapper;
+    @Autowired private NativeSQLMapper nativeSQLMapper;
+    @Autowired private DatasetMapper datasetMapper;
     @Autowired private HdfsStorageConfig hdfsConfig;
     @Autowired private LocalStorageConfig localStorageConfig;
 

@@ -67,6 +67,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     public WeDPRResponse createPublishService(String username, PublishCreateRequest publishCreate)
             throws Exception {
         publishCreate.setAgency(WeDPRCommonConfig.getAgency());
+        publishCreate.setOwner(username);
         publishCreate.checkServiceConfig(datasetMapper, username, WeDPRCommonConfig.getAgency());
         publishCreate.setStatus(ServiceStatus.Publishing.getStatus());
         this.publishedServiceMapper.insertServiceInfo(publishCreate);

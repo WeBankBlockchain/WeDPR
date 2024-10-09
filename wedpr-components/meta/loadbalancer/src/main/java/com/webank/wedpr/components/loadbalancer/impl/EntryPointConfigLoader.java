@@ -26,8 +26,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntryPointConfigLoader implements EntryPointFetcher {
+    private static final Logger logger = LoggerFactory.getLogger(EntryPointConfigLoader.class);
     private Map<String, List<EntryPointInfo>> alivedEntryPoints = new HashMap<>();
 
     @SneakyThrows(Exception.class)
@@ -36,22 +39,29 @@ public class EntryPointConfigLoader implements EntryPointFetcher {
         if (StringUtils.isBlank(entryPointsInfo)) {
             throw new WeDPRException("Must configure the wedpr.service.entrypoints");
         }
+        logger.info("load entryPointsInfo: {}", entryPointsInfo);
         List<ConfiguratedEntryPoints> entryPointsList =
                 ObjectMapperFactory.getObjectMapper()
                         .readValue(
                                 entryPointsInfo,
                                 new TypeReference<List<ConfiguratedEntryPoints>>() {});
         for (ConfiguratedEntryPoints entryPoint : entryPointsList) {
-            alivedEntryPoints.put(
+            logger.info(
+                    "add entrypoint info for service: {}, entryPointsSize: {}",
                     entryPoint.getServiceName(),
-                    EntryPointInfo.toEntryPointInfo(entryPoint.getEntryPoints()));
+                    entryPoint.getEntryPoints().size());
+            alivedEntryPoints.put(
+                    entryPoint.getServiceName().toLowerCase(),
+                    EntryPointInfo.toEntryPointInfo(
+                            entryPoint.getServiceName(), entryPoint.getEntryPoints()));
         }
     }
 
     @Override
     public List<EntryPointInfo> getAliveEntryPoints(String serviceName) {
-        if (alivedEntryPoints.containsKey(serviceName)) {
-            return alivedEntryPoints.get(serviceName);
+        String lowerCaseServiceName = serviceName.toLowerCase();
+        if (alivedEntryPoints.containsKey(lowerCaseServiceName)) {
+            return alivedEntryPoints.get(lowerCaseServiceName);
         }
         return null;
     }

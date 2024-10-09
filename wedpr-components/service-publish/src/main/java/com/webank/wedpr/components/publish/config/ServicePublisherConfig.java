@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.publish.config;
 
 import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.core.utils.Constant;
 import org.apache.http.client.config.RequestConfig;
 
 public class ServicePublisherConfig {
@@ -24,7 +25,9 @@ public class ServicePublisherConfig {
             WeDPRConfig.apply("wedpr.service.syncer.batch.size", 30);
 
     private static final String PIR_PUBLISH_SERVICE_URI_PATH =
-            WeDPRConfig.apply("wedpr.service.uri.path.pir_publish", "/pir/publish");
+            WeDPRConfig.apply(
+                    "wedpr.service.uri.path.pir_publish",
+                    Constant.WEDPR_API_PREFIX + "/pir/publish");
 
     /// the service worker client config ///
     private static final Integer CONNECTION_REQUEST_TIME_OUT =

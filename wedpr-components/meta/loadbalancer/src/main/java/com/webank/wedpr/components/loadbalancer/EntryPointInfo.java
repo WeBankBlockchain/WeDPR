@@ -19,32 +19,32 @@ import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class EntryPointInfo {
     private String serviceName;
     private String entryPoint;
 
-    public EntryPointInfo(String entryPoint) {
+    public EntryPointInfo(String serviceName, String entryPoint) {
+        this.serviceName = serviceName;
         this.entryPoint = entryPoint;
     }
 
     public String getUrl(String uriPath) {
         if (uriPath.startsWith(Constant.URI_SPLITER)) {
-            return Common.getUrl(serviceName + uriPath);
+            return Common.getUrl(entryPoint + uriPath);
         }
-        return Common.getUrl(serviceName + Constant.URI_SPLITER + uriPath);
+        return Common.getUrl(entryPoint + Constant.URI_SPLITER + uriPath);
     }
 
-    public static List<EntryPointInfo> toEntryPointInfo(List<String> entryPointsList) {
+    public static List<EntryPointInfo> toEntryPointInfo(
+            String serviceName, List<String> entryPointsList) {
         List<EntryPointInfo> result = new ArrayList<>();
         for (String entryPoint : entryPointsList) {
-            result.add(new EntryPointInfo(entryPoint));
+            result.add(new EntryPointInfo(serviceName, entryPoint));
         }
         return result;
     }

@@ -63,11 +63,13 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
             return;
         }
         Dataset dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
-        DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDatasetStorageType());
+        DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
         if (dataSourceType != DataSourceType.CSV) {
             throw new WeDPRException("PIR only support CSV DataSources now!");
         }
+        logger.info("constructFromCSV, dataset: {}", dataset.getDatasetId());
         constructFromCSV(dataset);
+        logger.info("constructFromCSV success, dataset: {}", dataset.getDatasetId());
     }
 
     private void constructFromCSV(Dataset dataset) throws Exception {
@@ -77,6 +79,10 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         String localFilePath =
                 Common.joinPath(PirServiceConfig.getPirCacheDir(), dataset.getDatasetId());
         this.fileStorageInterface.download(storagePath, localFilePath);
+        logger.info(
+                "Download dataset {} success, localFilePath: {}",
+                dataset.getDatasetId(),
+                localFilePath);
         String[] datasetFields =
                 Arrays.stream(dataset.getDatasetFields().trim().split(","))
                         .map(String::trim)

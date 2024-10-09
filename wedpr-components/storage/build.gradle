@@ -9,6 +9,7 @@ dependencies {
     compile project(":wedpr-core-protocol")
     compile project(":wedpr-core-utils")
     compile project(":wedpr-components-uuid")
+    compile("com.google.code.gson:gson:${gsonVersion}")
 
     compile("org.apache.hadoop:hadoop-common:${hadoopVersion}"){
         exclude group: 'javax.servlet', module: 'servlet-api'

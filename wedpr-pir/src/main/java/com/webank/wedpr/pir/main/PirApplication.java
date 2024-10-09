@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.worker.main;
+package com.webank.wedpr.pir.main;
 
 import com.webank.wedpr.components.initializer.WeDPRApplication;
 import org.slf4j.Logger;

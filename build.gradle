@@ -49,6 +49,7 @@ ext {
     bcprovVersion = "1.78.1"
     googleAutoServiceVersion = "1.1.1"
     wedprGatewaySDKVersion = "1.0.0-SNAPSHOT"
+    gsonVersion = "2.10.1"
 
     libraries = [
             spring: [
@@ -107,7 +108,6 @@ allprojects {
 
     // In this section you declare where to find the dependencies of your project
     repositories {
-        mavenCentral()
         maven {
             allowInsecureProtocol = true
             url "http://maven.aliyun.com/nexus/content/groups/public/"
@@ -115,6 +115,7 @@ allprojects {
         maven { url "https://oss.sonatype.org/service/local/staging/deploy/maven2"}
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven {url "https://plugins.gradle.org/m2/"}
+        mavenCentral()
     }
 
     List logger = [

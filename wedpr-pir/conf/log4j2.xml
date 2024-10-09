@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration shutdownHook="disable" monitorInterval="30">
+    <Properties>
+        <!-- log level -->
+        <Property name="LOG_LEVEL">info</Property>
+        <!-- log location -->
+        <Property name="LOG_HOME">./logs/ppcs-pir</Property>
+        <!-- log name -->
+        <Property name="APP_NAME">ppcs-pir</Property>
+        <property name="IMS_LOG_PATTERN" value="[%-p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%t][%F:%L][%m]%n"/>
+        <property name="METRICS_LOG_PATTERN" value="[%-p][%d{yyyy-MM-dd HH:mm:ss SSS}][%m]%n"/>
+        <property name="COMMON_LOG_PATTERN"
+                  value="[%-p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%t][%F:%L][%X{SRC_BIZ_SEQ}][%X{SYS_SEQ}][%X{LOG_POINT}][%X{OPS_MSG}][%m]%n"/>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="appLog" fileName="${LOG_HOME}/${APP_NAME}.log"
+                     filePattern="${LOG_HOME}/${APP_NAME}_%d{yyyyMMdd}.log">
+            <PatternLayout pattern="[%-p][%-t][%d{yyyy-MM-dd HH:mm:ss sss}][${sys:PID}][%F:%L]%m%n"/>
+            <Filters>
+                <ThresholdFilter level="warning" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="errorLog" fileName="${LOG_HOME}/${APP_NAME}.log"
+                     filePattern="${LOG_HOME}/${APP_NAME}_%d{yyyyMMdd}.log">
+            <PatternLayout pattern="[%-p][%d{yyyy-MM-dd HH:mm:ss sss}][${sys:PID}][%F:%L][OnError]%m%n"/>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="warningLog" fileName="${LOG_HOME}/${APP_NAME}.log"
+                     filePattern="${LOG_HOME}/${APP_NAME}_%d{yyyyMMdd}.log">
+            <PatternLayout pattern="[%-p][%d{yyyy-MM-dd HH:mm:ss sss}][${sys:PID}][%F:%L][OnWarning]%m%n"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warning" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="imsLog" fileName="${LOG_HOME}/appmonitor.log"
+                     filePattern="${LOG_HOME}/appmonitor_%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${IMS_LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-p][%d{yyyy-MM-dd HH:mm:ss sss}][${sys:PID}][%F:%L][%X{SRC_BIZ_SEQ}][%X{S}]%m%n"/>
+            <ThresholdFilter level="fatal" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.mybatis" level="info" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="console"/>
+        </Logger>
+        <Logger name="org.apache.ibatis" level="info" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="console"/>
+        </Logger>
+        <Logger name="org.springframework" level="info" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="console"/>
+        </Logger>
+        <Logger name="ims" level="trace" additivity="false">
+            <appender-ref ref="imsLog"/>
+        </Logger>
+
+        <root level="info" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="warningLog"/>
+            <appender-ref ref="errorLog"/>
+            <appender-ref ref="console"/>
+        </root>
+
+    </Loggers>
+</Configuration>

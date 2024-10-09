@@ -9,6 +9,5 @@ dependencies{
     compile project(":wedpr-components-db-mapper-service-publish")
     compile project(":wedpr-components-storage")
     compile project(":wedpr-components-service-sdk-pir")
-    compile project(":wedpr-components-service-publish")
     compile project(":wedpr-components-transport")
 }

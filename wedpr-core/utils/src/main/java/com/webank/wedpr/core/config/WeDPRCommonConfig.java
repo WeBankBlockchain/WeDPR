@@ -16,14 +16,19 @@
 package com.webank.wedpr.core.config;
 
 import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.WeDPRException;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
+// Note: Since the WeDPRCommonConfig module is a reusable, it shouldn't require the config to exist
+// when initializing static configuration variables,
+// which will cause some services that do not need to set these configuration to exception.
 public class WeDPRCommonConfig {
     private static final Integer DEFAULT_READ_TRUNK_SIZE = 1024 * 1024;
     private static final Integer DEFAULT_WRITE_TRUNK_SIZE = 1024 * 1024;
     // the agency id
-    private static final String AGENCY = WeDPRConfig.apply("wedpr.agency", null, Boolean.TRUE);
-    private static final String ADMIN_AGENCY =
-            WeDPRConfig.apply("wedpr.admin_agency", "ADMIN", Boolean.TRUE);
+    private static final String AGENCY = WeDPRConfig.apply("wedpr.agency", null);
+    private static final String ADMIN_AGENCY = WeDPRConfig.apply("wedpr.admin_agency", null);
     private static final String FIELD_SPLITTER = WeDPRConfig.apply("wedpr.field.splitter", ",");
 
     private static final Integer READ_CHUNK_SIZE =
@@ -63,11 +68,19 @@ public class WeDPRCommonConfig {
 
     private static String SHELL_CODE_CONNECTOR = " && ";
 
+    @SneakyThrows
     public static String getAgency() {
+        if (StringUtils.isBlank(AGENCY)) {
+            throw new WeDPRException("Invalid emtpy agency!");
+        }
         return AGENCY;
     }
 
+    @SneakyThrows
     public static String getAdminAgency() {
+        if (StringUtils.isBlank(ADMIN_AGENCY)) {
+            throw new WeDPRException("Invalid emtpy agency!");
+        }
         return ADMIN_AGENCY;
     }
 
