@@ -202,6 +202,10 @@ public class Common {
         return date.isBefore(currentDate);
     }
 
+    public static String addDoubleQuotes(String data) {
+        return "\"" + data + "\"";
+    }
+
     public static Map<String, String> trimAndMapping(Set<String> data) {
         Map<String, String> mapping = new HashMap<>();
         for (String item : data) {

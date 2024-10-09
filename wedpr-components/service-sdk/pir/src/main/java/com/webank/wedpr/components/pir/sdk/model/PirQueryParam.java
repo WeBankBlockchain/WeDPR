@@ -23,11 +23,12 @@ import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 /** @author zachma */
 @Data
-public class PirQueryParam {
+public class PirQueryParam implements Cloneable {
     // the credential information
     private CredentialInfo credentialInfo;
 
@@ -79,5 +80,11 @@ public class PirQueryParam {
         if (Objects.isNull(searchIdList) || searchIdList.size() == 0) {
             throw new WeDPRException(-1, "searchId列表不能为空");
         }
+    }
+
+    @SneakyThrows(Exception.class)
+    @Override
+    public PirQueryParam clone() {
+        return (PirQueryParam) super.clone();
     }
 }

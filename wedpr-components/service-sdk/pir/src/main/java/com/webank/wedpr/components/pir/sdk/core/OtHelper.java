@@ -15,10 +15,8 @@
 
 package com.webank.wedpr.components.pir.sdk.core;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +66,7 @@ public class OtHelper {
 
     /** 批量获取searchID的Hash值 */
     public static List<String> getIdHashVec(int obfuscationOrder, Integer idIndex, String searchId)
-            throws WeDPRException {
+            throws Exception {
 
         List<String> obfuscateDataList = new ArrayList<>();
         String searchIdTemp;
@@ -76,30 +74,10 @@ public class OtHelper {
             if (idIndex == i) {
                 searchIdTemp = searchId;
             } else {
-                String uuid = UUID.randomUUID().toString();
-                searchIdTemp = makeHash(uuid.getBytes());
+                searchIdTemp = UUID.randomUUID().toString();
             }
-            obfuscateDataList.add(searchIdTemp);
+            obfuscateDataList.add(CryptoToolkitFactory.hash(searchIdTemp));
         }
         return obfuscateDataList;
-    }
-
-    private static String makeHash(byte[] data) throws WeDPRException {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(data);
-
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hashBytes) {
-                String hex = Integer.toHexString(0xFF & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new WeDPRException(-1, "makeHash exception for " + e.getMessage());
-        }
     }
 }

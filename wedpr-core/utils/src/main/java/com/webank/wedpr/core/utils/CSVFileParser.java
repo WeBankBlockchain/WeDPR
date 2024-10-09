@@ -230,7 +230,8 @@ public class CSVFileParser {
                                     }
                                     // Note: the value field should surrounded with ""
                                     rowValue.add(
-                                            "\"" + row.get(rowFieldsMapping.get(field)) + "\"");
+                                            Common.addDoubleQuotes(
+                                                    row.get(rowFieldsMapping.get(field))));
                                 }
                                 resultValue.add(rowValue);
                             }

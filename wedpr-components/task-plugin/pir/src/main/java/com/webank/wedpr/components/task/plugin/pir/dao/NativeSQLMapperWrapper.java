@@ -20,6 +20,7 @@ import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
+import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -64,10 +65,14 @@ public class NativeSQLMapperWrapper {
 
     public List<PirDataItem> executeQuery(
             PirServiceSetting serviceSetting, List<String> queriedFields, List<String> filters) {
-        String condition = String.format("where t.id in (%s)", StringUtils.join(filters, ","));
+        String condition =
+                String.format(
+                        "where t.%s in (%s)",
+                        Constant.ID_HASH_FIELD_NAME, StringUtils.join(filters, ","));
         String sql =
                 String.format(
-                        "select t.id as t_id, %s from %s t %s",
+                        "select t.%s as t_id, %s from %s t %s",
+                        Constant.ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
                         serviceSetting.getDatasetId(),
                         condition);
@@ -77,10 +82,13 @@ public class NativeSQLMapperWrapper {
 
     public List<PirDataItem> executeFuzzyMatchQuery(
             PirServiceSetting serviceSetting, List<String> queriedFields, String filter) {
-        String condition = String.format("where t.id like concat(%s, '%%')", filter);
+        String condition =
+                String.format(
+                        "where t.%s like concat(%s, '%%')", Constant.ID_HASH_FIELD_NAME, filter);
         String sql =
                 String.format(
-                        "select t.id as t_id, %s from %s t %s",
+                        "select t.%s as t_id, %s from %s t %s",
+                        Constant.ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
                         serviceSetting.getDatasetId(),
                         condition);

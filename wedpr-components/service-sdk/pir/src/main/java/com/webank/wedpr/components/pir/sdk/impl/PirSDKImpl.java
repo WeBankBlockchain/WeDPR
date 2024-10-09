@@ -52,7 +52,11 @@ public class PirSDKImpl implements PirSDK {
 
         ObfuscateData obfuscateData =
                 OtCrypto.generateOtParam(queryParam.getAlgorithmType(), queryParam);
-        PirQueryRequest pirQueryRequest = new PirQueryRequest(queryParam, obfuscateData);
+        // Note: the searchIdList is sensitive that should not been passed to the pir-service
+        PirQueryParam nonSensitiveQueryParam = queryParam.clone();
+        nonSensitiveQueryParam.setSearchIdList(null);
+        PirQueryRequest pirQueryRequest =
+                new PirQueryRequest(nonSensitiveQueryParam, obfuscateData);
         Pair<WeDPRResponse, ObfuscateQueryResult> result = submitQuery(pirQueryRequest);
         if (result.getRight() == null) {
             return new ImmutablePair<>(result.getLeft(), null);
