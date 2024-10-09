@@ -72,6 +72,12 @@
                 </if>
             </when>
         </choose>
+        <if test="serviceIdList != null and serviceIdList.size > 0">
+            and `service_id` in
+            <foreach item="serviceId" collection="serviceIdList" open="(" close=")" separator=",">
+                #{serviceId}
+            </foreach>
+        </if>
         order by `last_update_time` desc
     </select>
     <update id="updateServiceInfo" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo">

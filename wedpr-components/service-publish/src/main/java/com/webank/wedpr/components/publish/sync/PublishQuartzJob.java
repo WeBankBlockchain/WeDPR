@@ -71,7 +71,7 @@ public class PublishQuartzJob implements Job {
         request.setPageSize(ServicePublisherConfig.getServiceSyncerBatchSize());
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(request)) {
             List<PublishedServiceInfo> resultList =
-                    this.publishedServiceMapper.queryPublishedService(request.getCondition());
+                    this.publishedServiceMapper.queryPublishedService(request.getCondition(), null);
             if (resultList == null || resultList.isEmpty()) {
                 return;
             }

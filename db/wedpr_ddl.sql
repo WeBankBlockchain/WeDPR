@@ -376,14 +376,14 @@ create table if not exists wedpr_published_service(
     `owner` varchar(255) not null comment "属主",
     `agency` varchar(255) not null comment "所属机构",
     `status` varchar(1024) not null comment "服务状态",
-    `status_msg` text comment "服务状态说明" default "",
+    `status_msg` text comment "服务状态说明",
     `sync_status` tinyint default 0 comment "同步状态",
     `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "创建时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
      primary key (`service_id`),
      index service_name_index(`service_name`(128)),
      index service_type_index(`service_type`(128)),
-    index status_index(`status`(128)),
+     index status_index(`status`(128)),
      index owner_index(`owner`(128)),
      index agency_index(`agency`(128))
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
@@ -392,12 +392,16 @@ create table if not exists wedpr_service_auth_table(
     `id` varchar(64) not null comment "ID",
     `service_id` varchar(64) not null comment "服务ID",
     `access_key_id` varchar(255) not null comment "访问ID(用于标志用户)",
+    `accessible_user` varchar(255) not null comment "授权访问的用户",
+    `accessible_agency` varchar(255) not null comment "授权机构",
     `expire_time` DATETIME not null comment "过期时间",
     `apply_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "申请时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
     primary key (`id`),
     index service_id_index(`service_id`(64)),
-    index access_key_id_index(`access_key_id`(128))
+    index access_key_id_index(`access_key_id`(128)),
+    index accessible_user_index(`accessible_user`(128)),
+    index accessible_agency_index(`accessible_agency`(128))
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 create table if not exists wedpr_service_invoke_table(

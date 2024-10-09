@@ -15,13 +15,31 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
+import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.TimeRange;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceAuthInfo extends TimeRange {
-    private String id;
+    private String id = WeDPRUuidGenerator.generateID();
     private String serviceId;
     private String accessKeyId;
     private String expireTime;
     private String applyTime;
+    private String accessibleUser;
+    private String accessibleAgency;
     private String lastUpdateTime;
+
+    public ServiceAuthInfo(String id) {
+        this.id = id;
+    }
+
+    public boolean expired() {
+        return Common.isDateExpired(expireTime);
+    }
 }

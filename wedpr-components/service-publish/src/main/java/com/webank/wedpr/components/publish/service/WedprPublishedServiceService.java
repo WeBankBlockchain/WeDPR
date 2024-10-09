@@ -23,5 +23,5 @@ public interface WedprPublishedServiceService {
 
     void syncPublishService(PublishSyncAction action, PublishedServiceInfo publishedServiceInfo);
 
-    WeDPRResponse listPublishService(PublishSearchRequest request);
+    WeDPRResponse listPublishService(String user, String agency, PublishSearchRequest request);
 }

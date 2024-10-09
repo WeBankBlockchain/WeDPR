@@ -22,10 +22,21 @@
         <id column="id" property="id"/>
         <result column="service_id" property="serviceId"/>
         <result column="access_key_id" property="accessKeyId"/>
+        <result column="accessible_user" property="accessibleUser"/>
+        <result column="accessible_agency" property="accessibleAgency"/>
         <result column="expire_time" property="expireTime"/>
         <result column="apply_time" property="applyTime"/>
         <result column="last_update_time" property="lastUpdateTime"/>
     </resultMap>
+    <insert id="batchInsertServiceAuth" parameterType="java.util.List">
+        insert into wedpr_service_auth_table(`id`, `service_id`, `access_key_id`, `accessible_user`, `accessible_agency`,
+                                            `expire_time`, `apply_time`) values
+        <foreach collection="serviceAuthInfoList" item = "serviceAuthInfo" index = "index" separator=",">
+            (#{serviceAuthInfo.id}, #{serviceAuthInfo.serviceId}, #{serviceAuthInfo.accessKeyId},
+             #{serviceAuthInfo.accessibleUser},  #{serviceAuthInfo.accessibleAgency},
+             #{serviceAuthInfo.expireTime},NOW())
+        </foreach>
+    </insert>
     <select id="queryServiceAuth" resultMap="ServiceAuthInfoMap">
         select *
         from wedpr_service_auth_table where 1=1
@@ -37,6 +48,12 @@
                 <if test="condition.accessKeyId != null and condition.accessKeyId !=''">
                     and `access_key_id` = #{condition.accessKeyId}
                 </if>
+                <if test="condition.accessibleUser != null and condition.accessibleUser !=''">
+                    and `accessible_user` = #{condition.accessibleUser}
+                </if>
+                <if test="condition.accessibleAgency != null and condition.accessibleAgency !=''">
+                    and `accessible_agency` = #{condition.accessibleAgency}
+                </if>
                 <if test="condition.startTime != null and condition.startTime  != ''">
                     <![CDATA[ and datediff(apply_time, #{condition.startTime}) >= 0]]>
                 </if>
@@ -45,6 +62,12 @@
                 </if>
             </when>
         </choose>
+        <if test="serviceIdList != null and serviceIdList.size > 0">
+            and `service_id` in
+            <foreach item="serviceId" collection="serviceIdList" open="(" close=")" separator=",">
+                #{serviceId}
+            </foreach>
+        </if>
         order by `last_update_time` desc
     </select>
 </mapper>

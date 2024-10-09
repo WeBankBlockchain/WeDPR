@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapperWrapper;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
@@ -20,6 +22,7 @@ import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,15 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
 
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private PublishedServiceMapper publishedServiceMapper;
+    @Autowired private ServiceAuthMapper serviceAuthMapper;
+
+    private PublishedServiceMapperWrapper publishedServiceMapperWrapper;
+
+    @PostConstruct
+    public void init() {
+        publishedServiceMapperWrapper =
+                new PublishedServiceMapperWrapper(serviceAuthMapper, publishedServiceMapper);
+    }
 
     @Override
     @Transactional(rollbackFor = WeDPRException.class)
@@ -107,12 +119,14 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     }
 
     @Override
-    public WeDPRResponse listPublishService(PublishSearchRequest request) {
+    public WeDPRResponse listPublishService(
+            String user, String agency, PublishSearchRequest request) {
         WeDPRResponse weDPRResponse =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(request)) {
             List<PublishedServiceInfo> result =
-                    this.publishedServiceMapper.queryPublishedService(request.getCondition());
+                    this.publishedServiceMapperWrapper.query(
+                            user, agency, null, request.getCondition(), request.getServiceIdList());
             WedprPublishSearchResponse response =
                     new WedprPublishSearchResponse(
                             new PageInfo<PublishedServiceInfo>(result).getTotal(), result);
@@ -128,7 +142,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     public void syncPublishService(
             PublishSyncAction action, PublishedServiceInfo publishedServiceInfo) {
         List<PublishedServiceInfo> existServiceList =
-                this.publishedServiceMapper.queryPublishedService(publishedServiceInfo);
+                this.publishedServiceMapper.queryPublishedService(publishedServiceInfo, null);
         if (action == PublishSyncAction.SYNC) {
             if (existServiceList == null || existServiceList.isEmpty()) {
                 this.publishedServiceMapper.insertServiceInfo(publishedServiceInfo);

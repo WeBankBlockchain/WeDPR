@@ -18,9 +18,8 @@ package com.webank.wedpr.components.loadbalancer.config;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.loadbalancer.impl.EntryPointConfigLoader;
 import com.webank.wedpr.components.loadbalancer.impl.LoadBalancerImpl;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -29,15 +28,9 @@ import org.springframework.context.annotation.Scope;
 public class LoadBalanceConfig {
     @Bean(name = "loadBalancer")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnProperty(value = "wedpr.service.debugMode", havingValue = "true")
+    // @ConditionalOnProperty(value = "wedpr.service.debugMode", havingValue = "true")
+    @ConditionalOnMissingBean
     public LoadBalancer debugModeloadBalancer() {
         return new LoadBalancerImpl(new EntryPointConfigLoader());
-    }
-
-    @Bean(name = "loadBalancer")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    @ConditionalOnProperty(value = "wedpr.service.debugMode", havingValue = "false")
-    public LoadBalancer loadBalancer() throws Exception {
-        throw new WeDPRException("Not implemented yet!");
     }
 }

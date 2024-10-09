@@ -21,5 +21,10 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ServiceAuthMapper {
-    public List<ServiceAuthInfo> queryServiceAuth(@Param("condition") ServiceAuthInfo condition);
+    public List<ServiceAuthInfo> queryServiceAuth(
+            @Param("condition") ServiceAuthInfo condition,
+            @Param("serviceIdList") List<String> serviceIdList);
+
+    public int batchInsertServiceAuth(
+            @Param("serviceAuthInfoList") List<ServiceAuthInfo> serviceAuthInfoList);
 }

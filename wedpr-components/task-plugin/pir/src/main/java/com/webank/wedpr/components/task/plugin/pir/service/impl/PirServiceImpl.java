@@ -98,7 +98,7 @@ public class PirServiceImpl implements PirService {
                 new PublishedServiceInfo(pirQueryRequest.getQueryParam().getServiceId());
         // check the service
         List<PublishedServiceInfo> result =
-                this.publishedServiceMapper.queryPublishedService(condition);
+                this.publishedServiceMapper.queryPublishedService(condition, null);
         if (result == null || result.isEmpty()) {
             throw new WeDPRException(
                     "The service "

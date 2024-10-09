@@ -64,10 +64,11 @@ public class WedprPublishedServiceController {
     public WeDPRResponse listPublish(
             @RequestBody PublishSearchRequest request, HttpServletRequest httpServletRequest) {
         try {
-            request.getCondition()
-                    .setOwner(TokenUtils.getLoginUser(httpServletRequest).getUsername());
-            request.getCondition().setAgency(WeDPRCommonConfig.getAgency());
-            return wedprPublishService.listPublishService(request);
+            // Note: anyone can see all published service
+            return wedprPublishService.listPublishService(
+                    TokenUtils.getLoginUser(httpServletRequest).getUsername(),
+                    WeDPRCommonConfig.getAgency(),
+                    request);
         } catch (Exception e) {
             logger.warn("列出所有的已发布的服务 exception, error: ", e);
             return new WeDPRResponse(

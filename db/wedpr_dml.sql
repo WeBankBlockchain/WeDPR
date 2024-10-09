@@ -23,6 +23,10 @@ insert into `wedpr_authorization_template_table`(`id`, `template_name`, `templat
 values("9112736673759237", "wedpr_data_auth", "数据审批模板", '{"name":"wedpr_data_auth","columns":[{"key":"datasetId","title":"数据集ID","required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"datasetTitle","title":"数据集名称","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"ownerUserName","title":"数据集属主","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"ownerAgencyName","title":"数据集所属机构","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"authTime","title":"授权时间","type":"date","required":true,"defaultValue":null,"visibility":true,"options":null}]}',
        "*");
 
+insert into `wedpr_authorization_template_table`(`id`, `template_name`, `template_desc`, `template_setting`, `create_user`)
+values("2000000000000001", "wedpr_service_auth", "服务审批模板", '{"name":"wedpr_service_auth","columns":[{"key":"serviceId","title":"服务ID","required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"serviceName","title":"服务名称","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"serviceType","title":"服务类型","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null}, {"key":"owner","title":"服务创建者","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"agency","title":"服务所属机构","type":null,"required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"accessKeyID","title":"访问凭证ID","type": "select","required":true,"defaultValue":null,"visibility":true,"options":null},{"key":"authTime","title":"授权时间","type":"date","required":true,"defaultValue":null,"visibility":true,"options":null}]}',
+       "*");
+
 insert into wedpr_group (group_id, group_name, admin_name, status) values('1000000000000000', '初始用户组', 'admin', 0);
 insert into wedpr_group_detail (group_id, username, status) values('1000000000000000', 'admin', 0);
 

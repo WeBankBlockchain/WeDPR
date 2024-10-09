@@ -20,10 +20,10 @@ import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.TimeRange;
 import com.webank.wedpr.core.utils.WeDPRException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 @EqualsAndHashCode(callSuper = true)
@@ -31,6 +31,18 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublishedServiceInfo extends TimeRange {
+    @Getter
+    public static enum ServiceAuthStatus {
+        Authorized("Authorized"),
+        NoPermission("NoPermission"),
+        Expired("Expired");
+        private final String status;
+
+        ServiceAuthStatus(String status) {
+            this.status = status;
+        }
+    }
+
     protected String serviceId;
     protected String serviceName;
     protected String serviceDesc;
@@ -43,6 +55,8 @@ public class PublishedServiceInfo extends TimeRange {
     protected String statusMsg;
     protected String createTime;
     protected String lastUpdateTime;
+    protected ServiceAuthStatus serviceAuthStatus = ServiceAuthStatus.NoPermission;
+    protected List<ServiceAuthInfo> serviceAuthInfos = new ArrayList<>();
 
     @JsonIgnore protected ServiceStatus serviceStatus;
 
@@ -60,6 +74,44 @@ public class PublishedServiceInfo extends TimeRange {
     public void setStatus(String status) {
         this.status = status;
         this.serviceStatus = ServiceStatus.deserialize(status);
+    }
+
+    public void setServiceAuthInfos(List<ServiceAuthInfo> serviceAuthInfos) {
+        if (serviceAuthInfos == null) {
+            return;
+        }
+        this.serviceAuthInfos = serviceAuthInfos;
+    }
+
+    public void appendServiceAuthInfo(ServiceAuthInfo serviceAuthInfo) {
+        this.serviceAuthInfos.add(serviceAuthInfo);
+    }
+
+    public void resetServiceAuthStatus() {
+        if (this.serviceAuthInfos.isEmpty()) {
+            return;
+        }
+        this.serviceAuthStatus = ServiceAuthStatus.Expired;
+        // set to be authorized if it has at least one authorized status
+        for (ServiceAuthInfo serviceAuthInfo : this.serviceAuthInfos) {
+            if (!serviceAuthInfo.expired()) {
+                this.serviceAuthStatus = ServiceAuthStatus.Authorized;
+                break;
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PublishedServiceInfo)) return false;
+        PublishedServiceInfo that = (PublishedServiceInfo) o;
+        return Objects.equals(serviceId, that.serviceId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceId);
     }
 
     @Override

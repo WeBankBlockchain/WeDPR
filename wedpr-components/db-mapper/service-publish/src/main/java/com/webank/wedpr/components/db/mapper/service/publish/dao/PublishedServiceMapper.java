@@ -22,7 +22,8 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface PublishedServiceMapper {
     public List<PublishedServiceInfo> queryPublishedService(
-            @Param("condition") PublishedServiceInfo condition);
+            @Param("condition") PublishedServiceInfo condition,
+            @Param("serviceIdList") List<String> serviceIdList);
 
     public Integer insertServiceInfo(@Param("serviceInfo") PublishedServiceInfo serviceInfo);
 

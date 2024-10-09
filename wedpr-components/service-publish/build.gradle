@@ -14,4 +14,5 @@ dependencies{
     compile project(":wedpr-components-quartz")
     compile project(":wedpr-components-loadbalancer")
     compile project(":wedpr-components-http-client")
+    compile project(":wedpr-components-authorization")
 }
