@@ -266,7 +266,7 @@ public class JobDO extends TimeRange {
 
     public void checkCreate() throws Exception {
         // check parties
-        if (this.taskParties == null) {
+        if (this.getShouldSync() && this.taskParties == null) {
             throw new WeDPRException("Invalid job for the relevant parties are not defined!");
         }
         // check jobType

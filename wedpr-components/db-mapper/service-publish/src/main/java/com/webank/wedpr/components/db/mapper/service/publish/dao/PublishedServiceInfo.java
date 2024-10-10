@@ -57,9 +57,12 @@ public class PublishedServiceInfo extends TimeRange {
     // enable non-owner-user-filter
     @JsonIgnore protected Boolean nonOwnerUserFilter = Boolean.FALSE;
     @JsonIgnore protected List<String> filterStatusList = new ArrayList<>();
+    @JsonIgnore protected String accessibleUser;
+    @JsonIgnore protected String accessibleAgency;
 
     protected String createTime;
     protected String lastUpdateTime;
+    protected String authStatus;
     protected ServiceAuthStatus serviceAuthStatus = ServiceAuthStatus.NoPermission;
     protected List<ServiceAuthInfo> serviceAuthInfos = new ArrayList<>();
 

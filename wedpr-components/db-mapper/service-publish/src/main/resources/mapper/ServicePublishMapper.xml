@@ -74,6 +74,38 @@
                     1=1
                     end
                 </if>
+                <if test="condition.authStatus != null and condition.authStatus  == 'Authorized'.toString()">
+                    and (
+                        `service_id` in(
+                            select distinct `service_id`
+                            from wedpr_service_auth_table
+                            where `accessible_user` = #{condition.accessibleUser}
+                            and `accessible_agency` = #{condition.accessibleAgency}
+                            and `expire_time` > UNIX_TIMESTAMP(NOW()))
+                            or
+                            ( `owner` = #{condition.accessibleUser} and `agency` = #{condition.accessibleAgency})
+                    )
+                </if>
+                <if test="condition.authStatus != null and condition.authStatus  == 'NoPermission'.toString()">
+                    and
+                        `service_id` not in(
+                            select distinct `service_id`
+                            from wedpr_service_auth_table
+                            where `accessible_user` = #{condition.accessibleUser}
+                            and `accessible_agency` = #{condition.accessibleAgency}
+                            and `expire_time` > UNIX_TIMESTAMP(NOW()))
+                    and ( `owner` != #{condition.accessibleUser} or `agency` != #{condition.accessibleAgency})
+                </if>
+                <if test="condition.authStatus != null and condition.authStatus  == 'Expired'.toString()">
+                    and `service_id` in
+                    (
+                    select distinct `service_id`
+                    from wedpr_service_auth_table
+                    where `accessible_user` = #{condition.accessibleUser}
+                    and `accessible_agency` = #{condition.accessibleAgency}
+                    and  UNIX_TIMESTAMP(NOW()) >= `expire_time`
+                    )
+                </if>
                 <if test="condition.startTime != null and condition.startTime  != ''">
                     <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>
                 </if>

@@ -123,6 +123,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     @Override
     public WeDPRResponse listPublishService(
             String user, String agency, PublishSearchRequest request) {
+        // the non-owner filter setting
         request.getCondition().setNonOwnerUserFilter(Boolean.TRUE);
         request.getCondition()
                 .setFilterStatusList(
@@ -130,6 +131,10 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
                                 ServiceStatus.Publishing.getStatus(),
                                 ServiceStatus.PublishFailed.getStatus()));
         request.getCondition().setOwner(user);
+        // the auth setting
+        request.getCondition().setAccessibleAgency(agency);
+        request.getCondition().setAccessibleUser(user);
+
         WeDPRResponse weDPRResponse =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(request)) {
