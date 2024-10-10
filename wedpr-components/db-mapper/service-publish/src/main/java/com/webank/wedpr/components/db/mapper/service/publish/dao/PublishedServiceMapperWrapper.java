@@ -15,8 +15,10 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PublishedServiceMapperWrapper {
     private final ServiceAuthMapper serviceAuthMapper;
@@ -26,6 +28,26 @@ public class PublishedServiceMapperWrapper {
             ServiceAuthMapper serviceAuthMapper, PublishedServiceMapper publishedServiceMapper) {
         this.serviceAuthMapper = serviceAuthMapper;
         this.publishedServiceMapper = publishedServiceMapper;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteServiceInfo(String serviceId, String user, String agency)
+            throws Exception {
+        // check the owner
+        PublishedServiceInfo condition = new PublishedServiceInfo();
+        condition.setServiceId(serviceId);
+        condition.setOwner(user);
+        condition.setAgency(agency);
+        List<PublishedServiceInfo> result =
+                this.publishedServiceMapper.queryPublishedService(condition, null);
+        if (result == null || result.isEmpty()) {
+            throw new WeDPRException("You not own the service " + serviceId);
+        }
+        // delete from the serviceInfo
+        Integer deletedNum = this.publishedServiceMapper.deleteServiceInfo(serviceId, user, agency);
+        // delete from the authTable
+        this.serviceAuthMapper.deleteService(serviceId);
+        return deletedNum;
     }
 
     public List<PublishedServiceInfo> query(
@@ -47,7 +69,7 @@ public class PublishedServiceMapperWrapper {
                                         a -> a,
                                         (k1, k2) -> k1));
         List<String> selectedServiceList = new ArrayList<>(publishedServiceInfoMap.keySet());
-        ServiceAuthInfo serviceAuthCondition = new ServiceAuthInfo();
+        ServiceAuthInfo serviceAuthCondition = new ServiceAuthInfo("");
         serviceAuthCondition.setAccessibleUser(user);
         serviceAuthCondition.setAccessibleAgency(agency);
         serviceAuthCondition.setAccessKeyId(accessKeyID);
@@ -62,11 +84,9 @@ public class PublishedServiceMapperWrapper {
                         .appendServiceAuthInfo(serviceAuthInfo);
             }
         }
-        List<PublishedServiceInfo> queriedResult = new ArrayList<>();
         for (PublishedServiceInfo item : publishedServiceInfoMap.values()) {
-            item.resetServiceAuthStatus();
-            queriedResult.add(item);
+            item.resetServiceAuthStatus(agency, user);
         }
-        return queriedResult;
+        return result;
     }
 }

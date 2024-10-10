@@ -105,7 +105,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     @Override
     public WeDPRResponse revokePublishService(String username, String serviceId) throws Exception {
         Integer result =
-                this.publishedServiceMapper.deleteServiceInfo(
+                this.publishedServiceMapperWrapper.deleteServiceInfo(
                         serviceId, username, WeDPRCommonConfig.getAgency());
         if (result != null && result > 0) {
             PublishedServiceInfo publishedServiceInfo = new PublishedServiceInfo();

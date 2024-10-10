@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 public class PublishedServiceInfo extends TimeRange {
     @Getter
     public static enum ServiceAuthStatus {
+        Owner("Owner"),
         Authorized("Authorized"),
         NoPermission("NoPermission"),
         Expired("Expired");
@@ -87,7 +88,13 @@ public class PublishedServiceInfo extends TimeRange {
         this.serviceAuthInfos.add(serviceAuthInfo);
     }
 
-    public void resetServiceAuthStatus() {
+    public void resetServiceAuthStatus(String agency, String user) {
+        // the owner
+        if (agency.compareToIgnoreCase(getAgency()) == 0
+                && user.compareToIgnoreCase(getOwner()) == 0) {
+            this.serviceAuthStatus = ServiceAuthStatus.Owner;
+            return;
+        }
         if (this.serviceAuthInfos.isEmpty()) {
             return;
         }
