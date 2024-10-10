@@ -79,6 +79,7 @@ public abstract class ResourceSyncerImpl implements ResourceSyncer {
 
     @Override
     public void start() {
+
         this.syncWorker.startWorking();
     }
 

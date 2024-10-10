@@ -53,6 +53,7 @@ public class BlockChainResourceSyncImpl extends ResourceSyncerImpl implements Re
     private final EventSubscribe eventSubscribe;
     private List<String> topics = new ArrayList<>();
     private String eventID;
+    private final Client blockChainClient;
 
     public static class WeDPRResourceSyncEventSubCallback implements EventSubCallback {
         private final ResourceSyncEventHandler resourceSyncEventHandler;
@@ -115,13 +116,13 @@ public class BlockChainResourceSyncImpl extends ResourceSyncerImpl implements Re
             ThreadPoolService threadPoolService) {
         super(weDPRSysConfig, leaderElection, syncStatusMapper, threadPoolService);
 
-        Client blockChainClient = BlockChainBuilder.getClient();
+        this.blockChainClient = BlockChainBuilder.getClient();
         this.resourceSyncEventHandler =
                 new ResourceSyncEventHandler(
+                        "eventlog-parser",
                         syncWorker,
                         BlockChainBuilder.createContractCodec(blockChainClient),
-                        blockChainClient,
-                        threadPoolService);
+                        blockChainClient);
 
         resourceLogRecordFactoryContract =
                 ResourceLogRecordFactory.load(
@@ -212,5 +213,18 @@ public class BlockChainResourceSyncImpl extends ResourceSyncerImpl implements Re
                     "Sync resource meta " + record.toString() + " failed, error: " + e.getMessage(),
                     e);
         }
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        this.resourceSyncEventHandler.startWorking();
+    }
+
+    public void stop() {
+        super.stop();
+        this.resourceSyncEventHandler.stop();
+        this.eventSubscribe.stop();
+        this.blockChainClient.stop();
     }
 }

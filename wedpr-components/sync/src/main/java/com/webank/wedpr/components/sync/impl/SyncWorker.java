@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class SyncWorker extends Worker {
     private static final Logger logger = LoggerFactory.getLogger(SyncWorker.class);
-    private static final long POLL_RECORD_TIME_OUT_MS = 5L;
-
     // thread-safe
     private final PriorityBlockingQueue<ResourceActionRecord> resourceQueue =
             new PriorityBlockingQueue<>(
@@ -39,6 +37,7 @@ public class SyncWorker extends Worker {
                             return o1.getIndex().compareTo(o2.getIndex());
                         }
                     });
+
     private final ResourceSyncStatus resourceSyncStatus;
     private final ResourceExecutor resourceExecutor;
     private final LeaderElection leaderElection;
@@ -72,6 +71,9 @@ public class SyncWorker extends Worker {
         wakeupWorker();
     }
 
+    public int getUnHandledResourceRecordSize() {
+        return this.resourceQueue.size();
+    }
     // register the resource-commit-handler
     public void registerCommitHandler(
             String resourceType, ResourceSyncer.CommitHandler commitHandler) {

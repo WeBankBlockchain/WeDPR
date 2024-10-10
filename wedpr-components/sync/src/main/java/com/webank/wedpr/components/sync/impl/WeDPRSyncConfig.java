@@ -34,6 +34,9 @@ public class WeDPRSyncConfig {
     private static final Integer WORKER_IDLE_WAIT_MS =
             WeDPRConfig.apply("wedpr.sync.worker_idle_ms", 10);
 
+    private static final Integer SYNC_PIPLINE_SIZE =
+            WeDPRConfig.apply("wedpr.sync.pipline_size", 50);
+
     public static String getResourceSequencerContractAddress() {
         return RESOURCE_SEQUENCER_CONTRACT_ADDRESS;
     }
@@ -52,5 +55,9 @@ public class WeDPRSyncConfig {
 
     public static Integer getWorkerIdleWaitMs() {
         return WORKER_IDLE_WAIT_MS;
+    }
+
+    public static Integer getSyncPiplineSize() {
+        return SYNC_PIPLINE_SIZE;
     }
 }
