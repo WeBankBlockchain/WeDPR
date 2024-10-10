@@ -20,6 +20,7 @@ import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.SchedulerBuilder;
 import com.webank.wedpr.components.scheduler.client.SchedulerClient;
 import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
+import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.pir.PirExecutor;
 import com.webank.wedpr.components.scheduler.executor.impl.remote.RemoteSchedulerExecutor;
@@ -109,7 +110,9 @@ public class SchedulerLoader {
 
         // register the pir executor, TODO: implement the taskFinishHandler
         executorManager.registerExecutor(
-                ExecutorType.PIR.getType(), new PirExecutor(weDPRTransport, null));
+                ExecutorType.PIR.getType(),
+                new PirExecutor(
+                        weDPRTransport, new ExecutiveContextBuilder(projectMapperWrapper), null));
         logger.info("register PirExecutor success");
     }
 }

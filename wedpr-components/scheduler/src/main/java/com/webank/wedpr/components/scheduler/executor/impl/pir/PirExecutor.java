@@ -23,6 +23,8 @@ import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
 import com.webank.wedpr.components.scheduler.executor.Executor;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
+import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContext;
+import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,11 +35,16 @@ public class PirExecutor implements Executor {
     private static final Logger logger = LoggerFactory.getLogger(PirExecutor.class);
     private final PirSDK pirSDK;
     private final PirExecutorParamChecker jobChecker = new PirExecutorParamChecker();
+    private final ExecutiveContextBuilder executiveContextBuilder;
     private final TaskFinishedHandler taskFinishedHandler;
 
-    public PirExecutor(WeDPRTransport transport, TaskFinishedHandler taskFinishedHandler) {
+    public PirExecutor(
+            WeDPRTransport transport,
+            ExecutiveContextBuilder executiveContextBuilder,
+            TaskFinishedHandler taskFinishedHandler) {
         logger.info("init the pir executor");
         this.pirSDK = new PirSDKImpl(transport);
+        this.executiveContextBuilder = executiveContextBuilder;
         this.taskFinishedHandler = taskFinishedHandler;
     }
 
@@ -49,6 +56,8 @@ public class PirExecutor implements Executor {
 
     @Override
     public void execute(JobDO jobDO) throws Exception {
+        ExecutiveContext executiveContext =
+                executiveContextBuilder.build(jobDO, taskFinishedHandler, jobDO.getId());
         PirQueryParam queryParam = (PirQueryParam) prepare(jobDO);
         Pair<WeDPRResponse, PirResult> result = this.pirSDK.query(queryParam);
         ExecuteResult executeResult = new ExecuteResult();
@@ -58,7 +67,7 @@ public class PirExecutor implements Executor {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.SUCCESS);
         }
         // TODO: store the query PirResult
-        this.taskFinishedHandler.onFinish(jobDO, executeResult);
+        executiveContext.onTaskFinished(executeResult);
     }
 
     @Override
