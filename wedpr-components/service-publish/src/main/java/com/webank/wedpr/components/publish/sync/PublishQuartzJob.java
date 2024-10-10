@@ -40,7 +40,7 @@ public class PublishQuartzJob implements Job {
     protected static class ServiceInfoQueryRequest extends PageRequest {
         private PublishedServiceInfo condition = new PublishedServiceInfo();
 
-        public ServiceInfoQueryRequest(int syncStatus, ServiceStatus serviceStatus) {
+        public ServiceInfoQueryRequest(Integer syncStatus, ServiceStatus serviceStatus) {
             this.condition.setSyncStatus(syncStatus);
             this.condition.setServiceStatus(serviceStatus);
         }

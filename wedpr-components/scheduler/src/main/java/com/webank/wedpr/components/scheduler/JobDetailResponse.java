@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.scheduler.pir;
+package com.webank.wedpr.components.scheduler;
 
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;

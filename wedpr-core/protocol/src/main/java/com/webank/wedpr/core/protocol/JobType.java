@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.core.protocol;
 
+import com.webank.wedpr.core.utils.WeDPRException;
 import org.apache.commons.lang3.StringUtils;
 
 public enum JobType {
@@ -72,6 +73,17 @@ public enum JobType {
 
     public static Boolean isMPCJob(String jobType) {
         return jobType.compareToIgnoreCase(MPC.getType()) == 0;
+    }
+
+    public static ExecutorType getExecutorType(String jobTypeStr) throws Exception {
+        JobType jobType = JobType.deserialize(jobTypeStr);
+        if (jobType == null) {
+            throw new WeDPRException("Invalid empty jobtType!");
+        }
+        if (jobType.ordinal() == PIR.ordinal()) {
+            return ExecutorType.PIR;
+        }
+        return ExecutorType.REMOTE;
     }
 
     public static JobType deserialize(String type) {

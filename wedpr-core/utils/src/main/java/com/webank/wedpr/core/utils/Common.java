@@ -200,7 +200,11 @@ public class Common {
     }
 
     public static boolean isDateExpired(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return isDateExpired(Constant.DEFAULT_DATE_FORMAT, dateString);
+    }
+
+    public static boolean isDateExpired(String datePattern, String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
         LocalDate date = LocalDate.parse(dateString, formatter);
         LocalDate currentDate = LocalDate.now();
         return date.isBefore(currentDate);

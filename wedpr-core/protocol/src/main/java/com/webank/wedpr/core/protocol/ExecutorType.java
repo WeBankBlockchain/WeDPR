@@ -13,10 +13,18 @@
  *
  */
 
-package com.webank.wedpr.components.scheduler.pir;
+package com.webank.wedpr.core.protocol;
 
-public interface SchedulerService {
-    // query the job detail
-    public abstract Object queryJobDetail(String user, String agency, String jobID)
-            throws Exception;
+import lombok.Getter;
+
+@Getter
+public enum ExecutorType {
+    PIR("PIR"),
+    REMOTE("REMOTE");
+
+    private final String type;
+
+    ExecutorType(String type) {
+        this.type = type;
+    }
 }

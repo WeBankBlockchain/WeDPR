@@ -43,8 +43,7 @@ public class PirController {
             Common.requireNonEmpty("serviceId", publishedServiceInfo.getServiceId());
             PirServiceSetting pirServiceSetting =
                     PirServiceSetting.deserialize(publishedServiceInfo.getServiceConfig());
-            this.pirService.publish(publishedServiceInfo.getServiceId(), pirServiceSetting);
-            return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
+            return this.pirService.publish(publishedServiceInfo.getServiceId(), pirServiceSetting);
         } catch (Exception e) {
             logger.warn("publish service {} failed, error: ", publishedServiceInfo.toString(), e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, e.getMessage());

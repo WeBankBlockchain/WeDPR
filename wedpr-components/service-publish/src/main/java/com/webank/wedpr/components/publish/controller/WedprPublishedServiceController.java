@@ -43,7 +43,7 @@ public class WedprPublishedServiceController {
             return wedprPublishService.createPublishService(
                     TokenUtils.getLoginUser(request).getUsername(), publishCreate);
         } catch (Exception e) {
-            logger.warn("发布服务失败 error: ", e);
+            logger.warn("PublishCreateRequest error: ", e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, "发布服务失败 error: " + e.getMessage());
         }
     }
@@ -55,7 +55,7 @@ public class WedprPublishedServiceController {
             return wedprPublishService.updatePublishService(
                     TokenUtils.getLoginUser(request).getUsername(), publishRequest);
         } catch (Exception e) {
-            logger.warn("更新已发布的服务 error: ", e);
+            logger.warn("updatePublish error: ", e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, "撤回已发布的服务失败: " + e.getMessage());
         }
     }
@@ -70,7 +70,7 @@ public class WedprPublishedServiceController {
                     WeDPRCommonConfig.getAgency(),
                     request);
         } catch (Exception e) {
-            logger.warn("列出所有的已发布的服务 exception, error: ", e);
+            logger.warn("listPublish exception, error: ", e);
             return new WeDPRResponse(
                     Constant.WEDPR_FAILED, "listPublish failed for " + e.getMessage());
         }
@@ -82,7 +82,7 @@ public class WedprPublishedServiceController {
             return wedprPublishService.revokePublishService(
                     TokenUtils.getLoginUser(request).getUsername(), serviceId);
         } catch (Exception e) {
-            logger.warn("撤回已发布的服务 error: ", e);
+            logger.warn("revokePublish error: ", e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, "撤回已发布的服务失败: " + e.getMessage());
         }
     }

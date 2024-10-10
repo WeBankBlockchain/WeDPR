@@ -49,7 +49,7 @@
                 <if test="condition.serviceName != null and condition.serviceName !=''">
                     and `service_name` = #{condition.serviceName}
                 </if>
-                <if test="condition.syncStatus != null and condition.syncStatus !=''">
+                <if test="condition.syncStatus != null">
                     and `sync_status` = #{condition.syncStatus}
                 </if>
                 <if test="condition.serviceType != null and condition.serviceType !=''">

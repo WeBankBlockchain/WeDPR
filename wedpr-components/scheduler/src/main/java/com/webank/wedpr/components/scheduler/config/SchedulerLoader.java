@@ -30,7 +30,7 @@ import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
-import com.webank.wedpr.core.protocol.JobType;
+import com.webank.wedpr.core.protocol.ExecutorType;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +87,7 @@ public class SchedulerLoader {
         SchedulerClient schedulerClient = new SchedulerClient();
         RemoteSchedulerExecutor remoteSchedulerExecutor =
                 new RemoteSchedulerExecutor(schedulerClient, jobChecker, storage, fileMetaBuilder);
-        executorManager.registerDefaultExecutor(remoteSchedulerExecutor);
+        executorManager.registerExecutor(ExecutorType.REMOTE.getType(), remoteSchedulerExecutor);
 
         /*
         // register the executor
@@ -109,7 +109,7 @@ public class SchedulerLoader {
 
         // register the pir executor, TODO: implement the taskFinishHandler
         executorManager.registerExecutor(
-                JobType.PIR.getType(), new PirExecutor(weDPRTransport, null));
+                ExecutorType.PIR.getType(), new PirExecutor(weDPRTransport, null));
         logger.info("register PirExecutor success");
     }
 }

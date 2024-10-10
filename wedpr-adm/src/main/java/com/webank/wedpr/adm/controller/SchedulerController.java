@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.adm.controller;
 
-import com.webank.wedpr.components.scheduler.pir.SchedulerService;
+import com.webank.wedpr.components.scheduler.SchedulerService;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.Constant;

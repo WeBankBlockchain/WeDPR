@@ -32,7 +32,5 @@ public interface ExecutorManager {
 
     void registerExecutor(String executorType, Executor executor);
 
-    void registerDefaultExecutor(Executor executor);
-
     Executor getExecutor(String executorType);
 }

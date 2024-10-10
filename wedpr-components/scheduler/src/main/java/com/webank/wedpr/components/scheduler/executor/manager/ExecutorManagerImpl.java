@@ -25,19 +25,19 @@ import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContext;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.core.protocol.JobStatus;
+import com.webank.wedpr.core.protocol.JobType;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExecutorManagerImpl implements ExecutorManager {
     private static final Logger logger = LoggerFactory.getLogger(ExecutorManagerImpl.class);
     protected Map<String, TaskFinishedHandler> handlers = new ConcurrentHashMap<>();
-
-    protected Executor defaultExecutor = null;
 
     protected Map<String, Executor> executors = new ConcurrentHashMap<>();
 
@@ -55,7 +55,6 @@ public class ExecutorManagerImpl implements ExecutorManager {
             ProjectMapperWrapper projectMapperWrapper) {
         this.queryStatusIntervalMs = queryStatusIntervalMs;
         this.projectMapperWrapper = projectMapperWrapper;
-
         start();
     }
 
@@ -216,20 +215,15 @@ public class ExecutorManagerImpl implements ExecutorManager {
         logger.info("register executor : {}", executorType);
     }
 
+    @SneakyThrows(Exception.class)
     @Override
-    public void registerDefaultExecutor(Executor executor) {
-        this.defaultExecutor = executor;
-    }
-
-    @Override
-    public Executor getExecutor(String executorType) {
+    public Executor getExecutor(String jobType) {
+        String executorType = JobType.getExecutorType(jobType).getType();
         if (executors.containsKey(executorType)) {
             Executor executor = executors.get(executorType);
             logger.debug("get executor, executorType: {}", executorType);
             return executor;
         }
-
-        // default
-        return defaultExecutor;
+        return null;
     }
 }

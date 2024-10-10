@@ -17,12 +17,12 @@ package com.webank.wedpr.components.scheduler.pir.impl;
 
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
+import com.webank.wedpr.components.scheduler.JobDetailResponse;
+import com.webank.wedpr.components.scheduler.SchedulerService;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorClient;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.GetTaskResultRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
-import com.webank.wedpr.components.scheduler.pir.JobDetailResponse;
-import com.webank.wedpr.components.scheduler.pir.SchedulerService;
 import com.webank.wedpr.core.protocol.JobStatus;
 import com.webank.wedpr.core.protocol.JobType;
 import com.webank.wedpr.core.utils.WeDPRException;
