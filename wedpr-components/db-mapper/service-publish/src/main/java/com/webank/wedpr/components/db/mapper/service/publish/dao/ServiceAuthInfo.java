@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
@@ -41,6 +42,7 @@ public class ServiceAuthInfo extends TimeRange {
     }
 
     // Note: the expireTime is timestamp format
+    @JsonProperty("expired")
     public boolean expired() {
         return Common.isDateExpired(Constant.DEFAULT_TIMESTAMP_FORMAT, expireTime);
     }

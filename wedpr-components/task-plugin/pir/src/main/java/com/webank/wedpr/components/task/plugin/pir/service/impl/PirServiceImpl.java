@@ -168,6 +168,13 @@ public class PirServiceImpl implements PirService {
         }
     }
 
+    protected void onPublishFinished(String serviceID, ServiceStatus serviceStatus, String msg) {
+        PublishedServiceInfo updatedInfo = new PublishedServiceInfo(serviceID);
+        updatedInfo.setStatus(serviceStatus.getStatus());
+        updatedInfo.setStatusMsg(msg);
+        publishedServiceMapper.updateServiceInfo(updatedInfo);
+    }
+
     /**
      * publish pir service
      *
@@ -187,8 +194,6 @@ public class PirServiceImpl implements PirService {
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    PublishedServiceInfo updatedInfo =
-                                            new PublishedServiceInfo(serviceID);
                                     try {
                                         pirDatasetConstructor.construct(serviceSetting);
                                         pirTopicSubscriber.registerService(
@@ -201,9 +206,10 @@ public class PirServiceImpl implements PirService {
                                                         return query(pirQueryRequest);
                                                     }
                                                 });
-                                        updatedInfo.setStatus(
-                                                ServiceStatus.PublishSuccess.getStatus());
-                                        updatedInfo.setStatusMsg(Constant.WEDPR_SUCCESS_MSG);
+                                        onPublishFinished(
+                                                serviceID,
+                                                ServiceStatus.PublishSuccess,
+                                                Constant.WEDPR_SUCCESS_MSG);
                                         logger.info(
                                                 "Publish dataset: {} success, serviceId: {}",
                                                 serviceSetting.getDatasetId(),
@@ -214,20 +220,23 @@ public class PirServiceImpl implements PirService {
                                                 serviceID,
                                                 serviceSetting.toString(),
                                                 e);
-                                        updatedInfo.setStatus(
-                                                ServiceStatus.PublishFailed.getStatus());
-                                        updatedInfo.setStatusMsg(
+                                        onPublishFinished(
+                                                serviceID,
+                                                ServiceStatus.PublishFailed,
                                                 "Publish PIR service "
                                                         + serviceID
                                                         + " failed for "
                                                         + e.getMessage());
                                     }
-                                    publishedServiceMapper.updateServiceInfo(updatedInfo);
                                 }
                             });
 
             return new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         } catch (Exception e) {
+            onPublishFinished(
+                    serviceID,
+                    ServiceStatus.PublishFailed,
+                    "Publish PIR service " + serviceID + " failed for " + e.getMessage());
             logger.warn(
                     "publish dataset {} failed, serviceID: {}, error: ",
                     serviceSetting.getDatasetId(),
