@@ -21,6 +21,7 @@ import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
 import com.webank.wedpr.core.utils.WeDPRResponse;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -122,6 +123,13 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
     @Override
     public WeDPRResponse listPublishService(
             String user, String agency, PublishSearchRequest request) {
+        request.getCondition().setNonOwnerUserFilter(Boolean.TRUE);
+        request.getCondition()
+                .setFilterStatusList(
+                        Arrays.asList(
+                                ServiceStatus.Publishing.getStatus(),
+                                ServiceStatus.PublishFailed.getStatus()));
+        request.getCondition().setOwner(user);
         WeDPRResponse weDPRResponse =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(request)) {

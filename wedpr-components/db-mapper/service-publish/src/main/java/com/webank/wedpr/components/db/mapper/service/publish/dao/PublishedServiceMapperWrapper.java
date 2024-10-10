@@ -41,7 +41,7 @@ public class PublishedServiceMapperWrapper {
         List<PublishedServiceInfo> result =
                 this.publishedServiceMapper.queryPublishedService(condition, null);
         if (result == null || result.isEmpty()) {
-            throw new WeDPRException("You not own the service " + serviceId);
+            throw new WeDPRException("You not own the service own " + serviceId);
         }
         // delete from the serviceInfo
         Integer deletedNum = this.publishedServiceMapper.deleteServiceInfo(serviceId, user, agency);

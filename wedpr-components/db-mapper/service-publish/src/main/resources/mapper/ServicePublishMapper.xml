@@ -61,8 +61,18 @@
                 <if test="condition.status!= null and condition.status !=''">
                     and `status` = #{condition.status}
                 </if>
-                <if test="condition.owner!= null and condition.owner !=''">
+                <if test="condition.owner!= null and condition.owner !='' and condition.nonOwnerUserFilter == false">
                     and `owner` = #{condition.owner}
+                </if>
+                <if test="condition.nonOwnerUserFilter!= null and condition.nonOwnerUserFilter == true">
+                    and case
+                    when `owner` != #{condition.owner} then `status` not in
+                        <foreach item="filterStatus" collection="condition.filterStatusList" open="(" close=")" separator=",">
+                            #{filterStatus}
+                        </foreach>
+                    else
+                    1=1
+                    end
                 </if>
                 <if test="condition.startTime != null and condition.startTime  != ''">
                     <![CDATA[ and datediff(create_time, #{condition.startTime}) >= 0]]>

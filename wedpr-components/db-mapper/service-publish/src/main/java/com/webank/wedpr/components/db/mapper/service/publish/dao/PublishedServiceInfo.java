@@ -54,6 +54,10 @@ public class PublishedServiceInfo extends TimeRange {
     protected String agency;
     protected String status;
     protected String statusMsg;
+    // enable non-owner-user-filter
+    @JsonIgnore protected Boolean nonOwnerUserFilter = Boolean.FALSE;
+    @JsonIgnore protected List<String> filterStatusList = new ArrayList<>();
+
     protected String createTime;
     protected String lastUpdateTime;
     protected ServiceAuthStatus serviceAuthStatus = ServiceAuthStatus.NoPermission;
@@ -114,6 +118,13 @@ public class PublishedServiceInfo extends TimeRange {
         if (!(o instanceof PublishedServiceInfo)) return false;
         PublishedServiceInfo that = (PublishedServiceInfo) o;
         return Objects.equals(serviceId, that.serviceId);
+    }
+
+    public void setNonOwnerUserFilter(Boolean nonOwnerUserFilter) {
+        if (nonOwnerUserFilter == null) {
+            return;
+        }
+        this.nonOwnerUserFilter = nonOwnerUserFilter;
     }
 
     @Override

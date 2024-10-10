@@ -74,6 +74,6 @@
         order by `last_update_time` desc
     </select>
     <delete id="deleteService">
-        delete from `wedpr_service_auth_table` where `service_id` = #{service_id}
+        delete from `wedpr_service_auth_table` where `service_id` = #{serviceId}
     </delete>
 </mapper>

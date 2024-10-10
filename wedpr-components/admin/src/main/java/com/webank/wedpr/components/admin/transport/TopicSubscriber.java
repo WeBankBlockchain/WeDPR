@@ -60,44 +60,9 @@ public class TopicSubscriber implements CommandLineRunner {
             subscribeProjectTopic();
             subscribeJobTopic();
             subscribeJobDatasetRelationTopic();
-            subscribeSysConfigTopic();
         } catch (Exception e) {
             log.warn("subscribe topic error", e);
         }
-    }
-
-    private void subscribeSysConfigTopic() {
-        weDPRTransport.registerTopicHandler(
-                TransportTopicEnum.SYS_CONFIG_REPORT.name(),
-                new MessageDispatcherCallback() {
-                    @Override
-                    public void onMessage(IMessage message) {
-                        log.info("receive sys config report");
-                        byte[] payload = message.getPayload();
-                        List<SysConfigDO> sysConfigDOList = null;
-                        SysConfigReportResponse response = new SysConfigReportResponse();
-                        try {
-                            sysConfigDOList =
-                                    ObjectMapperFactory.getObjectMapper()
-                                            .readValue(
-                                                    payload,
-                                                    new TypeReference<List<SysConfigDO>>() {});
-                        } catch (IOException e) {
-                            log.warn("parse message error", e);
-                            response.setCode(Constant.WEDPR_FAILED);
-                            response.setMsg("parse message error" + e.getMessage());
-                        }
-                        log.info("report wedprSysConfigDOList:{}", sysConfigDOList);
-                        List<SysConfigDO> finalSysConfigDOList = sysConfigDOList;
-                        reportWorker
-                                .getThreadPool()
-                                .execute(
-                                        () -> {
-                                            executeHandleReportSysConfig(
-                                                    message, finalSysConfigDOList, response);
-                                        });
-                    }
-                });
     }
 
     private void executeHandleReportSysConfig(

@@ -82,10 +82,11 @@ public class ResourceSyncEventHandler {
                                     ResourceLogRecordFactory.ADDRECORDEVENT_EVENT.getName(),
                                     log));
             logger.info(
-                    "handleEventLog, event: {}, status: {}, syncEventItem: {}",
+                    "handleEventLog, event: {}, status: {}, syncEventItem: {}, blockNumber: {}",
                     eventSubId,
                     status,
-                    syncEventItem.toString());
+                    syncEventItem.toString(),
+                    log.getBlockNumber());
             // fetch ResourceLogRecord from blockChain
             ResourceLogRecord record =
                     ResourceLogRecord.load(syncEventItem.getRecordAddress(), this.bcosClient);
