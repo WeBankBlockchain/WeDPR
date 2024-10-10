@@ -45,6 +45,9 @@
                 <if test="condition.id != null and condition.id !=''">
                     and `id` = #{condition.id}
                 </if>
+                <if test="condition.serviceId != null and condition.serviceId !=''">
+                    and `service_id` = #{condition.serviceId}
+                </if>
                 <if test="condition.accessKeyId != null and condition.accessKeyId !=''">
                     and `access_key_id` = #{condition.accessKeyId}
                 </if>
@@ -70,4 +73,7 @@
         </if>
         order by `last_update_time` desc
     </select>
+    <delete id="deleteService">
+        delete from `wedpr_service_auth_table` where `service_id` = #{service_id}
+    </delete>
 </mapper>

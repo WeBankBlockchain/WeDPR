@@ -22,7 +22,6 @@ import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,8 +30,7 @@ import java.util.Random;
 
 public class OtCrypto {
     public static ObfuscateData generateOtParam(
-            PirParamEnum.AlgorithmType algorithmType, PirQueryParam queryParam)
-            throws WeDPRException {
+            PirParamEnum.AlgorithmType algorithmType, PirQueryParam queryParam) throws Exception {
         BigInteger blindingA = OtHelper.getRandomInt();
         BigInteger blindingB = OtHelper.getRandomInt();
 
@@ -63,13 +61,15 @@ public class OtCrypto {
 
     /* hash披露, 请求方选择id，生成随机数a、b */
     protected static List<ObfuscateData.ObfuscateDataItem> generateOtParamForIDFilter(
-            BigInteger blindingC, Integer filterLength, List<String> searchIDList) {
+            BigInteger blindingC, Integer filterLength, List<String> searchIDList)
+            throws Exception {
         List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         for (String searchId : searchIDList) {
             String filter =
-                    searchId.length() < filterLength
-                            ? searchId
-                            : searchId.substring(0, filterLength);
+                    CryptoToolkitFactory.hash(
+                            searchId.length() < filterLength
+                                    ? searchId
+                                    : searchId.substring(0, filterLength));
             BigInteger z0 = calculateZ0(searchId, blindingC);
             ObfuscateData.ObfuscateDataItem pirDataBody = new ObfuscateData.ObfuscateDataItem();
             pirDataBody.setFilter(filter);
@@ -82,7 +82,7 @@ public class OtCrypto {
     /* hash筛选, 请求方选择顺序\delta\in \{0,1,..,m-1\}，生成随机数a、b */
     protected static List<ObfuscateData.ObfuscateDataItem> generateOtParamForIDObfuscation(
             BigInteger blindingC, Integer obfuscationOrder, List<String> searchIDList)
-            throws WeDPRException {
+            throws Exception {
         List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         Random rand = new Random();
         for (String searchId : searchIDList) {

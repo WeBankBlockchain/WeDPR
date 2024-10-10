@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.task.plugin.pir.core.impl;
 
+import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 import com.webank.wedpr.components.db.mapper.dataset.datasource.DataSourceType;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
@@ -29,6 +30,7 @@ import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import com.webank.wedpr.core.utils.CSVFileParser;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.WeDPRException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
@@ -68,11 +70,11 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
             throw new WeDPRException("PIR only support CSV DataSources now!");
         }
         logger.info("constructFromCSV, dataset: {}", dataset.getDatasetId());
-        constructFromCSV(dataset);
+        constructFromCSV(dataset, serviceSetting.getIdField());
         logger.info("constructFromCSV success, dataset: {}", dataset.getDatasetId());
     }
 
-    private void constructFromCSV(Dataset dataset) throws Exception {
+    private void constructFromCSV(Dataset dataset, String idField) throws Exception {
         StoragePath storagePath =
                 StoragePathBuilder.getInstance(
                         dataset.getDatasetStorageType(), dataset.getDatasetStoragePath());
@@ -98,31 +100,48 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
             return;
         }
         String tableId = Constant.datasetId2tableId(dataset.getDatasetId());
-        String createSqlFormat = "CREATE TABLE %s ( %s , PRIMARY KEY (`id`) USING BTREE )";
 
-        String[] fieldsWithType = new String[datasetFields.length];
+        // all the field + id_hash field
+        String[] fieldsWithType = new String[datasetFields.length + 1];
+        List<String> tableFields = new ArrayList<>();
+        int idFieldIndex = 0;
         for (int i = 0; i < datasetFields.length; i++) {
-            if ("id".equalsIgnoreCase(datasetFields[i])) {
-                fieldsWithType[i] = datasetFields[i] + " VARCHAR(64)";
+            // the idField
+            if (idField.equalsIgnoreCase(datasetFields[i])) {
+                fieldsWithType[i] = Constant.ID_FIELD_NAME + " VARCHAR(255)";
+                tableFields.add(Constant.ID_FIELD_NAME);
+                idFieldIndex = i;
             } else {
                 fieldsWithType[i] = datasetFields[i] + " TEXT";
+                tableFields.add(datasetFields[i]);
             }
         }
-        String sql = String.format(createSqlFormat, tableId, String.join(",", fieldsWithType));
+        // add the id_hash field at the last
+        fieldsWithType[datasetFields.length] = Constant.ID_HASH_FIELD_NAME + " VARCHAR(64)";
+        tableFields.add(Constant.ID_HASH_FIELD_NAME);
+
+        String sql =
+                String.format(
+                        "CREATE TABLE %s ( %s , PRIMARY KEY (`%s`) USING BTREE, index id_index(`%s`(128)) )",
+                        tableId,
+                        String.join(",", fieldsWithType),
+                        Constant.ID_HASH_FIELD_NAME,
+                        Constant.ID_FIELD_NAME);
         logger.info("constructFromCSV, execute sql: {}", sql);
         this.nativeSQLMapper.executeNativeUpdateSql(sql);
 
         StringBuilder sb = new StringBuilder();
         for (List<String> values : sqlValues) {
+            // add hash for the idField
+            values.add(Common.addDoubleQuotes(CryptoToolkitFactory.hash(values.get(idFieldIndex))));
             sb.append("(").append(String.join(",", values)).append("), ");
         }
         String insertValues = sb.toString();
         insertValues = insertValues.substring(0, insertValues.length() - 2);
-
-        String insertSqlFormat = "INSERT INTO %s (%s) VALUES %s ";
         sql =
                 String.format(
-                        insertSqlFormat, tableId, String.join(",", datasetFields), insertValues);
+                        "INSERT INTO %s (%s) VALUES %s ",
+                        tableId, String.join(",", tableFields), insertValues);
         this.nativeSQLMapper.executeNativeUpdateSql(sql);
     }
 }

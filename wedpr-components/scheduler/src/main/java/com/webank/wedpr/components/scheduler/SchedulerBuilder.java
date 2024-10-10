@@ -17,14 +17,13 @@ package com.webank.wedpr.components.scheduler;
 
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
-import com.webank.wedpr.components.scheduler.local.config.SchedulerTaskConfig;
-import com.webank.wedpr.components.scheduler.local.core.SchedulerTaskImpl;
-import com.webank.wedpr.components.scheduler.local.executor.ExecutorManager;
-import com.webank.wedpr.components.scheduler.local.executor.impl.ExecutorManagerImpl;
-import com.webank.wedpr.components.scheduler.local.executor.impl.model.FileMetaBuilder;
-import com.webank.wedpr.components.scheduler.local.impl.LocalSchedulerImpl;
-import com.webank.wedpr.components.scheduler.remote.config.SchedulerConfig;
-import com.webank.wedpr.components.scheduler.remote.impl.RemoteSchedulerImpl;
+import com.webank.wedpr.components.scheduler.api.SchedulerApi;
+import com.webank.wedpr.components.scheduler.config.SchedulerTaskConfig;
+import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
+import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
+import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManager;
+import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManagerImpl;
+import com.webank.wedpr.components.scheduler.impl.SchedulerImpl;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
@@ -49,7 +48,7 @@ public class SchedulerBuilder {
 
             logger.info("## create SchedulerTask, agency: {}", agency);
 
-            Scheduler scheduler =
+            SchedulerApi scheduler =
                     buildScheduler(
                             agency, projectMapperWrapper, storage, fileMetaBuilder, jobChecker);
 
@@ -63,46 +62,33 @@ public class SchedulerBuilder {
         }
     }
 
-    public static Scheduler buildScheduler(
+    public static SchedulerApi buildScheduler(
             String agency,
             ProjectMapperWrapper projectMapperWrapper,
             FileStorageInterface storage,
             FileMetaBuilder fileMetaBuilder,
             JobChecker jobChecker) {
-        boolean enableRemoteScheduler = SchedulerConfig.getEnableRemoteScheduler();
 
-        logger.info("## build scheduler, enable remote scheduler: {}", enableRemoteScheduler);
+        logger.info("## build scheduler service");
 
         ThreadPoolService schedulerWorker =
                 new ThreadPoolService(WORKER_NAME, SchedulerTaskConfig.getWorkerQueueSize());
 
-        if (enableRemoteScheduler) {
-            return new RemoteSchedulerImpl(
-                    agency,
-                    SchedulerTaskConfig.getQueryJobStatusIntervalMs(),
-                    schedulerWorker,
-                    projectMapperWrapper,
-                    jobChecker,
-                    storage,
-                    fileMetaBuilder);
-        } else {
-            // create and start the executorManager
-            ExecutorManager executorManager =
-                    new ExecutorManagerImpl(
-                            SchedulerTaskConfig.getQueryJobStatusIntervalMs(),
-                            fileMetaBuilder,
-                            storage,
-                            jobChecker,
-                            projectMapperWrapper);
+        ExecutorManager executorManager =
+                new ExecutorManagerImpl(
+                        SchedulerTaskConfig.getQueryJobStatusIntervalMs(),
+                        fileMetaBuilder,
+                        storage,
+                        jobChecker,
+                        projectMapperWrapper);
 
-            return new LocalSchedulerImpl(
-                    agency,
-                    executorManager,
-                    schedulerWorker,
-                    projectMapperWrapper,
-                    jobChecker,
-                    storage,
-                    fileMetaBuilder);
-        }
+        return new SchedulerImpl(
+                agency,
+                executorManager,
+                schedulerWorker,
+                projectMapperWrapper,
+                jobChecker,
+                storage,
+                fileMetaBuilder);
     }
 }

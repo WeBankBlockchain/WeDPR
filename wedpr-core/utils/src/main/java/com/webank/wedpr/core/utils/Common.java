@@ -99,6 +99,10 @@ public class Common {
         }
     }
 
+    public static boolean isEmptyStr(String str) {
+        return str == null || str.isEmpty();
+    }
+
     public static boolean isNullStr(String str) {
         if (StringUtils.isBlank(str)) {
             return true;
@@ -200,6 +204,10 @@ public class Common {
         LocalDate date = LocalDate.parse(dateString, formatter);
         LocalDate currentDate = LocalDate.now();
         return date.isBefore(currentDate);
+    }
+
+    public static String addDoubleQuotes(String data) {
+        return "\"" + data + "\"";
     }
 
     public static Map<String, String> trimAndMapping(Set<String> data) {

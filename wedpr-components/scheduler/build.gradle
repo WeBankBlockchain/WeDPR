@@ -10,4 +10,5 @@ dependencies {
     compile project(":wedpr-components-project")
     compile project(":wedpr-components-sync")
     compile project(":wedpr-components-http-client")
+    compile project(":wedpr-components-service-sdk-pir")
 }

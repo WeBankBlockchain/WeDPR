@@ -19,6 +19,9 @@ package com.webank.wedpr.components.task.plugin.pir.utils;
 public class Constant {
     public static String PIR_TEMP_TABLE_PREFIX = "wedpr_pir_";
 
+    public static final String ID_FIELD_NAME = "id";
+    public static final String ID_HASH_FIELD_NAME = "id_hash";
+
     public static String datasetId2tableId(String datasetId) {
         return PIR_TEMP_TABLE_PREFIX + datasetId.substring(2);
     }

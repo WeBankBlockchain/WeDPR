@@ -19,15 +19,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
 import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import java.util.Objects;
 import lombok.Data;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 /** @author zachma */
 @Data
-public class PirQueryParam {
+public class PirQueryParam implements Cloneable {
     // the credential information
     private CredentialInfo credentialInfo;
 
@@ -79,5 +81,18 @@ public class PirQueryParam {
         if (Objects.isNull(searchIdList) || searchIdList.size() == 0) {
             throw new WeDPRException(-1, "searchId列表不能为空");
         }
+    }
+
+    @SneakyThrows(Exception.class)
+    @Override
+    public PirQueryParam clone() {
+        return (PirQueryParam) super.clone();
+    }
+
+    public static PirQueryParam deserialize(String data) throws Exception {
+        if (StringUtils.isBlank(data)) {
+            throw new WeDPRException("The pir query param must be non-empty!");
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, PirQueryParam.class);
     }
 }

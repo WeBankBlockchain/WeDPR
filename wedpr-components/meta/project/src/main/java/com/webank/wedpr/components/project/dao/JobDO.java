@@ -28,10 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class JobDO extends TimeRange {
+    @Data
+    @ToString
     public static class JobResultItem {
         private String jobID;
         private Boolean success;
@@ -47,43 +51,11 @@ public class JobDO extends TimeRange {
             this.result = result;
         }
 
-        public String getJobID() {
-            return jobID;
-        }
-
-        public void setJobID(String jobID) {
-            this.jobID = jobID;
-        }
-
-        public Boolean getSuccess() {
-            return success;
-        }
-
-        public void setSuccess(Boolean success) {
-            this.success = success;
-        }
-
-        public String getResult() {
-            return result;
-        }
-
-        public void setResult(String result) {
-            this.result = result;
-        }
-
-        public Long getStartTime() {
-            return startTime;
-        }
-
         public void setStartTime(Long startTime) {
             if (startTime == null) {
                 return;
             }
             this.startTime = startTime;
-        }
-
-        public Long getTimeCostMs() {
-            return timeCostMs;
         }
 
         public void setTimeCostMs(Long timeCostMs) {
@@ -92,26 +64,10 @@ public class JobDO extends TimeRange {
             }
             this.timeCostMs = timeCostMs;
         }
-
-        @Override
-        public String toString() {
-            return "JobResultItem{"
-                    + "jobID='"
-                    + jobID
-                    + '\''
-                    + ", success="
-                    + success
-                    + ", result='"
-                    + result
-                    + '\''
-                    + ", startTime="
-                    + startTime
-                    + ", timeCostMs="
-                    + timeCostMs
-                    + '}';
-        }
     }
 
+    @Data
+    @ToString
     public static class JobResult {
         @JsonProperty("status")
         private JobStatus jobStatus;
@@ -120,31 +76,11 @@ public class JobDO extends TimeRange {
         private String result;
 
         @JsonProperty("subJobStatusInfos")
-        private Map<String, JobResultItem> subJobResults = new HashMap<>();
+        private Map<String, JobDO.JobResultItem> subJobResults = new HashMap<>();
 
         private Long timeCostMs = 0L;
 
-        public JobStatus getJobStatus() {
-            return jobStatus;
-        }
-
-        public void setJobStatus(JobStatus jobStatus) {
-            this.jobStatus = jobStatus;
-        }
-
-        public String getResult() {
-            return result;
-        }
-
-        public void setResult(String result) {
-            this.result = result;
-        }
-
-        public Map<String, JobResultItem> getSubJobResults() {
-            return subJobResults;
-        }
-
-        public void setSubJobResults(Map<String, JobResultItem> subJobResults) {
+        public void setSubJobResults(Map<String, JobDO.JobResultItem> subJobResults) {
             if (subJobResults == null) {
                 return;
             }
@@ -152,10 +88,6 @@ public class JobDO extends TimeRange {
             for (String subJob : subJobResults.keySet()) {
                 this.timeCostMs += subJobResults.get(subJob).getTimeCostMs();
             }
-        }
-
-        public Long getTimeCostMs() {
-            return timeCostMs;
         }
 
         public void setTimeCostMs(Long timeCostMs) {
@@ -179,19 +111,6 @@ public class JobDO extends TimeRange {
             } catch (Exception e) {
                 return null;
             }
-        }
-
-        @Override
-        public String toString() {
-            return "JobResult{"
-                    + "jobStatus="
-                    + jobStatus
-                    + ", result='"
-                    + result
-                    + '\''
-                    + ", subJobResults="
-                    + subJobResults
-                    + '}';
         }
     }
 
@@ -223,6 +142,9 @@ public class JobDO extends TimeRange {
 
     @JsonIgnore private transient Integer limitItems = -1;
 
+    // shouldSync or not
+    private Boolean shouldSync;
+
     private String createTime;
     private String lastUpdateTime;
 
@@ -243,18 +165,6 @@ public class JobDO extends TimeRange {
         setId(id);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         if (name == null) {
             return;
@@ -262,65 +172,9 @@ public class JobDO extends TimeRange {
         this.name = name;
     }
 
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getParam() {
-        return param;
-    }
-
-    public void setParam(String param) {
-        this.param = param;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getOwnerAgency() {
-        return ownerAgency;
-    }
-
-    public void setOwnerAgency(String ownerAgency) {
-        this.ownerAgency = ownerAgency;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public Integer getReportStatus() {
-        return reportStatus;
-    }
-
-    public void setReportStatus(Integer reportStatus) {
-        this.reportStatus = reportStatus;
-    }
-
     public void setResult(String result) {
         this.result = result;
         this.jobResult = JobResult.deserialize(result);
-    }
-
-    public JobResult getJobResult() {
-        return jobResult;
     }
 
     public void setJobResult(JobResult jobResult) {
@@ -352,8 +206,11 @@ public class JobDO extends TimeRange {
         return true;
     }
 
-    public String getJobType() {
-        return jobType;
+    public void setShouldSync(Boolean shouldSync) {
+        if (shouldSync == null) {
+            return;
+        }
+        this.shouldSync = shouldSync;
     }
 
     public void setJobType(String jobType) {
@@ -362,39 +219,18 @@ public class JobDO extends TimeRange {
             return;
         }
         this.type = JobType.deserialize(this.jobType);
-    }
-
-    public JobType getType() {
-        return type;
+        if (this.type != null) {
+            this.shouldSync = this.type.shouldSync();
+        }
     }
 
     public void setType(JobType type) {
         this.type = type;
+        if (type == null) {
+            return;
+        }
+        this.shouldSync = type.shouldSync();
         this.jobType = type.getType();
-    }
-
-    public Integer getLimitItems() {
-        return limitItems;
-    }
-
-    public void setLimitItems(Integer limitItems) {
-        this.limitItems = limitItems;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     public List<FollowerDO> getTaskParties() {
@@ -475,29 +311,6 @@ public class JobDO extends TimeRange {
         return datasetList.contains(datasetId);
     }
 
-    public Object getJobRequest() {
-        return jobRequest;
-    }
-
-    public void setJobRequest(Object jobRequest) {
-        this.jobRequest = jobRequest;
-    }
-
-    public Object getJobParam() {
-        return jobParam;
-    }
-
-    public void setJobParam(Object jobParam) {
-        this.jobParam = jobParam;
-    }
-
-    public JobType getOriginalJobType() {
-        return originalJobType;
-    }
-
-    public void setOriginalJobType(JobType originalJobType) {
-        this.originalJobType = originalJobType;
-    }
     // Note: here taskID add taskType postfix in case of the job rejected by the model_node
     // for taskID conflict when executing different types of sub-tasks
     public String getTaskID() {
@@ -520,14 +333,6 @@ public class JobDO extends TimeRange {
                 && Objects.equals(ownerAgency, jobDO.ownerAgency)
                 && Objects.equals(projectName, jobDO.projectName)
                 && Objects.equals(status, jobDO.status);
-    }
-
-    public List<String> getDatasetList() {
-        return datasetList;
-    }
-
-    public void setDatasetList(List<String> datasetList) {
-        this.datasetList = datasetList;
     }
 
     @Override

@@ -27,4 +27,6 @@ public interface ServiceAuthMapper {
 
     public int batchInsertServiceAuth(
             @Param("serviceAuthInfoList") List<ServiceAuthInfo> serviceAuthInfoList);
+
+    public void deleteService(@Param("serviceId") String serviceId);
 }

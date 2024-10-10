@@ -40,11 +40,11 @@ import org.slf4j.LoggerFactory;
 
 public class PirSDKImpl implements PirSDK {
     private static final Logger logger = LoggerFactory.getLogger(PirSDKImpl.class);
+    private final WeDPRTransport transport;
 
-    // TODO: initialize the transport
-    private WeDPRTransport transport;
-
-    public PirSDKImpl() {}
+    public PirSDKImpl(WeDPRTransport transport) {
+        this.transport = transport;
+    }
 
     @Override
     public Pair<WeDPRResponse, PirResult> query(PirQueryParam queryParam) throws Exception {
@@ -52,7 +52,11 @@ public class PirSDKImpl implements PirSDK {
 
         ObfuscateData obfuscateData =
                 OtCrypto.generateOtParam(queryParam.getAlgorithmType(), queryParam);
-        PirQueryRequest pirQueryRequest = new PirQueryRequest(queryParam, obfuscateData);
+        // Note: the searchIdList is sensitive that should not been passed to the pir-service
+        PirQueryParam nonSensitiveQueryParam = queryParam.clone();
+        nonSensitiveQueryParam.setSearchIdList(null);
+        PirQueryRequest pirQueryRequest =
+                new PirQueryRequest(nonSensitiveQueryParam, obfuscateData);
         Pair<WeDPRResponse, ObfuscateQueryResult> result = submitQuery(pirQueryRequest);
         if (result.getRight() == null) {
             return new ImmutablePair<>(result.getLeft(), null);
