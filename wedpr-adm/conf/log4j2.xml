@@ -4,9 +4,9 @@
         <!-- log level -->
         <Property name="LOG_LEVEL">info</Property>
         <!-- log location -->
-        <Property name="LOG_HOME">./logs/ppcs-modeladm</Property>
+        <Property name="LOG_HOME">./logs/wedpr-adm</Property>
         <!-- log name -->
-        <Property name="APP_NAME">ppcs-modeladm</Property>
+        <Property name="APP_NAME">wedpr-adm</Property>
         <property name="IMS_LOG_PATTERN" value="[%-p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%t][%F:%L][%m]%n"/>
         <property name="METRICS_LOG_PATTERN" value="[%-p][%d{yyyy-MM-dd HH:mm:ss SSS}][%m]%n"/>
         <property name="COMMON_LOG_PATTERN"
@@ -68,6 +68,12 @@
         </Logger>
         <Logger name="org.apache.ibatis" level="info" additivity="false">
             <appender-ref ref="appLog"/>
+            <appender-ref ref="console"/>
+        </Logger>
+        <Logger name="com.webank.wedpr" level="debug" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="errorLog"/>
+            <appender-ref ref="warningLog"/>
             <appender-ref ref="console"/>
         </Logger>
         <Logger name="org.springframework" level="info" additivity="false">
