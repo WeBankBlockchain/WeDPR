@@ -86,7 +86,8 @@ public class ExecutorManagerImpl implements ExecutorManager {
                 return;
             }
             // the job has already been finished(the sync case)
-            if (executiveContext.getJob().getJobResult().getJobStatus().finished()) {
+            if (executiveContext.getJob().getJobResult() != null
+                    && executiveContext.getJob().getJobResult().getJobStatus().finished()) {
                 proceedingJobs.remove(executiveContext);
                 return;
             }

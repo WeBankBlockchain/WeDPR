@@ -20,10 +20,12 @@ import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class PirQueryRequest {
     private PirQueryParam queryParam;
     private ObfuscateData obfuscateData;

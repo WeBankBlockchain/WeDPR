@@ -15,18 +15,17 @@
 
 package com.webank.wedpr.components.pir.sdk.config;
 
+import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.config.WeDPRConfig;
 
 public class PirSDKConfig {
-    private static String PIR_TOPIC_PREFIX =
-            WeDPRConfig.apply("wedpr.service.pir.topic.prefix", "PIR_");
-    private static String PIR_COMPONENT_PREFIX =
-            WeDPRConfig.apply("wedpr.service.pir.topic.prefix", "PIR_COMPONENT_");
+    private static String PIR_TOPIC_PREFIX = "PIR_TOPIC_";
+    private static String PIR_COMPONENT_PREFIX = "PIR_COMPONENT_";
     private static Integer PIR_QUERY_TIMEOUT_MS =
             WeDPRConfig.apply("wedpr.service.pir.timeout_ms", 30000);
 
     public static String getPirComponent(String serviceID) {
-        return PIR_COMPONENT_PREFIX + serviceID;
+        return PIR_COMPONENT_PREFIX + WeDPRCommonConfig.getAgency() + "_" + serviceID;
     }
 
     public static String getPirTopic(String serviceID) {

@@ -43,11 +43,11 @@ public class PirQueryParam implements Cloneable {
 
     // the search type, default is search exist
     private String searchType = PirSearchType.SearchExist.getValue();
-    @JsonIgnore private PirSearchType searchTypeObject;
+    @JsonIgnore private PirSearchType searchTypeObject = PirSearchType.SearchExist;
 
     // the pir algorithm, default use id-filter algorithm
     private String pirAlgorithmType = PirParamEnum.AlgorithmType.idFilter.getValue();
-    @JsonIgnore PirParamEnum.AlgorithmType algorithmType;
+    @JsonIgnore PirParamEnum.AlgorithmType algorithmType = PirParamEnum.AlgorithmType.idFilter;
     // query range
     private Integer obfuscationOrder = 9;
     // the filter length

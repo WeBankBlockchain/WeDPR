@@ -41,6 +41,7 @@ import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
+import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ThreadPoolService;
 import com.webank.wedpr.core.utils.WeDPRException;
@@ -80,7 +81,7 @@ public class PirServiceImpl implements PirService {
     private PirTopicSubscriber pirTopicSubscriber;
 
     @PostConstruct
-    public void init() {
+    public void init() throws Exception {
         this.obfuscator = new ObfuscatorImpl();
         this.nativeSQLMapperWrapper = new NativeSQLMapperWrapper(nativeSQLMapper);
         this.pirDatasetConstructor =
@@ -90,6 +91,36 @@ public class PirServiceImpl implements PirService {
                         new StoragePathBuilder(hdfsConfig, localStorageConfig),
                         nativeSQLMapper);
         this.pirTopicSubscriber = new PirTopicSubscriberImpl(weDPRTransport);
+        registerPublishedServices();
+    }
+
+    protected void registerPublishedServices() throws Exception {
+        logger.info("registerPublishedService");
+        PublishedServiceInfo condition = new PublishedServiceInfo("");
+        condition.setAgency(WeDPRCommonConfig.getAgency());
+        condition.setStatus(ServiceStatus.PublishSuccess.getStatus());
+        List<PublishedServiceInfo> serviceInfoList =
+                publishedServiceMapper.queryPublishedService(condition, null);
+        if (serviceInfoList == null || serviceInfoList.isEmpty()) {
+            return;
+        }
+        for (PublishedServiceInfo serviceInfo : serviceInfoList) {
+            logger.info("registerPublishedService for {}", serviceInfo.getServiceId());
+            registerPublishedService(serviceInfo.getServiceId());
+            logger.info("registerPublishedService for {} success", serviceInfo.getServiceId());
+        }
+        logger.info("registerPublishedService success");
+    }
+
+    private void registerPublishedService(String serviceId) throws Exception {
+        pirTopicSubscriber.registerService(
+                serviceId,
+                new PirTopicSubscriber.QueryHandler() {
+                    @Override
+                    public WeDPRResponse onQuery(PirQueryRequest pirQueryRequest) throws Exception {
+                        return query(pirQueryRequest);
+                    }
+                });
     }
 
     @Override
@@ -196,16 +227,7 @@ public class PirServiceImpl implements PirService {
                                 public void run() {
                                     try {
                                         pirDatasetConstructor.construct(serviceSetting);
-                                        pirTopicSubscriber.registerService(
-                                                serviceID,
-                                                new PirTopicSubscriber.QueryHandler() {
-                                                    @Override
-                                                    public WeDPRResponse onQuery(
-                                                            PirQueryRequest pirQueryRequest)
-                                                            throws Exception {
-                                                        return query(pirQueryRequest);
-                                                    }
-                                                });
+                                        registerPublishedService(serviceID);
                                         onPublishFinished(
                                                 serviceID,
                                                 ServiceStatus.PublishSuccess,

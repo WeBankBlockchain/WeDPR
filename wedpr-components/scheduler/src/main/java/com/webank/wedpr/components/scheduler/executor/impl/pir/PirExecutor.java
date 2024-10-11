@@ -59,13 +59,17 @@ public class PirExecutor implements Executor {
         ExecutiveContext executiveContext =
                 executiveContextBuilder.build(jobDO, taskFinishedHandler, jobDO.getId());
         PirQueryParam queryParam = (PirQueryParam) prepare(jobDO);
+        logger.info("Execute the pir query task, jobID: {}", jobDO.getId());
         Pair<WeDPRResponse, PirResult> result = this.pirSDK.query(queryParam);
         ExecuteResult executeResult = new ExecuteResult();
         if (result.getLeft() == null || !result.getLeft().statusOk()) {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.FAILED);
+            // the error information
+            executeResult.setMsg(result.getLeft().getMsg());
         } else {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.SUCCESS);
         }
+        logger.info("Execute the pir query task finished, jobID: {}", jobDO.getId());
         // TODO: store the query PirResult
         executiveContext.onTaskFinished(executeResult);
     }

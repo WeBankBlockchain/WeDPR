@@ -16,10 +16,13 @@
 package com.webank.wedpr.components.scheduler.config;
 
 import com.webank.wedpr.components.project.JobChecker;
+import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.SchedulerBuilder;
 import com.webank.wedpr.components.scheduler.client.SchedulerClient;
 import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
+import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
+import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.pir.PirExecutor;
@@ -32,6 +35,7 @@ import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
 import com.webank.wedpr.core.protocol.ExecutorType;
+import com.webank.wedpr.core.protocol.JobStatus;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +116,23 @@ public class SchedulerLoader {
         executorManager.registerExecutor(
                 ExecutorType.PIR.getType(),
                 new PirExecutor(
-                        weDPRTransport, new ExecutiveContextBuilder(projectMapperWrapper), null));
+                        weDPRTransport,
+                        new ExecutiveContextBuilder(projectMapperWrapper),
+                        new TaskFinishedHandler() {
+                            @Override
+                            public void onFinish(JobDO jobDO, ExecuteResult result) {
+                                if (result.getResultStatus().failed()) {
+                                    projectMapperWrapper.updateJobResult(
+                                            jobDO.getId(), JobStatus.RunFailed, null);
+                                    return;
+                                }
+                                if (result.getResultStatus().success()) {
+                                    projectMapperWrapper.updateJobResult(
+                                            jobDO.getId(), JobStatus.RunSuccess, null);
+                                    return;
+                                }
+                            }
+                        }));
         logger.info("register PirExecutor success");
     }
 }

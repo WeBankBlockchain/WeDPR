@@ -20,7 +20,6 @@ import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateQueryResult;
 import com.webank.wedpr.components.pir.sdk.core.OtCrypto;
-import com.webank.wedpr.components.pir.sdk.core.PirMsgErrorCallback;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
@@ -31,6 +30,7 @@ import com.webank.wedpr.sdk.jni.generated.SendResponseHandler;
 import com.webank.wedpr.sdk.jni.transport.IMessage;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import com.webank.wedpr.sdk.jni.transport.handlers.MessageCallback;
+import com.webank.wedpr.sdk.jni.transport.handlers.MessageErrorCallback;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -49,9 +49,10 @@ public class PirSDKImpl implements PirSDK {
     @Override
     public Pair<WeDPRResponse, PirResult> query(PirQueryParam queryParam) throws Exception {
         queryParam.check();
-
+        logger.debug("Generate the obfuscate param");
         ObfuscateData obfuscateData =
                 OtCrypto.generateOtParam(queryParam.getAlgorithmType(), queryParam);
+        logger.debug("Generate the obfuscate param success");
         // Note: the searchIdList is sensitive that should not been passed to the pir-service
         PirQueryParam nonSensitiveQueryParam = queryParam.clone();
         nonSensitiveQueryParam.setSearchIdList(null);
@@ -71,6 +72,8 @@ public class PirSDKImpl implements PirSDK {
     protected Pair<WeDPRResponse, ObfuscateQueryResult> submitQuery(
             PirQueryRequest pirQueryRequest) {
         try {
+            logger.debug(
+                    "submitQuery, service: {}", pirQueryRequest.getQueryParam().getServiceId());
             CompletableFuture<WeDPRResponse> queriedResult = new CompletableFuture<>();
             // Note: the dstInst is unknown
             this.transport.asyncSendMessageByComponent(
@@ -80,7 +83,22 @@ public class PirSDKImpl implements PirSDK {
                     pirQueryRequest.serialize().getBytes(StandardCharsets.UTF_8),
                     0,
                     PirSDKConfig.getPirQueryTimeoutMs(),
-                    new PirMsgErrorCallback("PirQuery"),
+                    new MessageErrorCallback() {
+                        @Override
+                        public void onErrorResult(Error error) {
+                            if (error == null || error.errorCode() == 0) {
+                                logger.debug("submitQuery: sendPirRequest success");
+                                return;
+                            }
+                            logger.error(
+                                    "submitQuery: sendPirRequest failed, code: {}, msg: {}",
+                                    error.errorCode(),
+                                    error.errorMessage());
+                            queriedResult.complete(
+                                    new WeDPRResponse(
+                                            (int) error.errorCode(), error.errorMessage()));
+                        }
+                    },
                     new MessageCallback() {
                         @Override
                         public void onMessage(
@@ -99,7 +117,7 @@ public class PirSDKImpl implements PirSDK {
                                                     (int) error.errorCode(), error.errorMessage()));
                                     return;
                                 }
-                                logger.trace(
+                                logger.debug(
                                         "PirQuery, get response from the server, msg: {}, payload: {}",
                                         message.toString(),
                                         new String(message.getPayload()));
