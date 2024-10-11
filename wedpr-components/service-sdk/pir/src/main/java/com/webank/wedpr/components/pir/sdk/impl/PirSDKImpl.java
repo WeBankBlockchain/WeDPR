@@ -77,7 +77,6 @@ public class PirSDKImpl implements PirSDK {
                     pirQueryRequest.getQueryParam().getServiceId());
             CompletableFuture<WeDPRResponse> queriedResult = new CompletableFuture<>();
             // Note: the dstInst is unknown
-            // TODO: put the callback into threadPool in case of blocked
             this.transport.asyncSendMessageByComponent(
                     PirSDKConfig.getPirTopic(pirQueryRequest.getQueryParam().getServiceId()),
                     null,
@@ -88,20 +87,43 @@ public class PirSDKImpl implements PirSDK {
                     new MessageErrorCallback() {
                         @Override
                         public void onErrorResult(Error error) {
-                            if (error == null || error.errorCode() == 0) {
-                                logger.debug(
-                                        "submitQuery: sendPirRequest success, targetService: {}",
-                                        pirQueryRequest.getQueryParam().getServiceId());
-                                return;
-                            }
-                            logger.error(
-                                    "submitQuery: sendPirRequest failed, targetService: {}, code: {}, msg: {}",
-                                    pirQueryRequest.getQueryParam().getServiceId(),
-                                    error.errorCode(),
-                                    error.errorMessage());
-                            queriedResult.complete(
-                                    new WeDPRResponse(
-                                            (int) error.errorCode(), error.errorMessage()));
+                            PirSDKConfig.getThreadPoolService()
+                                    .getThreadPool()
+                                    .execute(
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        if (error == null
+                                                                || error.errorCode() == 0) {
+                                                            logger.debug(
+                                                                    "submitQuery: sendPirRequest success, targetService: {}",
+                                                                    pirQueryRequest
+                                                                            .getQueryParam()
+                                                                            .getServiceId());
+                                                            return;
+                                                        }
+                                                        logger.error(
+                                                                "submitQuery: sendPirRequest failed, targetService: {}, code: {}, msg: {}",
+                                                                pirQueryRequest
+                                                                        .getQueryParam()
+                                                                        .getServiceId(),
+                                                                error.errorCode(),
+                                                                error.errorMessage());
+                                                        queriedResult.complete(
+                                                                new WeDPRResponse(
+                                                                        (int) error.errorCode(),
+                                                                        error.errorMessage()));
+                                                    } catch (Exception e) {
+                                                        logger.warn(
+                                                                "submitQuery threadPool exception, service: {}, error: ",
+                                                                pirQueryRequest
+                                                                        .getQueryParam()
+                                                                        .getServiceId(),
+                                                                e);
+                                                    }
+                                                }
+                                            });
                         }
                     },
                     new MessageCallback() {
@@ -110,32 +132,49 @@ public class PirSDKImpl implements PirSDK {
                                 Error error,
                                 IMessage message,
                                 SendResponseHandler sendResponseHandler) {
-                            try {
-                                if (error != null && error.errorCode() != 0) {
-                                    logger.error(
-                                            "PirQuery failed, queryParam: {}, code: {}, msg: {}",
-                                            pirQueryRequest.getQueryParam().toString(),
-                                            error.errorCode(),
-                                            error.errorMessage());
-                                    queriedResult.complete(
-                                            new WeDPRResponse(
-                                                    (int) error.errorCode(), error.errorMessage()));
-                                    return;
-                                }
-                                logger.debug(
-                                        "PirQuery, get response from the server, msg: {}, payload: {}",
-                                        message.toString(),
-                                        new String(message.getPayload()));
-                                queriedResult.complete(
-                                        WeDPRResponse.deserialize(message.getPayload()));
-                            } catch (Exception e) {
-                                logger.warn(
-                                        "PirQuery error, targetService: {}, parse the response message exception for ",
-                                        pirQueryRequest.getQueryParam().getServiceId(),
-                                        e);
-                                queriedResult.complete(
-                                        new WeDPRResponse(Constant.WEDPR_FAILED, e.getMessage()));
-                            }
+                            PirSDKConfig.getThreadPoolService()
+                                    .getThreadPool()
+                                    .execute(
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        if (error != null
+                                                                && error.errorCode() != 0) {
+                                                            logger.error(
+                                                                    "PirQuery failed, queryParam: {}, code: {}, msg: {}",
+                                                                    pirQueryRequest
+                                                                            .getQueryParam()
+                                                                            .toString(),
+                                                                    error.errorCode(),
+                                                                    error.errorMessage());
+                                                            queriedResult.complete(
+                                                                    new WeDPRResponse(
+                                                                            (int) error.errorCode(),
+                                                                            error.errorMessage()));
+                                                            return;
+                                                        }
+                                                        logger.debug(
+                                                                "PirQuery, get response from the server, msg: {}, payload: {}",
+                                                                message.toString(),
+                                                                new String(message.getPayload()));
+                                                        queriedResult.complete(
+                                                                WeDPRResponse.deserialize(
+                                                                        message.getPayload()));
+                                                    } catch (Exception e) {
+                                                        logger.warn(
+                                                                "PirQuery error, targetService: {}, parse the response message exception for ",
+                                                                pirQueryRequest
+                                                                        .getQueryParam()
+                                                                        .getServiceId(),
+                                                                e);
+                                                        queriedResult.complete(
+                                                                new WeDPRResponse(
+                                                                        Constant.WEDPR_FAILED,
+                                                                        e.getMessage()));
+                                                    }
+                                                }
+                                            });
                         }
                     });
             WeDPRResponse queriedResponse = queriedResult.get();

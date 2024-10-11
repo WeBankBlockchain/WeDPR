@@ -45,6 +45,13 @@ public class OtResult {
 
     private List<OtResultItem> otResultItems;
 
+    public boolean hasNoResults() {
+        if (otResultItems == null || otResultItems.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "OtResult{" + "otResultItems=" + ArrayUtils.toString(otResultItems) + '}';

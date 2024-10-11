@@ -20,6 +20,7 @@ import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServic
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus;
+import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateQueryResult;
 import com.webank.wedpr.components.pir.sdk.core.OtResult;
@@ -29,7 +30,6 @@ import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
-import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.Obfuscator;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.core.impl.ObfuscatorImpl;
@@ -73,7 +73,7 @@ public class PirServiceImpl implements PirService {
     private WeDPRTransport weDPRTransport;
 
     @Autowired private PublishedServiceMapper publishedServiceMapper;
-    private final ThreadPoolService threadPoolService = PirServiceConfig.getThreadPoolService();
+    private final ThreadPoolService threadPoolService = PirSDKConfig.getThreadPoolService();
 
     private NativeSQLMapperWrapper nativeSQLMapperWrapper;
     private Obfuscator obfuscator;

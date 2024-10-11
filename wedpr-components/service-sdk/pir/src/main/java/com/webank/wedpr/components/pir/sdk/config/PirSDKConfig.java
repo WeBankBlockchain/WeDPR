@@ -17,12 +17,28 @@ package com.webank.wedpr.components.pir.sdk.config;
 
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.core.utils.ThreadPoolService;
 
 public class PirSDKConfig {
     private static String PIR_TOPIC_PREFIX = "PIR_TOPIC_";
     private static String PIR_COMPONENT_PREFIX = "PIR_COMPONENT_";
     private static Integer PIR_QUERY_TIMEOUT_MS =
             WeDPRConfig.apply("wedpr.service.pir.timeout_ms", 30000);
+
+    private static String PIR_CACHE_DIR = WeDPRConfig.apply("wedpr.pir.cache.dir", ".cache");
+    private static Integer PIR_THREAD_POOL_QUEUE_SIZE_LIMIT =
+            WeDPRConfig.apply("wedpr.pir.threadpool.queue.size.limit", 10000);
+
+    private static final ThreadPoolService threadPoolService =
+            new ThreadPoolService("pir-workers", PirSDKConfig.getPirThreadPoolQueueSizeLimit());
+
+    public static Integer getPirThreadPoolQueueSizeLimit() {
+        return PIR_THREAD_POOL_QUEUE_SIZE_LIMIT;
+    }
+
+    public static ThreadPoolService getThreadPoolService() {
+        return threadPoolService;
+    }
 
     public static String getPirComponent(String serviceID) {
         return PIR_COMPONENT_PREFIX + WeDPRCommonConfig.getAgency() + "_" + serviceID;

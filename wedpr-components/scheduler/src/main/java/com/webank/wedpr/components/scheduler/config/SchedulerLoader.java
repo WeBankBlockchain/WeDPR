@@ -35,7 +35,6 @@ import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
 import com.webank.wedpr.core.protocol.ExecutorType;
-import com.webank.wedpr.core.protocol.JobStatus;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,16 +120,8 @@ public class SchedulerLoader {
                         new TaskFinishedHandler() {
                             @Override
                             public void onFinish(JobDO jobDO, ExecuteResult result) {
-                                if (result.getResultStatus().failed()) {
-                                    projectMapperWrapper.updateJobResult(
-                                            jobDO.getId(), JobStatus.RunFailed, null);
-                                    return;
-                                }
-                                if (result.getResultStatus().success()) {
-                                    projectMapperWrapper.updateJobResult(
-                                            jobDO.getId(), JobStatus.RunSuccess, null);
-                                    return;
-                                }
+                                projectMapperWrapper.updateJobResult(
+                                        jobDO.getId(), jobDO.getJobResult().getJobStatus(), null);
                             }
                         }));
         logger.info("register PirExecutor success");

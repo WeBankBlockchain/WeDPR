@@ -25,6 +25,8 @@ import com.webank.wedpr.components.scheduler.executor.Executor;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContext;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
+import com.webank.wedpr.core.protocol.JobStatus;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.apache.commons.lang3.tuple.Pair;
@@ -66,14 +68,16 @@ public class PirExecutor implements Executor {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.FAILED);
             // the error information
             executeResult.setMsg(result.getLeft().getMsg());
+            jobDO.getJobResult().setJobStatus(JobStatus.RunFailed);
         } else {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.SUCCESS);
+            jobDO.getJobResult().setJobStatus(JobStatus.RunSuccess);
         }
         logger.info("Execute the pir query task finished, jobID: {}", jobDO.getId());
-        /*logger.info(
-        "Execute the pir query task finished, jobID: {}, result: {}",
-        jobDO.getId(),
-        result.getRight().toString());*/
+        logger.info(
+                "Execute the pir query task finished, jobID: {}, result: {}",
+                jobDO.getId(),
+                ObjectMapperFactory.getObjectMapper().writeValueAsString(result.getRight()));
         // TODO: store the query PirResult
         executiveContext.onTaskFinished(executeResult);
     }

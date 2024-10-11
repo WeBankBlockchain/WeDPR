@@ -149,16 +149,14 @@ public class OtCrypto {
         List<PirResult.PirResultItem> pirResultItemList = new ArrayList<>();
         for (int i = 0; i < seachIDList.size(); i++) {
             // not exist case, and search value
-            if (otResultList.get(i).getOtResultItems().isEmpty()
-                    && searchType == PirSearchType.SearchValue) {
+            if (otResultList.get(i).hasNoResults() && searchType == PirSearchType.SearchValue) {
                 continue;
             }
             PirResult.PirResultItem pirResultItem = new PirResult.PirResultItem();
             pirResultItemList.add(pirResultItem);
             pirResultItem.setSearchId(seachIDList.get(i));
             // not exist case, and search exists
-            if (otResultList.get(i).getOtResultItems().isEmpty()
-                    && searchType == PirSearchType.SearchExist) {
+            if (otResultList.get(i).hasNoResults() && searchType == PirSearchType.SearchExist) {
                 pirResultItem.setIsExists(false);
                 continue;
             }

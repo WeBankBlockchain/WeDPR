@@ -18,7 +18,6 @@ package com.webank.wedpr.components.task.plugin.pir.transport.impl;
 import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.components.pir.sdk.core.PirMsgErrorCallback;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
-import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.ThreadPoolService;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class PirTopicSubscriberImpl implements PirTopicSubscriber {
     private static final Logger logger = LoggerFactory.getLogger(PirTopicSubscriberImpl.class);
     private final WeDPRTransport transport;
-    private final ThreadPoolService threadPoolService = PirServiceConfig.getThreadPoolService();
+    private final ThreadPoolService threadPoolService = PirSDKConfig.getThreadPoolService();
 
     public PirTopicSubscriberImpl(WeDPRTransport transport) {
         this.transport = transport;
