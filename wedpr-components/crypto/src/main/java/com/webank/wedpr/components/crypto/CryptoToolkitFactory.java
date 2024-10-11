@@ -23,7 +23,8 @@ import java.util.Base64;
 
 public class CryptoToolkitFactory {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private static final HashCrypto hashCrypto = CryptoToolkitFactory.buildHashCrypto();
+    private static final HashCrypto sha256HashCrypto =
+            CryptoToolkitFactory.buildHashCrypto(CryptoConfig.SHA256_ALGORITHM);
 
     public static SymmetricCrypto buildSymmetricCrypto() throws WeDPRException {
         if (CryptoConfig.getSymmetricAlgorithmType().compareToIgnoreCase(CryptoConfig.AES_ALGORITHM)
@@ -41,7 +42,11 @@ public class CryptoToolkitFactory {
     }
 
     public static HashCrypto buildHashCrypto() {
-        return new HashCryptoImpl(CryptoConfig.getHashAlgorithmType());
+        return CryptoToolkitFactory.buildHashCrypto(CryptoConfig.getHashAlgorithmType());
+    }
+
+    public static HashCrypto buildHashCrypto(String algorithmType) {
+        return new HashCryptoImpl(algorithmType);
     }
 
     public static CryptoToolkit build() throws Exception {
@@ -49,7 +54,7 @@ public class CryptoToolkitFactory {
     }
 
     public static String hash(String input) throws Exception {
-        return hashCrypto.hash(input);
+        return sha256HashCrypto.hash(input);
     }
 
     public static String generateRandomKey() {

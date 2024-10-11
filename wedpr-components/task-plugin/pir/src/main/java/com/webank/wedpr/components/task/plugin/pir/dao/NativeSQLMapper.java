@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.task.plugin.pir.dao;
 
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
@@ -27,5 +28,5 @@ public interface NativeSQLMapper {
     public List<String> showAllTables();
 
     @Select(value = "${nativeSql}")
-    public List executeNativeQuerySql(@Param("nativeSql") String nativeSql);
+    public List<Map<String, Object>> executeNativeQuerySql(@Param("nativeSql") String nativeSql);
 }

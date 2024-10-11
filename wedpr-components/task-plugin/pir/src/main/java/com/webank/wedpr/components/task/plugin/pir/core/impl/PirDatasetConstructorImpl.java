@@ -133,8 +133,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         StringBuilder sb = new StringBuilder();
         for (List<String> values : sqlValues) {
             // add hash for the idField
-            values.add(Common.addDoubleQuotes(CryptoToolkitFactory.hash(values.get(idFieldIndex))));
-            sb.append("(").append(String.join(",", values)).append("), ");
+            values.add(CryptoToolkitFactory.hash(values.get(idFieldIndex)));
+            sb.append("(").append(Common.joinAndAddDoubleQuotes(values)).append("), ");
         }
         String insertValues = sb.toString();
         insertValues = insertValues.substring(0, insertValues.length() - 2);

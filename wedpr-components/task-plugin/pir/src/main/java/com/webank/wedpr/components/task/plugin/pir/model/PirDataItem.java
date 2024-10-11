@@ -16,9 +16,11 @@
 package com.webank.wedpr.components.task.plugin.pir.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 /** @author zachma */
 @Data
+@ToString
 public class PirDataItem {
 
     private Integer id;

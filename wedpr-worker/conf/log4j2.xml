@@ -74,6 +74,12 @@
             <appender-ref ref="appLog"/>
             <appender-ref ref="console"/>
         </Logger>
+        <Logger name="com.webank.wedpr" level="debug" additivity="false">
+            <appender-ref ref="appLog"/>
+            <appender-ref ref="errorLog"/>
+            <appender-ref ref="warningLog"/>
+            <appender-ref ref="console"/>
+        </Logger>
         <Logger name="ims" level="trace" additivity="false">
             <appender-ref ref="imsLog"/>
         </Logger>

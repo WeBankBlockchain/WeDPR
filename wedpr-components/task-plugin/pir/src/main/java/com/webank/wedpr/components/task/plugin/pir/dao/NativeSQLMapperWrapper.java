@@ -21,10 +21,12 @@ import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
+import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public class NativeSQLMapperWrapper {
             PirServiceSetting serviceSetting,
             PirQueryParam queryParam,
             ObfuscateData.ObfuscateDataItem obfuscateDataItem)
-            throws WeDPRException {
+            throws Exception {
         List<String> queriedFields =
                 serviceSetting.obtainQueriedFields(
                         queryParam.getSearchTypeObject(), queryParam.getQueriedFields());
@@ -49,12 +51,14 @@ public class NativeSQLMapperWrapper {
                 "query, origin queriedFields: [{}], intersection fields: [{}]",
                 StringUtils.join(queryParam.getQueriedFields(), ","),
                 StringUtils.join(queriedFields, ","));
+        String tableName = Constant.datasetId2tableId(serviceSetting.getDatasetId());
         if (queryParam.getAlgorithmType() == PirParamEnum.AlgorithmType.idFilter) {
             return executeFuzzyMatchQuery(
-                    serviceSetting, queriedFields, obfuscateDataItem.getFilter());
+                    tableName, serviceSetting, queriedFields, obfuscateDataItem.getFilter());
         }
         if (queryParam.getAlgorithmType() == PirParamEnum.AlgorithmType.idObfuscation) {
-            return executeQuery(serviceSetting, queriedFields, obfuscateDataItem.getIdHashList());
+            return executeQuery(
+                    tableName, serviceSetting, queriedFields, obfuscateDataItem.getIdHashList());
         }
         throw new WeDPRException(
                 "query "
@@ -64,51 +68,64 @@ public class NativeSQLMapperWrapper {
     }
 
     public List<PirDataItem> executeQuery(
-            PirServiceSetting serviceSetting, List<String> queriedFields, List<String> filters) {
+            String tableName,
+            PirServiceSetting serviceSetting,
+            List<String> queriedFields,
+            List<String> filters)
+            throws Exception {
         String condition =
                 String.format(
                         "where t.%s in (%s)",
-                        Constant.ID_HASH_FIELD_NAME, StringUtils.join(filters, ","));
+                        Constant.ID_HASH_FIELD_NAME, Common.joinAndAddDoubleQuotes(filters));
         String sql =
                 String.format(
-                        "select t.%s as t_id, %s from %s t %s",
+                        "select t.%s, %s from %s t %s",
                         Constant.ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
-                        serviceSetting.getDatasetId(),
+                        tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
         return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
     }
 
     public List<PirDataItem> executeFuzzyMatchQuery(
-            PirServiceSetting serviceSetting, List<String> queriedFields, String filter) {
+            String tableName,
+            PirServiceSetting serviceSetting,
+            List<String> queriedFields,
+            String filter)
+            throws Exception {
         String condition =
                 String.format(
-                        "where t.%s like concat(%s, '%%')", Constant.ID_HASH_FIELD_NAME, filter);
+                        "where t.%s like concat('%s', '%%')", Constant.ID_HASH_FIELD_NAME, filter);
         String sql =
                 String.format(
-                        "select t.%s as t_id, %s from %s t %s",
+                        "select t.%s, %s from %s t %s",
                         Constant.ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
-                        serviceSetting.getDatasetId(),
+                        tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
         return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
     }
 
-    protected static List<PirDataItem> toPirDataList(List values) {
+    protected static List<PirDataItem> toPirDataList(List<Map<String, Object>> values)
+            throws Exception {
         if (values == null || values.isEmpty()) {
             return null;
         }
         List<PirDataItem> result = new LinkedList<>();
-        for (int i = 0; i < values.size(); i++) {
-            Object[] temp = (Object[]) values.get(i);
+        int i = 0;
+        for (Map<String, Object> row : values) {
             PirDataItem pirTable = new PirDataItem();
-            pirTable.setId(i + 1);
-            pirTable.setPirKey(String.valueOf(temp[0]));
-            Object[] objects = Arrays.copyOfRange(temp, 1, temp.length);
-            pirTable.setPirValue(Arrays.toString(objects));
+            pirTable.setId(i);
+            // the key, Note: here must use the idField value since the client use the idField value
+            // to calculateZ0
+            pirTable.setPirKey((String) row.get(Constant.ID_FIELD_NAME));
+            // the values
+            pirTable.setPirValue(ObjectMapperFactory.getObjectMapper().writeValueAsString(row));
+            logger.trace("toPirDataList result: {}", pirTable.toString());
             result.add(pirTable);
+            i++;
         }
         return result;
     }

@@ -20,6 +20,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.apache.commons.lang3.ArrayUtils;
 
 @Data
 @AllArgsConstructor
@@ -28,6 +30,7 @@ public class OtResult {
     /** @author zachma */
     @Data
     @NoArgsConstructor
+    @ToString
     public static class OtResultItem {
         BigInteger e;
         BigInteger w;
@@ -41,4 +44,9 @@ public class OtResult {
     }
 
     private List<OtResultItem> otResultItems;
+
+    @Override
+    public String toString() {
+        return "OtResult{" + "otResultItems=" + ArrayUtils.toString(otResultItems) + '}';
+    }
 }

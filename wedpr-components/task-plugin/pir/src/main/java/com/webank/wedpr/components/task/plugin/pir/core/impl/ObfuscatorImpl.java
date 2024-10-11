@@ -29,8 +29,11 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObfuscatorImpl implements Obfuscator {
+    private final Logger logger = LoggerFactory.getLogger(ObfuscatorImpl.class);
 
     @Override
     public List<OtResult.OtResultItem> obfuscate(

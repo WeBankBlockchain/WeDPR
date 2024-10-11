@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
@@ -208,6 +209,10 @@ public class Common {
         LocalDate date = LocalDate.parse(dateString, formatter);
         LocalDate currentDate = LocalDate.now();
         return date.isBefore(currentDate);
+    }
+
+    public static String joinAndAddDoubleQuotes(List<String> arrayData) {
+        return arrayData.stream().map(s -> "\'" + s + "\'").collect(Collectors.joining(", "));
     }
 
     public static String addDoubleQuotes(String data) {

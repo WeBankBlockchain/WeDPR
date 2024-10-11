@@ -70,6 +70,10 @@ public class PirExecutor implements Executor {
             executeResult.setResultStatus(ExecuteResult.ResultStatus.SUCCESS);
         }
         logger.info("Execute the pir query task finished, jobID: {}", jobDO.getId());
+        /*logger.info(
+        "Execute the pir query task finished, jobID: {}, result: {}",
+        jobDO.getId(),
+        result.getRight().toString());*/
         // TODO: store the query PirResult
         executiveContext.onTaskFinished(executeResult);
     }

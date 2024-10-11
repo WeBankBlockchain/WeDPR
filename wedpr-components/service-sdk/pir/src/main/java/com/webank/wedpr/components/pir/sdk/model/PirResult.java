@@ -19,6 +19,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /** @author zachma */
@@ -28,6 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 public class PirResult {
 
     @Data
+    @NoArgsConstructor
+    @ToString
     public static class PirResultItem {
         String searchId;
         Boolean isExists = false;
@@ -42,4 +46,9 @@ public class PirResult {
     }
 
     private List<PirResultItem> pirResultItemList;
+
+    @Override
+    public String toString() {
+        return "PirResult{" + "pirResultItemList=" + ArrayUtils.toString(pirResultItemList) + '}';
+    }
 }

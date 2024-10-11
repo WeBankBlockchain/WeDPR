@@ -27,8 +27,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OtCrypto {
+    private static final Logger logger = LoggerFactory.getLogger(OtCrypto.class);
+
     public static ObfuscateData generateOtParam(
             PirParamEnum.AlgorithmType algorithmType, PirQueryParam queryParam) throws Exception {
         BigInteger blindingA = OtHelper.getRandomInt();
@@ -65,11 +69,11 @@ public class OtCrypto {
             throws Exception {
         List<ObfuscateData.ObfuscateDataItem> obfuscateDataItems = new ArrayList<>();
         for (String searchId : searchIDList) {
+            String searchIdHash = CryptoToolkitFactory.hash(searchId);
             String filter =
-                    CryptoToolkitFactory.hash(
-                            searchId.length() < filterLength
-                                    ? searchId
-                                    : searchId.substring(0, filterLength));
+                    searchIdHash.length() < filterLength
+                            ? searchIdHash
+                            : searchIdHash.substring(0, filterLength);
             BigInteger z0 = calculateZ0(searchId, blindingC);
             ObfuscateData.ObfuscateDataItem pirDataBody = new ObfuscateData.ObfuscateDataItem();
             pirDataBody.setFilter(filter);
@@ -126,7 +130,6 @@ public class OtCrypto {
                 String decryptedText = symmetricCrypto.decrypt(cipherStr);
                 pirResultItem.setValue(decryptedText);
             } catch (Exception ignored) {
-
             }
         }
     }

@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zachma
@@ -26,6 +27,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ObfuscateData {
     @Data
     public static class ObfuscateDataItem {

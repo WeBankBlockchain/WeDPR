@@ -228,10 +228,7 @@ public class CSVFileParser {
                                         logger.warn(errorMsg);
                                         throw new WeDPRException(-1, errorMsg);
                                     }
-                                    // Note: the value field should surrounded with ""
-                                    rowValue.add(
-                                            Common.addDoubleQuotes(
-                                                    row.get(rowFieldsMapping.get(field))));
+                                    rowValue.add(row.get(rowFieldsMapping.get(field)));
                                 }
                                 resultValue.add(rowValue);
                             }

@@ -175,6 +175,10 @@ public class PirServiceImpl implements PirService {
             for (ObfuscateData.ObfuscateDataItem dataItem : obfuscateData.getObfuscateDataItems()) {
                 List<PirDataItem> queriedResult =
                         this.nativeSQLMapperWrapper.query(serviceSetting, pirQueryParam, dataItem);
+                // without recorder
+                if (queriedResult == null || queriedResult.isEmpty()) {
+                    continue;
+                }
                 obfuscationParam.setIndex(dataItem.getIdIndex());
                 List<OtResult.OtResultItem> otResultItems =
                         this.obfuscator.obfuscate(obfuscationParam, queriedResult, dataItem);
