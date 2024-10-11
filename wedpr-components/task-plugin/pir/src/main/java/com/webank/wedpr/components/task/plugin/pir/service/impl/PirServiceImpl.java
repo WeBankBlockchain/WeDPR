@@ -177,6 +177,7 @@ public class PirServiceImpl implements PirService {
                         this.nativeSQLMapperWrapper.query(serviceSetting, pirQueryParam, dataItem);
                 // without recorder
                 if (queriedResult == null || queriedResult.isEmpty()) {
+                    obfuscateQueryResult.getOtResultList().add(new OtResult());
                     continue;
                 }
                 obfuscationParam.setIndex(dataItem.getIdIndex());

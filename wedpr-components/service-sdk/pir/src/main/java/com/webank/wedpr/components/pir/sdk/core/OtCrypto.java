@@ -17,6 +17,7 @@ package com.webank.wedpr.components.pir.sdk.core;
 
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
@@ -60,7 +61,10 @@ public class OtCrypto {
     public static PirResult decryptAndGetResult(
             ObfuscateData obfuscateData, PirQueryParam queryParam, List<OtResult> otResultList) {
         return decryptResultAndObtainResult(
-                obfuscateData.getB(), queryParam.getSearchIdList(), otResultList);
+                queryParam.getSearchTypeObject(),
+                obfuscateData.getB(),
+                queryParam.getSearchIdList(),
+                otResultList);
     }
 
     /* hash披露, 请求方选择id，生成随机数a、b */
@@ -115,7 +119,10 @@ public class OtCrypto {
     }
 
     private static void decryptServerResultList(
-            PirResult.PirResultItem pirResultItem, OtResult otResultList, BigInteger b) {
+            PirSearchType searchType,
+            PirResult.PirResultItem pirResultItem,
+            OtResult otResultList,
+            BigInteger b) {
         for (OtResult.OtResultItem result : otResultList.getOtResultItems()) {
             BigInteger e = result.getE();
             BigInteger w = result.getW();
@@ -128,21 +135,35 @@ public class OtCrypto {
                         CryptoToolkitFactory.buildAESSymmetricCrypto(
                                 key, Constant.DEFAULT_IV.getBytes(StandardCharsets.UTF_8));
                 String decryptedText = symmetricCrypto.decrypt(cipherStr);
-                pirResultItem.setValue(decryptedText);
+                pirResultItem.setValueData(searchType, decryptedText);
             } catch (Exception ignored) {
             }
         }
     }
 
     protected static PirResult decryptResultAndObtainResult(
-            BigInteger blindingB, List<String> seachIDList, List<OtResult> otResultList) {
+            PirSearchType searchType,
+            BigInteger blindingB,
+            List<String> seachIDList,
+            List<OtResult> otResultList) {
         List<PirResult.PirResultItem> pirResultItemList = new ArrayList<>();
         for (int i = 0; i < seachIDList.size(); i++) {
+            // not exist case, and search value
+            if (otResultList.get(i).getOtResultItems().isEmpty()
+                    && searchType == PirSearchType.SearchValue) {
+                continue;
+            }
             PirResult.PirResultItem pirResultItem = new PirResult.PirResultItem();
-            pirResultItem.setSearchId(seachIDList.get(i));
-            decryptServerResultList(pirResultItem, otResultList.get(i), blindingB);
             pirResultItemList.add(pirResultItem);
+            pirResultItem.setSearchId(seachIDList.get(i));
+            // not exist case, and search exists
+            if (otResultList.get(i).getOtResultItems().isEmpty()
+                    && searchType == PirSearchType.SearchExist) {
+                pirResultItem.setIsExists(false);
+                continue;
+            }
+            decryptServerResultList(searchType, pirResultItem, otResultList.get(i), blindingB);
         }
-        return new PirResult(pirResultItemList);
+        return new PirResult(searchType.getValue(), pirResultItemList);
     }
 }

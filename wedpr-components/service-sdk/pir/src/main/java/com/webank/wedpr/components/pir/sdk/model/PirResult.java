@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.pir.sdk.model;
 
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,14 +38,17 @@ public class PirResult {
         Boolean isExists = false;
         String value;
 
-        public void setValue(String value) {
-            this.value = value;
-            if (StringUtils.isNotBlank(this.value)) {
+        public void setValueData(PirSearchType pirSearchType, String value) {
+            if (pirSearchType == PirSearchType.SearchValue) {
+                this.value = value;
+            }
+            if (StringUtils.isNotBlank(value)) {
                 this.isExists = true;
             }
         }
     }
 
+    private String searchType;
     private List<PirResultItem> pirResultItemList;
 
     @Override
