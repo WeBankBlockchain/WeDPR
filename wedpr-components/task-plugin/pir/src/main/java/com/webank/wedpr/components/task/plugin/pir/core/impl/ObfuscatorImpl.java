@@ -76,6 +76,10 @@ public class ObfuscatorImpl implements Obfuscator {
         SymmetricCrypto symmetricCrypto =
                 CryptoToolkitFactory.buildAESSymmetricCrypto(
                         aesKey, Constant.DEFAULT_IV.getBytes(StandardCharsets.UTF_8));
-        return new OtResult.OtResultItem(messageCipherNum, w, symmetricCrypto.encrypt(message));
+        OtResult.OtResultItem otResultItem =
+                new OtResult.OtResultItem(messageCipherNum, w, symmetricCrypto.encrypt(message));
+        // return the pir key to check matching
+        otResultItem.setPirKey(param.getPirDataItem().getPirKey());
+        return otResultItem;
     }
 }

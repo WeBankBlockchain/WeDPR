@@ -24,13 +24,17 @@ public class FileUtils {
             PosixFilePermissions.fromString("rwxr-xr-x");
 
     public static void createExecutableFile(Path path) throws Exception {
+        createParentDirectory(path);
+        Files.createFile(path);
+        Files.setPosixFilePermissions(path, EXECUTABLE_PERMISSION);
+    }
+
+    public static void createParentDirectory(Path path) throws Exception {
         if (path == null) {
             throw new WeDPRException("Must define the path!");
         }
         if (Files.notExists(path.getParent())) {
             Files.createDirectories(path.getParent());
         }
-        Files.createFile(path);
-        Files.setPosixFilePermissions(path, EXECUTABLE_PERMISSION);
     }
 }

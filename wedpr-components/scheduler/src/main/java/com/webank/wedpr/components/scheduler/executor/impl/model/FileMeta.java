@@ -20,6 +20,7 @@ import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.core.protocol.StorageType;
 import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -57,6 +58,10 @@ public class FileMeta {
         this.path = path;
         this.owner = owner;
         this.ownerAgency = ownerAgency;
+    }
+
+    public String serialize() throws Exception {
+        return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
     }
 
     public Integer getType() {

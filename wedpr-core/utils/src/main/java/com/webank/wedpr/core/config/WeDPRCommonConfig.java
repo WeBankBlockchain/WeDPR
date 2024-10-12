@@ -35,7 +35,7 @@ public class WeDPRCommonConfig {
             WeDPRConfig.apply("wedpr.file.read.lines", DEFAULT_READ_TRUNK_SIZE);
     private static final Integer WRITE_CHUNK_SIZE =
             WeDPRConfig.apply("wedpr.file.write.lines", DEFAULT_WRITE_TRUNK_SIZE);
-    private static final String CACHE_DIR = WeDPRConfig.apply("wedpr.cache.dir", "/home/cache");
+    private static final String SHARE_DIR = WeDPRConfig.apply("wedpr.share.dir", "share");
 
     private static final Integer AUTH_CACHE_SIZE =
             WeDPRConfig.apply("wedpr.auth.cache.size", 10000);
@@ -96,20 +96,17 @@ public class WeDPRCommonConfig {
         return WRITE_CHUNK_SIZE;
     }
 
-    public static String getCacheDir() {
-        return CACHE_DIR;
+    public static String getUserShareDir(String userName) {
+        return Common.joinPath(userName, SHARE_DIR);
     }
 
-    public static String getUserCacheDir(String userName) {
-        return Common.joinPath(CACHE_DIR, userName);
+    public static String getUserJobCacheDir(String userName, String jobType, String jobID) {
+        return Common.joinPath(getUserShareDir(userName), jobType.toLowerCase() + "-" + jobID);
     }
 
-    public static String getUserJobCacheDir(String userName, String jobID) {
-        return Common.joinPath(getUserCacheDir(userName), jobID);
-    }
-
-    public static String getUserJobCachePath(String user, String jobID, String file) {
-        return Common.joinPath(getUserJobCacheDir(user, jobID), file);
+    public static String getUserJobCachePath(
+            String user, String jobType, String jobID, String file) {
+        return Common.joinPath(getUserJobCacheDir(user, jobType, jobID), file);
     }
 
     public static String getUserDatasetPath(String user, String datasetId) {

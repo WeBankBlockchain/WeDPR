@@ -15,8 +15,12 @@
 
 package com.webank.wedpr.components.pir.sdk.model;
 
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
+import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
+import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +43,22 @@ public class PirQueryRequest {
             return null;
         }
         return ObjectMapperFactory.getObjectMapper().readValue(data, PirQueryRequest.class);
+    }
+
+    public void check(boolean requireSearchIdList) throws Exception {
+        Common.requireNonNull("queryParam", queryParam);
+        Common.requireNonNull("obfuscateData", obfuscateData);
+        queryParam.check(requireSearchIdList);
+    }
+
+    public void checkSearchType(String serviceId, PirServiceSetting serviceSetting)
+            throws WeDPRException {
+        if (queryParam.getSearchTypeObject() == PirSearchType.SearchExist) {
+            return;
+        }
+        if (serviceSetting.getSearchTypeObject() == PirSearchType.SearchExist) {
+            throw new WeDPRException(
+                    "The service " + serviceId + " only support SearchExist policy");
+        }
     }
 }

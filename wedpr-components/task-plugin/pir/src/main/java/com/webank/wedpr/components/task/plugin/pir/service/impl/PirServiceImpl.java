@@ -125,6 +125,8 @@ public class PirServiceImpl implements PirService {
 
     @Override
     public WeDPRResponse query(PirQueryRequest pirQueryRequest) throws Exception {
+        // check the request
+        pirQueryRequest.check(false);
         PublishedServiceInfo condition =
                 new PublishedServiceInfo(pirQueryRequest.getQueryParam().getServiceId());
         // check the service
@@ -145,10 +147,12 @@ public class PirServiceImpl implements PirService {
                             + " is not ready yet, status: "
                             + result.get(0).getStatus());
         }
-        // TODO: check the auth
         // get the serviceSetting
         PirServiceSetting serviceSetting =
                 PirServiceSetting.deserialize(result.get(0).getServiceConfig());
+        // check searchType
+        pirQueryRequest.checkSearchType(result.get(0).getServiceId(), serviceSetting);
+        // TODO: check the auth
         return query(
                 pirQueryRequest.getQueryParam(),
                 serviceSetting,

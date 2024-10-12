@@ -118,11 +118,13 @@ public class OtCrypto {
         return OtHelper.powMod(blindingC.subtract(BigInteger.valueOf(idIndex)));
     }
 
-    private static void decryptServerResultList(
+    private static boolean decryptServerResultList(
             PirSearchType searchType,
+            String searchID,
             PirResult.PirResultItem pirResultItem,
             OtResult otResultList,
             BigInteger b) {
+        boolean foundResult = false;
         for (OtResult.OtResultItem result : otResultList.getOtResultItems()) {
             BigInteger e = result.getE();
             BigInteger w = result.getW();
@@ -135,10 +137,22 @@ public class OtCrypto {
                         CryptoToolkitFactory.buildAESSymmetricCrypto(
                                 key, Constant.DEFAULT_IV.getBytes(StandardCharsets.UTF_8));
                 String decryptedText = symmetricCrypto.decrypt(cipherStr);
-                pirResultItem.setValueData(searchType, decryptedText);
+                if (result.getPirKey().equalsIgnoreCase(searchID)) {
+                    // SearchExist case, if one-record hit, return directly
+                    if (searchType == PirSearchType.SearchExist) {
+                        pirResultItem.setIsExists(true);
+                        return true;
+                    }
+                    // SearchValue case, return all results
+                    boolean exist = pirResultItem.appendValueData(searchType, decryptedText);
+                    if (exist) {
+                        foundResult = true;
+                    }
+                }
             } catch (Exception ignored) {
             }
         }
+        return foundResult;
     }
 
     protected static PirResult decryptResultAndObtainResult(
@@ -153,14 +167,23 @@ public class OtCrypto {
                 continue;
             }
             PirResult.PirResultItem pirResultItem = new PirResult.PirResultItem();
-            pirResultItemList.add(pirResultItem);
             pirResultItem.setSearchId(seachIDList.get(i));
             // not exist case, and search exists
             if (otResultList.get(i).hasNoResults() && searchType == PirSearchType.SearchExist) {
                 pirResultItem.setIsExists(false);
                 continue;
             }
-            decryptServerResultList(searchType, pirResultItem, otResultList.get(i), blindingB);
+            boolean foundResult =
+                    decryptServerResultList(
+                            searchType,
+                            seachIDList.get(i),
+                            pirResultItem,
+                            otResultList.get(i),
+                            blindingB);
+            if (!foundResult && searchType == PirSearchType.SearchValue) {
+                continue;
+            }
+            pirResultItemList.add(pirResultItem);
         }
         return new PirResult(searchType.getValue(), pirResultItemList);
     }

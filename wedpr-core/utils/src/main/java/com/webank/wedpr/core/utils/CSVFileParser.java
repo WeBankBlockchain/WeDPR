@@ -18,10 +18,8 @@ package com.webank.wedpr.core.utils;
 import com.opencsv.CSVReaderHeaderAware;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Paths;
+import java.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,5 +232,31 @@ public class CSVFileParser {
                             }
                             return resultValue;
                         });
+    }
+
+    public static boolean writeMapData(
+            List<Map<String, String>> mapObjects, Boolean append, String generatedFilePath)
+            throws Exception {
+        if (mapObjects == null || mapObjects.isEmpty()) {
+            return false;
+        }
+        FileUtils.createParentDirectory(Paths.get(generatedFilePath));
+        try (Writer writer =
+                new BufferedWriter(
+                        new FileWriter(generatedFilePath, append),
+                        WeDPRCommonConfig.getWriteChunkSize())) {
+            // write the headers
+            if (!append) {
+                writer.write(String.join(",", mapObjects.get(0).keySet()) + "\n");
+            }
+            // write the values
+            for (Map<String, String> item : mapObjects) {
+                writer.write(String.join(",", item.values()) + "\n");
+            }
+            return true;
+        } catch (Exception e) {
+            logger.warn("mapStr2Json exception, error: ", e);
+            throw e;
+        }
     }
 }

@@ -116,6 +116,8 @@ public class SchedulerLoader {
                 ExecutorType.PIR.getType(),
                 new PirExecutor(
                         weDPRTransport,
+                        storage,
+                        new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig)),
                         new ExecutiveContextBuilder(projectMapperWrapper),
                         new TaskFinishedHandler() {
                             @Override

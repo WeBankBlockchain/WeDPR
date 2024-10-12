@@ -75,6 +75,10 @@ public enum JobType {
         return jobType.compareToIgnoreCase(MPC.getType()) == 0;
     }
 
+    public static Boolean isPirJob(String jobType) {
+        return jobType.compareToIgnoreCase(PIR.getType()) == 0;
+    }
+
     public static ExecutorType getExecutorType(String jobTypeStr) throws Exception {
         JobType jobType = JobType.deserialize(jobTypeStr);
         if (jobType == null) {

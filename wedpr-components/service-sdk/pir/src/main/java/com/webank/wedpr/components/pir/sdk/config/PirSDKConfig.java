@@ -51,4 +51,8 @@ public class PirSDKConfig {
     public static Integer getPirQueryTimeoutMs() {
         return PIR_QUERY_TIMEOUT_MS;
     }
+
+    public static String getPirCacheDir() {
+        return PIR_CACHE_DIR;
+    }
 }

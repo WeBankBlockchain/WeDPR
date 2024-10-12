@@ -16,14 +16,22 @@
 package com.webank.wedpr.components.storage.api;
 
 import com.webank.wedpr.core.protocol.StorageType;
+import com.webank.wedpr.core.utils.Common;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public interface FileStorageInterface {
 
     @Data
+    @NoArgsConstructor
     public static class FilePermissionInfo {
         private String owner;
         private String group;
+
+        public FilePermissionInfo(String owner, String group) {
+            this.owner = owner;
+            this.group = group;
+        }
     }
 
     /**
@@ -33,6 +41,9 @@ public interface FileStorageInterface {
      */
     String getBaseDir();
 
+    public default String generateAbsoluteDir(String relativeFilePath) {
+        return Common.joinPath(getBaseDir(), relativeFilePath);
+    }
     /**
      * open storage for input stream
      *

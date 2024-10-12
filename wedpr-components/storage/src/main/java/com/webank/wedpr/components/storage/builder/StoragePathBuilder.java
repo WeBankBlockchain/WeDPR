@@ -53,7 +53,7 @@ public class StoragePathBuilder {
     }
 
     @SneakyThrows(Exception.class)
-    public String getPathWithHome(String storageType, String filePath) {
+    public String getAbsoluteDir(String storageType, String filePath) {
         if (storageType.compareToIgnoreCase(StorageType.HDFS.getName()) == 0) {
             return hdfsConfig.getAbsPathInHdfs(filePath);
         }

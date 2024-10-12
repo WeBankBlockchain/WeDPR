@@ -69,12 +69,15 @@ public class JobDO extends TimeRange {
     @Data
     @ToString
     public static class JobResult {
+        // the job status
         @JsonProperty("status")
         private JobStatus jobStatus;
 
+        // the serialized final jobResult
         @JsonProperty("statusDetail")
         private String result;
 
+        // the subJobResults(workflow cases)
         @JsonProperty("subJobStatusInfos")
         private Map<String, JobDO.JobResultItem> subJobResults = new HashMap<>();
 
@@ -174,6 +177,9 @@ public class JobDO extends TimeRange {
 
     public void setResult(String result) {
         this.result = result;
+        if (StringUtils.isBlank(result)) {
+            return;
+        }
         this.jobResult = JobResult.deserialize(result);
     }
 
@@ -265,14 +271,14 @@ public class JobDO extends TimeRange {
     }
 
     public void checkCreate() throws Exception {
-        // check parties
-        if (this.getShouldSync() && this.taskParties == null) {
-            throw new WeDPRException("Invalid job for the relevant parties are not defined!");
-        }
         // check jobType
         if (this.getType() == null || StringUtils.isBlank(this.getJobType())) {
             throw new WeDPRException(
                     "Invalid job for the job type " + this.getJobType() + " is not supported!");
+        }
+        // check parties
+        if (this.getShouldSync() && this.taskParties == null) {
+            throw new WeDPRException("Invalid job for the relevant parties are not defined!");
         }
         // check the status
         if (!StringUtils.isBlank(this.getStatus())) {

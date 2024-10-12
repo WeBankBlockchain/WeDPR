@@ -14,6 +14,6 @@ public class HdfsStorageConfig {
     private String baseDir = "/user";
 
     public String getAbsPathInHdfs(String path) {
-        return getBaseDir() + File.separator + getUser() + File.separator + path;
+        return getBaseDir() + File.separator + path;
     }
 }

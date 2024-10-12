@@ -35,7 +35,7 @@ public class PirExecutorParamChecker implements ExecutorParamChecker {
         // deserialize the jobParam
         PirQueryParam pirQueryParam = PirQueryParam.deserialize(jobDO.getParam());
         // check the jobParam
-        pirQueryParam.check();
+        pirQueryParam.check(true);
         return pirQueryParam;
     }
 }

@@ -17,7 +17,9 @@ package com.webank.wedpr.components.scheduler.executor.impl.model;
 
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.core.protocol.StorageType;
+import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 public class FileMetaBuilder {
     private final StoragePathBuilder storagePathBuilder;
@@ -31,10 +33,18 @@ public class FileMetaBuilder {
         return new FileMeta(storageType, path, owner, agency);
     }
 
-    // add home prefix to the filePath
-    public void resetWithHome(FileMeta fileMeta) throws Exception {
+    @SneakyThrows(Exception.class)
+    public FileMeta build(String data) {
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, FileMeta.class);
+    }
+
+    // add baseDir to the filePath
+    public void getAbsoluteDir(FileMeta fileMeta) throws Exception {
         String pathWithHome =
-                storagePathBuilder.getPathWithHome(
+                storagePathBuilder.getAbsoluteDir(
                         fileMeta.getStorageType().getName(), fileMeta.getPath());
         fileMeta.setPath(pathWithHome);
     }

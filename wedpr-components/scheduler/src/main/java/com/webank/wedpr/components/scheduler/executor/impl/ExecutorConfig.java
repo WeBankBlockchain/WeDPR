@@ -15,8 +15,10 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl;
 
+import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.core.protocol.JobType;
 import com.webank.wedpr.core.utils.Common;
 import java.io.File;
 
@@ -40,6 +42,8 @@ public class ExecutorConfig {
 
     private static String MPC_OUTPUT_FILE =
             WeDPRConfig.apply("wedpr.executor.mpc.output.file.name", "mpc_output.txt");
+    private static String PIR_RESULT_FILE_NAME =
+            WeDPRConfig.apply("wedpr.executor.pir.result.file.name", "pir_result");
 
     public static String getJobCacheDir() {
         return JOB_CACHE_DIR;
@@ -66,7 +70,18 @@ public class ExecutorConfig {
     }
 
     public static String getDefaultPSIResultPath(String user, String jobID) {
-        return WeDPRCommonConfig.getUserJobCachePath(user, jobID, PSI_RESULT_FILE);
+        return WeDPRCommonConfig.getUserJobCachePath(
+                user, JobType.PIR.getType(), jobID, PSI_RESULT_FILE);
+    }
+
+    public static String getPirJobResultPath(String user, String jobID) {
+        return Common.joinPath(
+                Common.joinPath(PirSDKConfig.getPirCacheDir(), Common.joinPath(user, jobID)),
+                getPirResultFileName());
+    }
+
+    public static String getPirResultFileName() {
+        return PIR_RESULT_FILE_NAME;
     }
 
     public static String getMPCPrepareFileName() {

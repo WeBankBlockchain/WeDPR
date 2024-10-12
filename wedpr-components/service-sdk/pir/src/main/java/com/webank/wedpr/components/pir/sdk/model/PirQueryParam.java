@@ -73,13 +73,16 @@ public class PirQueryParam implements Cloneable {
         this.algorithmType = PirParamEnum.AlgorithmType.deserialize(pirAlgorithmType);
     }
 
-    public void check() throws WeDPRException {
+    public void check(boolean requireSearchIdList) throws WeDPRException {
         Common.requireNonNull("searchType", this.searchTypeObject);
         Common.requireNonNull("pirAlgorithmType", this.algorithmType);
         Common.requireNonNull("serviceID", serviceId);
         Common.requireNonNull("queriedFields", queriedFields);
+        if (!requireSearchIdList) {
+            return;
+        }
         if (Objects.isNull(searchIdList) || searchIdList.size() == 0) {
-            throw new WeDPRException(-1, "searchId列表不能为空");
+            throw new WeDPRException(-1, "the searchIdList can't be empty");
         }
     }
 

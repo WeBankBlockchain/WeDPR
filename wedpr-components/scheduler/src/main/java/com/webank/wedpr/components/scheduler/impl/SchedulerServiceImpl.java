@@ -50,6 +50,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         if (!JobStatus.success(jobDO.getStatus())) {
             return new JobDetailResponse(jobDO, null);
         }
+        // the ml job
         if (jobDO.getType().mlJob()) {
             return new JobDetailResponse(
                     jobDO,
@@ -61,6 +62,10 @@ public class SchedulerServiceImpl implements SchedulerService {
         if (JobType.isPSIJob(jobDO.getJobType())) {
             PSIJobParam psiJobParam = PSIJobParam.deserialize(jobDO.getParam());
             response.setResultFileInfo(psiJobParam.getResultPath(fileMetaBuilder, jobID));
+        }
+        // the pir job, get result files
+        if (JobType.isPirJob(jobDO.getJobType())) {
+            response.setResultFileInfo(fileMetaBuilder.build(jobDO.getJobResult().getResult()));
         }
         return response;
     }

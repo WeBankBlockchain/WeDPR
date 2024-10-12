@@ -26,6 +26,7 @@ import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.Closeable;
 import java.io.IOException;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @ConditionalOnProperty(value = "wedpr.storage.type", havingValue = "HDFS")
 @Component("fileStorage")
@@ -166,7 +166,7 @@ public class HDFSStorage implements FileStorageInterface {
             String localPath,
             String remotePath,
             boolean isAbsPath) {
-        logger.debug("update file: {}=>{}", localPath, remotePath);
+        logger.debug("upload file: {}=>{}", localPath, remotePath);
 
         String remoteAbsPath;
         if (!isAbsPath) {
@@ -187,7 +187,7 @@ public class HDFSStorage implements FileStorageInterface {
                         return;
                     }
                     String group = filePermissionInfo.getGroup();
-                    if (StringUtils.isEmpty(group)) {
+                    if (StringUtils.isBlank(group)) {
                         group = hdfsConfig.getUser();
                     }
                     logger.info(

@@ -32,6 +32,7 @@ public class OtResult {
     @NoArgsConstructor
     @ToString
     public static class OtResultItem {
+        String pirKey;
         BigInteger e;
         BigInteger w;
         String c;

@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.pir;
 
 import com.webank.wedpr.components.pir.sdk.PirSDK;
+import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.components.pir.sdk.impl.PirSDKImpl;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
@@ -25,6 +26,12 @@ import com.webank.wedpr.components.scheduler.executor.Executor;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContext;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
+import com.webank.wedpr.components.scheduler.executor.impl.ExecutorConfig;
+import com.webank.wedpr.components.scheduler.executor.impl.helper.ExecutorHelper;
+import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
+import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
+import com.webank.wedpr.components.storage.api.FileStorageInterface;
+import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import com.webank.wedpr.core.protocol.JobStatus;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.core.utils.WeDPRResponse;
@@ -39,13 +46,19 @@ public class PirExecutor implements Executor {
     private final PirExecutorParamChecker jobChecker = new PirExecutorParamChecker();
     private final ExecutiveContextBuilder executiveContextBuilder;
     private final TaskFinishedHandler taskFinishedHandler;
+    private final FileStorageInterface storage;
+    private final FileMetaBuilder fileMetaBuilder;
 
     public PirExecutor(
             WeDPRTransport transport,
+            FileStorageInterface storage,
+            FileMetaBuilder fileMetaBuilder,
             ExecutiveContextBuilder executiveContextBuilder,
             TaskFinishedHandler taskFinishedHandler) {
         logger.info("init the pir executor");
         this.pirSDK = new PirSDKImpl(transport);
+        this.storage = storage;
+        this.fileMetaBuilder = fileMetaBuilder;
         this.executiveContextBuilder = executiveContextBuilder;
         this.taskFinishedHandler = taskFinishedHandler;
     }
@@ -58,27 +71,102 @@ public class PirExecutor implements Executor {
 
     @Override
     public void execute(JobDO jobDO) throws Exception {
-        ExecutiveContext executiveContext =
-                executiveContextBuilder.build(jobDO, taskFinishedHandler, jobDO.getId());
-        PirQueryParam queryParam = (PirQueryParam) prepare(jobDO);
-        logger.info("Execute the pir query task, jobID: {}", jobDO.getId());
-        Pair<WeDPRResponse, PirResult> result = this.pirSDK.query(queryParam);
-        ExecuteResult executeResult = new ExecuteResult();
-        if (result.getLeft() == null || !result.getLeft().statusOk()) {
-            executeResult.setResultStatus(ExecuteResult.ResultStatus.FAILED);
-            // the error information
-            executeResult.setMsg(result.getLeft().getMsg());
-            jobDO.getJobResult().setJobStatus(JobStatus.RunFailed);
-        } else {
-            executeResult.setResultStatus(ExecuteResult.ResultStatus.SUCCESS);
-            jobDO.getJobResult().setJobStatus(JobStatus.RunSuccess);
+        // Note: execute this in the threadPool
+        PirSDKConfig.getThreadPoolService()
+                .getThreadPool()
+                .execute(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                ExecutiveContext executiveContext =
+                                        executiveContextBuilder.build(
+                                                jobDO, taskFinishedHandler, jobDO.getId());
+                                try {
+                                    PirQueryParam queryParam = (PirQueryParam) prepare(jobDO);
+                                    logger.info(
+                                            "Execute the pir query task, jobID: {}", jobDO.getId());
+                                    Pair<WeDPRResponse, PirResult> result =
+                                            pirSDK.query(queryParam);
+                                    ExecuteResult executeResult = new ExecuteResult();
+                                    if (result.getLeft() == null || !result.getLeft().statusOk()) {
+                                        executeResult.setResultStatus(
+                                                ExecuteResult.ResultStatus.FAILED);
+                                        // the error information
+                                        executeResult.setMsg(result.getLeft().getMsg());
+                                        jobDO.getJobResult().setJobStatus(JobStatus.RunFailed);
+                                    } else {
+                                        executeResult.setResultStatus(
+                                                ExecuteResult.ResultStatus.SUCCESS);
+                                        jobDO.getJobResult().setJobStatus(JobStatus.RunSuccess);
+                                    }
+                                    logger.info(
+                                            "Execute the pir query task finished, jobID: {}",
+                                            jobDO.getId());
+                                    logger.info(
+                                            "Execute the pir query task finished, jobID: {}, result: {}",
+                                            jobDO.getId(),
+                                            ObjectMapperFactory.getObjectMapper()
+                                                    .writeValueAsString(result.getRight()));
+                                    // store the result
+                                    storePirResult(
+                                            jobDO,
+                                            result.getRight(),
+                                            executiveContext,
+                                            executeResult);
+                                } catch (Exception e) {
+                                    logger.warn(
+                                            "Execute pir job {} failed, error: ", jobDO.getId(), e);
+                                    ExecuteResult executeResult = new ExecuteResult();
+                                    executeResult.setResultStatus(
+                                            ExecuteResult.ResultStatus.FAILED);
+                                    executeResult.setMsg(
+                                            "execute pir job "
+                                                    + jobDO.getId()
+                                                    + " failed for "
+                                                    + e.getMessage());
+                                    jobDO.getJobResult().setJobStatus(JobStatus.RunFailed);
+                                    executiveContext.onTaskFinished(executeResult);
+                                }
+                            }
+                        });
+    }
+
+    protected void storePirResult(
+            JobDO jobDO,
+            PirResult pirResult,
+            ExecutiveContext executiveContext,
+            ExecuteResult executeResult)
+            throws Exception {
+        String localFilePath = ExecutorConfig.getPirJobResultPath(jobDO.getOwner(), jobDO.getId());
+        logger.info("storePirResult for job: {}, localFilePath: {}", jobDO.getId(), localFilePath);
+        boolean result = pirResult.persistentResult(localFilePath);
+        if (!result) {
+            executiveContext.onTaskFinished(executeResult);
+            return;
         }
-        logger.info("Execute the pir query task finished, jobID: {}", jobDO.getId());
+        // upload the result, if the userGroup is not, default set group to the hdfs superUserGroup
+        String remoteFilePath =
+                ExecutorHelper.uploadJobResult(
+                        storage,
+                        localFilePath,
+                        null,
+                        jobDO.getOwner(),
+                        jobDO.getJobType(),
+                        jobDO.getId(),
+                        ExecutorConfig.getPirResultFileName(),
+                        false);
         logger.info(
-                "Execute the pir query task finished, jobID: {}, result: {}",
+                "storePirResult for job {} success, localPath: {}, remotePath: {}",
                 jobDO.getId(),
-                ObjectMapperFactory.getObjectMapper().writeValueAsString(result.getRight()));
-        // TODO: store the query PirResult
+                localFilePath,
+                remoteFilePath);
+        FileMeta fileMeta =
+                fileMetaBuilder.build(
+                        storage.type(),
+                        remoteFilePath,
+                        jobDO.getOwner(),
+                        WeDPRCommonConfig.getAgency());
+        jobDO.getJobResult().setResult(fileMeta.serialize());
         executiveContext.onTaskFinished(executeResult);
     }
 
