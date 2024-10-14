@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.pir.sdk.impl;
 
+import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.pir.sdk.PirSDK;
 import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
@@ -47,7 +48,8 @@ public class PirSDKImpl implements PirSDK {
     }
 
     @Override
-    public Pair<WeDPRResponse, PirResult> query(PirQueryParam queryParam) throws Exception {
+    public Pair<WeDPRResponse, PirResult> query(
+            CredentialInfo credentialInfo, PirQueryParam queryParam) throws Exception {
         queryParam.check(true);
         logger.debug("Generate the obfuscate param");
         ObfuscateData obfuscateData =
@@ -56,6 +58,8 @@ public class PirSDKImpl implements PirSDK {
         // Note: the searchIdList is sensitive that should not been passed to the pir-service
         PirQueryParam nonSensitiveQueryParam = queryParam.clone();
         nonSensitiveQueryParam.setSearchIdList(null);
+        // the api verify information
+        nonSensitiveQueryParam.setCredentialInfo(credentialInfo);
         PirQueryRequest pirQueryRequest =
                 new PirQueryRequest(nonSensitiveQueryParam, obfuscateData);
         Pair<WeDPRResponse, ObfuscateQueryResult> result = submitQuery(pirQueryRequest);

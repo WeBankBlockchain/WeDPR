@@ -18,7 +18,6 @@ package com.webank.wedpr.components.hook;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,13 +25,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceHook {
     private static final Logger logger = LoggerFactory.getLogger(UserHook.class);
-
-    @Data
-    public static class ServiceInvokeInfo {
-        private String user;
-        private String agency;
-        private String status;
-    }
 
     public interface ServiceCallback {
         abstract void onPublish(Object serviceInfo) throws Exception;

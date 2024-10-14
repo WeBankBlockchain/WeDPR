@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.components.api.credential.core.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,8 @@ public class CredentialInfo {
     private String nonce;
     private String timestamp;
     private String signature;
+    @JsonIgnore private String user;
+    @JsonIgnore private String agency;
 
     public CredentialInfo(String accessKeyID, String accessSecret, CryptoToolkit cryptoToolkit)
             throws Exception {

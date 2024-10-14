@@ -13,16 +13,10 @@
  *
  */
 
-package com.webank.wedpr.components.pir.sdk;
+package com.webank.wedpr.components.db.mapper.service.publish.verifier;
 
 import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
-import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
-import com.webank.wedpr.components.pir.sdk.model.PirResult;
-import com.webank.wedpr.core.utils.WeDPRResponse;
-import org.apache.commons.lang3.tuple.Pair;
 
-public interface PirSDK {
-
-    public abstract Pair<WeDPRResponse, PirResult> query(
-            CredentialInfo credentialInfo, PirQueryParam queryParam) throws Exception;
+public interface ServiceAuthVerifier {
+    abstract void verify(String serviceId, CredentialInfo credentialInfo) throws Exception;
 }

@@ -32,6 +32,19 @@ public class ServiceInvokeDO extends TimeRange {
     private String invokeTime;
     private String lastUpdateTime;
 
+    public ServiceInvokeDO(
+            String serviceId,
+            String serviceType,
+            String invokeUser,
+            String invokeAgency,
+            String invokeStatus) {
+        this.serviceId = serviceId;
+        this.serviceType = serviceType;
+        this.invokeUser = invokeUser;
+        this.invokeAgency = invokeAgency;
+        this.invokeStatus = invokeStatus;
+    }
+
     public ServiceInvokeDO(String invokeId) {
         this.invokeId = invokeId;
     }
