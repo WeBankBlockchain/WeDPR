@@ -18,6 +18,7 @@ package com.webank.wedpr.components.hook;
 import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,12 +27,22 @@ import org.springframework.stereotype.Component;
 public class ServiceHook {
     private static final Logger logger = LoggerFactory.getLogger(UserHook.class);
 
+    @Data
+    public static class ServiceInvokeInfo {
+        private String user;
+        private String agency;
+        private String status;
+    }
+
     public interface ServiceCallback {
         abstract void onPublish(Object serviceInfo) throws Exception;
+
+        abstract void onInvoke(Object serviceInvokeInfo) throws Exception;
     }
 
     public enum ServiceAction {
-        PUBLISH
+        PUBLISH,
+        INVOKE
     }
 
     private Map<String, ServiceHook.ServiceCallback> callbacks = new HashMap<>();
@@ -56,6 +67,11 @@ public class ServiceHook {
                     callback.onPublish(serviceInfo);
                     break;
                 }
+            case INVOKE:
+                {
+                    callback.onInvoke(serviceInfo);
+                    break;
+                }
             default:
                 throw new WeDPRException("Unsupported action: " + action);
         }
@@ -66,5 +82,9 @@ public class ServiceHook {
     public synchronized boolean onPublish(String serviceType, Object publishedService)
             throws Exception {
         return triggerCallback(ServiceAction.PUBLISH, serviceType, publishedService);
+    }
+
+    public boolean onInvoke(String serviceType, Object invokeRecorder) throws Exception {
+        return triggerCallback(ServiceAction.INVOKE, serviceType, invokeRecorder);
     }
 }

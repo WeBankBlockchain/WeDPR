@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 public class ServiceInvokeDO extends TimeRange {
     private String invokeId = WeDPRUuidGenerator.generateID();
     private String serviceId;
+    private String serviceType;
     private String invokeUser;
     private String invokeAgency;
     private String invokeStatus;

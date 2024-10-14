@@ -21,6 +21,7 @@
     <resultMap id="ServiceInvokeDOMap" type="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO">
         <id column="invoke_id" property="invokeId"/>
         <result column="service_id" property="serviceId"/>
+        <result column="service_type" property="serviceType"/>
         <result column="invoke_user" property="invokeUser"/>
         <result column="invoke_agency" property="invokeAgency"/>
         <result column="invoke_status" property="invokeStatus"/>
@@ -28,9 +29,9 @@
         <result column="last_update_time" property="lastUpdateTime"/>
     </resultMap>
     <insert id="insert" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO">
-        insert into wedpr_service_invoke_table(`invoke_id`, `service_id`, `invoke_user`, `invoke_agency`, `invoke_status`,
+        insert into wedpr_service_invoke_table(`invoke_id`, `service_id`, `service_type`, `invoke_user`, `invoke_agency`, `invoke_status`,
                                                `invoke_time`) values
-            (#{invokeInfo.invokeId}, #{invokeInfo.serviceId}, #{invokeInfo.invokeUser}, #{invokeInfo.invokeAgency},
+            (#{invokeInfo.invokeId}, #{invokeInfo.serviceId}, #{invokeInfo.serviceType},#{invokeInfo.invokeUser}, #{invokeInfo.invokeAgency},
              #{invokeInfo.invokeStatus}, NOW())
     </insert>
     <select id="query" resultMap="ServiceInvokeDOMap">
@@ -40,6 +41,9 @@
             <when test="condition != null and condition != ''">
                 <if test="condition.invokeId != null and condition.invokeId !=''">
                     and `invoke_id` = #{condition.invokeId}
+                </if>
+                <if test="condition.serviceType != null and condition.serviceType !=''">
+                    and `service_type` = #{condition.serviceType}
                 </if>
                 <if test="condition.serviceId != null and condition.serviceId !=''">
                     and `service_id` = #{condition.serviceId}

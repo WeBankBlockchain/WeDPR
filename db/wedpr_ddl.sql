@@ -371,7 +371,7 @@ create table if not exists wedpr_published_service(
     `service_id` varchar(64) not null comment "发布的服务ID",
     `service_name` varchar(1024) not null comment "服务名称",
     `service_desc` text default null comment "服务描述",
-    `service_type` varchar(1024) not null comment "发布的服务类型, 如pir/lr/xgb",
+    `service_type` varchar(128) not null comment "发布的服务类型, 如pir/lr/xgb",
     `service_config` longtext comment "服务配置",
     `owner` varchar(255) not null comment "属主",
     `agency` varchar(255) not null comment "所属机构",
@@ -407,6 +407,7 @@ create table if not exists wedpr_service_auth_table(
 create table if not exists wedpr_service_invoke_table(
     `invoke_id` varchar(64) not null comment "调用ID",
     `service_id` varchar(64) not null comment "调用的服务ID",
+    `service_type` varchar(128) not null comment "发布的服务类型, 如pir/lr/xgb",
     `invoke_user` varchar(1024) not null comment "调用者",
     `invoke_agency` varchar(1024) not null comment "调用方所属机构",
     `invoke_status` varchar(64) comment "调用的服务状态",
@@ -414,5 +415,7 @@ create table if not exists wedpr_service_invoke_table(
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "更新时间",
     primary key (`invoke_id`),
     index service_id_index(`service_id`),
+    index service_type_index(`service_type`),
+    index invoke_status_index(`invoke_status`),
     index invoker_index(`invoke_agency`(64), `invoke_user`(64))
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
