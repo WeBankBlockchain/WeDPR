@@ -1,9 +1,10 @@
 package com.webank.wedpr.components.publish.entity.response;
 
-import com.webank.wedpr.components.publish.entity.result.WedprServiceInvokeResult;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zachma
@@ -11,7 +12,8 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class WedprPublishInvokeSearchResponse {
     private long total;
-    List<WedprServiceInvokeResult> wedprPublishInvokeList;
+    List<ServiceInvokeDO> wedprPublishInvokeList;
 }

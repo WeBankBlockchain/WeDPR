@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+
+ * Copyright 2017-2025  [webank-wedpr]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper">
+    <resultMap id="ServiceInvokeDOMap" type="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO">
+        <id column="invoke_id" property="invokeId"/>
+        <result column="service_id" property="serviceId"/>
+        <result column="invoke_user" property="invokeUser"/>
+        <result column="invoke_agency" property="invokeAgency"/>
+        <result column="invoke_status" property="invokeStatus"/>
+        <result column="invoke_time" property="invokeTime"/>
+        <result column="last_update_time" property="lastUpdateTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO">
+        insert into wedpr_service_invoke_table(`invoke_id`, `service_id`, `invoke_user`, `invoke_agency`, `invoke_status`,
+                                               `invoke_time`) values
+            (#{invokeInfo.invokeId}, #{invokeInfo.serviceId}, #{invokeInfo.invokeUser}, #{invokeInfo.invokeAgency},
+             #{invokeInfo.invokeStatus}, NOW())
+    </insert>
+    <select id="query" resultMap="ServiceInvokeDOMap">
+        select *
+        from wedpr_service_invoke_table where 1=1
+        <choose>
+            <when test="condition != null and condition != ''">
+                <if test="condition.invokeId != null and condition.invokeId !=''">
+                    and `invoke_id` = #{condition.invokeId}
+                </if>
+                <if test="condition.serviceId != null and condition.serviceId !=''">
+                    and `service_id` = #{condition.serviceId}
+                </if>
+                <if test="condition.invokeUser != null and condition.invokeUser !=''">
+                    and `invoke_user` = #{condition.invokeUser}
+                </if>
+                <if test="condition.invokeAgency != null and condition.invokeAgency !=''">
+                    and `invoke_agency` = #{condition.invokeAgency}
+                </if>
+                <if test="condition.invokeStatus != null and condition.invokeStatus !=''">
+                    and `invoke_status` = #{condition.invokeStatus}
+                </if>
+                <if test="condition.startTime != null and condition.startTime  != ''">
+                    <![CDATA[ and datediff(invoke_time, #{condition.startTime}) >= 0]]>
+                </if>
+                <if test="condition.endTime != null and condition.endTime  != ''">
+                    <![CDATA[ and datediff(invoke_time, #{condition.endTime}) <= 0]]>
+                </if>
+            </when>
+        </choose>
+        order by `last_update_time` desc
+    </select>
+</mapper>

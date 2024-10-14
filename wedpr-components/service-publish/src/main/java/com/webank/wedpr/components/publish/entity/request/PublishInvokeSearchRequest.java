@@ -1,7 +1,11 @@
 package com.webank.wedpr.components.publish.entity.request;
 
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO;
+import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.core.utils.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zachma
@@ -9,12 +13,18 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PublishInvokeSearchRequest extends BasePageRequest {
-    private String invokeAgency;
+@NoArgsConstructor
+public class PublishInvokeSearchRequest extends PageRequest {
+    private ServiceInvokeDO condition = new ServiceInvokeDO("");
 
-    private String expireDate;
+    public void check() throws Exception {
+        Common.requireNonEmpty("condition.ServiceId", condition.getServiceId());
+    }
 
-    private String invokeDate;
-
-    private String invokeStatus;
+    public void setCondition(ServiceInvokeDO condition) {
+        if (condition == null) {
+            return;
+        }
+        this.condition = condition;
+    }
 }
