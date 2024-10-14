@@ -17,7 +17,7 @@
  */
 -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper">
+<mapper namespace="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeMapper">
     <resultMap id="ServiceInvokeDOMap" type="com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceInvokeDO">
         <id column="invoke_id" property="invokeId"/>
         <result column="service_id" property="serviceId"/>

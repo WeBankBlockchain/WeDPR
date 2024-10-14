@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.publish.config;
 
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.helper.PublishServiceHelper;
@@ -43,12 +44,15 @@ public class ServicePublisherLoader {
     @Qualifier("serviceHook")
     private ServiceHook serviceHook;
 
+    @Autowired private ServiceAuthMapper serviceAuthMapper;
+
     @PostConstruct
     public void init() {
         logger.info("Register serviceCallback");
         serviceHook.registerServiceCallback(
                 PublishServiceHelper.PublishType.PIR.getType(),
-                new PirServicePublishCallback(loadBalancer, new WeDPRResponseFactory()));
+                new PirServicePublishCallback(
+                        loadBalancer, new WeDPRResponseFactory(), serviceAuthMapper));
         logger.info("Register serviceCallback success");
     }
 

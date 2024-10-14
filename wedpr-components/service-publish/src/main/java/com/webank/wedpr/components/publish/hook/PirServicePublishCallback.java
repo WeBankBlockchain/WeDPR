@@ -15,15 +15,20 @@
 
 package com.webank.wedpr.components.publish.hook;
 
-import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.config.ServicePublisherConfig;
+import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
 import com.webank.wedpr.core.utils.BaseResponse;
 import com.webank.wedpr.core.utils.BaseResponseFactory;
+import com.webank.wedpr.core.utils.Constant;
 import com.webank.wedpr.core.utils.WeDPRException;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,16 +38,40 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
 
     private final LoadBalancer loadBalancer;
     private final BaseResponseFactory responseFactory;
+    private final ServiceAuthMapper serviceAuthMapper;
 
     public PirServicePublishCallback(
-            LoadBalancer loadBalancer, BaseResponseFactory responseFactory) {
+            LoadBalancer loadBalancer,
+            BaseResponseFactory responseFactory,
+            ServiceAuthMapper serviceAuthMapper) {
         this.loadBalancer = loadBalancer;
         this.responseFactory = responseFactory;
+        this.serviceAuthMapper = serviceAuthMapper;
+    }
+
+    public void batchInsertServiceAuthInfo(
+            String serviceId, PublishCreateRequest publishServiceInfo) {
+        if (publishServiceInfo.getGrantedAccessKeyList() == null
+                || publishServiceInfo.getGrantedAccessKeyList().isEmpty()) {
+            return;
+        }
+        List<ServiceAuthInfo> serviceAuthInfoList = new ArrayList<>();
+        for (String accessKeyID : publishServiceInfo.getGrantedAccessKeyList()) {
+            ServiceAuthInfo serviceAuthInfo = new ServiceAuthInfo();
+            serviceAuthInfo.setServiceId(serviceId);
+            serviceAuthInfo.setAccessKeyId(accessKeyID);
+            serviceAuthInfo.setAccessibleUser(publishServiceInfo.getOwner());
+            serviceAuthInfo.setAccessibleAgency(publishServiceInfo.getAgency());
+            // the empty means
+            serviceAuthInfo.setExpireTime(Constant.NEVER_EXPIRE_TIMESTAMP);
+            serviceAuthInfoList.add(serviceAuthInfo);
+        }
+        this.serviceAuthMapper.batchInsertServiceAuth(serviceAuthInfoList);
     }
 
     @Override
     public void onPublish(Object serviceInfo) throws Exception {
-        PublishedServiceInfo publishedServiceInfo = (PublishedServiceInfo) serviceInfo;
+        PublishCreateRequest publishedServiceInfo = (PublishCreateRequest) serviceInfo;
         EntryPointInfo selectedEntryPoint =
                 loadBalancer.selectService(
                         LoadBalancer.Policy.ROUND_ROBIN, publishedServiceInfo.getServiceType());
@@ -77,9 +106,14 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
                             + " failed, response: "
                             + response.serialize());
         }
+        // register auth information
+        batchInsertServiceAuthInfo(publishedServiceInfo.getServiceId(), publishedServiceInfo);
         logger.info(
                 "onPublish success, service: {}, target: {}",
                 publishedServiceInfo.getServiceId(),
                 url);
     }
+
+    @Override
+    public void onInvoke(Object serviceInvokeInfo) throws Exception {}
 }

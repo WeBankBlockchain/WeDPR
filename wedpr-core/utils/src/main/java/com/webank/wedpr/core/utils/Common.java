@@ -205,6 +205,9 @@ public class Common {
     }
 
     public static boolean isDateExpired(String datePattern, String dateString) {
+        if (dateString.equalsIgnoreCase(Constant.NEVER_EXPIRE_TIMESTAMP)) {
+            return false;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(datePattern);
         LocalDate date = LocalDate.parse(dateString, formatter);
         LocalDate currentDate = LocalDate.now();

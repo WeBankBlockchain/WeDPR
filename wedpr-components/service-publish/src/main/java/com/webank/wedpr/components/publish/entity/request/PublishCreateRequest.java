@@ -19,6 +19,10 @@ import lombok.Data;
 @Data
 public class PublishCreateRequest extends PublishedServiceInfo {
     private String serviceId = Constant.PUBLISH_ID_PREFIX + WeDPRUuidGenerator.generateID();
+
+    // the granted access key list
+    private List<String> grantedAccessKeyList;
+
     @JsonIgnore private PublishServiceHelper.PublishType publishType;
 
     public PublishCreateRequest() {

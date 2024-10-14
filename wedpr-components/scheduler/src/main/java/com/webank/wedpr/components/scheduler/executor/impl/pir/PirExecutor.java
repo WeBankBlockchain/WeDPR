@@ -86,7 +86,6 @@ public class PirExecutor implements Executor {
         return this.jobChecker.checkAndParseJob(jobDO);
     }
 
-    // TODO: support the owner case
     public CredentialInfo generateCredentialInfo(JobDO jobDO, PirQueryParam pirQueryParam)
             throws Exception {
         // obtain the accessKeyID
