@@ -15,6 +15,9 @@
 
 package com.webank.wedpr.components.task.plugin.pir.core.impl;
 
+import com.webank.wedpr.common.utils.CSVFileParser;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 import com.webank.wedpr.components.db.mapper.dataset.datasource.DataSourceType;
@@ -27,9 +30,6 @@ import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
 import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
-import com.webank.wedpr.core.utils.CSVFileParser;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

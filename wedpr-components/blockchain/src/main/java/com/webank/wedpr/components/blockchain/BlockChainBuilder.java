@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.blockchain;
 
 import com.moandjiezana.toml.Toml;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.io.InputStream;
 import lombok.SneakyThrows;
 import org.fisco.bcos.sdk.v3.BcosSDK;

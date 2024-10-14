@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.task.plugin.pir.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface PirService {
 

@@ -16,8 +16,8 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.scheduler.executor.impl.model.AlgorithmType;
-import com.webank.wedpr.core.protocol.JobType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class XGBJobRequest extends ModelJobRequest {

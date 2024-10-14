@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-utils")
     compile ("org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:${bcosSDKVersion}")
 }

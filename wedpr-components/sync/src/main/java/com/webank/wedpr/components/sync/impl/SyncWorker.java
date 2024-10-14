@@ -14,12 +14,12 @@
  */
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.utils.ThreadPoolService;
+import com.webank.wedpr.common.utils.Worker;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapperWrapper;
-import com.webank.wedpr.core.utils.ThreadPoolService;
-import com.webank.wedpr.core.utils.Worker;
 import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;
 import org.slf4j.Logger;

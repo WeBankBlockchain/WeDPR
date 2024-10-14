@@ -16,7 +16,7 @@
 
 package com.webank.wedpr.components.meta.sys.config.dao;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import org.apache.commons.lang3.StringUtils;
 
 public class SysConfigDO {

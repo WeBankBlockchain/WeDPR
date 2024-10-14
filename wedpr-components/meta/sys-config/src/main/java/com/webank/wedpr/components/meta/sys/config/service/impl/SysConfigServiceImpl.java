@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.meta.sys.config.service.impl;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.meta.sys.config.service.SysConfigService;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

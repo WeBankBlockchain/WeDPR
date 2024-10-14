@@ -2,13 +2,13 @@ package com.webank.wedpr.components.dataset.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.authorization.WeDPRAuthNotifier;
 import com.webank.wedpr.components.authorization.core.AuthApplyType;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.dataset.service.DatasetAuthApi;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

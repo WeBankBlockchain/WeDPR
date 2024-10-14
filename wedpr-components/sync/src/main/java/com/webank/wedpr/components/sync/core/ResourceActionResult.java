@@ -16,7 +16,7 @@
 
 package com.webank.wedpr.components.sync.core;
 
-import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.common.utils.Constant;
 
 public class ResourceActionResult {
     private Integer code = Constant.WEDPR_SUCCESS;

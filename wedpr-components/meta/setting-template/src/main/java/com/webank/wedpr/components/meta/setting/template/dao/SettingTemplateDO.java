@@ -16,11 +16,11 @@
 package com.webank.wedpr.components.meta.setting.template.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.TimeRange;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.TimeRange;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;

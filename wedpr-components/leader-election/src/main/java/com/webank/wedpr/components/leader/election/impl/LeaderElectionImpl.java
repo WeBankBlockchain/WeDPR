@@ -16,10 +16,10 @@
 
 package com.webank.wedpr.components.leader.election.impl;
 
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;

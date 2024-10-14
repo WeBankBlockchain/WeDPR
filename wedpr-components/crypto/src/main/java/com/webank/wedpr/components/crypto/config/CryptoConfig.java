@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.crypto.config;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class CryptoConfig {
     public static final String AES_ALGORITHM = "AES";

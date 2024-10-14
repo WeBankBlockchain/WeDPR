@@ -16,11 +16,11 @@
 
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapperWrapper;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

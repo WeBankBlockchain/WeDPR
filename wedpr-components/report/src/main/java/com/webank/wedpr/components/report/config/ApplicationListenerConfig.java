@@ -1,9 +1,9 @@
 /** Copyright (C) @2014-2022 Webank */
 package com.webank.wedpr.components.report.config;
 
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.quartz.config.QuartzBindJobConfig;
 import com.webank.wedpr.components.report.job.ReportQuartzJob;
-import com.webank.wedpr.core.utils.Constant;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

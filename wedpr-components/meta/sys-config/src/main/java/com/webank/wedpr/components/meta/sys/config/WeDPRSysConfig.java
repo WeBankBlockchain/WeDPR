@@ -16,10 +16,10 @@
 
 package com.webank.wedpr.components.meta.sys.config;
 
+import com.webank.wedpr.common.protocol.SysConfigKey;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
-import com.webank.wedpr.core.protocol.SysConfigKey;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

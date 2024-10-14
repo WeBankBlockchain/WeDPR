@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.project.model;
 
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.project.dao.ProjectDO;
-import com.webank.wedpr.core.utils.PageRequest;
 
 public class ProjectRequest extends PageRequest {
     private ProjectDO project = new ProjectDO();

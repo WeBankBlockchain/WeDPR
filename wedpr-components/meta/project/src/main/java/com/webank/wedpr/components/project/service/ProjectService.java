@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.project.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.project.model.*;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 
 public interface ProjectService {

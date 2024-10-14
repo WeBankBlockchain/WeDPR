@@ -15,14 +15,14 @@
 
 package com.webank.wedpr.components.pir.sdk.core;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

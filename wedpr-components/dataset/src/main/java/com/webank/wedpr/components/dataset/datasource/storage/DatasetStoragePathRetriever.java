@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.dataset.datasource.storage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.dataset.common.DatasetStatus;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
@@ -15,7 +16,6 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransa
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,9 @@
 package com.webank.wedpr.components.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.user.entity.WedprPermission;
@@ -11,9 +14,6 @@ import com.webank.wedpr.components.user.service.WedprPermissionService;
 import com.webank.wedpr.components.user.service.WedprRolePermissionService;
 import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;

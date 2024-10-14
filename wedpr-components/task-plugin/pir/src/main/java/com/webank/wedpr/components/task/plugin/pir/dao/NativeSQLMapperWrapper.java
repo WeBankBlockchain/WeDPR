@@ -15,15 +15,15 @@
 
 package com.webank.wedpr.components.task.plugin.pir.dao;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

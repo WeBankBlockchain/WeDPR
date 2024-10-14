@@ -15,13 +15,13 @@
 
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionResult;
 import com.webank.wedpr.components.sync.dao.ResourceActionDOBuilder;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapperWrapper;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

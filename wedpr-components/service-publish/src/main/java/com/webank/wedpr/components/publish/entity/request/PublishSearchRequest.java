@@ -1,8 +1,8 @@
 package com.webank.wedpr.components.publish.entity.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
-import com.webank.wedpr.core.utils.PageRequest;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

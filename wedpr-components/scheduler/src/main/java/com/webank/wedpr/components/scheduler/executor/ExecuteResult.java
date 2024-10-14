@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.executor;
 
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import lombok.Data;
 import lombok.SneakyThrows;
 

@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.uuid.generator.demo;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRConfig;
 
 public class UuidGeneratorDemo {
 

@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.api.credential.core.impl;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class CredentialConfig {
     private static Integer SIGNAUTURE_EXPIRATION_TIME =

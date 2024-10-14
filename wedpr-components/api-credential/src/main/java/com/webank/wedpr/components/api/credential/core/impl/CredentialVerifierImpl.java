@@ -14,11 +14,11 @@
  */
 package com.webank.wedpr.components.api.credential.core.impl;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.api.credential.core.CredentialCache;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
-import com.webank.wedpr.core.utils.WeDPRException;
 import javax.servlet.http.HttpServletRequest;
 
 public class CredentialVerifierImpl implements CredentialVerifier {

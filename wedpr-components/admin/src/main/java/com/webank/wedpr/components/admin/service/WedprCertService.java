@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.admin.entity.WedprCert;
 import com.webank.wedpr.components.admin.request.GetWedprCertListRequest;
 import com.webank.wedpr.components.admin.request.SetAgencyCertRequest;
@@ -8,7 +9,6 @@ import com.webank.wedpr.components.admin.response.DownloadCertResponse;
 import com.webank.wedpr.components.admin.response.DownloadCertToolResponse;
 import com.webank.wedpr.components.admin.response.GetWedprCertDetailResponse;
 import com.webank.wedpr.components.admin.response.GetWedprCertListResponse;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 

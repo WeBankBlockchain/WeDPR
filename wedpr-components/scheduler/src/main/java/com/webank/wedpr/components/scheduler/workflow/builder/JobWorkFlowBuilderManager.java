@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.workflow.builder;
 
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutor;
@@ -16,7 +17,6 @@ import com.webank.wedpr.components.scheduler.executor.impl.psi.PSIExecutor;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlow;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlowNode;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.core.protocol.JobType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

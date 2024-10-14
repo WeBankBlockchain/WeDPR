@@ -15,8 +15,8 @@
 */
 package com.webank.wedpr.components.blockchain;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.Constant;
 
 public class BlockChainConfig {
     // the group-id

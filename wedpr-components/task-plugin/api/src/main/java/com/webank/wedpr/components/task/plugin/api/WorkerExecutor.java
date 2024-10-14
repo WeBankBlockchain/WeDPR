@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.task.plugin.api;
 
-import com.webank.wedpr.core.protocol.task.TaskResponse;
+import com.webank.wedpr.common.protocol.task.TaskResponse;
 
 public interface WorkerExecutor {
     public abstract TaskResponse run(Object param) throws Exception;

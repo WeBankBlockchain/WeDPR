@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.config;
 
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
@@ -23,7 +24,6 @@ import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCExecutorParamChecker;
 import com.webank.wedpr.components.scheduler.executor.impl.pir.PirExecutorParamChecker;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.PSIExecutorParamChecker;
-import com.webank.wedpr.core.protocol.JobType;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

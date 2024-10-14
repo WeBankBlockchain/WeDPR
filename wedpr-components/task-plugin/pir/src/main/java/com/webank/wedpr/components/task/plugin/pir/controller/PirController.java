@@ -15,12 +15,12 @@
 
 package com.webank.wedpr.components.task.plugin.pir.controller;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

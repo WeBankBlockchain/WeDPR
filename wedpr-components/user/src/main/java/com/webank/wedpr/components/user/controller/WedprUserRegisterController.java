@@ -1,5 +1,7 @@
 package com.webank.wedpr.components.user.controller;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.helper.TokenImageHelper;
 import com.webank.wedpr.components.user.requests.UserRegisterRequest;
@@ -8,8 +10,6 @@ import com.webank.wedpr.components.user.response.WedprPublicKeyResponse;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.user.service.WedprUserService;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

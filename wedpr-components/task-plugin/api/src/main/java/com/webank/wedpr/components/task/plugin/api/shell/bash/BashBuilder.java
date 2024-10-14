@@ -14,8 +14,8 @@
  */
 package com.webank.wedpr.components.task.plugin.api.shell.bash;
 
+import com.webank.wedpr.common.utils.ShellConstant;
 import com.webank.wedpr.components.task.plugin.api.shell.BaseShellBuilderImpl;
-import com.webank.wedpr.core.utils.ShellConstant;
 import java.util.List;
 import lombok.SneakyThrows;
 

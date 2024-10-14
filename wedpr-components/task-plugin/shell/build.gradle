@@ -3,6 +3,6 @@ plugins {
     id 'java'
 }
 dependencies{
-    implementation project(path: ':wedpr-core-protocol')
+    compile project(":wedpr-common-protocol")
     compile project(":wedpr-components-task-plugin-api")
 }

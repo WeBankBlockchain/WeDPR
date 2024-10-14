@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.sync.service;
 
-import com.webank.wedpr.core.utils.WeDPRResponse;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 
 public interface SyncService {
     public abstract WeDPRResponse queryRecordSyncStatus(RecordSyncStatusRequest condition);

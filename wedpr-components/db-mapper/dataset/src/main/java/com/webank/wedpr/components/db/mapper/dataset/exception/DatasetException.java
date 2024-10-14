@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.db.mapper.dataset.exception;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 
 public class DatasetException extends WeDPRException {
 

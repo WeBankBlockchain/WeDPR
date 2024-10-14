@@ -1,9 +1,9 @@
 package com.webank.wedpr.components.storage.builder;
 
+import com.webank.wedpr.common.protocol.StorageType;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.impl.hdfs.HDFSStorage;
 import com.webank.wedpr.components.storage.impl.local.LocalFileStorage;
-import com.webank.wedpr.core.protocol.StorageType;
 import java.util.HashMap;
 import java.util.Map;
 

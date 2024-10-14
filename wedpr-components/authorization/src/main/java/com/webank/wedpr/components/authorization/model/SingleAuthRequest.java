@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.authorization.model;
 
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
-import com.webank.wedpr.core.utils.PageRequest;
 
 public class SingleAuthRequest extends PageRequest {
     private AuthorizationDO authorizationDO = new AuthorizationDO();

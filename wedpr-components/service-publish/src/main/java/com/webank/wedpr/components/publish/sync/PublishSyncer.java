@@ -1,11 +1,11 @@
 package com.webank.wedpr.components.publish.sync;
 
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.Constant;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

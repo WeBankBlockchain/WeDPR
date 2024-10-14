@@ -16,10 +16,10 @@
 package com.webank.wedpr.components.integration.jupyter.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

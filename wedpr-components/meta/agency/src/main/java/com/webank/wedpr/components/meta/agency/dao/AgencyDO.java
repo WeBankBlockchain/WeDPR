@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.meta.agency.dao;
 
-import com.webank.wedpr.core.utils.TimeRange;
+import com.webank.wedpr.common.utils.TimeRange;
 
 public class AgencyDO extends TimeRange {
     private String name;

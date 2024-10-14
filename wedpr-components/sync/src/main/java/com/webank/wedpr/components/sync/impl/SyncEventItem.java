@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.sync.impl;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;

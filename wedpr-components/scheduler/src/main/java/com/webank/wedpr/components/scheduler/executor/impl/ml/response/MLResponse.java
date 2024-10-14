@@ -17,10 +17,10 @@ package com.webank.wedpr.components.scheduler.executor.impl.ml.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.utils.BaseResponse;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
-import com.webank.wedpr.core.utils.BaseResponse;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 
 public class MLResponse implements BaseResponse {
     public static class Result {

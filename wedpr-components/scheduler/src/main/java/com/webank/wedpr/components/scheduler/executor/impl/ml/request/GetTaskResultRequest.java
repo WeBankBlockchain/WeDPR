@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml.request;
 
-import com.webank.wedpr.core.utils.BaseRequest;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.BaseRequest;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 
 public class GetTaskResultRequest implements BaseRequest {
     String jobID;

@@ -15,10 +15,10 @@
 
 package com.webank.wedpr.components.integration.jupyter.hook;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.hook.UserHook;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterManager;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.apache.commons.lang3.StringUtils;
 
 public class JupyterUserCallback implements UserHook.UserCallback {

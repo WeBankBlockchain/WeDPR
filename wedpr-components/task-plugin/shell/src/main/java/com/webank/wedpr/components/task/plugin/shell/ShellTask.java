@@ -14,15 +14,15 @@
  */
 package com.webank.wedpr.components.task.plugin.shell;
 
+import com.webank.wedpr.common.protocol.task.ShellParameters;
+import com.webank.wedpr.common.protocol.task.TaskExecutionContext;
+import com.webank.wedpr.common.protocol.task.TaskResponse;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.task.plugin.api.TaskInterface;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellBuilder;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellBuilderFactory;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellCommandExecutor;
-import com.webank.wedpr.core.protocol.task.ShellParameters;
-import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.SneakyThrows;
 
 public class ShellTask implements TaskInterface {

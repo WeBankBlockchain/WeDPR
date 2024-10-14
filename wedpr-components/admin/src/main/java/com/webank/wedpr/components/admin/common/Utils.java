@@ -1,12 +1,12 @@
 package com.webank.wedpr.components.admin.common;
 
+import com.webank.wedpr.common.protocol.CertStatusEnum;
+import com.webank.wedpr.common.protocol.CertStatusViewEnum;
+import com.webank.wedpr.common.protocol.UserRoleEnum;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.UserToken;
-import com.webank.wedpr.core.protocol.CertStatusEnum;
-import com.webank.wedpr.core.protocol.CertStatusViewEnum;
-import com.webank.wedpr.core.protocol.UserRoleEnum;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.*;
 import java.math.RoundingMode;
 import java.nio.file.Files;

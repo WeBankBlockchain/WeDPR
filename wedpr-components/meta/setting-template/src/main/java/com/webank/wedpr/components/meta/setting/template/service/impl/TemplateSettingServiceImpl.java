@@ -16,6 +16,9 @@
 package com.webank.wedpr.components.meta.setting.template.service.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateMapper;
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingList;
@@ -23,9 +26,6 @@ import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingQu
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingRequest;
 import com.webank.wedpr.components.meta.setting.template.service.TemplateSettingService;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

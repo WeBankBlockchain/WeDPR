@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.psi;
 
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
-import com.webank.wedpr.core.protocol.JobType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

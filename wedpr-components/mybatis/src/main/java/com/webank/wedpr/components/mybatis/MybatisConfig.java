@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.mybatis;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 import java.io.InputStream;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;

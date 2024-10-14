@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.helper;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

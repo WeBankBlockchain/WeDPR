@@ -14,10 +14,10 @@
  */
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.utils.Worker;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.impl.generated.v1.ResourceLogRecord;
 import com.webank.wedpr.components.sync.impl.generated.v1.ResourceLogRecordFactory;
-import com.webank.wedpr.core.utils.Worker;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.List;

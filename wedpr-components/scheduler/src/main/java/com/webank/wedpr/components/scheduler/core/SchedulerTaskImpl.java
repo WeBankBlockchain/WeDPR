@@ -16,15 +16,15 @@
 package com.webank.wedpr.components.scheduler.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.project.model.BatchJobList;
 import com.webank.wedpr.components.scheduler.api.SchedulerApi;
 import com.webank.wedpr.components.scheduler.config.SchedulerTaskConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.protocol.JobStatus;
-import com.webank.wedpr.core.utils.Constant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

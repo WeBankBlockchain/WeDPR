@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.integration.jupyter.service.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.components.hook.UserHook;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterManager;
@@ -23,7 +24,6 @@ import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
 import com.webank.wedpr.components.integration.jupyter.hook.JupyterUserCallback;
 import com.webank.wedpr.components.integration.jupyter.service.JupyterService;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;

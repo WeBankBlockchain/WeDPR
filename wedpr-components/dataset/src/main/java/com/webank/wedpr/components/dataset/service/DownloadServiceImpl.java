@@ -1,6 +1,8 @@
 package com.webank.wedpr.components.dataset.service;
 
 import com.alibaba.druid.util.HexBin;
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
@@ -8,8 +10,6 @@ import com.webank.wedpr.components.storage.api.StorageMeta;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.api.StorageStreamApi;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

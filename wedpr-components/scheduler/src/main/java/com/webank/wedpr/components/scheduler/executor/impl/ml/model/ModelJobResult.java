@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 
 public class ModelJobResult {
     public static class ModelJobData {

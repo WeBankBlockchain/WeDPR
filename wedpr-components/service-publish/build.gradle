@@ -5,8 +5,8 @@ plugins {
 dependencies{
     compile project(":wedpr-components-db-mapper-service-publish")
     compile project(":wedpr-components-db-mapper-dataset")
-    compile project(":wedpr-core-utils")
-    compile project(":wedpr-core-protocol")
+    compile project(":wedpr-common-utils")
+    compile project(":wedpr-common-protocol")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
     compile project(":wedpr-components-sync")

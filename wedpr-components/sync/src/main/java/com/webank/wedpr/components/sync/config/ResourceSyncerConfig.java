@@ -14,6 +14,8 @@
  */
 package com.webank.wedpr.components.sync.config;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.leader.election.config.LeaderElectionConfig;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
@@ -21,8 +23,6 @@ import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapper;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapperWrapper;
 import com.webank.wedpr.components.sync.impl.BlockChainResourceSyncImpl;
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

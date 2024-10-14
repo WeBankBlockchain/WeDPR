@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.user.helper;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.SM2Helper;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bouncycastle.crypto.InvalidCipherTextException;

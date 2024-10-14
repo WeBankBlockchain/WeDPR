@@ -15,12 +15,12 @@
 
 package com.webank.wedpr.components.token.auth.demo;
 
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
 import com.webank.wedpr.components.token.auth.model.HeaderInfo;
 import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
-import com.webank.wedpr.core.utils.Constant;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -16,9 +16,9 @@
 package com.webank.wedpr.components.token.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.token.auth.utils.SecurityUtils;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

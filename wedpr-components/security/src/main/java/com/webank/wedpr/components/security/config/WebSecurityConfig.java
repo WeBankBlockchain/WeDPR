@@ -1,5 +1,7 @@
 package com.webank.wedpr.components.security.config;
 
+import com.webank.wedpr.common.protocol.ServerTypeEnum;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.security.filter.APISignatureAuthFilter;
@@ -9,8 +11,6 @@ import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
 import com.webank.wedpr.components.user.service.WedprUserService;
-import com.webank.wedpr.core.protocol.ServerTypeEnum;
-import com.webank.wedpr.core.utils.Constant;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

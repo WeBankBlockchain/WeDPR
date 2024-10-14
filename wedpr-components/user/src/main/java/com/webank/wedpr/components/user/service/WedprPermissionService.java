@@ -1,10 +1,10 @@
 package com.webank.wedpr.components.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.user.entity.WedprPermission;
 import com.webank.wedpr.components.user.requests.WedprPermissionRequest;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**

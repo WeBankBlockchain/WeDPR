@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.transport.config;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class WeDPRTransportConfig {
     private static Integer THREAD_POOL_SIZE =

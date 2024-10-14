@@ -15,14 +15,14 @@
 
 package com.webank.wedpr.components.storage.impl.hdfs;
 
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StorageMeta;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.stream.HdfsStorageStream;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.Closeable;
 import java.io.IOException;
 import lombok.SneakyThrows;

@@ -14,9 +14,9 @@
  */
 package com.webank.wedpr.worker.service.impl;
 
+import com.webank.wedpr.common.protocol.task.TaskResponse;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.task.plugin.shell.ShellTask;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
 import com.webank.wedpr.worker.service.ShellWorkerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

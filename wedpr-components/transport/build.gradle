@@ -5,5 +5,5 @@ plugins {
 dependencies{
     compile libraries.spring, libraries.spring_boot
     compile ("com.webank.wedpr:wedpr-gateway-sdk:${wedprGatewaySDKVersion}")
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-utils")
 }

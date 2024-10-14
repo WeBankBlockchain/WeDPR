@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.spi.plugin;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;

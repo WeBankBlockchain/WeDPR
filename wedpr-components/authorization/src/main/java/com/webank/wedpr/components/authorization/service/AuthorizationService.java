@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.authorization.service;
 
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.authorization.model.*;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 
 public interface AuthorizationService {

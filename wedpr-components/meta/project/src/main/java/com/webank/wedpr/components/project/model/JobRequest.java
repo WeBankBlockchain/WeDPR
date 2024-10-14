@@ -15,10 +15,10 @@
 
 package com.webank.wedpr.components.project.model;
 
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
 import com.webank.wedpr.components.project.dao.JobDO;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import lombok.SneakyThrows;
 

@@ -14,10 +14,10 @@
  */
 package com.webank.wedpr.components.integration.jupyter.client;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.HashMap;
 import java.util.Map;
 

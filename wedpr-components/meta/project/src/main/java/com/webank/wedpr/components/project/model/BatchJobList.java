@@ -16,9 +16,9 @@
 package com.webank.wedpr.components.project.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.project.dao.JobDO;
-import com.webank.wedpr.core.protocol.JobStatus;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

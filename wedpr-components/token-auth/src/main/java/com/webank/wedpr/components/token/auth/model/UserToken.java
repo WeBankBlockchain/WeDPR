@@ -17,8 +17,8 @@ package com.webank.wedpr.components.token.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.core.protocol.UserRoleEnum;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.protocol.UserRoleEnum;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import java.util.List;
 import lombok.Data;
 import lombok.ToString;

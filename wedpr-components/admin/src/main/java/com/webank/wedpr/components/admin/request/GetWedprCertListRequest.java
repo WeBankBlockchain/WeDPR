@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.admin.request;
 
-import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.common.utils.Constant;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.Data;

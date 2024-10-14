@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.pir.sdk.model;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.CSVFileParser;
+import com.webank.wedpr.common.utils.FileUtils;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirSearchType;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.CSVFileParser;
-import com.webank.wedpr.core.utils.FileUtils;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.Writer;

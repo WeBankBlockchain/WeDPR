@@ -15,6 +15,11 @@
 
 package com.webank.wedpr.components.task.plugin.pir.service.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.ThreadPoolService;
+import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialVerifierImpl;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
@@ -47,11 +52,6 @@ import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.ThreadPoolService;
-import com.webank.wedpr.core.utils.WeDPRException;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import java.util.List;
 import javax.annotation.PostConstruct;

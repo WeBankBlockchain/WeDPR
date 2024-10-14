@@ -14,10 +14,10 @@
  */
 package com.webank.wedpr.worker.controller;
 
+import com.webank.wedpr.common.protocol.task.TaskResponse;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.worker.service.ShellWorkerService;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

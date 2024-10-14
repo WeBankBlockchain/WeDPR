@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.project.dao;
 
+import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.protocol.ReportStatusEnum;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerMapper;
-import com.webank.wedpr.core.protocol.JobStatus;
-import com.webank.wedpr.core.protocol.ReportStatusEnum;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

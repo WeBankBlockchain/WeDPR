@@ -14,10 +14,10 @@
  */
 package com.webank.wedpr.components.task.plugin.api.model;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellType;
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

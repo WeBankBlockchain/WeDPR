@@ -16,12 +16,12 @@
 
 package com.webank.wedpr.components.scheduler.config;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.core.JobSyncer;
 import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

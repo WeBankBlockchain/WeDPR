@@ -16,11 +16,11 @@
 package com.webank.wedpr.components.loadbalancer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
 import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

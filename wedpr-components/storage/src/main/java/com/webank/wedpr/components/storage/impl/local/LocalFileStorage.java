@@ -1,13 +1,13 @@
 package com.webank.wedpr.components.storage.impl.local;
 
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StorageMeta;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.storage.stream.LocalStorageStream;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;

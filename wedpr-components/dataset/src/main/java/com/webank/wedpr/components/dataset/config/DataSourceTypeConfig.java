@@ -2,10 +2,10 @@ package com.webank.wedpr.components.dataset.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.db.mapper.dataset.datasource.DataSourceType;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
-import com.webank.wedpr.core.utils.Common;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

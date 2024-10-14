@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.config;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.components.dataset.sync.DatasetSyncer;
 import com.webank.wedpr.components.dataset.sync.DatasetSyncerCommitHandler;
 import com.webank.wedpr.components.dataset.sync.api.DatasetSyncerApi;
@@ -7,7 +8,6 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransa
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.ResourceSyncer.ResourceType;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

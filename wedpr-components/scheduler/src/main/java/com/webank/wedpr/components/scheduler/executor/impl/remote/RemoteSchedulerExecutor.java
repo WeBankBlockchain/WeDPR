@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.executor.impl.remote;
 
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.api.WorkFlowOrchestratorApi;
@@ -11,7 +12,6 @@ import com.webank.wedpr.components.scheduler.workflow.WorkFlow;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlowOrchestrator;
 import com.webank.wedpr.components.scheduler.workflow.builder.JobWorkFlowBuilderManager;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.config;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class SchedulerTaskConfig {
     private static final Integer WORKER_QUEUE_SIZE =

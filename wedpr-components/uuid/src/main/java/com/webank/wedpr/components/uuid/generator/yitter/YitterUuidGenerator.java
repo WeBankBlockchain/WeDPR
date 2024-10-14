@@ -17,8 +17,8 @@ package com.webank.wedpr.components.uuid.generator.yitter;
 
 import com.github.yitter.contract.IdGeneratorOptions;
 import com.github.yitter.idgen.YitIdHelper;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.uuid.generator.UuidGenerator;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

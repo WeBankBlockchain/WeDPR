@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.authorization.service.impl;
 
+import com.webank.wedpr.common.utils.ThreadPoolService;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.authorization.WeDPRAuthNotifier;
 import com.webank.wedpr.components.authorization.core.AuthExecutor;
 import com.webank.wedpr.components.authorization.dao.AuthMapperWrapper;
@@ -27,8 +29,6 @@ import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.ThreadPoolService;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

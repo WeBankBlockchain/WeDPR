@@ -14,14 +14,14 @@
  */
 package com.webank.wedpr.components.integration.jupyter.core;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.integration.jupyter.client.JupyterClient;
 import com.webank.wedpr.components.integration.jupyter.client.impl.JupyterClientImpl;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

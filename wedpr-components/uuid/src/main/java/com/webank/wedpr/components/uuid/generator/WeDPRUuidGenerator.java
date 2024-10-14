@@ -15,10 +15,10 @@
 
 package com.webank.wedpr.components.uuid.generator;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.uuid.generator.yitter.YitterUuidConfig;
 import com.webank.wedpr.components.uuid.generator.yitter.YitterUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

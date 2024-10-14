@@ -1,5 +1,7 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.category.HdfsDataSource;
@@ -10,8 +12,6 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.impl.hdfs.HDFSStoragePath;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.Common;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

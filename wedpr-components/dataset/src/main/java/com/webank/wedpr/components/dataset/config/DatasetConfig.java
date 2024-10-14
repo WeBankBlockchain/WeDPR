@@ -18,8 +18,8 @@ package com.webank.wedpr.components.dataset.config;
 import static com.webank.wedpr.components.dataset.service.ChunkUploadImpl.UPLOAD_CHUNK_FILE_NAME_PREFIX;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
-import com.webank.wedpr.core.utils.Common;
 import java.io.File;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

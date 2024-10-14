@@ -1,5 +1,8 @@
 package com.webank.wedpr.components.dataset.controller;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.message.DownloadFileShardRequest;
 import com.webank.wedpr.components.dataset.message.GetFileShardsInfoResponse;
@@ -7,9 +10,6 @@ import com.webank.wedpr.components.dataset.service.DownloadServiceApi;
 import com.webank.wedpr.components.dataset.utils.UserTokenUtils;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.io.File;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;

@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.token.auth.utils;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 
 public class SecurityUtils {
 

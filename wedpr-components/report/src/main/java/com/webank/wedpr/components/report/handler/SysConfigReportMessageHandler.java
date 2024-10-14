@@ -1,11 +1,11 @@
 package com.webank.wedpr.components.report.handler;
 
+import com.webank.wedpr.common.protocol.ReportStatusEnum;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.transport.message.SysConfigReportResponse;
-import com.webank.wedpr.core.protocol.ReportStatusEnum;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import com.webank.wedpr.sdk.jni.generated.Error;
 import com.webank.wedpr.sdk.jni.generated.SendResponseHandler;
 import com.webank.wedpr.sdk.jni.transport.IMessage;

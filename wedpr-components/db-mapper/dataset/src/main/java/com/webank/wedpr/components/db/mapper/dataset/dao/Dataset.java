@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.webank.wedpr.core.utils.Json2StringDeserializer;
+import com.webank.wedpr.common.utils.Json2StringDeserializer;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 

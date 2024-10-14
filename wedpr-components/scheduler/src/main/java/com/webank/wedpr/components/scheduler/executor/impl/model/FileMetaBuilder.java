@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.model;
 
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 

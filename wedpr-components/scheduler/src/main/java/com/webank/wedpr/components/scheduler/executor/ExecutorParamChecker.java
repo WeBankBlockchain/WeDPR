@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.scheduler.executor;
 
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.project.dao.JobDO;
-import com.webank.wedpr.core.protocol.JobType;
 import java.util.List;
 
 public interface ExecutorParamChecker {

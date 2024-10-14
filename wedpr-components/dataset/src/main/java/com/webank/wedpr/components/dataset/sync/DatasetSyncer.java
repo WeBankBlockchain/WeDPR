@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.sync;
 
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.dataset.sync.api.DatasetSyncerApi;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
@@ -8,7 +9,6 @@ import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.List;
 import lombok.Data;
 import org.slf4j.Logger;

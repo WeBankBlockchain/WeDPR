@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.mybatis;
 
 import com.github.pagehelper.PageHelper;
-import com.webank.wedpr.core.utils.PageRequest;
+import com.webank.wedpr.common.utils.PageRequest;
 
 public class PageHelperWrapper implements AutoCloseable {
     boolean usePage = false;

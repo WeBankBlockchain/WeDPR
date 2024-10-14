@@ -16,14 +16,14 @@
 package com.webank.wedpr.components.authorization.dao;
 
 import com.github.pagehelper.PageInfo;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.authorization.model.*;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerMapper;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.ibatis.reflection.ArrayUtil;

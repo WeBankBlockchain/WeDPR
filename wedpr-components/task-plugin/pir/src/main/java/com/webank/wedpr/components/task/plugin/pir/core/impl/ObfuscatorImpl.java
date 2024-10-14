@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.task.plugin.pir.core.impl;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
@@ -23,8 +25,6 @@ import com.webank.wedpr.components.pir.sdk.core.OtResult;
 import com.webank.wedpr.components.task.plugin.pir.core.Obfuscator;
 import com.webank.wedpr.components.task.plugin.pir.model.ObfuscationParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

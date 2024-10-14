@@ -17,9 +17,9 @@ package com.webank.wedpr.components.api.credential.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialStatus;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.TimeRange;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

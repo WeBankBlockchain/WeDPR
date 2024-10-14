@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.authorization.model;
 
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;

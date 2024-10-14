@@ -16,9 +16,9 @@
 package com.webank.wedpr.components.authorization.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

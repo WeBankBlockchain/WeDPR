@@ -1,5 +1,7 @@
 package com.webank.wedpr.components.admin.controller;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.admin.common.Utils;
 import com.webank.wedpr.components.admin.request.GetDatasetDateLineRequest;
 import com.webank.wedpr.components.admin.request.GetJobDateLineRequest;
@@ -8,8 +10,6 @@ import com.webank.wedpr.components.admin.service.WedprAgencyService;
 import com.webank.wedpr.components.admin.service.WedprDatasetService;
 import com.webank.wedpr.components.admin.service.WedprJobTableService;
 import com.webank.wedpr.components.token.auth.model.UserToken;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.db.mapper.dataset.permission;
 
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetPermission;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
@@ -7,7 +8,6 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetPermissionMapper;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
-import com.webank.wedpr.core.utils.Common;
 import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;

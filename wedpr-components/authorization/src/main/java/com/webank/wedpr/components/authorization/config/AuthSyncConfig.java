@@ -16,12 +16,12 @@
 
 package com.webank.wedpr.components.authorization.config;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.authorization.dao.AuthMapperWrapper;
 import com.webank.wedpr.components.authorization.service.impl.AuthSyncer;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.ThreadPoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

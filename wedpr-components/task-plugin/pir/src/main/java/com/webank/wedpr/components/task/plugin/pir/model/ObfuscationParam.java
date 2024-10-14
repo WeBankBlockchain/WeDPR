@@ -16,9 +16,9 @@
 package com.webank.wedpr.components.task.plugin.pir.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
-import com.webank.wedpr.core.utils.Common;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import lombok.Data;

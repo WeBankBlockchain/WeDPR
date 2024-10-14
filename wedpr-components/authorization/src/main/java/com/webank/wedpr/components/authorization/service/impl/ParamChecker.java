@@ -15,13 +15,13 @@
 
 package com.webank.wedpr.components.authorization.service.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.authorization.dao.AuthMapperWrapper;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.authorization.dao.AuthorizationTemplateDO;
 import com.webank.wedpr.components.authorization.model.*;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;

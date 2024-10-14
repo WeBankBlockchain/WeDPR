@@ -14,9 +14,9 @@
  */
 package com.webank.wedpr.components.crypto.impl;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.SymmetricCrypto;
 import com.webank.wedpr.components.crypto.config.CryptoConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

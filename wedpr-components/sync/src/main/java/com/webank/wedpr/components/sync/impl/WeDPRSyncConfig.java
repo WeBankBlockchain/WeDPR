@@ -15,7 +15,7 @@
 */
 package com.webank.wedpr.components.sync.impl;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class WeDPRSyncConfig {
     // address for contract ResourceLogRecordFactory.sol

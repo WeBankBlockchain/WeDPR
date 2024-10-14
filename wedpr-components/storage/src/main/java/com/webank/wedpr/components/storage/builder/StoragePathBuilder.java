@@ -1,14 +1,14 @@
 package com.webank.wedpr.components.storage.builder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.protocol.StorageType;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.storage.impl.hdfs.HDFSStoragePath;
 import com.webank.wedpr.components.storage.impl.local.LocalStoragePath;
-import com.webank.wedpr.core.protocol.StorageType;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;

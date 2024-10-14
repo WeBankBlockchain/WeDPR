@@ -16,12 +16,12 @@
 package com.webank.wedpr.components.authorization.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.authorization.model.AuthChain;
 import com.webank.wedpr.components.authorization.model.AuthResult;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.TimeRange;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;

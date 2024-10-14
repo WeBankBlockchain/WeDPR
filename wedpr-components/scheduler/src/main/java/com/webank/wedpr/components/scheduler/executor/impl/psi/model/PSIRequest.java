@@ -17,8 +17,8 @@ package com.webank.wedpr.components.scheduler.executor.impl.psi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

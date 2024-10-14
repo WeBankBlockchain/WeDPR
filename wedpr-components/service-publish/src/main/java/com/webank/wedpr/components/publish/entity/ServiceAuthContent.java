@@ -16,9 +16,9 @@
 package com.webank.wedpr.components.publish.entity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;

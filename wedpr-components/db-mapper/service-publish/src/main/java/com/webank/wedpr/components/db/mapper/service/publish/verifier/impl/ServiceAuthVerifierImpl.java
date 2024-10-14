@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.verifier.impl;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.verifier.ServiceAuthVerifier;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 
 public class ServiceAuthVerifierImpl implements ServiceAuthVerifier {

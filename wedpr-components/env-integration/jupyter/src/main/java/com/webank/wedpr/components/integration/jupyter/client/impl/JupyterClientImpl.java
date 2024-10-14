@@ -14,6 +14,12 @@
  */
 package com.webank.wedpr.components.integration.jupyter.client.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.protocol.task.ShellParameters;
+import com.webank.wedpr.common.protocol.task.TaskExecutionContext;
+import com.webank.wedpr.common.protocol.task.TaskResponse;
+import com.webank.wedpr.common.protocol.task.TaskType;
+import com.webank.wedpr.common.utils.*;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.integration.jupyter.client.JupyterClient;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterConfig;
@@ -22,12 +28,6 @@ import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.protocol.task.ShellParameters;
-import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
-import com.webank.wedpr.core.protocol.task.TaskType;
-import com.webank.wedpr.core.utils.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

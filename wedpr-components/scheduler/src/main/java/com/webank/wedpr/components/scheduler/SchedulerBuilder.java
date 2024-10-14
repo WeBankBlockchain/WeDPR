@@ -15,6 +15,9 @@
 
 package com.webank.wedpr.components.scheduler;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.ThreadPoolService;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.api.SchedulerApi;
@@ -26,9 +29,6 @@ import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManagerImp
 import com.webank.wedpr.components.scheduler.impl.SchedulerImpl;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.sync.ResourceSyncer;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.ThreadPoolService;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

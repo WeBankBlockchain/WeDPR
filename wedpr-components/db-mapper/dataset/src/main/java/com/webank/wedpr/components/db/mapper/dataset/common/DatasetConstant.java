@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.db.mapper.dataset.common;
 
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
-import com.webank.wedpr.core.utils.Constant;
 
 public class DatasetConstant {
     public static final String MAX_DATASET_PERMISSION_EXPIRED_TIME = "9999-12-31";

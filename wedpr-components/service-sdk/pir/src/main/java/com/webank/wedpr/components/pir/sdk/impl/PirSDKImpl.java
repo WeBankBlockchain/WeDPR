@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.pir.sdk.impl;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.pir.sdk.PirSDK;
 import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
@@ -24,8 +26,6 @@ import com.webank.wedpr.components.pir.sdk.core.OtCrypto;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
 import com.webank.wedpr.components.pir.sdk.model.PirResult;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import com.webank.wedpr.sdk.jni.generated.Error;
 import com.webank.wedpr.sdk.jni.generated.SendResponseHandler;
 import com.webank.wedpr.sdk.jni.transport.IMessage;

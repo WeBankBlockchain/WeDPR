@@ -16,13 +16,13 @@
 package com.webank.wedpr.components.sync.service.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
 import com.webank.wedpr.components.sync.dao.ResourceActionDO;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapper;
 import com.webank.wedpr.components.sync.service.RecordSyncStatusRequest;
 import com.webank.wedpr.components.sync.service.SyncService;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

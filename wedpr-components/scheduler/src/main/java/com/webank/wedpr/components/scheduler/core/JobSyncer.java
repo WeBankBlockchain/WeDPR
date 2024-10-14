@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.project.model.BatchJobList;
@@ -24,7 +25,6 @@ import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;

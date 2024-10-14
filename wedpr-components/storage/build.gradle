@@ -6,8 +6,8 @@ plugins {
 dependencies {
     compile libraries.spring, libraries.spring_boot
 
-    compile project(":wedpr-core-protocol")
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-protocol")
+    compile project(":wedpr-common-utils")
     compile project(":wedpr-components-uuid")
     compile("com.google.code.gson:gson:${gsonVersion}")
 

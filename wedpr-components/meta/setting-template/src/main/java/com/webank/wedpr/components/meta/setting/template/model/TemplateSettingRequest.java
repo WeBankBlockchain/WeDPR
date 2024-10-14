@@ -16,8 +16,8 @@
 package com.webank.wedpr.components.meta.setting.template.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 

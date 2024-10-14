@@ -1,13 +1,13 @@
 package com.webank.wedpr.components.dataset.sync;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.dataset.sync.handler.*;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.ResourceSyncer.CommitArgs;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;

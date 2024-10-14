@@ -16,6 +16,10 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.PreprocessingRequest;
@@ -26,10 +30,6 @@ import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.protocol.JobType;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.List;
 

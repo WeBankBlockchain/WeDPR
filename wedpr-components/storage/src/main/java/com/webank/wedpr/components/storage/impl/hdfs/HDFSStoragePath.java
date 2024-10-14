@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.storage.impl.hdfs;
 
+import com.webank.wedpr.common.protocol.StorageType;
 import com.webank.wedpr.components.storage.api.StoragePath;
-import com.webank.wedpr.core.protocol.StorageType;
 import java.nio.file.Paths;
 import lombok.Getter;
 import lombok.Setter;

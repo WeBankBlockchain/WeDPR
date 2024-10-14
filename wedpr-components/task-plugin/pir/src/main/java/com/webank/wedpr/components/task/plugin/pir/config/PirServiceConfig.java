@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.task.plugin.pir.config;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 
 public class PirServiceConfig {
     private static String PIR_CACHE_DIR = WeDPRConfig.apply("wedpr.pir.cache.dir", ".cache");

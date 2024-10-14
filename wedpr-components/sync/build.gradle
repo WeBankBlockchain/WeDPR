@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-utils")
     compile project(":wedpr-components-uuid")
-    compile project(":wedpr-core-protocol")
+    compile project(":wedpr-common-protocol")
     compile project(":wedpr-components-sys-config")
     compile project(":wedpr-components-blockchain")
     compile project(":wedpr-components-leader-election")

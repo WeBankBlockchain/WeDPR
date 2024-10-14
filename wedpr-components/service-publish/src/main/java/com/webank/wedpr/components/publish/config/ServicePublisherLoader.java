@@ -1,5 +1,7 @@
 package com.webank.wedpr.components.publish.config;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.WeDPRResponseFactory;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
@@ -10,8 +12,6 @@ import com.webank.wedpr.components.publish.sync.PublishSyncerCommitHandler;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.core.ResourceActionRecorderBuilder;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.utils.WeDPRResponseFactory;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

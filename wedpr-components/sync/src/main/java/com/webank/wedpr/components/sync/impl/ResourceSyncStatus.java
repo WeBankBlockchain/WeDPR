@@ -14,9 +14,9 @@
  */
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.protocol.SysConfigKey;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
-import com.webank.wedpr.core.protocol.SysConfigKey;
 import java.math.BigInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,7 +14,7 @@
  */
 package com.webank.wedpr.components.task.plugin.api;
 
-import com.webank.wedpr.core.protocol.task.TaskExecutionContext;
+import com.webank.wedpr.common.protocol.task.TaskExecutionContext;
 
 public interface TaskBuilder {
     public abstract TaskInterface createTask(TaskExecutionContext taskExecutionContext);

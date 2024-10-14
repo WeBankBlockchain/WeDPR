@@ -2,11 +2,11 @@ rootProject.name = "WeDPR";
 
 
 // submodules
-include 'wedpr-core-utils'
-project(':wedpr-core-utils').projectDir = file('wedpr-core/utils')
+include ':wedpr-common-utils'
+project(':wedpr-common-utils').projectDir = file('wedpr-common/utils')
 
-include ':wedpr-core-protocol'
-project(':wedpr-core-protocol').projectDir = file('wedpr-core/protocol')
+include ':wedpr-common-protocol'
+project(':wedpr-common-protocol').projectDir = file('wedpr-common/protocol')
 
 include ":wedpr-components-http-client"
 project(":wedpr-components-http-client").projectDir = file("wedpr-components/http-client")
@@ -114,8 +114,8 @@ project(":wedpr-worker").projectDir=file("wedpr-worker")
 include "wedpr-pir"
 project(":wedpr-pir").projectDir=file("wedpr-pir")
 
-include "wedpr-adm"
-project(":wedpr-adm").projectDir=file("wedpr-adm")
+include "wedpr-site"
+project(":wedpr-site").projectDir=file("wedpr-site")
 
 include 'wedpr-admin'
 project(":wedpr-admin").projectDir=file("wedpr-admin")

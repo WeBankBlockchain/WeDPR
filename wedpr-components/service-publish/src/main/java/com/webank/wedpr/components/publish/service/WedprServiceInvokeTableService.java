@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.publish.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.publish.entity.request.PublishInvokeSearchRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 
 /**
  * 服务类

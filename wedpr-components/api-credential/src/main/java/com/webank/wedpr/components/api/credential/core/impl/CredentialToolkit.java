@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.api.credential.core.impl;
 
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
-import com.webank.wedpr.core.utils.Common;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 

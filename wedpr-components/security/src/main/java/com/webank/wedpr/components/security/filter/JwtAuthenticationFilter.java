@@ -1,5 +1,8 @@
 package com.webank.wedpr.components.security.filter;
 
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.HeaderInfo;
@@ -7,9 +10,6 @@ import com.webank.wedpr.components.token.auth.model.TokenContents;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.token.auth.utils.SecurityUtils;
 import com.webank.wedpr.components.user.config.UserJwtConfig;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRException;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

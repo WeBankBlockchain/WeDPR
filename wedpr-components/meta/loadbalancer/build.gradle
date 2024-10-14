@@ -4,6 +4,6 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-utils")
     compile libraries.spring, libraries.spring_boot
 }

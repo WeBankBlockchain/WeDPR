@@ -6,8 +6,8 @@ plugins {
 dependencies {
     compile project(":wedpr-components-crypto")
     compile project(":wedpr-components-token-auth")
-    compile project(":wedpr-core-utils")
-    compile project(":wedpr-core-protocol")
+    compile project(":wedpr-common-utils")
+    compile project(":wedpr-common-protocol")
     compile project(":wedpr-components-uuid")
     compile project(":wedpr-components-mybatis")
     compile project(":wedpr-components-hook")

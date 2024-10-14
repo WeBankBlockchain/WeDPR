@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.authorization.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import java.util.List;
 
 public class FormTemplateSetting {

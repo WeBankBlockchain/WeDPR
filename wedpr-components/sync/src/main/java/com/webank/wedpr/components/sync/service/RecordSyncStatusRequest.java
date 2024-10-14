@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.sync.service;
 
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.sync.dao.ResourceActionDO;
-import com.webank.wedpr.core.utils.PageRequest;
 
 public class RecordSyncStatusRequest extends PageRequest {
     private ResourceActionDO resourceActionDO;

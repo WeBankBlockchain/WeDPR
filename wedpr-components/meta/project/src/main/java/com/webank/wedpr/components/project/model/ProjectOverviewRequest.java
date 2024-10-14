@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.project.model;
 
-import com.webank.wedpr.core.utils.TimeRange;
+import com.webank.wedpr.common.utils.TimeRange;
 
 public class ProjectOverviewRequest {
     private TimeRange statTime;

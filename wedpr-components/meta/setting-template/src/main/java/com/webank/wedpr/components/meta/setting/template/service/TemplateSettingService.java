@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.meta.setting.template.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingQueryRequest;
 import com.webank.wedpr.components.meta.setting.template.model.TemplateSettingRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.List;
 
 public interface TemplateSettingService {

@@ -14,8 +14,8 @@
  */
 package com.webank.wedpr.worker.service;
 
+import com.webank.wedpr.common.protocol.task.TaskResponse;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
 
 public interface ShellWorkerService {
     TaskResponse submit(CommandTaskExecutionContext context);

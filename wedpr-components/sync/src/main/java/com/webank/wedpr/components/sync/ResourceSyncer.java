@@ -16,10 +16,10 @@
 
 package com.webank.wedpr.components.sync;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.sync.core.ResourceActionRecord;
 import com.webank.wedpr.components.sync.core.ResourceActionResult;
-import com.webank.wedpr.core.utils.WeDPRException;
 
 public interface ResourceSyncer {
     public static enum ResourceType {

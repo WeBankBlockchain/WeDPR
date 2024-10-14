@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.hook;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;

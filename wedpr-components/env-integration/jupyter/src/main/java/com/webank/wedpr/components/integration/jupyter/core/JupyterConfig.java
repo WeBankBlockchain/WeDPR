@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.integration.jupyter.core;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.Common;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.Common;
 import org.apache.http.client.config.RequestConfig;
 
 public class JupyterConfig {

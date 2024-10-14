@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.http.client.model;
 
-import com.webank.wedpr.core.utils.BaseResponse;
-import com.webank.wedpr.core.utils.BaseResponseFactory;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.BaseResponse;
+import com.webank.wedpr.common.utils.BaseResponseFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 
 public class JsonRpcResponseFactory implements BaseResponseFactory {
     @Override

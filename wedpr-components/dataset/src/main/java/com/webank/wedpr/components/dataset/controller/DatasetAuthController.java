@@ -1,5 +1,8 @@
 package com.webank.wedpr.components.dataset.controller;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.dataset.message.QueryAuthRequest;
 import com.webank.wedpr.components.dataset.service.DatasetAuthApi;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
@@ -7,9 +10,6 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
 import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Data;

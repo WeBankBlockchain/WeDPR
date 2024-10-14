@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.loadbalancer;
 
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

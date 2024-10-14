@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
+import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.TimeRange;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

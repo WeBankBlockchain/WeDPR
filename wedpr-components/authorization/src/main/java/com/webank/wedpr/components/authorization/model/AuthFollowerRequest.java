@@ -15,9 +15,9 @@
 
 package com.webank.wedpr.components.authorization.model;
 
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
-import com.webank.wedpr.core.utils.PageRequest;
 
 public class AuthFollowerRequest extends PageRequest {
     private FollowerDO authFollowerDO = new FollowerDO();

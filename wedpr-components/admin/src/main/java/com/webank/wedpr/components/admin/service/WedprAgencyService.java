@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.admin.entity.WedprAgency;
 import com.webank.wedpr.components.admin.request.CreateOrUpdateWedprAgencyRequest;
 import com.webank.wedpr.components.admin.request.GetWedprAgencyListRequest;
@@ -10,7 +11,6 @@ import com.webank.wedpr.components.admin.response.GetWedprAgencyDetailResponse;
 import com.webank.wedpr.components.admin.response.GetWedprAgencyListResponse;
 import com.webank.wedpr.components.admin.response.GetWedprNoCertAgencyListResponse;
 import com.webank.wedpr.components.token.auth.model.UserToken;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.concurrent.ExecutionException;
 
 /**

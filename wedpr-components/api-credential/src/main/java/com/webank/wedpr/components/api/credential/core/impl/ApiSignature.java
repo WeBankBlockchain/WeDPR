@@ -15,9 +15,9 @@
 package com.webank.wedpr.components.api.credential.core.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Data;

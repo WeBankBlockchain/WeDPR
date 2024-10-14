@@ -15,10 +15,10 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml;
 
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobResult;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.GetTaskResultRequest;
-import com.webank.wedpr.core.utils.Constant;
 
 public class MLExecutorClient {
     public static Object getJobResult(GetTaskResultRequest request) throws Exception {

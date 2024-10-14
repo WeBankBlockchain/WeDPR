@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.workflow;
 
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.api.WorkFlowOrchestratorApi;
@@ -8,7 +9,6 @@ import com.webank.wedpr.components.scheduler.executor.impl.ml.request.Preprocess
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCJobParam;
 import com.webank.wedpr.components.scheduler.workflow.builder.JobWorkFlowBuilderManager;
-import com.webank.wedpr.core.protocol.JobType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

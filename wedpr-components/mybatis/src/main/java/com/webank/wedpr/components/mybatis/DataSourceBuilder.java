@@ -16,7 +16,7 @@ package com.webank.wedpr.components.mybatis;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.Map;
 import java.util.Properties;
 import javax.sql.DataSource;

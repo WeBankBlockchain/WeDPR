@@ -15,11 +15,11 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.pir.sdk.config.PirSDKConfig;
-import com.webank.wedpr.core.config.WeDPRCommonConfig;
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.protocol.JobType;
-import com.webank.wedpr.core.utils.Common;
 import java.io.File;
 
 public class ExecutorConfig {

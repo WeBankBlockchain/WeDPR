@@ -16,8 +16,8 @@
 package com.webank.wedpr.components.meta.resource.follower.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.TimeRange;
 import org.apache.commons.lang3.StringUtils;
 
 public class FollowerDO extends TimeRange {

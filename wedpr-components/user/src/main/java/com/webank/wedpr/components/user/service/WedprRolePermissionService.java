@@ -3,12 +3,12 @@ package com.webank.wedpr.components.user.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.webank.wedpr.common.utils.PageRequest;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.token.auth.model.UserToken;
 import com.webank.wedpr.components.user.entity.WedprRolePermission;
 import com.webank.wedpr.components.user.entity.result.WedprRolePermissionResult;
 import com.webank.wedpr.components.user.requests.WedprRolePermissionRequest;
-import com.webank.wedpr.core.utils.PageRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**

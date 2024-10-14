@@ -14,10 +14,10 @@
  */
 package com.webank.wedpr.components.crypto;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.config.CryptoConfig;
 import com.webank.wedpr.components.crypto.impl.AESCrypto;
 import com.webank.wedpr.components.crypto.impl.HashCryptoImpl;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.security.SecureRandom;
 import java.util.Base64;
 

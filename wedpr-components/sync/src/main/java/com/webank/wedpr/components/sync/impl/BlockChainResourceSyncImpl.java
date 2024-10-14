@@ -15,6 +15,10 @@
 */
 package com.webank.wedpr.components.sync.impl;
 
+import com.webank.wedpr.common.protocol.SysConfigKey;
+import com.webank.wedpr.common.utils.ThreadPoolService;
+import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.blockchain.BlockChainBuilder;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
@@ -24,10 +28,6 @@ import com.webank.wedpr.components.sync.dao.ResourceActionDO;
 import com.webank.wedpr.components.sync.dao.ResourceActionDOBuilder;
 import com.webank.wedpr.components.sync.dao.SyncStatusMapperWrapper;
 import com.webank.wedpr.components.sync.impl.generated.v1.ResourceLogRecordFactory;
-import com.webank.wedpr.core.protocol.SysConfigKey;
-import com.webank.wedpr.core.utils.ThreadPoolService;
-import com.webank.wedpr.core.utils.WeDPRException;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;

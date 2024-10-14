@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml;
 
+import com.webank.wedpr.common.utils.BaseResponse;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
@@ -22,8 +24,6 @@ import com.webank.wedpr.components.scheduler.executor.Executor;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.response.MLResponse;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.response.MLResponseFactory;
-import com.webank.wedpr.core.utils.BaseResponse;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

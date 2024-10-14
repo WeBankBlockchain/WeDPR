@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.service;
 
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetAuthContent;
 import com.webank.wedpr.components.db.mapper.dataset.dao.DatasetUserPermissions;
@@ -9,7 +10,6 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetPermissionMap
 import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.db.mapper.dataset.permission.DatasetUserPermissionValidator;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
-import com.webank.wedpr.core.utils.Common;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.webank.wedpr.components.publish.sync.handler;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 
 /**
  * @author zachma

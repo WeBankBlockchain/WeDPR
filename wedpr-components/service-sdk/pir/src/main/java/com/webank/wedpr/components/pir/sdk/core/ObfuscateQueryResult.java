@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.pir.sdk.core;
 
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;

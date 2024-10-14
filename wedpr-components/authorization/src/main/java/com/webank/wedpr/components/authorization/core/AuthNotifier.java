@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.authorization.core;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

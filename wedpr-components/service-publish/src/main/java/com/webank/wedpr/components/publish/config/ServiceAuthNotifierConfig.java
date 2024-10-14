@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.publish.config;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.authorization.WeDPRAuthNotifier;
 import com.webank.wedpr.components.authorization.core.AuthApplyType;
 import com.webank.wedpr.components.authorization.core.AuthNotifier;
@@ -22,7 +23,6 @@ import com.webank.wedpr.components.authorization.dao.AuthorizationDO;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.publish.entity.ServiceAuthContent;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

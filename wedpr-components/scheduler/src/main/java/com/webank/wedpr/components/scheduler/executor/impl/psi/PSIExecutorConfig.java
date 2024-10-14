@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.psi;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
+import com.webank.wedpr.common.config.WeDPRConfig;
 import org.apache.http.client.config.RequestConfig;
 
 public class PSIExecutorConfig {

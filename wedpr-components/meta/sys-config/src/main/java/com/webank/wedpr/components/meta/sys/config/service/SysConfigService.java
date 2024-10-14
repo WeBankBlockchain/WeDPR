@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.meta.sys.config.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface SysConfigService {
     public abstract WeDPRResponse getSystemConfig(String key);

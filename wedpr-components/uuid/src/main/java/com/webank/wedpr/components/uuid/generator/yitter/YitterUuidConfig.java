@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.uuid.generator.yitter;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     compile ("org.apache.httpcomponents:httpclient:${httpClientVersion}")
-    compile project(":wedpr-core-utils")
+    compile project(":wedpr-common-utils")
 }

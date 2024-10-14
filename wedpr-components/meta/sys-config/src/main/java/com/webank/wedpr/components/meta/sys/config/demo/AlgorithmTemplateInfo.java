@@ -16,7 +16,7 @@
 package com.webank.wedpr.components.meta.sys.config.demo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.core.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 

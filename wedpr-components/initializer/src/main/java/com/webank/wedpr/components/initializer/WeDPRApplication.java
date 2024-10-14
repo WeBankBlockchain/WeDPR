@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.initializer;
 
-import com.webank.wedpr.core.config.WeDPRConfig;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.config.WeDPRConfig;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;

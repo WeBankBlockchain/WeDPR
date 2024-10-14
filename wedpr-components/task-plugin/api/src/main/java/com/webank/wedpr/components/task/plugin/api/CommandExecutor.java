@@ -14,13 +14,13 @@
  */
 package com.webank.wedpr.components.task.plugin.api;
 
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskConfig;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskResponse;
 import com.webank.wedpr.components.task.plugin.api.shell.ShellBuilder;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRException;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

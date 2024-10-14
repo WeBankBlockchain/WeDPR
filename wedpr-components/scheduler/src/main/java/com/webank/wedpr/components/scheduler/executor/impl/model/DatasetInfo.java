@@ -16,8 +16,8 @@
 package com.webank.wedpr.components.scheduler.executor.impl.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webank.wedpr.core.utils.Constant;
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

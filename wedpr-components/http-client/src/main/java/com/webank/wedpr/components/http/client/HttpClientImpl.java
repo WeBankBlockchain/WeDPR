@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.http.client;
 
-import com.webank.wedpr.core.utils.*;
+import com.webank.wedpr.common.utils.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;

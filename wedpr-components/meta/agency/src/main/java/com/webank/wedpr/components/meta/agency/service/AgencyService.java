@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.meta.agency.service;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.meta.agency.model.AgencyRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface AgencyService {
     public abstract WeDPRResponse queryAgencyMetas(AgencyRequest request);

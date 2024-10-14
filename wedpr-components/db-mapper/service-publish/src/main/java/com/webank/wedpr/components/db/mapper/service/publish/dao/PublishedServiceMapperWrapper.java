@@ -15,7 +15,7 @@
 
 package com.webank.wedpr.components.db.mapper.service.publish.dao;
 
-import com.webank.wedpr.core.utils.WeDPRException;
+import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;

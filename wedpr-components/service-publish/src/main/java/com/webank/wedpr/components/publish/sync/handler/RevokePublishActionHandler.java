@@ -1,9 +1,9 @@
 package com.webank.wedpr.components.publish.sync.handler;
 
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.publish.service.WedprPublishedServiceService;
 import com.webank.wedpr.components.publish.sync.PublishSyncAction;
-import com.webank.wedpr.core.utils.WeDPRException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

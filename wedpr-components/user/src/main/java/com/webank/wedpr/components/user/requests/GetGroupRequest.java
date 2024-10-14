@@ -1,7 +1,7 @@
 package com.webank.wedpr.components.user.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.webank.wedpr.core.utils.Constant;
+import com.webank.wedpr.common.utils.Constant;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.Data;

@@ -16,13 +16,13 @@
 package com.webank.wedpr.components.publish.sync;
 
 import com.github.pagehelper.PageInfo;
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.model.ServiceStatus;
 import com.webank.wedpr.components.mybatis.PageHelperWrapper;
 import com.webank.wedpr.components.publish.config.ServicePublisherConfig;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
-import com.webank.wedpr.core.utils.PageRequest;
 import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

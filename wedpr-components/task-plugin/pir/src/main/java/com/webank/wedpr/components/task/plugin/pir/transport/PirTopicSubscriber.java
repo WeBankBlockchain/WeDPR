@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.task.plugin.pir.transport;
 
+import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
-import com.webank.wedpr.core.utils.WeDPRResponse;
 
 public interface PirTopicSubscriber {
     interface QueryHandler {

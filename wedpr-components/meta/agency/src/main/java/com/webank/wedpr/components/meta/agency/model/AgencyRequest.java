@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.meta.agency.model;
 
+import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.components.meta.agency.dao.AgencyDO;
-import com.webank.wedpr.core.utils.PageRequest;
 
 public class AgencyRequest extends PageRequest {
     private AgencyDO condition = new AgencyDO();

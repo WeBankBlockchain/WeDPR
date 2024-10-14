@@ -16,13 +16,13 @@
 
 package com.webank.wedpr.components.leader.election.config;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.components.leader.election.LeaderElection;
 import com.webank.wedpr.components.leader.election.impl.ElectionConfig;
 import com.webank.wedpr.components.leader.election.impl.LeaderElectionImpl;
 import com.webank.wedpr.components.meta.sys.config.WeDPRSysConfig;
 import com.webank.wedpr.components.meta.sys.config.loader.SysConfigLoader;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.config.WeDPRConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

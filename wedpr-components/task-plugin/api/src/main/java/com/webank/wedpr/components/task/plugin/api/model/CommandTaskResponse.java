@@ -15,7 +15,7 @@
 package com.webank.wedpr.components.task.plugin.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.webank.wedpr.core.protocol.task.TaskResponse;
+import com.webank.wedpr.common.protocol.task.TaskResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

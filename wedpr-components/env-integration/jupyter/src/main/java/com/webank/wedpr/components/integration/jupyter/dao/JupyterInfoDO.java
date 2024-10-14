@@ -16,11 +16,11 @@
 package com.webank.wedpr.components.integration.jupyter.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterSetting;
 import com.webank.wedpr.components.integration.jupyter.core.JupyterStatus;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
-import com.webank.wedpr.core.utils.Common;
-import com.webank.wedpr.core.utils.TimeRange;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

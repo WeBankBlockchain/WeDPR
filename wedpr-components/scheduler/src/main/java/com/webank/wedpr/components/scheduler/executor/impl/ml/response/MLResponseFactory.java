@@ -15,8 +15,8 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml.response;
 
-import com.webank.wedpr.core.utils.BaseResponse;
-import com.webank.wedpr.core.utils.BaseResponseFactory;
+import com.webank.wedpr.common.utils.BaseResponse;
+import com.webank.wedpr.common.utils.BaseResponseFactory;
 
 public class MLResponseFactory implements BaseResponseFactory {
     @Override

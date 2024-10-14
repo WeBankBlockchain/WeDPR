@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.config;
 
+import com.webank.wedpr.common.protocol.ExecutorType;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
@@ -37,7 +38,6 @@ import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import com.webank.wedpr.components.sync.config.ResourceSyncerConfig;
-import com.webank.wedpr.core.protocol.ExecutorType;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
