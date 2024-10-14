@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.components.api.credential.core.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
 import com.webank.wedpr.core.utils.Common;
 import com.webank.wedpr.core.utils.WeDPRException;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiSignature {
     private static Logger logger = LoggerFactory.getLogger(ApiSignature.class);
     public static String ACCESS_ID_KEY = "accessKeyID";

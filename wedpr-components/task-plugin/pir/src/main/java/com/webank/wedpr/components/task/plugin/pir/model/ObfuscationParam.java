@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.task.plugin.pir.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.core.utils.Common;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ObfuscationParam {
     BigInteger x;
     BigInteger y;

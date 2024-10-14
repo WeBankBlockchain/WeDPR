@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.token.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.core.protocol.UserRoleEnum;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
@@ -24,6 +25,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 public class UserToken {
     private String username;

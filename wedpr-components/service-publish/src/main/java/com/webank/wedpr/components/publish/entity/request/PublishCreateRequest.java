@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.publish.entity.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
@@ -17,13 +18,13 @@ import lombok.Data;
 
 /** @author zachma */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PublishCreateRequest extends PublishedServiceInfo {
     private String serviceId = Constant.PUBLISH_ID_PREFIX + WeDPRUuidGenerator.generateID();
+    @JsonIgnore private PublishServiceHelper.PublishType publishType;
 
     // the granted access key list
-    private List<String> grantedAccessKeyList;
-
-    @JsonIgnore private PublishServiceHelper.PublishType publishType;
+    protected List<String> grantedAccessKeyList;
 
     public PublishCreateRequest() {
         this.serviceId = Constant.PUBLISH_ID_PREFIX + WeDPRUuidGenerator.generateID();

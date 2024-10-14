@@ -63,6 +63,6 @@ public class ServiceAuthVerifierImpl implements ServiceAuthVerifier {
         }
 
         credentialInfo.setUser(authRecorders.get(0).getAccessibleUser());
-        credentialInfo.setUser(authRecorders.get(0).getAccessibleAgency());
+        credentialInfo.setAgency(authRecorders.get(0).getAccessibleAgency());
     }
 }

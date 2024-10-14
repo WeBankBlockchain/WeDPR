@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.adm.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.core.utils.PageRequest;
 import lombok.Data;
@@ -23,6 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CredentialRequest extends PageRequest {
     private ApiCredentialDO condition = new ApiCredentialDO(true);
 }

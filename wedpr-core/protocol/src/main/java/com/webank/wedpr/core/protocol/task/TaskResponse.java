@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.core.protocol.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.core.utils.BaseResponse;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskResponse implements BaseResponse {

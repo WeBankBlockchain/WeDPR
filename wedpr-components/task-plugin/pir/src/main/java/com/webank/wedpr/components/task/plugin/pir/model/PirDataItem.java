@@ -15,12 +15,14 @@
 
 package com.webank.wedpr.components.task.plugin.pir.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.ToString;
 
 /** @author zachma */
 @Data
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PirDataItem {
 
     private Integer id;

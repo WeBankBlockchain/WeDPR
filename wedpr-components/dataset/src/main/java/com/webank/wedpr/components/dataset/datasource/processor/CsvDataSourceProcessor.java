@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.dao.MergeChunkResult;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = false)
 public class CsvDataSourceProcessor implements DataSourceProcessor {
 

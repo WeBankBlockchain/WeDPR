@@ -15,11 +15,13 @@
 
 package com.webank.wedpr.components.meta.setting.template.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TemplateSettingList {
     private List<SettingTemplateDO> dataList;
     private long total;

@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.core.protocol.task;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.webank.wedpr.core.utils.BaseRequest;
 import com.webank.wedpr.core.utils.ObjectMapperFactory;
@@ -23,6 +24,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

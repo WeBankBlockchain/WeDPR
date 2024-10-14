@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.project.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,8 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class JobDO extends TimeRange {
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @ToString
     public static class JobResultItem {
         private String jobID;
@@ -67,6 +70,7 @@ public class JobDO extends TimeRange {
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @ToString
     public static class JobResult {
         // the job status

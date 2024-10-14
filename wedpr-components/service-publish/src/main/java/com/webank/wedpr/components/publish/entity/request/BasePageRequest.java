@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.publish.entity.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.core.utils.Constant;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -10,6 +11,7 @@ import lombok.Data;
  * @date 2024/8/31
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BasePageRequest {
     private Integer pageNum = Constant.DEFAULT_PAGE_NUM;
 

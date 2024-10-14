@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.concurrent.ThreadPoolExecutor;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @EnableAsync
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DatasetExecutorConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasetExecutorConfig.class);

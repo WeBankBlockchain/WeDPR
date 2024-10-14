@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.storage.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.core.protocol.StorageType;
 import com.webank.wedpr.core.utils.Common;
 import lombok.Data;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 public interface FileStorageInterface {
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @NoArgsConstructor
     public static class FilePermissionInfo {
         private String owner;

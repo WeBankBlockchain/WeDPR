@@ -67,7 +67,7 @@ public class Constant {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static final String NEVER_EXPIRE_TIMESTAMP = "0000-00-00 00:00:00";
+    public static final String NEVER_EXPIRE_TIMESTAMP = "9999-12-31 00:00:00";
     public static final String DEFAULT_INIT_GROUP_ID = "1000000000000000";
 
     public static final String PID_FIELD = "pid";

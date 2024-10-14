@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.service.ChunkUploadApi;
@@ -12,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public class DataSourceProcessorContext {
     // input

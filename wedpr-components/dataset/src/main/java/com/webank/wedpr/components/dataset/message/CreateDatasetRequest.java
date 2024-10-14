@@ -1,10 +1,12 @@
 package com.webank.wedpr.components.dataset.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.webank.wedpr.core.utils.Json2StringDeserializer;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateDatasetRequest {
     // title
     private String datasetTitle;

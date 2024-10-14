@@ -14,6 +14,7 @@
  */
 package com.webank.wedpr.adm.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.core.utils.PageRequest;
 import lombok.Data;
@@ -22,6 +23,7 @@ import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 public class JupyterRequest extends PageRequest {
     private JupyterInfoDO condition = new JupyterInfoDO(true);

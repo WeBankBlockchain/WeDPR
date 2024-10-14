@@ -14,12 +14,14 @@
  */
 package com.webank.wedpr.adm.controller.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import java.util.List;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 public class CredentialResponse {
     private List<ApiCredentialDO> credentials;

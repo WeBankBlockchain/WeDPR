@@ -1,11 +1,13 @@
 package com.webank.wedpr.components.user.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 /** Created by caryliao on 2024/7/18 16:58 */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRegisterRequest {
     @NotBlank(message = "用户名不能为空")
     @Length(max = 128, message = "用户名最多64个字符")
