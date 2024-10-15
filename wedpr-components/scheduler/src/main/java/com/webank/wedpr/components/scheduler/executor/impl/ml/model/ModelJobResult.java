@@ -17,47 +17,22 @@ package com.webank.wedpr.components.scheduler.executor.impl.ml.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class ModelJobResult {
+    @Data
+    @NoArgsConstructor
     public static class ModelJobData {
         private Object jobPlanetResult;
-
-        public Object getJobPlanetResult() {
-            return jobPlanetResult;
-        }
-
-        public void setJobPlanetResult(Object jobPlanetResult) {
-            this.jobPlanetResult = jobPlanetResult;
-        }
+        private String modelData;
     }
 
     private Integer errorCode;
     private String message;
     private ModelJobData data;
-
-    public Integer getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public ModelJobData getData() {
-        return data;
-    }
-
-    public void setData(ModelJobData data) {
-        this.data = data;
-    }
 
     public static ModelJobResult deserialize(String data) throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper().readValue(data, ModelJobResult.class);

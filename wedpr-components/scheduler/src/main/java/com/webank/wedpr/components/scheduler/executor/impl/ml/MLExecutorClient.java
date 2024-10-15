@@ -39,6 +39,6 @@ public class MLExecutorClient {
         if (modelJobResult.getData().getJobPlanetResult() == null) {
             return null;
         }
-        return modelJobResult.getData().getJobPlanetResult();
+        return modelJobResult.getData();
     }
 }

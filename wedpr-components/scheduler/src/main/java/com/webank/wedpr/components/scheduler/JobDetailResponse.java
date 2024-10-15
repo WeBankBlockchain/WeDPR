@@ -17,45 +17,25 @@ package com.webank.wedpr.components.scheduler;
 
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class JobDetailResponse {
     private JobDO job;
     private Object modelResultDetail;
     private FileMeta resultFileInfo;
-
-    public JobDetailResponse() {}
+    private String model;
 
     public JobDetailResponse(JobDO job) {
         this.job = job;
     }
 
-    public JobDetailResponse(JobDO job, Object modelResultDetail) {
+    public JobDetailResponse(JobDO job, Object modelResultDetail, String model) {
         this.job = job;
         this.modelResultDetail = modelResultDetail;
-    }
-
-    public JobDO getJob() {
-        return job;
-    }
-
-    public void setJob(JobDO job) {
-        this.job = job;
-    }
-
-    public Object getModelResultDetail() {
-        return modelResultDetail;
-    }
-
-    public void setModelResultDetail(Object modelResultDetail) {
-        this.modelResultDetail = modelResultDetail;
-    }
-
-    public FileMeta getResultFileInfo() {
-        return resultFileInfo;
-    }
-
-    public void setResultFileInfo(FileMeta resultFileInfo) {
-        this.resultFileInfo = resultFileInfo;
+        this.model = model;
     }
 
     @Override

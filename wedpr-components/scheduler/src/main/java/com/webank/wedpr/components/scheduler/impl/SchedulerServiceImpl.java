@@ -23,6 +23,7 @@ import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.JobDetailResponse;
 import com.webank.wedpr.components.scheduler.SchedulerService;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorClient;
+import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobResult;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.GetTaskResultRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
@@ -48,14 +49,17 @@ public class SchedulerServiceImpl implements SchedulerService {
         JobDO jobDO = jobDOList.get(0);
         // run failed, no need to fetch the result
         if (!JobStatus.success(jobDO.getStatus())) {
-            return new JobDetailResponse(jobDO, null);
+            return new JobDetailResponse(jobDO, null, null);
         }
         // the ml job
         if (jobDO.getType().mlJob()) {
+            ModelJobResult.ModelJobData modelJobData =
+                    (ModelJobResult.ModelJobData)
+                            MLExecutorClient.getJobResult(
+                                    new GetTaskResultRequest(
+                                            user, jobDO.getId(), jobDO.getJobType()));
             return new JobDetailResponse(
-                    jobDO,
-                    MLExecutorClient.getJobResult(
-                            new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType())));
+                    jobDO, modelJobData.getJobPlanetResult(), modelJobData.getModelData());
         }
         JobDetailResponse response = new JobDetailResponse(jobDO);
         // the psi job, parse the output
