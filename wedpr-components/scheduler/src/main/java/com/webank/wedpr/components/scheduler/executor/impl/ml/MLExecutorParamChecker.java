@@ -33,7 +33,12 @@ public class MLExecutorParamChecker implements ExecutorParamChecker {
 
     @Override
     public List<JobType> getJobTypeList() {
-        return new ArrayList<>(Arrays.asList(JobType.XGB_PREDICT, JobType.XGB_TRAIN));
+        return new ArrayList<>(
+                Arrays.asList(
+                        JobType.XGB_PREDICT,
+                        JobType.XGB_TRAIN,
+                        JobType.LR_TRAIN,
+                        JobType.LR_PREDICT));
     }
 
     @Override

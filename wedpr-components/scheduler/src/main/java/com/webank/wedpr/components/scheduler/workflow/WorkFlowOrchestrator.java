@@ -56,7 +56,7 @@ public class WorkFlowOrchestrator implements WorkFlowOrchestratorApi {
         jobDO.setOriginalJobType(jobDO.getType());
         if (JobType.isPSIJob(jobType)) {
             workflow = buildPSIWorkFlow(jobDO);
-        } else if (JobType.isXGBJob(jobType)) {
+        } else if (JobType.isMultiPartyMlJob(jobType)) {
             workflow = buildXGBWorkFlow(jobDO, workflow);
         } else if (JobType.isMPCJob(jobType)) {
             workflow = buildMPCWorkFlow(jobDO, workflow);

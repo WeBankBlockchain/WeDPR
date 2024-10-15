@@ -281,7 +281,7 @@ public class PSIJobParam {
                     Boolean.TRUE,
                     extractFilePath,
                     updatedInput.getPath(),
-                    false);
+                    true);
             partyInfo.setDataset(updatedInput);
 
             logger.info(

@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.workflow.builder;
 
+import com.webank.wedpr.common.protocol.WorkerNodeType;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.project.dao.JobDO;
@@ -35,7 +36,8 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
 
         WorkFlow workflow = new WorkFlow(jobDO.getId());
 
-        WorkFlowNode workflowNode = addWorkFlowNode(workflow, null, jobDO.getJobType(), args);
+        WorkFlowNode workflowNode =
+                addWorkFlowNode(workflow, null, jobDO.getType().getWorkerNodeType(), args);
         List<WorkFlowBuilderDependencyHandler> depsHandlers =
                 jobWorkflowBuilderManager.getHandler(jobDO.getJobType());
         if (depsHandlers != null) {
@@ -54,7 +56,10 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
         int index = upstream.getIndex();
         WorkFlowNode workflowNode =
                 addWorkFlowNode(
-                        workflow, Collections.singletonList(index), jobDO.getJobType(), args);
+                        workflow,
+                        Collections.singletonList(index),
+                        jobDO.getType().getWorkerNodeType(),
+                        args);
 
         List<WorkFlowBuilderDependencyHandler> handlers =
                 jobWorkflowBuilderManager.getHandler(jobDO.getJobType());
@@ -68,12 +73,12 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
     }
 
     private WorkFlowNode addWorkFlowNode(
-            WorkFlow workflow, List<Integer> upstreams, String jobType, Object args)
+            WorkFlow workflow, List<Integer> upstreams, WorkerNodeType workerNodeType, Object args)
             throws Exception {
         // args
         String argsAsString = ObjectMapperFactory.getObjectMapper().writeValueAsString(args);
         // workflow build
-        return workflow.addWorkFlowNode(upstreams, jobType, argsAsString);
+        return workflow.addWorkFlowNode(upstreams, workerNodeType.getType(), argsAsString);
     }
 
     @Override

@@ -92,7 +92,7 @@ public class ExecutorManagerImpl implements ExecutorManager {
                 proceedingJobs.remove(executiveContext);
                 return;
             }
-            ExecuteResult result = executor.queryStatus(executiveContext.getTaskID());
+            ExecuteResult result = executor.queryStatus(executiveContext.getJob().getId());
             if (result.finished()) {
                 executiveContext.onTaskFinished(result);
                 proceedingJobs.remove(executiveContext);

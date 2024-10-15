@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
@@ -23,7 +24,6 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.PreprocessingRequest;
-import com.webank.wedpr.components.scheduler.executor.impl.ml.request.XGBJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.model.AlgorithmType;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
@@ -32,13 +32,19 @@ import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ModelJobParam {
 
     @JsonIgnore private transient String jobID;
     @JsonIgnore private transient JobType jobType;
     // the model Setting
     private Object modelSetting;
+    // the model parm for predicting
+    private String modelPredictAlgorithm;
+
     // the dataset information
     private List<DatasetInfo> dataSetList;
 
@@ -69,11 +75,23 @@ public class ModelJobParam {
         }
         parseLabelProviderInfo();
         parseParticipants();
-        // set the model params
-        XGBModelSetting xgbModelSetting =
-                ObjectMapperFactory.getObjectMapper()
-                        .convertValue(modelSetting, XGBModelSetting.class);
-        this.modelRequest.setModelParam(xgbModelSetting);
+        // set the model params for the not-predicting job
+        if (!jobType.predictJob() && modelSetting == null) {
+            throw new WeDPRException(
+                    "The job with type " + jobType.getType() + " must define settings!");
+        }
+        this.modelRequest.setModelParam(modelSetting);
+        if (modelSetting != null) {
+            BaseModelSetting baseModelSetting =
+                    ObjectMapperFactory.getObjectMapper()
+                            .convertValue(modelSetting, BaseModelSetting.class);
+            this.modelRequest.setBaseModelSetting(baseModelSetting);
+        }
+
+        // set the model params for the predicting job
+        if (jobType.predictJob()) {
+            this.modelRequest.setModelPredictAlgorithm(this.modelPredictAlgorithm);
+        }
     }
 
     public void parseLabelProviderInfo() throws Exception {
@@ -106,7 +124,7 @@ public class ModelJobParam {
             throw new WeDPRException("Invalid model job param, Must define the labelProvider");
         }
         // set the label provider information
-        modelRequest.setLabelProvider(
+        modelRequest.setIsLabelProvider(
                 (this.labelProviderDataset
                                 .getDataset()
                                 .getOwnerAgency()
@@ -147,18 +165,18 @@ public class ModelJobParam {
                 "Job " + jobType.getType() + "can't be converted to preprocessing request!");
     }
 
-    public FeatureEngineeringRequest toFeatureEngineerRequest() throws Exception {
-        if (!((XGBModelSetting) modelRequest.getModelParam()).getUseIv()) {
+    public FeatureEngineeringRequest toFeatureEngineerRequest() {
+        if (!(modelRequest.getBaseModelSetting()).getUseIv()) {
             return null;
         }
         return new FeatureEngineeringRequest(modelRequest);
     }
 
-    public XGBJobRequest toXGBJobRequest() throws Exception {
-        if (!JobType.isXGBJob(this.jobType.getType())) {
+    public ModelJobRequest toMultiPartyMlJobRequest() {
+        if (!JobType.isMultiPartyMlJob(this.jobType.getType())) {
             return null;
         }
-        return new XGBJobRequest(modelRequest, this.jobType);
+        return new ModelJobRequest(modelRequest, this.jobType);
     }
 
     public void parseIDFilePath(FileMetaBuilder fileMetaBuilder) {
@@ -187,67 +205,11 @@ public class ModelJobParam {
         return psiJobParam;
     }
 
-    public String getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
-
-    public Object getModelSetting() {
-        return modelSetting;
-    }
-
-    public void setModelSetting(Object modelSetting) {
-        this.modelSetting = modelSetting;
-    }
-
-    public List<DatasetInfo> getDataSetList() {
-        return dataSetList;
-    }
-
-    public void setDataSetList(List<DatasetInfo> dataSetList) {
-        this.dataSetList = dataSetList;
-    }
-
-    public DatasetInfo getSelfDataset() {
-        return selfDataset;
-    }
-
-    public void setSelfDataset(DatasetInfo selfDataset) {
-        this.selfDataset = selfDataset;
-    }
-
-    public DatasetInfo getLabelProviderDataset() {
-        return labelProviderDataset;
-    }
-
-    public void setLabelProviderDataset(DatasetInfo labelProviderDataset) {
-        this.labelProviderDataset = labelProviderDataset;
-    }
-
-    public List<String> getDatasetIDList() {
-        return datasetIDList;
-    }
-
-    public void setDatasetIDList(List<String> datasetIDList) {
-        this.datasetIDList = datasetIDList;
-    }
-
     public boolean usePSI() {
-        if (this.modelRequest == null || this.modelRequest.getModelParam() == null) {
+        if (this.modelRequest == null || this.modelRequest.getBaseModelSetting() == null) {
             return false;
         }
-        return ((XGBModelSetting) this.modelRequest.getModelParam()).getUsePsi();
+        return this.modelRequest.getBaseModelSetting().getUsePsi();
     }
 
     public String serialize() throws Exception {

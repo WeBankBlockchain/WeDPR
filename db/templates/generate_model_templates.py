@@ -1,6 +1,6 @@
 import json
 
-xgb_model_template = [{
+common_template = [{
     'label': 'use_psi',
     'type': 'bool',
     'value': 0,
@@ -107,19 +107,64 @@ xgb_model_template = [{
     'max_value': 1,
     'description': '是否采用goss抽样加速训练, 只能为0或1'
 }, {
+    'label': 'silent',
+    'type': 'bool',
+    'value': 0,
+    'min_value': 0,
+    'max_value': 1,
+    'description': '值为1时不打印运行信息,只能为0或1'
+}, {
+    'label': 'verbose_eval',
+    'type': 'int',
+    'value': 1,
+    'min_value': 0,
+    'max_value': 100,
+    'description': '按传入的间隔输出训练过程中的评估信息,0表示不打印'
+}, {
+    'label': 'eval_set_column',
+    'type': 'string',
+    'value': '',
+    'description': '指定训练集测试集标记字段名称'
+}, {
+    'label': 'train_set_value',
+    'type': 'string',
+    'value': '',
+    'description': '指定训练集标记值'
+}, {
+    'label': 'eval_set_value',
+    'type': 'string',
+    'value': '',
+    'description': '指定测试集标记值'
+}, {
+    'label': 'train_features',
+    'type': 'string',
+    'value': '',
+    'description': '指定入模特征'
+},
+    {
+    'label': 'learning_rate',
+        'type': 'float',
+        'value': 0.1,
+        'min_value': 0.01,
+        'max_value': 1,
+        'description': '学习率, 取值范围为0.01~1之间'
+},
+    {
+        'label': 'random_state',
+        'type': 'str',
+        'value': "",
+        'description': '随机数种子'
+}
+]
+
+
+xgb_model_template = [{
     'label': 'test_dataset_percentage',
     'type': 'float',
     'value': 0.3,
     'min_value': 0.1,
     'max_value': 0.5,
     'description': '测试集比例, 取值范围为0.1~0.5之间'
-}, {
-    'label': 'learning_rate',
-    'type': 'float',
-    'value': 0.1,
-    'min_value': 0.01,
-    'max_value': 1,
-    'description': '学习率, 取值范围为0.01~1之间'
 }, {
     'label': 'num_trees',
     'type': 'int',
@@ -219,33 +264,34 @@ xgb_model_template = [{
     'type': 'string',
     'value': 'auc',
     'description': '早停的评估指标,支持auc, acc, recall, precision'
-}, {
-    'label': 'verbose_eval',
-    'type': 'int',
-    'value': 1,
-    'min_value': 0,
-    'max_value': 100,
-    'description': '按传入的间隔输出训练过程中的评估信息,0表示不打印'
-}, {
-    'label': 'eval_set_column',
-    'type': 'string',
-    'value': '',
-    'description': '指定训练集测试集标记字段名称'
-}, {
-    'label': 'train_set_value',
-    'type': 'string',
-    'value': '',
-    'description': '指定训练集标记值'
-}, {
-    'label': 'eval_set_value',
-    'type': 'string',
-    'value': '',
-    'description': '指定测试集标记值'
-}, {
-    'label': 'train_features',
-    'type': 'string',
-    'value': '',
-    'description': '指定入模特征'
 }]
 
-print("%s" % json.dumps(xgb_model_template, ensure_ascii=False))
+print("##### Generate XGB setting template")
+print("%s" % json.dumps(common_template + xgb_model_template, ensure_ascii=False))
+print("##### Generate XGB setting template done")
+
+lr_model_template = [{
+    'label': 'epochs',
+    'type': 'int',
+    'value': 3,
+    'min_value': 1,
+    'description': '数据迭代轮数'
+},
+    {
+    'label': 'batch_size',
+        'type': 'int',
+        'value': 16,
+        'min_value': 1,
+        'description': '每次训练迭代中使用的数据量'
+},
+    {
+    'label': 'feature_rate',
+        'type': 'float',
+        'value': 1.0,
+        'description': ''
+}
+]
+
+print("##### Generate LR setting template")
+print("%s" % json.dumps(common_template + lr_model_template, ensure_ascii=False))
+print("##### Generate LR setting template done")

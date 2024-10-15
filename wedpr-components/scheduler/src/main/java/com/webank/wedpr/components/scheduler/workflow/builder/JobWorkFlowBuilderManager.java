@@ -6,8 +6,8 @@ import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutor;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobParam;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
+import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.PreprocessingRequest;
-import com.webank.wedpr.components.scheduler.executor.impl.ml.request.XGBJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCJobParam;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.MLPSIExecutor;
@@ -85,6 +85,10 @@ public class JobWorkFlowBuilderManager {
                 JobType.XGB_TRAIN.getType(), new JobWorkFlowBuilderImpl(new MLExecutor(), this));
         registerJobWorkFlowBuilder(
                 JobType.XGB_PREDICT.getType(), new JobWorkFlowBuilderImpl(new MLExecutor(), this));
+        registerJobWorkFlowBuilder(
+                JobType.LR_TRAIN.getType(), new JobWorkFlowBuilderImpl(new MLExecutor(), this));
+        registerJobWorkFlowBuilder(
+                JobType.LR_PREDICT.getType(), new JobWorkFlowBuilderImpl(new MLExecutor(), this));
 
         logger.info("register job workflow builder end");
     }
@@ -93,7 +97,7 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.ML_PSI.getType(),
                 (jobDO, workflow, upstream) -> {
-                    // preprocessing
+                    // the next work is preprocessing
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
                     PreprocessingRequest preprocessingRequest =
                             modelJobParam.toPreprocessingRequest(fileMetaBuilder);
@@ -109,7 +113,6 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.MPC_PSI.getType(),
                 (jobDO, workflow, upstream) -> {
-                    // preprocessing
                     MPCJobParam mpcJobParam = (MPCJobParam) jobDO.getJobParam();
                     mpcJobParam.toMPCJobRequest();
                     /*
@@ -131,6 +134,7 @@ public class JobWorkFlowBuilderManager {
                     if (jobDO.getOriginalJobType() == null) {
                         return;
                     }
+                    // the next work is feature-engineer or multi-party-ml-job
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
                     jobDO.setJobType(JobType.FeatureEngineer.getType());
                     // try to execute FeatureEngineer job
@@ -140,7 +144,7 @@ public class JobWorkFlowBuilderManager {
 
                     // execute xgb request
                     jobDO.setType(jobDO.getOriginalJobType());
-                    if (executeXGBJob(jobDO, modelJobParam, workflow, upstream)) {
+                    if (executeMultiPartyMlJob(jobDO, modelJobParam, workflow, upstream)) {
                         return;
                     }
                 });
@@ -150,8 +154,8 @@ public class JobWorkFlowBuilderManager {
                 (jobDO, workflow, upstream) -> {
                     jobDO.setType(jobDO.getOriginalJobType());
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
-
-                    executeXGBJob(jobDO, modelJobParam, workflow, upstream);
+                    // the next work is multi-party-ml-job
+                    executeMultiPartyMlJob(jobDO, modelJobParam, workflow, upstream);
                 });
     }
 
@@ -173,11 +177,11 @@ public class JobWorkFlowBuilderManager {
         return true;
     }
 
-    private boolean executeXGBJob(
+    private boolean executeMultiPartyMlJob(
             JobDO jobDO, ModelJobParam modelJobParam, WorkFlow workflow, WorkFlowNode upstream)
             throws Exception {
         // execute xgb request
-        XGBJobRequest xgbJobRequest = modelJobParam.toXGBJobRequest();
+        ModelJobRequest xgbJobRequest = modelJobParam.toMultiPartyMlJobRequest();
         if (xgbJobRequest == null) {
             return false;
         }

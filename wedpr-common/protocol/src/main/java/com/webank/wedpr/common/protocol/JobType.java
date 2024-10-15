@@ -26,7 +26,9 @@ public enum JobType {
     MLPreprocessing("PREPROCESSING"),
     FeatureEngineer("FEATURE_ENGINEERING"),
     XGB_TRAIN("XGB_TRAINING"),
+    LR_TRAIN("LR_TRAINING"),
     XGB_PREDICT("XGB_PREDICTING"),
+    LR_PREDICT("LR_PREDICTING"),
     PIR("PIR");
 
     private final String type;
@@ -51,20 +53,24 @@ public enum JobType {
         return (ordinal() == MLPreprocessing.ordinal())
                 || (ordinal() == FeatureEngineer.ordinal())
                 || (ordinal() == XGB_PREDICT.ordinal())
-                || (ordinal() == XGB_TRAIN.ordinal());
+                || (ordinal() == XGB_TRAIN.ordinal())
+                || (ordinal() == LR_TRAIN.ordinal())
+                || (ordinal() == LR_PREDICT.ordinal());
     }
 
     public boolean predictJob() {
-        return ordinal() == XGB_PREDICT.ordinal();
+        return ordinal() == XGB_PREDICT.ordinal() || ordinal() == LR_PREDICT.ordinal();
     }
 
     public boolean trainJob() {
-        return ordinal() == XGB_TRAIN.ordinal();
+        return ordinal() == XGB_TRAIN.ordinal() || ordinal() == LR_TRAIN.ordinal();
     }
 
-    public static Boolean isXGBJob(String jobType) {
+    public static Boolean isMultiPartyMlJob(String jobType) {
         return jobType.compareToIgnoreCase(XGB_TRAIN.getType()) == 0
-                || jobType.compareToIgnoreCase(XGB_PREDICT.getType()) == 0;
+                || jobType.compareToIgnoreCase(XGB_PREDICT.getType()) == 0
+                || jobType.compareToIgnoreCase(LR_TRAIN.getType()) == 0
+                || jobType.compareToIgnoreCase(LR_PREDICT.getType()) == 0;
     }
 
     public static Boolean isPSIJob(String jobType) {
@@ -88,6 +94,23 @@ public enum JobType {
             return ExecutorType.PIR;
         }
         return ExecutorType.REMOTE;
+    }
+
+    public WorkerNodeType getWorkerNodeType() throws Exception {
+        if (ordinal() == JobType.PSI.ordinal()
+                || ordinal() == JobType.ML_PSI.ordinal()
+                || ordinal() == JobType.MPC_PSI.ordinal()) {
+            return WorkerNodeType.PSI;
+        }
+        if (ordinal() == JobType.MLPreprocessing.ordinal()
+                || ordinal() == JobType.FeatureEngineer.ordinal()
+                || ordinal() == JobType.XGB_TRAIN.ordinal()
+                || ordinal() == JobType.LR_TRAIN.ordinal()
+                || ordinal() == JobType.XGB_PREDICT.ordinal()
+                || ordinal() == JobType.LR_PREDICT.ordinal()) {
+            return WorkerNodeType.MODEL;
+        }
+        throw new WeDPRException("Not find the workerNodeType for the " + getType() + " job!");
     }
 
     public static JobType deserialize(String type) {

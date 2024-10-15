@@ -15,15 +15,21 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.BaseRequest;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.components.scheduler.executor.impl.ml.model.BaseModelSetting;
+import com.webank.wedpr.components.scheduler.executor.impl.model.AlgorithmType;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ModelJobRequest implements BaseRequest {
     @JsonProperty("psi_result_path")
@@ -59,6 +65,9 @@ public class ModelJobRequest implements BaseRequest {
     @JsonProperty("model_dict")
     protected Object modelParam;
 
+    // the baseModelSetting used to determine need to run psi/featureEngineer or not
+    @JsonIgnore protected BaseModelSetting baseModelSetting;
+
     @JsonProperty("model_predict_algorithm")
     protected String modelPredictAlgorithm;
 
@@ -76,27 +85,17 @@ public class ModelJobRequest implements BaseRequest {
         this.setResultReceiverIDList(modelJobRequest.getResultReceiverIDList());
         this.setTaskID(modelJobRequest.getTaskID());
         this.setTaskType(modelJobRequest.getTaskType());
-        this.setLabelProvider(modelJobRequest.getLabelProvider());
+        this.setIsLabelProvider(modelJobRequest.getIsLabelProvider());
     }
 
-    public String getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public String getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
-    }
-
-    public String getDatasetPath() {
-        return datasetPath;
+    public ModelJobRequest(ModelJobRequest modelJobRequest, JobType jobType) {
+        this(modelJobRequest);
+        this.setTaskType(jobType.getType());
+        if (jobType.trainJob()) {
+            this.algorithmType = AlgorithmType.WEDPR_TRAIN.getType();
+        } else {
+            this.algorithmType = AlgorithmType.WEDPR_PREDICT.getType();
+        }
     }
 
     public void setDatasetPath(String datasetPath) {
@@ -112,75 +111,11 @@ public class ModelJobRequest implements BaseRequest {
         this.datasetID = Common.getFileName(datasetPath);
     }
 
-    public String getAlgorithmType() {
-        return algorithmType;
-    }
-
-    public void setAlgorithmType(String algorithmType) {
-        this.algorithmType = algorithmType;
-    }
-
-    public List<String> getResultReceiverIDList() {
-        return resultReceiverIDList;
-    }
-
-    public void setResultReceiverIDList(List<String> resultReceiverIDList) {
-        this.resultReceiverIDList = resultReceiverIDList;
-    }
-
-    public List<String> getParticipantIDList() {
-        return participantIDList;
-    }
-
-    public void setParticipantIDList(List<String> participantIDList) {
-        this.participantIDList = participantIDList;
-    }
-
-    public String getDatasetID() {
-        return datasetID;
-    }
-
-    public void setDatasetID(String datasetID) {
-        this.datasetID = datasetID;
-    }
-
-    public Object getModelParam() {
-        return modelParam;
-    }
-
-    public void setModelParam(Object modelParam) {
-        this.modelParam = modelParam;
-    }
-
-    public String getTaskID() {
-        return taskID;
-    }
-
     public void setTaskID(String taskID) {
         if (StringUtils.isBlank(taskID)) {
             return;
         }
         this.taskID = taskID;
-    }
-
-    public String getModelPredictAlgorithm() {
-        return modelPredictAlgorithm;
-    }
-
-    public void setModelPredictAlgorithm(String modelPredictAlgorithm) {
-        this.modelPredictAlgorithm = modelPredictAlgorithm;
-    }
-
-    public Boolean getLabelProvider() {
-        return isLabelProvider;
-    }
-
-    public void setLabelProvider(Boolean labelProvider) {
-        isLabelProvider = labelProvider;
-    }
-
-    public String getIdFilePath() {
-        return idFilePath;
     }
 
     public void setIdFilePath(String idFilePath) {

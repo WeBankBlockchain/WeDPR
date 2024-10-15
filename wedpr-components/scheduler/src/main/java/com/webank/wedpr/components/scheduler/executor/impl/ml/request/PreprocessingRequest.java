@@ -18,14 +18,12 @@ package com.webank.wedpr.components.scheduler.executor.impl.ml.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webank.wedpr.common.protocol.JobType;
-import com.webank.wedpr.components.scheduler.executor.impl.ml.model.XGBModelSetting;
 import com.webank.wedpr.components.scheduler.executor.impl.model.AlgorithmType;
+import lombok.Data;
 
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PreprocessingRequest extends ModelJobRequest {
-
-    @JsonProperty("xgb_prepare_path")
-    private String inputFilePath;
 
     @JsonProperty("need_run_psi")
     private Boolean needIntersection;
@@ -35,23 +33,7 @@ public class PreprocessingRequest extends ModelJobRequest {
     public PreprocessingRequest(ModelJobRequest modelJobRequest, AlgorithmType algorithmType) {
         super(modelJobRequest);
         this.algorithmType = algorithmType.getType();
-        this.needIntersection = ((XGBModelSetting) modelParam).getUsePsi();
+        this.needIntersection = modelJobRequest.getBaseModelSetting().getUsePsi();
         this.setTaskType(JobType.MLPreprocessing.getType());
-    }
-
-    public String getInputFilePath() {
-        return inputFilePath;
-    }
-
-    public void setInputFilePath(String inputFilePath) {
-        this.inputFilePath = inputFilePath;
-    }
-
-    public Boolean getNeedIntersection() {
-        return needIntersection;
-    }
-
-    public void setNeedIntersection(Boolean needIntersection) {
-        this.needIntersection = needIntersection;
     }
 }
