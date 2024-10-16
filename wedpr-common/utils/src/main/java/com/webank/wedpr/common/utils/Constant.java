@@ -76,4 +76,5 @@ public class Constant {
 
     public static final String PUBLISH_ID_PREFIX = "s-";
     public static final String DEFAULT_JOB_GROUP = "wedpr";
+    public static final String RESERVE_SETTING_PREFIX = "SYS_";
 }

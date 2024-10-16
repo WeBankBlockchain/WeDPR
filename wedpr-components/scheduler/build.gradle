@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    compile project(":wedpr-components-setting-template")
     compile project(":wedpr-components-storage")
     compile project(":wedpr-common-utils")
     compile project(":wedpr-components-uuid")

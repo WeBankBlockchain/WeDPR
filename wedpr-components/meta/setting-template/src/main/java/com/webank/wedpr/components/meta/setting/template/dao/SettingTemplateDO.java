@@ -16,15 +16,25 @@
 package com.webank.wedpr.components.meta.setting.template.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+@Data
+@ToString
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SettingTemplateDO extends TimeRange {
     public static final String DEFAULT_TEMPLATE_OWNER = "*";
     private String id = WeDPRUuidGenerator.generateID();
@@ -37,78 +47,6 @@ public class SettingTemplateDO extends TimeRange {
     private String lastUpdateTime;
     @JsonIgnore private transient List<String> queriedOwners;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getAgency() {
-        return agency;
-    }
-
-    public void setAgency(String agency) {
-        this.agency = agency;
-    }
-
-    public String getSetting() {
-        return setting;
-    }
-
-    public void setSetting(String setting) {
-        this.setting = setting;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public List<String> getQueriedOwners() {
-        return queriedOwners;
-    }
-
-    public void setQueriedOwners(List<String> queriedOwners) {
-        this.queriedOwners = queriedOwners;
-    }
-
     @SneakyThrows(WeDPRException.class)
     public void checkInsert(Boolean admin) {
         Common.requireNonEmpty("id", this.id);
@@ -118,43 +56,32 @@ public class SettingTemplateDO extends TimeRange {
         if (admin) {
             return;
         }
-        if (StringUtils.isNotBlank(this.owner) && this.owner.equals(DEFAULT_TEMPLATE_OWNER)) {
+        if (getName().startsWith(Constant.RESERVE_SETTING_PREFIX)) {
             throw new WeDPRException(
-                    "Only the admins have permissions to insert default settings!");
+                    "The non-admin user can't update or create the settings start with "
+                            + Constant.RESERVE_SETTING_PREFIX);
         }
     }
 
-    public void checkUpdate(String owner, Boolean admin) {
+    public void checkUpdate(String owner, Boolean admin) throws Exception {
         Common.requireNonEmpty("id", this.id);
         if (admin) {
             return;
+        }
+        if (getName().startsWith(Constant.RESERVE_SETTING_PREFIX)) {
+            throw new WeDPRException(
+                    "The non-admin user can't update or create the settings start with "
+                            + Constant.RESERVE_SETTING_PREFIX);
         }
         // the non-admin can only update themselves record
         setOwner(owner);
         setAgency(WeDPRCommonConfig.getAgency());
     }
 
-    @Override
-    public String toString() {
-        return "SettingTemplateDO{"
-                + "id='"
-                + id
-                + '\''
-                + ", name='"
-                + name
-                + '\''
-                + ", type='"
-                + type
-                + '\''
-                + ", agency='"
-                + agency
-                + '\''
-                + ", owner='"
-                + owner
-                + '\''
-                + ", setting='"
-                + setting
-                + '\''
-                + '}';
+    public static SettingTemplateDO deserialize(String data) throws Exception {
+        if (StringUtils.isBlank(data)) {
+            return null;
+        }
+        return ObjectMapperFactory.getObjectMapper().readValue(data, SettingTemplateDO.class);
     }
 }

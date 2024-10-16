@@ -39,7 +39,7 @@ public class TemplateSettingRequest {
         }
     }
 
-    public void checkUpdate(String owner, Boolean admin) {
+    public void checkUpdate(String owner, Boolean admin) throws Exception {
         for (SettingTemplateDO setting : templateList) {
             setting.checkUpdate(owner, admin);
         }

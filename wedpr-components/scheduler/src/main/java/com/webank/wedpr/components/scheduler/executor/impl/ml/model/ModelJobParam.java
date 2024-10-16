@@ -21,6 +21,7 @@ import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.PreprocessingRequest;
@@ -90,7 +91,8 @@ public class ModelJobParam {
 
         // set the model params for the predicting job
         if (jobType.predictJob()) {
-            this.modelRequest.setModelPredictAlgorithm(this.modelPredictAlgorithm);
+            this.modelRequest.setModelPredictAlgorithm(
+                    SettingTemplateDO.deserialize(this.modelPredictAlgorithm).getSetting());
         }
     }
 

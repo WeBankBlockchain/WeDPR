@@ -39,7 +39,7 @@ public class TemplateSettingServiceImpl implements TemplateSettingService {
 
     @Override
     public WeDPRResponse batchInsertTemplateSettings(
-            Boolean admin, String user, TemplateSettingRequest settings) {
+            Boolean admin, String user, TemplateSettingRequest settings) throws Exception {
         settings.checkCreate(admin);
         settings.setOwnerInfo(admin, user);
 
@@ -52,7 +52,7 @@ public class TemplateSettingServiceImpl implements TemplateSettingService {
 
     @Override
     public WeDPRResponse batchUpdateTemplateSettings(
-            Boolean admin, String user, TemplateSettingRequest settings) {
+            Boolean admin, String user, TemplateSettingRequest settings) throws Exception {
         settings.checkUpdate(user, admin);
         WeDPRResponse response =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);

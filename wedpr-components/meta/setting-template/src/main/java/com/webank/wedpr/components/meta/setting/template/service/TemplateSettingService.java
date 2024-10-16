@@ -22,10 +22,10 @@ import java.util.List;
 
 public interface TemplateSettingService {
     public abstract WeDPRResponse batchInsertTemplateSettings(
-            Boolean admin, String user, TemplateSettingRequest settings);
+            Boolean admin, String user, TemplateSettingRequest settings) throws Exception;
 
     public abstract WeDPRResponse batchUpdateTemplateSettings(
-            Boolean admin, String user, TemplateSettingRequest settings);
+            Boolean admin, String user, TemplateSettingRequest settings) throws Exception;
 
     public abstract WeDPRResponse deleteTemplateSettings(
             Boolean admin, String user, List<String> templateIDList);
