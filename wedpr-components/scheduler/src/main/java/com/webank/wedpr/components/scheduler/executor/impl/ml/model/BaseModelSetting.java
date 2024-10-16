@@ -29,4 +29,18 @@ public class BaseModelSetting {
 
     @JsonProperty("use_iv")
     private Boolean useIv = false;
+
+    public void setUsePsi(Boolean usePsi) {
+        if (usePsi == null) {
+            return;
+        }
+        this.usePsi = usePsi;
+    }
+
+    public void setUseIv(Boolean useIv) {
+        if (useIv == null) {
+            return;
+        }
+        this.useIv = useIv;
+    }
 }

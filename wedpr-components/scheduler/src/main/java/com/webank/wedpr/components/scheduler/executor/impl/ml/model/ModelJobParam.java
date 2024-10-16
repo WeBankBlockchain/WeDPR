@@ -75,8 +75,8 @@ public class ModelJobParam {
         }
         parseLabelProviderInfo();
         parseParticipants();
-        // set the model params for the not-predicting job
-        if (!jobType.predictJob() && modelSetting == null) {
+        // set the model params for all the jobs
+        if (modelSetting == null) {
             throw new WeDPRException(
                     "The job with type " + jobType.getType() + " must define settings!");
         }
