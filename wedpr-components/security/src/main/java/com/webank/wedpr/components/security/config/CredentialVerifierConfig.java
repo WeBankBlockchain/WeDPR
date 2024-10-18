@@ -41,7 +41,6 @@ public class CredentialVerifierConfig {
     public CredentialVerifier credentialVerifier() throws Exception {
         CryptoToolkit cryptoToolkit = CryptoToolkitFactory.build();
         CredentialToolkit toolkit = new CredentialToolkit(cryptoToolkit);
-        return new CredentialVerifierImpl(
-                cryptoToolkit, new MemoryCredentialCache(credentialMapper, toolkit));
+        return new CredentialVerifierImpl(new MemoryCredentialCache(credentialMapper, toolkit));
     }
 }

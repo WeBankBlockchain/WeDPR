@@ -14,21 +14,22 @@
  */
 package com.webank.wedpr.components.api.credential.core.impl;
 
-import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.config.CryptoConfig;
 
 public class CredentialInfoFactory {
     private final String accessKeyID;
     private final String accessSecret;
-    private final CryptoToolkit cryptoToolkit;
 
-    public CredentialInfoFactory(
-            String accessKeyID, String accessSecret, CryptoToolkit cryptoToolkit) {
+    public CredentialInfoFactory(String accessKeyID, String accessSecret) {
         this.accessKeyID = accessKeyID;
         this.accessSecret = accessSecret;
-        this.cryptoToolkit = cryptoToolkit;
+    }
+
+    public CredentialInfo build(String hashAlgorithm) throws Exception {
+        return new CredentialInfo(hashAlgorithm, this.accessKeyID, this.accessSecret);
     }
 
     public CredentialInfo build() throws Exception {
-        return new CredentialInfo(this.accessKeyID, this.accessSecret, cryptoToolkit);
+        return build(CryptoConfig.SHA256_ALGORITHM);
     }
 }

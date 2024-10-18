@@ -17,10 +17,11 @@ package com.webank.wedpr.components.api.credential.core.impl;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.config.CryptoConfig;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,14 @@ public class ApiSignature {
     public static String NONCE_KEY = "nonce";
     public static String TIMESTAMP_KEY = "timestamp";
     public static String SIGNATURE_KEY = "signature";
+    public static String HASH_ALGORITHM_KEY = "hashAlgorithm";
 
     private String accessKeyID;
     private String nonce;
     private String timestamp;
     private String signature;
+    // default use SHA256_ALGORITHM
+    private String hashAlgorithm = CryptoConfig.SHA256_ALGORITHM;
 
     public ApiSignature(CredentialInfo credentialInfo) throws Exception {
         this.accessKeyID = credentialInfo.getAccessKeyID();
@@ -50,6 +54,7 @@ public class ApiSignature {
         this.nonce = request.getParameter(NONCE_KEY);
         this.timestamp = request.getParameter(TIMESTAMP_KEY);
         this.signature = request.getParameter(SIGNATURE_KEY);
+        this.hashAlgorithm = request.getParameter(HASH_ALGORITHM_KEY);
         // check the content
         check();
     }
@@ -71,21 +76,26 @@ public class ApiSignature {
         }
     }
 
-    public String generateSignature(CryptoToolkit cryptoToolkit, String accessKeySecret)
-            throws Exception {
-        // hash(hash(accessKeyID + nonce + timestamp) + accessKeySecret)
-        return cryptoToolkit.hash(
-                cryptoToolkit.hash(accessKeyID + nonce + timestamp) + accessKeySecret);
-    }
-
-    public boolean verifySignature(CryptoToolkit cryptoToolkit, String accessKeySecret)
-            throws Exception {
+    public boolean verifySignature(String accessKeySecret) throws Exception {
         try {
-            String generatedSignature = generateSignature(cryptoToolkit, accessKeySecret);
+            String generatedSignature =
+                    CredentialInfo.generateSignature(
+                            this.hashAlgorithm,
+                            this.getAccessKeyID(),
+                            this.getNonce(),
+                            this.getTimestamp(),
+                            accessKeySecret);
             return generatedSignature.equals(signature);
         } catch (Exception e) {
             logger.warn("verifySignature exception, accessID: {}, error: ", accessKeyID, e);
             return false;
         }
+    }
+
+    public void setHashAlgorithm(String hashAlgorithm) {
+        if (StringUtils.isBlank(hashAlgorithm)) {
+            return;
+        }
+        this.hashAlgorithm = hashAlgorithm;
     }
 }

@@ -22,7 +22,6 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialVerifierImpl;
-import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.*;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
@@ -110,9 +109,7 @@ public class PirServiceImpl implements PirService {
         this.pirServiceHook = new PirServiceHook(serviceHook, serviceInvokeMapper);
         this.pirTopicSubscriber =
                 new PirTopicSubscriberImpl(
-                        weDPRTransport,
-                        new CredentialVerifierImpl(CryptoToolkitFactory.build(), null),
-                        pirServiceHook);
+                        weDPRTransport, new CredentialVerifierImpl(null), pirServiceHook);
         registerPublishedServices();
         this.serviceAuthVerifier = new ServiceAuthVerifierImpl(serviceAuthMapper);
     }

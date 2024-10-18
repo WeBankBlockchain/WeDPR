@@ -18,15 +18,12 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.api.credential.core.CredentialCache;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
-import com.webank.wedpr.components.crypto.CryptoToolkit;
 import javax.servlet.http.HttpServletRequest;
 
 public class CredentialVerifierImpl implements CredentialVerifier {
-    private final CryptoToolkit cryptoToolkit;
     private final CredentialCache credentialCache;
 
-    public CredentialVerifierImpl(CryptoToolkit cryptoToolkit, CredentialCache credentialCache) {
-        this.cryptoToolkit = cryptoToolkit;
+    public CredentialVerifierImpl(CredentialCache credentialCache) {
         this.credentialCache = credentialCache;
     }
 
@@ -34,7 +31,7 @@ public class CredentialVerifierImpl implements CredentialVerifier {
     public CredentialInfo verify(CredentialInfo credentialInfo) throws Exception {
         ApiSignature apiSignature = new ApiSignature(credentialInfo);
         // verify the signature
-        if (!apiSignature.verifySignature(cryptoToolkit, credentialInfo.getAccessSecret())) {
+        if (!apiSignature.verifySignature(credentialInfo.getAccessSecret())) {
             throw new WeDPRException("access forbidden for invalid signature!");
         }
         return credentialInfo;
@@ -56,7 +53,7 @@ public class CredentialVerifierImpl implements CredentialVerifier {
                     "access forbidden for disabled accessKey: " + apiSignature.getAccessKeyID());
         }
         // verify the signature
-        if (!apiSignature.verifySignature(cryptoToolkit, apiCredentialDO.getAccessKeySecret())) {
+        if (!apiSignature.verifySignature(apiCredentialDO.getAccessKeySecret())) {
             throw new WeDPRException("access forbidden for invalid signature!");
         }
         return new ApiCredentialDO(

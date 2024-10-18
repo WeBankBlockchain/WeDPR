@@ -24,6 +24,7 @@ import com.webank.wedpr.components.api.credential.core.impl.CredentialInfo;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialDO;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.config.CryptoConfig;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.pir.sdk.PirSDK;
@@ -128,8 +129,11 @@ public class PirExecutor implements Executor {
                             + pirQueryParam.getServiceId()
                             + " for no corresponding accessKeyID");
         }
+        // use sha256 hash algorithm
         return new CredentialInfo(
-                result.get(0).getAccessKeyID(), result.get(0).getAccessKeySecret(), cryptoToolkit);
+                CryptoConfig.SHA256_ALGORITHM,
+                result.get(0).getAccessKeyID(),
+                result.get(0).getAccessKeySecret());
     }
 
     @Override
