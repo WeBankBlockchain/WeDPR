@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.webank.wedpr.common.protocol.CertStatusViewEnum;
 import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.FormatCheckUtils;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.admin.common.Utils;
@@ -51,6 +52,12 @@ public class WedprAgencyServiceImpl extends ServiceImpl<WedprAgencyMapper, Wedpr
     public String createOrUpdateAgency(
             CreateOrUpdateWedprAgencyRequest createOrUpdateWedprAgencyRequest, UserToken userToken)
             throws WeDPRException {
+        if (!FormatCheckUtils.checkParamFormat(
+                createOrUpdateWedprAgencyRequest.getGatewayEndpoint(),
+                FormatCheckUtils.GATEWAY_ENDPOINT_PATTERN)) {
+            throw new WeDPRException(
+                    "gateway endpoint format error, please provide ip(or domain):port format");
+        }
         String username = userToken.getUsername();
         String agencyId = createOrUpdateWedprAgencyRequest.getAgencyId();
         if (StringUtils.isEmpty(agencyId)) {
