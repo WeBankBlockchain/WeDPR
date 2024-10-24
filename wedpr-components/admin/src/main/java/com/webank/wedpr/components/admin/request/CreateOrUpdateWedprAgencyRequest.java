@@ -1,7 +1,6 @@
 package com.webank.wedpr.components.admin.request;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -23,7 +22,7 @@ public class CreateOrUpdateWedprAgencyRequest {
     @Length(max = 64, message = "agencyContact at most 64 chars")
     private String agencyContact;
 
-    @Pattern(regexp = "^[1]([3-9])[0-9]{9}$", message = "phone format error")
+    @NotBlank(message = "phone is not be empty")
     private String contactPhone;
 
     @NotBlank(message = "gatewayEndpoint is not be empty")
