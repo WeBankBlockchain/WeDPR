@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class GetWedprJobListRequest {
-    @NotBlank private String projectName;
+    @NotBlank private String projectId;
     private String ownerAgency;
     private String jobType;
     private String status;

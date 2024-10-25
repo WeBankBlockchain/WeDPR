@@ -26,8 +26,8 @@ public class WedprJobTable implements Serializable {
     @ApiModelProperty(value = "任务名称")
     private String name;
 
-    @ApiModelProperty(value = "任务所属项目")
-    private String projectName;
+    @ApiModelProperty(value = "任务所属项目Id")
+    private String projectId;
 
     @ApiModelProperty(value = "任务发起人")
     private String owner;
