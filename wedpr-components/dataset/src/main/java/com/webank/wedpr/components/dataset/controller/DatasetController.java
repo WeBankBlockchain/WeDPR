@@ -101,10 +101,8 @@ public class DatasetController {
             Common.requireNonEmpty("datasetTitle", datasetTitle);
 
             String datasetLabel = createDatasetRequest.getDatasetLabel();
-            Common.requireNonEmpty("datasetLabel", datasetLabel);
 
             String datasetDesc = createDatasetRequest.getDatasetDesc();
-            Common.requireNonEmpty("datasetDesc", datasetDesc);
 
             Integer datasetVisibility = createDatasetRequest.getDatasetVisibility();
             Common.requireNonNull("datasetVisibility", datasetVisibility);
