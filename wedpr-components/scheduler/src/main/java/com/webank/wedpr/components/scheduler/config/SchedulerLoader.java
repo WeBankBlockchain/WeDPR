@@ -133,29 +133,6 @@ public class SchedulerLoader {
                         threadPoolService);
         executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
         /*
-        boolean enableLocalDagScheduler = true;
-        if (enableLocalDagScheduler) {
-            DagSchedulerExecutor dagSchedulerExecutor =
-                    new DagSchedulerExecutor(
-                            loadBalancer,
-                            jobWorkerMapper,
-                            jobChecker,
-                            storage,
-                            fileMetaBuilder,
-                            executorManager);
-            executorManager.registerExecutor(ExecutorType.REMOTE.getType(), dagSchedulerExecutor);
-        } else {
-            SchedulerClient schedulerClient = new SchedulerClient();
-            RemoteSchedulerExecutor remoteSchedulerExecutor =
-                    new RemoteSchedulerExecutor(
-                            schedulerClient, jobChecker, storage, fileMetaBuilder);
-
-            executorManager.registerExecutor(
-                    ExecutorType.REMOTE.getType(), remoteSchedulerExecutor);
-        }
-        */
-
-        /*
         // register the executor
         PSIExecutor psiExecutor = new PSIExecutor(storage, fileMetaBuilder, jobChecker);
         executorManager.registerExecutor(JobType.PSI.getType(), psiExecutor);
