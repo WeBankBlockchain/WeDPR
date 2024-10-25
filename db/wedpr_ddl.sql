@@ -178,16 +178,16 @@ create table if not exists `wedpr_setting_template`(
     `create_time` DATETIME DEFAULT  CURRENT_TIMESTAMP comment "算法模板创建时间",
     `last_update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment "算法模板更新时间",
     primary key (`id`),
-    unique index name_index(`name`(128)),
+    index name_index(`name`(128)),
     index type_index(`type`(128)),
-    index agency_index(`agency`(128))
+    index agency_index(`agency`(128)
 )ENGINE=InnoDB default charset=utf8mb4 default collate=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE if not exists `wedpr_dataset` (
     `dataset_id` VARCHAR(64) NOT NULL COMMENT '数据集id',
     `dataset_title` VARCHAR(1024) NOT NULL COMMENT '数据集标题',
-    `dataset_label` VARCHAR(1024) NOT NULL COMMENT '数据集标签',
-    `dataset_desc` TEXT NOT NULL COMMENT '数据集描述',
+    `dataset_label` VARCHAR(1024) DEFAULT '' COMMENT '数据集标签',
+    `dataset_desc` TEXT COMMENT '数据集描述',
     `dataset_fields` TEXT COMMENT '数据源字段以及预览信息',
     `dataset_version_hash` VARCHAR(64) DEFAULT '' COMMENT '数据集hash',
     `dataset_size` bigint DEFAULT 0 COMMENT '数据集大小',

@@ -288,6 +288,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         List<String> authStatusList = new ArrayList<>();
         authStatusList.add(AuthorizationDO.AuthStatus.ToConfirm.getStatus());
         authStatusList.add(AuthorizationDO.AuthStatus.Approving.getStatus());
+        authStatusList.add(AuthorizationDO.AuthStatus.ApproveRejected.getStatus());
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(condition)) {
             List<AuthorizationDO> result =
                     this.authMapperWrapper

@@ -132,6 +132,9 @@
                 <if test="condition.label != null and condition.label !=''">
                     and `label` like concat(#{condition.label}, "%")
                 </if>
+                <if test="condition.projectName != null and condition.projectName !=''">
+                    and `project_name` = #{condition.projectName}
+                </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
