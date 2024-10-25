@@ -120,7 +120,7 @@ create table if not exists `wedpr_project_table`(
 create table if not exists `wedpr_job_table`(
     `id` varchar(64) not null comment "任务ID",
     `name` varchar(1024) comment "任务名称",
-    `project_name` varchar(1024) comment "任务所属项目",
+    `project_id` varchar(64) default '' comment "任务所属项目",
     `owner` varchar(255) not null comment "任务发起人",
     `owner_agency` varchar(255) not null comment "任务发起机构",
     `job_type` varchar(255) not null comment "任务类型",
@@ -135,7 +135,7 @@ create table if not exists `wedpr_job_table`(
     index name_index(`name`(128)),
     index owner_index(`owner`(128)),
     index owner_agency_index(`owner_agency`(128)),
-    index project_index(`project_name`(128)),
+    index project_index(`project_id`),
     index status_index(`status`(128)),
     index report_status_index(`report_status`)
 )ENGINE=InnoDB default charset=utf8mb4 default collate=utf8mb4_bin ROW_FORMAT=DYNAMIC;
