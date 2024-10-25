@@ -252,6 +252,7 @@ public class AuthMapperWrapper {
         WeDPRResponse response =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
         request.getAuthFollowerDO().setUserName(user);
+        request.getAuthFollowerDO().setAgency(WeDPRCommonConfig.getAgency());
         List<FollowerDO> followerDOList =
                 this.followerMapper.queryFollowerList(request.getAuthFollowerDO());
         if (followerDOList == null || followerDOList.isEmpty()) {
