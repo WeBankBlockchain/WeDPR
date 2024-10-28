@@ -64,19 +64,6 @@ public class ProjectServiceImpl implements ProjectService {
             }
             // check
             project.checkCreate();
-            // check the existence
-            ProjectDO condition = new ProjectDO(project.getName());
-            condition.setId(null);
-            List<ProjectDO> existedProjects =
-                    this.projectMapperWrapper
-                            .getProjectMapper()
-                            .queryProject(Boolean.TRUE, condition);
-            if (existedProjects != null && !existedProjects.isEmpty()) {
-                throw new WeDPRException(
-                        "The project "
-                                + project.getName()
-                                + " already exists, please try another project name!");
-            }
             this.projectMapperWrapper.getProjectMapper().insertProjectInfo(project);
             logger.info("createProject success, detail: {}", projectDetail.toString());
             response.setData(project.getId());

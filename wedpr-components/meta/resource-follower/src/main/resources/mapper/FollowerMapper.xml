@@ -42,7 +42,7 @@
                 and `id` like concat(#{condition.id}, '%')
             </if>
             <if test="condition.userName != null and condition.userName !=''">
-                and `user_name` like concat(#{condition.userName}, '%')
+                and `user_name` = #{condition.userName}
             </if>
             <if test="condition.agency != null and condition.agency !=''">
                 and `agency` = #{condition.agency}
