@@ -146,7 +146,7 @@ CREATE TABLE if not exists wedpr_job_worker_table (
     job_id VARCHAR(255),
     type VARCHAR(255),
     status VARCHAR(255),
-    args TEXT,
+    args LONGTEXT,
     upstreams TEXT,
     inputs_statement TEXT,
     outputs TEXT,

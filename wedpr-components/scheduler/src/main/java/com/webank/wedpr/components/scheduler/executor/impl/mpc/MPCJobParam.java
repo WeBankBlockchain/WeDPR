@@ -6,7 +6,6 @@ import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.components.scheduler.client.SchedulerClient;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -33,28 +32,10 @@ public class MPCJobParam {
     // the dataset information
     private List<DatasetInfo> dataSetList;
 
+    @JsonIgnore private DatasetInfo selfDataset;
+    @JsonIgnore private int selfIndex = -1;
+
     @JsonIgnore private transient List<String> datasetIDList;
-
-    public void transferSQL2MPC() throws Exception {
-        if (Common.isEmptyStr(sql)) {
-            return;
-        }
-
-        if (!Common.isEmptyStr(mpcContent)) {
-            return;
-        }
-
-        SchedulerClient schedulerClient = new SchedulerClient();
-        String mpcContent = schedulerClient.transferSQL2MPCContent(jobID, sql);
-
-        this.mpcContent = mpcContent;
-
-        logger.info(
-                "transfer sql to mpc code, jobId: {}, sql: {}, mpc code: {}",
-                jobID,
-                sql,
-                mpcContent);
-    }
 
     public boolean checkNeedRunPSI() {
 
@@ -84,7 +65,6 @@ public class MPCJobParam {
             throw new WeDPRException("Invalid mpc job param, must define the mpc code or sql!");
         }
 
-        this.transferSQL2MPC();
         for (DatasetInfo datasetInfo : dataSetList) {
             datasetInfo.setDatasetIDList(datasetIDList);
             datasetInfo.check();

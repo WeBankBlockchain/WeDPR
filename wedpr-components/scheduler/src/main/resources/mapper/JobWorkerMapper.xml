@@ -33,12 +33,12 @@
     </select>
 
     <insert id="insertJobWorker" parameterType="com.webank.wedpr.components.scheduler.dag.entity.JobWorker">
-        INSERT INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams)
+        INSERT IGNORE INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams)
         VALUES (#{workerId}, #{jobId}, #{type}, #{status}, #{args}, #{upstreams})
     </insert>
 
     <insert id="batchInsertJobWorkers" parameterType="java.util.List">
-        INSERT INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams, inputs_statement, outputs)
+        INSERT IGNORE INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams, inputs_statement, outputs)
         VALUES
         <foreach collection="list" item="jobWorker" separator=",">
             (#{jobWorker.workerId}, #{jobWorker.jobId}, #{jobWorker.type}, #{jobWorker.status}, #{jobWorker.args}, #{jobWorker.upstreams})
