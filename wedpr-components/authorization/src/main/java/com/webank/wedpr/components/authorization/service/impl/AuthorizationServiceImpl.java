@@ -159,25 +159,31 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             updatedAuth.setAuthChain(result.getAuthChain());
             // update the authResult
             updatedAuth.updateResult(authorizer, authResultRequest.getAuthResultDetail());
+            boolean progressToNextAuditor = false;
             if (authResultRequest.getAuthResultDetail().getAuthResultStatus().agree()) {
                 // progress to next applyNode if the auth-result is agreed
                 updatedAuth.progressToNextAuthNode();
+                progressToNextAuditor = true;
                 // update the status to approving
                 if (result.getAuthStatus().toConfirmed()) {
                     updatedAuth.setAuthStatus(AuthorizationDO.AuthStatus.Approving);
                 }
-            } else {
+            } else if (authResultRequest.getAuthResultDetail().getAuthResultStatus().reject()) {
                 // return to the applicant if the auth-result is rejected
                 updatedAuth.progressToApplicant(result.getApplicant(), result.getApplicantAgency());
+                progressToNextAuditor = true;
             }
-            // set the CurrentApplyNode to the follower
-            FollowerDO followerDO =
-                    new FollowerDO(
-                            updatedAuth.getCurrentApplyNode(),
-                            updatedAuth.getCurrentApplyNodeAgency(),
-                            updatedAuth.getId(),
-                            FollowerDO.FollowerType.AUTH_AUDITOR.getType());
-            updatedAuth.setFollowerDOList(new ArrayList<>(Collections.singletonList(followerDO)));
+            if (progressToNextAuditor) {
+                // set the CurrentApplyNode to the follower
+                FollowerDO followerDO =
+                        new FollowerDO(
+                                updatedAuth.getCurrentApplyNode(),
+                                updatedAuth.getCurrentApplyNodeAgency(),
+                                updatedAuth.getId(),
+                                FollowerDO.FollowerType.AUTH_AUDITOR.getType());
+                updatedAuth.setFollowerDOList(
+                        new ArrayList<>(Collections.singletonList(followerDO)));
+            }
             return updateAuth(authorizer, new AuthRequest(updatedAuth, false), false);
         } catch (Exception e) {
             logger.warn(

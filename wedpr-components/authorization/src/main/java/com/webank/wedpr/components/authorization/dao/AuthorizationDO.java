@@ -68,6 +68,10 @@ public class AuthorizationDO extends TimeRange {
             return this.ordinal() == Approving.ordinal() || this.ordinal() == ToConfirm.ordinal();
         }
 
+        public boolean cancel() {
+            return this.ordinal() == ApproveCanceled.ordinal();
+        }
+
         public boolean approveSuccess() {
             return this.ordinal() == ApproveSuccess.ordinal();
         }
