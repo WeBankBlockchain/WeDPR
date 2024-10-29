@@ -220,7 +220,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -276,7 +276,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -323,7 +323,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -367,7 +367,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
