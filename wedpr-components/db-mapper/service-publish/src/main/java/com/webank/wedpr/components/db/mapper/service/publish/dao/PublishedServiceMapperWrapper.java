@@ -75,7 +75,20 @@ public class PublishedServiceMapperWrapper {
         serviceAuthCondition.setAccessKeyId(accessKeyID);
         // query the auth info
         List<ServiceAuthInfo> serviceAuthInfos =
-                this.serviceAuthMapper.queryServiceAuth(null, selectedServiceList);
+                new ArrayList<>(
+                        this.serviceAuthMapper.queryServiceAuth(
+                                serviceAuthCondition, selectedServiceList));
+        // query all recorders for the owner
+        List<String> publishedServices = new ArrayList<>();
+        for (PublishedServiceInfo serviceInfo : result) {
+            if (serviceInfo.getOwner().equals(user) && serviceInfo.getAgency().equals(agency)) {
+                publishedServices.add(serviceInfo.getServiceId());
+            }
+        }
+        if (!publishedServices.isEmpty()) {
+            serviceAuthInfos.addAll(
+                    this.serviceAuthMapper.queryServiceAuth(null, publishedServices));
+        }
         // merge the result
         for (ServiceAuthInfo serviceAuthInfo : serviceAuthInfos) {
             if (publishedServiceInfoMap.containsKey(serviceAuthInfo.getServiceId())) {
