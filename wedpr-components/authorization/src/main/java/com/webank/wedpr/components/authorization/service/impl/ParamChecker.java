@@ -138,8 +138,8 @@ public class ParamChecker {
                     "Invalid updateAuth request for the auth is read-only, auth: "
                             + authorizationDO.getId());
         }
-        // update the authStatus to ToConfirm when original status is  AuthReject
-        if (result.get(0).getAuthStatus().rejected()) {
+        // update the authStatus to ToConfirm when original status is AuthReject
+        if (authorizationDO.getAuthStatus() == null && result.get(0).getAuthStatus().rejected()) {
             authorizationDO.setAuthStatus(AuthorizationDO.AuthStatus.ToConfirm);
         }
         // not first AuthNode, can't update the content
