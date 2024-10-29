@@ -14,7 +14,7 @@ public interface JobWorkerMapper {
      * @param workerId
      * @return
      */
-    JobWorker selectJobWorkerById(@Param("workId") String workerId);
+    JobWorker selectJobWorkerById(@Param("workerId") String workerId);
 
     /**
      * insert jobWorker
