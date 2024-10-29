@@ -79,7 +79,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.agency != null and condition.agency !=''">
-                    and `agency` like concat(#{condition.agency}, '%')
+                    and `agency` = #{condition.agency}
                 </if>
                 <if test="condition.status!= null and condition.status !=''">
                     and `status` = #{condition.status}
