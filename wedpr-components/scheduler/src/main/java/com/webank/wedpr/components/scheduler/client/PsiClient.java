@@ -2,13 +2,13 @@ package com.webank.wedpr.components.scheduler.client;
 
 import static com.webank.wedpr.components.scheduler.client.common.ClientCommon.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.JsonRpcClient;
 import com.webank.wedpr.components.http.client.model.JsonRpcResponse;
 import com.webank.wedpr.components.scheduler.dag.utils.WorkerUtils;
-import com.webank.wedpr.components.scheduler.executor.impl.psi.PSIExecutor;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.PSIExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIRequest;
 import org.slf4j.Logger;
@@ -17,6 +17,28 @@ import org.slf4j.LoggerFactory;
 public class PsiClient {
 
     private static final Logger logger = LoggerFactory.getLogger(PsiClient.class);
+
+    public static class QueryTaskParam {
+        private String taskID;
+
+        public QueryTaskParam() {}
+
+        public QueryTaskParam(String taskID) {
+            this.taskID = taskID;
+        }
+
+        public String getTaskID() {
+            return taskID;
+        }
+
+        public void setTaskID(String taskID) {
+            this.taskID = taskID;
+        }
+
+        public String serialize() throws JsonProcessingException {
+            return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
+        }
+    }
 
     private static final String RUN_FINISHED_STATUS = "COMPLETED";
 
@@ -32,6 +54,10 @@ public class PsiClient {
                         url,
                         PSIExecutorConfig.getMaxTotalConnection(),
                         PSIExecutorConfig.buildConfig());
+    }
+
+    public JsonRpcClient getJsonRpcClient() {
+        return this.jsonRpcClient;
     }
 
     public String submitTask(String params) throws Exception {
@@ -77,7 +103,7 @@ public class PsiClient {
                             taskId,
                             PSIExecutorConfig.getPsiGetTaskStatusMethod(),
                             PSIExecutorConfig.getPsiToken(),
-                            new PSIExecutor.QueryTaskParam(taskId));
+                            new QueryTaskParam(taskId));
 
             // response error
             if (!response.statusOk()) {

@@ -6,7 +6,6 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.client.ModelClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
-import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +40,7 @@ public class ModelWorker extends Worker {
         }
 
         long startTimeMillis = System.currentTimeMillis();
-
-        String modelUrl = MLExecutorConfig.getUrl();
-        String url = entryPoint.getUrl(modelUrl);
+        String url = entryPoint.getUrl(null);
 
         if (logger.isDebugEnabled()) {
             logger.debug("model url: {}, jobId: {}", url, jobId);

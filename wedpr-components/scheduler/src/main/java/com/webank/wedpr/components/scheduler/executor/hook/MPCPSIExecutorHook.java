@@ -1,4 +1,4 @@
-package com.webank.wedpr.components.scheduler.executor.impl.psi;
+package com.webank.wedpr.components.scheduler.executor.hook;
 
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -6,8 +6,8 @@ import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCJobParam;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 
-public class MPCPSIExecutor extends PSIExecutor {
-    public MPCPSIExecutor(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
+public class MPCPSIExecutorHook extends PSIExecutorHook {
+    public MPCPSIExecutorHook(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
         super(storage, fileMetaBuilder, null);
     }
 

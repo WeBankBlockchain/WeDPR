@@ -22,7 +22,6 @@ public class MLExecutorConfig {
     private static final String DEFAULT_RUNTASK_API_PATH = "/api/ppc-model/pml/run-model-task/";
     private static final String DEFAULT_GET_JOB_RESULT_API_PATH =
             "api/ppc-model/pml/get-job-result/";
-    private static final String URL = WeDPRConfig.apply("wedpr.executor.ml.url", null, true);
     private static final String RUN_TASK_API_PATH =
             WeDPRConfig.apply("wedpr.executor.ml.method.runTask", DEFAULT_RUNTASK_API_PATH);
 
@@ -50,20 +49,8 @@ public class MLExecutorConfig {
                 .build();
     }
 
-    public static String getUrl() {
-        return URL;
-    }
-
-    public static String getRunTaskApiUrl(String jobID) {
-        return URL + RUN_TASK_API_PATH + jobID;
-    }
-
     public static String getRunTaskApiUrl(String url, String jobID) {
         return url + RUN_TASK_API_PATH + jobID;
-    }
-
-    public static String getObtainJobResultApiUrl(String jobID) {
-        return URL + "/" + OBTAIN_JOB_RESULT_API_PATH + "/" + jobID;
     }
 
     public static String getObtainJobResultApiUrl(String url, String jobID) {

@@ -6,7 +6,6 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.client.PsiClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
-import com.webank.wedpr.components.scheduler.executor.impl.psi.PSIExecutorConfig;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +45,7 @@ public class PsiWorker extends Worker {
                 jobId,
                 workerId,
                 workerArgs);
-
-        String psiUrl = PSIExecutorConfig.getPsiUrl();
-        String url = entryPoint.getUrl(psiUrl);
+        String url = entryPoint.getUrl(null);
 
         if (logger.isDebugEnabled()) {
             logger.debug("psi url: {}, jobId: {}", url, jobId);

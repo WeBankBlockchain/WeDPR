@@ -132,24 +132,6 @@ public class SchedulerLoader {
                         new ExecutiveContextBuilder(projectMapperWrapper),
                         threadPoolService);
         executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
-        /*
-        // register the executor
-        PSIExecutor psiExecutor = new PSIExecutor(storage, fileMetaBuilder, jobChecker);
-        executorManager.registerExecutor(JobType.PSI.getType(), psiExecutor);
-
-        logger.info("register PSIExecutor success");
-        MLPSIExecutor mlpsiExecutor = new MLPSIExecutor(storage, fileMetaBuilder);
-        executorManager.registerExecutor(JobType.ML_PSI.getType(), mlpsiExecutor);
-
-        logger.info("register ML-PSIExecutor success");
-        MLExecutor mlExecutor = new MLExecutor();
-        executorManager.registerExecutor(JobType.MLPreprocessing.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.FeatureEngineer.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.XGB_TRAIN.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.XGB_PREDICT.getType(), mlExecutor);
-        logger.info("register MLExecutor success");
-        */
-
         // register the pir executor, TODO: implement the taskFinishHandler
         executorManager.registerExecutor(
                 ExecutorType.PIR.getType(),

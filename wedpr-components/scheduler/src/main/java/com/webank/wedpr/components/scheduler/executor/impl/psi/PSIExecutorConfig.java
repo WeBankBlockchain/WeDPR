@@ -19,7 +19,6 @@ import com.webank.wedpr.common.config.WeDPRConfig;
 import org.apache.http.client.config.RequestConfig;
 
 public class PSIExecutorConfig {
-    private static final String PSI_URL = WeDPRConfig.apply("wedpr.executor.psi.url", null, true);
     private static final String PSI_RUN_TASK_METHOD =
             WeDPRConfig.apply("wedpr.executor.psi.method.runTask", "asyncRunTask");
     private static final String PSI_GET_TASK_STATUS_METHOD =
@@ -42,10 +41,6 @@ public class PSIExecutorConfig {
                 .setConnectTimeout(CONNECTION_TIME_OUT)
                 .setSocketTimeout(REQUEST_TIMEOUT)
                 .build();
-    }
-
-    public static String getPsiUrl() {
-        return PSI_URL;
     }
 
     public static String getPsiRunTaskMethod() {

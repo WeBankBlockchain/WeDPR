@@ -34,10 +34,7 @@ public class MLExecutorClient {
         if (entryPoint == null) {
             throw new WeDPRException("Cannot find ml client endpoint");
         }
-
-        String modelUrl = MLExecutorConfig.getUrl();
-        String url = entryPoint.getUrl(modelUrl);
-
+        String url = entryPoint.getUrl(null);
         HttpClientImpl httpClient =
                 new HttpClientImpl(
                         MLExecutorConfig.getObtainJobResultApiUrl(url, request.getJobID()),
