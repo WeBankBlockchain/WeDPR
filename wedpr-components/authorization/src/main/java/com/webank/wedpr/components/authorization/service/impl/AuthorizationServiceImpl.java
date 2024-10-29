@@ -186,16 +186,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                     authResultRequest.getAuthID(),
                     authResultRequest.getAuthResultDetail().toString(),
                     e);
-            WeDPRResponse response =
-                    new WeDPRResponse(
-                            Constant.WEDPR_FAILED,
-                            "updateAuthResult failed,  authorizer: "
-                                    + authorizer
-                                    + ", ID: "
-                                    + authResultRequest.getAuthID()
-                                    + ", reason: "
-                                    + e.getMessage());
-            return response;
+            return new WeDPRResponse(
+                    Constant.WEDPR_FAILED,
+                    "updateAuthResult failed,  authorizer: "
+                            + authorizer
+                            + ", ID: "
+                            + authResultRequest.getAuthID()
+                            + ", reason: "
+                            + e.getMessage());
         }
     }
 

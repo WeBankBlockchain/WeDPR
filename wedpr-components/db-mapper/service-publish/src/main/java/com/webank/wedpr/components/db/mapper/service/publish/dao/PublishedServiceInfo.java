@@ -92,6 +92,9 @@ public class PublishedServiceInfo extends TimeRange {
     }
 
     public void appendServiceAuthInfo(ServiceAuthInfo serviceAuthInfo) {
+        if (this.serviceAuthInfos.contains(serviceAuthInfo)) {
+            return;
+        }
         this.serviceAuthInfos.add(serviceAuthInfo);
     }
 

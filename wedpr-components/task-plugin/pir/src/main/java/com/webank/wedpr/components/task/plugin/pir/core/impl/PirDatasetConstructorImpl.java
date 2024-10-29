@@ -89,7 +89,13 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                 Arrays.stream(dataset.getDatasetFields().trim().split(","))
                         .map(String::trim)
                         .toArray(String[]::new);
-
+        List<String> datasetFieldsList = Arrays.asList(datasetFields);
+        if (datasetFieldsList.contains(Constant.ID_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.ID_FIELD_NAME);
+        }
+        if (datasetFieldsList.contains(Constant.ID_HASH_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.ID_HASH_FIELD_NAME);
+        }
         List<List<String>> sqlValues =
                 CSVFileParser.processCsv2SqlMap(datasetFields, localFilePath);
         if (sqlValues.size() == 0) {
