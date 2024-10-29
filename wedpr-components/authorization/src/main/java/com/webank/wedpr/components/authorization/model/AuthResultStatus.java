@@ -20,7 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 public enum AuthResultStatus {
     Submit("Submit"),
     Agree("Agree"),
-    Reject("Reject");
+    Reject("Reject"),
+    Cancel("Cancel");
 
     private final String name;
 
@@ -38,6 +39,10 @@ public enum AuthResultStatus {
 
     public boolean reject() {
         return this.ordinal() == Reject.ordinal();
+    }
+
+    public boolean cancel() {
+        return this.ordinal() == Cancel.ordinal();
     }
 
     public static AuthResultStatus deserialize(String result) {
