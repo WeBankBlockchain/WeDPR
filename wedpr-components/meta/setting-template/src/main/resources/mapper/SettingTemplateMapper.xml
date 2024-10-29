@@ -104,14 +104,18 @@
                 <if test="condition.endTime != null and condition.endTime  != ''">
                     <![CDATA[ and datediff(create_time, #{condition.endTime}) <= 0]]>
                 </if>
-            </when>
-        </choose>
-        <choose>
-            <when test="condition.queriedOwners != null and condition.queriedOwners.size > 0">
-                and `owner` in
-                <foreach item="owner" collection="condition.queriedOwners" open="(" close=")" separator=",">
-                    #{owner}
-                </foreach>
+                <if test="condition.queriedOwners != null and condition.queriedOwners.size > 0">
+                    and `owner` in
+                    <foreach item="owner" collection="condition.queriedOwners" open="(" close=")" separator=",">
+                        #{owner}
+                    </foreach>
+                </if>
+                <if test="condition.queriedTypes != null and condition.queriedTypes.size > 0">
+                    and `type` in
+                    <foreach item="type" collection="condition.queriedTypes" open="(" close=")" separator=",">
+                        #{type}
+                    </foreach>
+                </if>
             </when>
         </choose>
         order by `last_update_time` desc
