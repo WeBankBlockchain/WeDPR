@@ -38,7 +38,7 @@ public class DatasetConfig {
     @Value("${wedpr.dataset.debugMode.userTokenField}")
     String debugModelUserTokenField;
 
-    @Value("${wedpr.dataset.maxBatchSize : 15}")
+    @Value("${wedpr.dataset.maxBatchSize : 32}")
     int maxBatchSize;
 
     @Value("${wedpr.dataset.datasource.excel.defaultSheet : 0}")
