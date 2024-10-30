@@ -149,7 +149,7 @@ public class ParamChecker {
             updateAuthResult(applicant, authorizationDO, result.get(0), AuthResultStatus.Submit);
         }
         // the cancel case
-        if (authorizationDO.getAuthStatus().cancel()) {
+        if (authorizationDO.getAuthStatus() != null && authorizationDO.getAuthStatus().cancel()) {
             logger.info("The auth {} canceled, record the result", authorizationDO.toString());
             updateAuthResult(applicant, authorizationDO, result.get(0), AuthResultStatus.Cancel);
         }
