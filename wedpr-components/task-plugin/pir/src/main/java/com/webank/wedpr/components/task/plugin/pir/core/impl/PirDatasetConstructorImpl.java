@@ -68,8 +68,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         }
         Dataset dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
         DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
-        if (dataSourceType != DataSourceType.CSV) {
-            throw new WeDPRException("PIR only support CSV DataSources now!");
+        if (dataSourceType != DataSourceType.CSV && dataSourceType != DataSourceType.EXCEL) {
+            throw new WeDPRException("PIR only support CSV and excel DataSources now!");
         }
         logger.info("constructFromCSV, dataset: {}", dataset.getDatasetId());
         constructFromCSV(dataset, serviceSetting.getIdField());
@@ -92,11 +92,11 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                         .map(String::trim)
                         .toArray(String[]::new);
         List<String> datasetFieldsList = Arrays.asList(datasetFields);
-        if (datasetFieldsList.contains(Constant.ID_FIELD_NAME)) {
-            throw new WeDPRException("Conflict with sys field " + Constant.ID_FIELD_NAME);
+        if (datasetFieldsList.contains(Constant.PIR_ID_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_FIELD_NAME);
         }
-        if (datasetFieldsList.contains(Constant.ID_HASH_FIELD_NAME)) {
-            throw new WeDPRException("Conflict with sys field " + Constant.ID_HASH_FIELD_NAME);
+        if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
         }
         List<List<String>> sqlValues =
                 CSVFileParser.processCsv2SqlMap(datasetFields, localFilePath);
@@ -118,8 +118,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         for (int i = 0; i < datasetFields.length; i++) {
             // the idField
             if (idField.equalsIgnoreCase(datasetFields[i])) {
-                fieldsWithType[i] = Constant.ID_FIELD_NAME + " VARCHAR(255)";
-                tableFields.add(Constant.ID_FIELD_NAME);
+                fieldsWithType[i] = Constant.PIR_ID_FIELD_NAME + " VARCHAR(255)";
+                tableFields.add(Constant.PIR_ID_FIELD_NAME);
                 idFieldIndex = i;
             } else {
                 fieldsWithType[i] = datasetFields[i] + " TEXT";
@@ -127,16 +127,16 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
             }
         }
         // add the id_hash field at the last
-        fieldsWithType[datasetFields.length] = Constant.ID_HASH_FIELD_NAME + " VARCHAR(64)";
-        tableFields.add(Constant.ID_HASH_FIELD_NAME);
+        fieldsWithType[datasetFields.length] = Constant.PIR_ID_HASH_FIELD_NAME + " VARCHAR(64)";
+        tableFields.add(Constant.PIR_ID_HASH_FIELD_NAME);
 
         String sql =
                 String.format(
                         "CREATE TABLE %s ( %s , PRIMARY KEY (`%s`) USING BTREE, index id_index(`%s`(128)) )",
                         tableId,
                         String.join(",", fieldsWithType),
-                        Constant.ID_HASH_FIELD_NAME,
-                        Constant.ID_FIELD_NAME);
+                        Constant.PIR_ID_HASH_FIELD_NAME,
+                        Constant.PIR_ID_FIELD_NAME);
         logger.info("constructFromCSV, execute sql: {}", sql);
         this.nativeSQLMapper.executeNativeUpdateSql(sql);
 

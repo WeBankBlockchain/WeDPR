@@ -78,11 +78,11 @@ public class NativeSQLMapperWrapper {
         String condition =
                 String.format(
                         "where t.%s in (%s)",
-                        Constant.ID_HASH_FIELD_NAME, Common.joinAndAddDoubleQuotes(filters));
+                        Constant.PIR_ID_HASH_FIELD_NAME, Common.joinAndAddDoubleQuotes(filters));
         String sql =
                 String.format(
                         "select t.%s, %s from %s t %s",
-                        Constant.ID_HASH_FIELD_NAME,
+                        Constant.PIR_ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
                         tableName,
                         condition);
@@ -98,11 +98,12 @@ public class NativeSQLMapperWrapper {
             throws Exception {
         String condition =
                 String.format(
-                        "where t.%s like concat('%s', '%%')", Constant.ID_HASH_FIELD_NAME, filter);
+                        "where t.%s like concat('%s', '%%')",
+                        Constant.PIR_ID_HASH_FIELD_NAME, filter);
         String sql =
                 String.format(
                         "select t.%s, %s from %s t %s",
-                        Constant.ID_HASH_FIELD_NAME,
+                        Constant.PIR_ID_HASH_FIELD_NAME,
                         StringUtils.join(queriedFields, ","),
                         tableName,
                         condition);
@@ -122,7 +123,7 @@ public class NativeSQLMapperWrapper {
             pirTable.setId(i);
             // the key, Note: here must use the idField value since the client use the idField value
             // to calculateZ0
-            pirTable.setPirKey((String) row.get(Constant.ID_FIELD_NAME));
+            pirTable.setPirKey((String) row.get(Constant.PIR_ID_FIELD_NAME));
             // the values
             pirTable.setPirValue(ObjectMapperFactory.getObjectMapper().writeValueAsString(row));
             logger.trace("toPirDataList result: {}", pirTable.toString());

@@ -42,10 +42,14 @@ public class PirServiceSetting {
         if (searchType == PirSearchType.SearchValue) {
             // remove duplicated fields
             Set<String> queriedFieldSet = new HashSet<>(queriedFields);
+            if (queriedFieldSet.contains(idField)) {
+                queriedFieldSet.remove(idField);
+                queriedFieldSet.add(Constant.PIR_ID_FIELD_NAME);
+            }
             return (List<String>)
                     CollectionUtils.intersection(queriedFieldSet, accessibleValueQueryFields);
         }
-        return Collections.singletonList(Constant.DEFAULT_ID_FIELD);
+        return Collections.singletonList(Constant.PIR_ID_FIELD_NAME);
     }
 
     public void setSearchType(String searchType) {

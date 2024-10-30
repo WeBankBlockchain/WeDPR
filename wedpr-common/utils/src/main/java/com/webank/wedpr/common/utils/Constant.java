@@ -79,6 +79,6 @@ public class Constant {
     public static final String RESERVE_SETTING_PREFIX = "SYS_";
 
     // the pir related fields
-    public static final String ID_FIELD_NAME = "pir_sys_id";
-    public static final String ID_HASH_FIELD_NAME = "pir_sys_id_hash";
+    public static final String PIR_ID_FIELD_NAME = "pir_sys_id";
+    public static final String PIR_ID_HASH_FIELD_NAME = "pir_sys_id_hash";
 }
