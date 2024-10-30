@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.authorization.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.authorization.model.AuthChain;
@@ -24,10 +25,15 @@ import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthorizationDO extends TimeRange {
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationDO.class);
 
@@ -156,64 +162,13 @@ public class AuthorizationDO extends TimeRange {
         setResult(result);
     }
 
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getApplicant() {
-        return applicant;
-    }
-
-    public void setApplicant(String applicant) {
-        this.applicant = applicant;
-    }
-
-    public String getApplicantAgency() {
-        return applicantAgency;
-    }
-
-    public void setApplicantAgency(String applicantAgency) {
-        this.applicantAgency = applicantAgency;
-    }
-
-    public String getApplyType() {
-        return applyType;
-    }
-
-    public void setApplyType(String applyType) {
-        this.applyType = applyType;
-    }
-
-    public String getApplyTitle() {
-        return applyTitle;
-    }
-
-    public void setApplyTitle(String applyTitle) {
-        this.applyTitle = applyTitle;
-    }
-
-    public String getApplyDesc() {
-        return applyDesc;
-    }
-
-    public void setApplyDesc(String applyDesc) {
-        this.applyDesc = applyDesc;
-    }
-
-    public String getApplyChain() {
-        return applyChain;
-    }
-
-    public List<String> getAuthIDList() {
-        return authIDList;
-    }
-
-    public void setAuthIDList(List<String> authIDList) {
-        this.authIDList = authIDList;
+        if (this.followerDOList != null && !this.followerDOList.isEmpty()) {
+            for (FollowerDO followerDO : this.followerDOList) {
+                followerDO.setResourceID(id);
+            }
+        }
     }
 
     public void setApplyChain(String applyChain) {
@@ -224,40 +179,12 @@ public class AuthorizationDO extends TimeRange {
         this.authChain = AuthChain.deserialize(applyChain);
     }
 
-    public AuthChain getAuthChain() {
-        return authChain;
-    }
-
     public void setAuthChain(AuthChain authChain) {
         this.authChain = authChain;
         if (authChain == null) {
             return;
         }
         this.applyChain = this.authChain.serialize();
-    }
-
-    public String getApplyContent() {
-        return applyContent;
-    }
-
-    public void setApplyContent(String applyContent) {
-        this.applyContent = applyContent;
-    }
-
-    public String getApplyTemplateName() {
-        return applyTemplateName;
-    }
-
-    public void setApplyTemplateName(String applyTemplateName) {
-        this.applyTemplateName = applyTemplateName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public AuthStatus getAuthStatus() {
-        return authStatus;
     }
 
     public void setAuthStatus(AuthStatus authStatus) {
@@ -275,42 +202,6 @@ public class AuthorizationDO extends TimeRange {
         this.status = status;
         // deserialize the authStatus
         this.authStatus = AuthStatus.deserialize(status);
-    }
-
-    public String getCurrentApplyNode() {
-        return currentApplyNode;
-    }
-
-    public void setCurrentApplyNode(String currentApplyNode) {
-        this.currentApplyNode = currentApplyNode;
-    }
-
-    public String getCurrentApplyNodeAgency() {
-        return currentApplyNodeAgency;
-    }
-
-    public void setCurrentApplyNodeAgency(String currentApplyNodeAgency) {
-        this.currentApplyNodeAgency = currentApplyNodeAgency;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
-
-    public String getResult() {
-        return result;
     }
 
     public void setResult(String result) {

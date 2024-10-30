@@ -166,7 +166,9 @@ public class ParamChecker {
             AuthorizationDO authorizationDO,
             AuthorizationDO lastRecorder,
             AuthResultStatus authResultStatus) {
-        authorizationDO.setAuthChain(lastRecorder.getAuthChain());
+        if (authorizationDO.getAuthChain() == null) {
+            authorizationDO.setAuthChain(lastRecorder.getAuthChain());
+        }
         authorizationDO.setResult(lastRecorder.getResult());
         // update the authResult
         AuthResult.AuthResultDetail authResultDetail = new AuthResult.AuthResultDetail();
