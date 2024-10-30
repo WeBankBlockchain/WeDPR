@@ -13,7 +13,7 @@
  *
  */
 
-package com.webank.wedpr.components.scheduler.executor.impl.psi;
+package com.webank.wedpr.components.scheduler.executor.hook;
 
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobParam;
@@ -21,8 +21,8 @@ import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 
-public class MLPSIExecutor extends PSIExecutor {
-    public MLPSIExecutor(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
+public class MLPSIExecutorHook extends PSIExecutorHook {
+    public MLPSIExecutorHook(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
         // no need to check here since MLJobParam has been checked in JobOrchestrate
         super(storage, fileMetaBuilder, null);
     }

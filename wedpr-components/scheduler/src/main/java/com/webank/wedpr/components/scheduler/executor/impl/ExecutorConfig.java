@@ -71,7 +71,7 @@ public class ExecutorConfig {
 
     public static String getDefaultPSIResultPath(String user, String jobID) {
         return WeDPRCommonConfig.getUserJobCachePath(
-                user, JobType.PIR.getType(), jobID, PSI_RESULT_FILE);
+                user, JobType.PSI.getType(), jobID, PSI_RESULT_FILE);
     }
 
     public static String getPirJobResultPath(String user, String jobID) {
