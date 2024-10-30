@@ -104,7 +104,7 @@ public class WorkFlowOrchestrator implements WorkFlowOrchestratorApi {
         MPCJobParam mpcJobParam = (MPCJobParam) jobChecker.checkAndParseParam(jobDO);
         jobDO.setJobParam(mpcJobParam);
 
-        if (mpcJobParam.checkNeedRunPSI()) {
+        if (mpcJobParam.isNeedRunPsi()) {
             // mpc-psi
             jobDO.setJobType(JobType.MPC_PSI.getType());
         }

@@ -15,8 +15,7 @@ public class MPCPSIExecutorHook extends PSIExecutorHook {
     public Object prepare(JobDO jobDO) throws Exception {
         // get the jobParam
         PSIJobParam psiJobParam =
-                ((MPCJobParam) jobDO.getJobParam())
-                        .toPSIJobParam(this.fileMetaBuilder, this.storage);
+                ((MPCJobParam) jobDO.getJobParam()).toPSIJobParam(this.fileMetaBuilder);
         psiJobParam.setTaskID(jobDO.getTaskID());
         preparePSIJob(jobDO, psiJobParam);
         return jobDO.getJobRequest();

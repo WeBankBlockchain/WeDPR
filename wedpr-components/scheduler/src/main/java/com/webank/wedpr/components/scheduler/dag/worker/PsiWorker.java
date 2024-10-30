@@ -61,7 +61,8 @@ public class PsiWorker extends Worker {
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             logger.info(
-                    "## psi engine run end, workerId: {}, elapsed: {} ms",
+                    "## psi engine run end, jobId: {}, workerId: {}, elapsed: {} ms",
+                    jobId,
                     workerId,
                     (endTimeMillis - startTimeMillis));
         }

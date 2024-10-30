@@ -47,7 +47,6 @@ public class ModelWorker extends Worker {
         }
 
         try {
-
             ModelClient modelClient = new ModelClient(url);
             // submit task
             String taskId = modelClient.submitTask(args, getJobWorker());
@@ -56,7 +55,8 @@ public class ModelWorker extends Worker {
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             logger.info(
-                    "## psi engine run end, taskId: {}, elapsed: {} ms",
+                    "## ml engine run end, jobId: {}, taskId: {}, elapsed: {} ms",
+                    jobId,
                     workerId,
                     (endTimeMillis - startTimeMillis));
         }

@@ -3,8 +3,10 @@ package com.webank.wedpr.components.scheduler.dag.worker;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
+import com.webank.wedpr.components.scheduler.client.MpcClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
+import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCExecutorConfig;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +25,48 @@ public class MpcWorker extends Worker {
     }
 
     @Override
-    public WorkerStatus engineRun() throws WeDPRException {
+    public WorkerStatus engineRun() throws Exception {
+
+        String jobId = getJobId();
+        String workerId = getWorkerId();
+        String workerArgs = getArgs();
 
         EntryPointInfo entryPoint =
                 getLoadBalancer()
                         .selectService(LoadBalancer.Policy.ROUND_ROBIN, ServiceName.MPC.getValue());
         if (entryPoint == null) {
-            throw new WeDPRException("cannot find mpc client endpoint, jobId: " + getJobId());
+            logger.error("Unable to find mpc service endpoint, jobId: {}", jobId);
+            throw new WeDPRException("Unable to find mpc service endpoint, jobId: " + jobId);
         }
 
-        logger.info("## getting mpc client: {}", entryPoint);
+        long startTimeMillis = System.currentTimeMillis();
+        logger.info(
+                "## mpc engine run begin, endpoint: {}, jobId: {}, taskId: {}, args: {}",
+                entryPoint,
+                jobId,
+                workerId,
+                workerArgs);
+
+        String mpcUrl = MPCExecutorConfig.getMpcUrl();
+        String url = entryPoint.getUrl(mpcUrl);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("mpc url: {}, jobId: {}", url, jobId);
+        }
+
+        try {
+            MpcClient psiClient = new MpcClient(url);
+            // submit task, sync call
+            psiClient.submitTask(workerArgs);
+        } finally {
+            long endTimeMillis = System.currentTimeMillis();
+            logger.info(
+                    "## mpc engine run end, jobId: {}, workerId: {}, elapsed: {} ms",
+                    jobId,
+                    workerId,
+                    (endTimeMillis - startTimeMillis));
+        }
+
         return WorkerStatus.SUCCESS;
     }
 }
