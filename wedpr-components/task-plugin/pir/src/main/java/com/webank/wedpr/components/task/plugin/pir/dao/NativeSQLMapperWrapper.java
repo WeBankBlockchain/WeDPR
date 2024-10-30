@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.task.plugin.pir.dao;
 
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.service.publish.model.PirServiceSetting;
@@ -23,7 +24,6 @@ import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
-import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,9 @@ public class NativeSQLMapperWrapper {
                 "query, origin queriedFields: [{}], intersection fields: [{}]",
                 StringUtils.join(queryParam.getQueriedFields(), ","),
                 StringUtils.join(queriedFields, ","));
-        String tableName = Constant.datasetId2tableId(serviceSetting.getDatasetId());
+        String tableName =
+                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                        serviceSetting.getDatasetId());
         if (queryParam.getAlgorithmType() == PirParamEnum.AlgorithmType.idFilter) {
             return executeFuzzyMatchQuery(
                     tableName, serviceSetting, queriedFields, obfuscateDataItem.getFilter());

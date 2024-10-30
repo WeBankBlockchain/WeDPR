@@ -17,6 +17,7 @@ package com.webank.wedpr.components.task.plugin.pir.core.impl;
 
 import com.webank.wedpr.common.utils.CSVFileParser;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
@@ -29,7 +30,6 @@ import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
-import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +59,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
     public void construct(PirServiceSetting serviceSetting) throws Exception {
         List<String> allTables = this.nativeSQLMapper.showAllTables();
         String datasetID = serviceSetting.getDatasetId();
-        String tableId = Constant.datasetId2tableId(datasetID);
+        String tableId =
+                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                        datasetID);
         if (allTables.contains(tableId)) {
             logger.info("The dataset {} has already been constructed into {}", datasetID, tableId);
             return;
@@ -105,7 +107,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                     localFilePath);
             return;
         }
-        String tableId = Constant.datasetId2tableId(dataset.getDatasetId());
+        String tableId =
+                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                        dataset.getDatasetId());
 
         // all the field + id_hash field
         String[] fieldsWithType = new String[datasetFields.length + 1];

@@ -77,4 +77,8 @@ public class Constant {
     public static final String PUBLISH_ID_PREFIX = "s-";
     public static final String DEFAULT_JOB_GROUP = "wedpr";
     public static final String RESERVE_SETTING_PREFIX = "SYS_";
+
+    // the pir related fields
+    public static final String ID_FIELD_NAME = "pir_sys_id";
+    public static final String ID_HASH_FIELD_NAME = "pir_sys_id_hash";
 }
