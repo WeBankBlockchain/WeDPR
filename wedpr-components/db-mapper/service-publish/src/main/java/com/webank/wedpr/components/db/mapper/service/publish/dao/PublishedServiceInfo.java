@@ -67,6 +67,7 @@ public class PublishedServiceInfo extends TimeRange {
     protected List<ServiceAuthInfo> serviceAuthInfos = new ArrayList<>();
 
     @JsonIgnore protected ServiceStatus serviceStatus;
+    @JsonIgnore protected String loginUser;
 
     public PublishedServiceInfo(String serviceId) {
         this.serviceId = serviceId;

@@ -130,7 +130,7 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
                         Arrays.asList(
                                 ServiceStatus.Publishing.getStatus(),
                                 ServiceStatus.PublishFailed.getStatus()));
-        request.getCondition().setOwner(user);
+        request.getCondition().setLoginUser(user);
         // the auth setting
         request.getCondition().setAccessibleAgency(agency);
         request.getCondition().setAccessibleUser(user);

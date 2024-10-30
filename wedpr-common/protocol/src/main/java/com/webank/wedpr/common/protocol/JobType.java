@@ -71,7 +71,9 @@ public enum JobType {
         return jobType.compareToIgnoreCase(XGB_TRAIN.getType()) == 0
                 || jobType.compareToIgnoreCase(XGB_PREDICT.getType()) == 0
                 || jobType.compareToIgnoreCase(LR_TRAIN.getType()) == 0
-                || jobType.compareToIgnoreCase(LR_PREDICT.getType()) == 0;
+                || jobType.compareToIgnoreCase(LR_PREDICT.getType()) == 0
+                || jobType.compareToIgnoreCase(MLPreprocessing.getType()) == 0
+                || jobType.compareToIgnoreCase(FeatureEngineer.getType()) == 0;
     }
 
     public static Boolean isPSIJob(String jobType) {

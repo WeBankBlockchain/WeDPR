@@ -61,12 +61,12 @@
                 <if test="condition.status!= null and condition.status !=''">
                     and `status` = #{condition.status}
                 </if>
-                <if test="condition.owner!= null and condition.owner !='' and condition.nonOwnerUserFilter == false">
+                <if test="condition.owner!= null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.nonOwnerUserFilter!= null and condition.nonOwnerUserFilter == true">
                     and case
-                    when `owner` != #{condition.owner} then `status` not in
+                    when `owner` != #{condition.loginUser} then `status` not in
                         <foreach item="filterStatus" collection="condition.filterStatusList" open="(" close=")" separator=",">
                             #{filterStatus}
                         </foreach>

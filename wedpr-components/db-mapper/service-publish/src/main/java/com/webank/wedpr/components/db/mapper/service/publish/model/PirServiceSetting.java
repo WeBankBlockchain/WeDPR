@@ -16,10 +16,13 @@
 package com.webank.wedpr.components.db.mapper.service.publish.model;
 
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 import lombok.ToString;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,10 +40,16 @@ public class PirServiceSetting {
 
     public List<String> obtainQueriedFields(PirSearchType searchType, List<String> queriedFields) {
         if (searchType == PirSearchType.SearchValue) {
+            // remove duplicated fields
+            Set<String> queriedFieldSet = new HashSet<>(queriedFields);
+            if (queriedFieldSet.contains(idField)) {
+                queriedFieldSet.remove(idField);
+                queriedFieldSet.add(Constant.PIR_ID_FIELD_NAME);
+            }
             return (List<String>)
-                    CollectionUtils.intersection(queriedFields, accessibleValueQueryFields);
+                    CollectionUtils.intersection(queriedFieldSet, accessibleValueQueryFields);
         }
-        return Collections.singletonList(idField);
+        return Collections.singletonList(Constant.PIR_ID_FIELD_NAME);
     }
 
     public void setSearchType(String searchType) {
