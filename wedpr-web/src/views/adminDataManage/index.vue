@@ -10,7 +10,7 @@
         <el-form-item prop="datasetTitle" label="资源名称：">
           <el-input style="width: 160px" v-model="searchForm.datasetTitle" placeholder="请输入"> </el-input>
         </el-form-item>
-        <el-form-item prop="createTime" label="上传时间：">
+        <el-form-item prop="createTime" label="创建时间：">
           <el-date-picker
             style="width: 360px"
             value-format="yyyy-MM-dd HH:mm:ss"

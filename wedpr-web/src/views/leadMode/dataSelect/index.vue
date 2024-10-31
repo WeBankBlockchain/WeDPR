@@ -4,13 +4,10 @@
       <el-form-item prop="datasetTitle" label="资源名称：">
         <el-input style="width: 160px" v-model="searchForm.datasetTitle" placeholder="请输入"> </el-input>
       </el-form-item>
-      <el-form-item prop="datasetTitle" label="资源标签：">
-        <el-input style="width: 160px" v-model="searchForm.tag" placeholder="请输入"> </el-input>
-      </el-form-item>
       <el-form-item prop="ownerUserName" label="所属用户：">
         <el-input style="width: 160px" v-model="searchForm.ownerUserName" placeholder="请输入"> </el-input>
       </el-form-item>
-      <el-form-item prop="createTime" label="上传时间：">
+      <el-form-item prop="createTime" label="创建时间：">
         <el-date-picker value-format="yyyy-MM-dd" style="width: 160px" v-model="searchForm.createTime" type="date" placeholder="请选择日期"> </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -38,7 +35,7 @@
       <img slot="image" src="~Assets/images/pic_empty_news.png" alt="" />
     </el-empty>
     <we-pagination
-      :pageSizesOption="[8, 12, 16, 24, 32]"
+      :pageSizesOption="[4, 8, 12, 16, 24]"
       :total="total"
       :page_offset="pageData.page_offset"
       :page_size="pageData.page_size"
@@ -134,8 +131,8 @@ export default {
     async getListDataset() {
       const { page_offset, page_size } = this.pageData
       const { ownerAgencyName = '' } = this
-      const { tag = '', ownerUserName = '', datasetTitle = '', createTime = '' } = this.searchQuery
-      let params = handleParamsValid({ ownerAgencyName, tag, ownerUserName, datasetTitle, createTime })
+      const { ownerUserName = '', datasetTitle = '', createTime = '' } = this.searchQuery
+      let params = handleParamsValid({ ownerAgencyName, ownerUserName, datasetTitle, createTime })
       params = { ...params, pageNum: page_offset, pageSize: page_size, permissionType: 'usable' }
       this.loadingFlag = true
       const res = await dataManageServer.listDataset(params)

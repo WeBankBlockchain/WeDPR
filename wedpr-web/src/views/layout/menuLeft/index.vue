@@ -146,7 +146,7 @@ export default {
       this.defaultIndex = this.bread[0].name
     }
     this.isAgencyMode && this.queryTODOCount()
-    this.isAgencyMode && (this.timer = setInterval(this.queryTODOCount, 10000))
+    this.isAgencyMode && (this.timer = setInterval(this.queryTODOCount, 90000))
   },
   watch: {
     defaultIndex(n) {

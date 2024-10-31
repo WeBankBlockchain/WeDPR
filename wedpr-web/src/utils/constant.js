@@ -3,7 +3,7 @@ export const approveStatusMap = {
   Approving: '审批中',
   ApproveFailed: '失败',
   ApproveRejected: '驳回',
-  ApproveCanceled: '作废',
+  ApproveCanceled: '废弃',
   ApproveSuccess: '审批完成',
   ProgressFailed: '失败',
   Progressing: '生效中',
@@ -18,9 +18,11 @@ export const jobStatusMap = {
   RunFailed: '运行失败',
   RunSuccess: '运行成功',
   WaitToRetry: '等待重试',
-  WaitToKill: '等待被kill',
-  Killing: 'kill中',
-  Killed: '已经被kill'
+  WaitToKill: '等待被终止',
+  Killing: '正在终止',
+  Killed: '已终止',
+  KillFailed: '终止失败',
+  ChainInProgress: '上链中'
 }
 export const opType = {
   Authorization: '审批',
@@ -89,10 +91,26 @@ export const jobEnum = {
   MPC: 'MPC'
 }
 
+export const settingMap = {
+  XGB_TRAINING: 'XGB_SETTING',
+  LR_TRAINING: 'LR_SETTING'
+}
+
+// 任务生成的模型
+export const modelSettingMap = {
+  LR_TRAINING: 'LR_MODEL_SETTING',
+  XGB_TRAINING: 'XGB_MODEL_SETTING'
+}
+// 创建任务所需模型
+export const jobModelSettingMap = {
+  LR_PREDICTING: 'LR_MODEL_SETTING',
+  XGB_PREDICTING: 'XGB_MODEL_SETTING'
+}
+
 export const serviceTypeEnum = {
   PIR: 'pir',
   XGB: 'xgb',
-  lr: 'lr'
+  LR: 'lr'
 }
 export const serviceAuthStatus = {
   Owner: 'Owner',

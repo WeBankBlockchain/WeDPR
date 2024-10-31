@@ -34,11 +34,11 @@
       </div>
       <div class="whole">
         <div class="half">
-          <span class="title right">上传时间：</span>
+          <span class="title">创建时间：</span>
           <span class="info" :title="dataInfo.createTcreateAtime"> {{ dataInfo.createAt }} </span>
         </div>
         <div class="half">
-          <span class="title">字段：</span>
+          <span class="title right">字段：</span>
           <span class="info" :title="dataInfo.datasetFields"> {{ dataInfo.datasetFields }} </span>
         </div>
       </div>
@@ -56,8 +56,8 @@
     <div class="title-radius">使用记录</div>
     <div class="tableContent autoTableWrap" v-if="total">
       <el-table :max-height="tableHeight" size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
-        <el-table-column label="任务ID" prop="id" />
-        <el-table-column label="所属项目" prop="projectName" />
+        <el-table-column label="任务ID" prop="id" show-overflow-tooltip />
+        <el-table-column label="所属项目" prop="projectName" show-overflow-tooltip />
         <el-table-column label="发起机构" prop="ownerAgency" />
         <el-table-column label="参与机构" prop="participate" />
         <el-table-column label="发起用户" prop="owner" />
@@ -83,9 +83,13 @@ import { dataManageServer, projectManageServer } from 'Api'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { mapGetters } from 'vuex'
 import { jobStatusMap } from 'Utils/constant.js'
+import wePagination from '@/components/wePagination.vue'
 export default {
   name: 'dataDetail',
   mixins: [tableHeightHandle],
+  components: {
+    wePagination
+  },
   data() {
     return {
       dataInfo: {
@@ -157,7 +161,10 @@ export default {
         })
       }
     },
-    paginationHandle() {}
+    paginationHandle(pageData) {
+      this.pageData = { ...pageData }
+      this.adminQueryJobsByDatasetId()
+    }
   }
 }
 </script>

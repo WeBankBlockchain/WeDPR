@@ -259,7 +259,7 @@ export default {
         ],
         datasetLabel: [
           {
-            required: true,
+            required: false,
             message: '请输入资源标签',
             trigger: 'blur'
           }
@@ -490,11 +490,10 @@ export default {
       return true
     },
     beforeUploadExcel(file) {
-      console.log(file, 1)
-      const supportType = ['xls', 'xlsx']
-      const isCSV = supportType.includes(file.type)
+      const isType = file.type === 'application/vnd.ms-excel'
+      const isTypeComputer = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       const isLt2G = file.size / 1024 / 1024 < 2048
-      if (!isCSV) {
+      if (!isType && !isTypeComputer) {
         this.$message.error('文件只能是xls, xlsx格式!')
         return false
       }

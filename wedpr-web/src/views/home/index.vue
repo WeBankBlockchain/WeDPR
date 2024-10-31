@@ -162,6 +162,7 @@ import { dataManageServer, accountManageServer, projectManageServer, jobManageSe
 import dayjs from 'dayjs'
 import { jobStatusMap } from 'Utils/constant.js'
 import modifyUser from './modifyUser/index.vue'
+import { spliceLegendHome } from '../screen/chartsSetting.js'
 const channelColors = {
   PSI: '#2F89F3',
   XGB_TRAINING: '#FFA927',
@@ -391,6 +392,7 @@ export default {
           }
         })
         console.log(series, 'series')
+        const rowLength = parseInt(algNames.length / 4) + 1
         this.option = {
           xAxis: {
             type: 'category',
@@ -400,7 +402,7 @@ export default {
             show: true, // 是否显示图表背景网格
             left: 0, // 图表距离容器左侧多少距离
             right: 16, // 图表距离容器右侧侧多少距离
-            bottom: 30, // 图表距离容器上面多少距离
+            bottom: 22 * rowLength, // 图表距离容器上面多少距离
             top: 30, // 图表距离容器下面多少距离
             containLabel: true // 防止标签溢出
           },
@@ -408,12 +410,13 @@ export default {
             trigger: 'axis'
           },
           smooth: true,
-          legend: {
-            type: 'scroll',
-            data: algNames,
-            left: 'center',
-            bottom: -6
-          },
+          // legend: {
+          //   type: 'scroll',
+          //   data: algNames,
+          //   left: 'center',
+          //   bottom: -6
+          // },
+          legend: spliceLegendHome(algNames, '#000000'),
           yAxis: { type: 'value' },
           series
         }

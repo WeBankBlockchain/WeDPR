@@ -9,6 +9,7 @@
         v-for="item in tableData"
         :serviceInfo="item"
         :key="item.serviceId"
+        :showEdit="false"
       />
     </div>
     <el-empty v-if="!total" :image-size="120" description="暂无数据">

@@ -19,6 +19,7 @@
     "element-china-area-data": "^6.1.0",
     "element-ui": "^2.15.8",
     "file-saver": "^2.0.5",
+    "highlight.js": "^11.10.0",
     "js-file-download": "^0.4.12",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",

@@ -11,7 +11,7 @@
       </formCard>
       <formCard title="选择发布模型" v-if="type !== 'edit'">
         <el-form-item prop="serviceConfig" label-width="0">
-          <modelSelect v-model="serverForm.serviceConfig" />
+          <modelSelect :queriedTypes="['XGB_MODEL_SETTING', 'LR_MODEL_SETTING']" v-model="serverForm.serviceConfig" />
         </el-form-item>
       </formCard>
     </el-form>
@@ -50,9 +50,6 @@ export default {
       queryFlag: false,
       loadingFlag: false,
       showAddModal: false,
-      dataForm: {
-        serviceConfig: []
-      },
       type: '',
       dataList: [],
       selectedData: {},
@@ -133,12 +130,18 @@ export default {
       this.$refs.serverForm.validate((valid) => {
         if (valid) {
           const { serviceName, serviceDesc, serviceConfig } = this.serverForm
-          const { model_type } = JSON.parse(serviceConfig)
+          let setting = ''
+          if (this.type === 'edit') {
+            setting = serviceConfig
+          } else {
+            setting = serviceConfig.setting
+          }
+          const { model_type } = JSON.parse(setting)
           const serviceType = model_type === 'xgb_model' ? serviceTypeEnum.XGB : serviceTypeEnum.LR
           if (this.type === 'edit') {
-            this.updateService({ serviceName, serviceDesc, serviceId: this.serviceId, serviceConfig, serviceType })
+            this.updateService({ serviceName, serviceDesc, serviceId: this.serviceId, serviceConfig: setting, serviceType })
           } else {
-            this.createService({ serviceName, serviceDesc, serviceType, serviceConfig })
+            this.createService({ serviceName, serviceDesc, serviceType, serviceConfig: setting })
           }
         } else {
           return false

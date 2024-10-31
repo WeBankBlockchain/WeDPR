@@ -17,7 +17,7 @@
           >
         </li>
         <li v-if="showOwner">
-          数据属主 <span :title="dataInfo.ownerUserName">{{ dataInfo.ownerUserName }}</span>
+          所属用户 <span :title="dataInfo.ownerUserName">{{ dataInfo.ownerUserName }}</span>
         </li>
         <li>
           所属机构 <span :title="dataInfo.ownerAgencyName">{{ dataInfo.ownerAgencyName }}</span>
@@ -38,7 +38,7 @@
         <div class="apply" @click.stop="applyData" v-if="!dataInfo.permissions.usable">
           <span><img src="~Assets/images/apply.png" alt="" />申请使用</span>
         </div>
-        <div class="apply authed" @click.stop="applyData" v-if="!dataInfo.isOwner && dataInfo.permissions.usable">
+        <div class="apply authed" v-if="!dataInfo.isOwner && dataInfo.permissions.usable">
           <span><img src="~Assets/images/apply_disabled.png" alt="" />申请使用</span>
         </div>
       </div>

@@ -18,8 +18,16 @@
             <el-option :key="item" v-for="item in servicePulishStatusList" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="createDate" label="发布时间：">
-          <el-date-picker clearable value-format="yyyy-MM-dd" style="width: 160px" v-model="searchForm.createDate" type="date" placeholder="请选择日期"> </el-date-picker>
+        <el-form-item prop="createTime" label="发布时间：">
+          <el-date-picker
+            style="width: 280px"
+            value-format="yyyy-MM-dd"
+            v-model="searchForm.createTime"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="queryFlag" @click="queryHandle">
@@ -81,14 +89,14 @@ export default {
         agency: '',
         owner: '',
         serviceName: '',
-        createDate: '',
+        createTime: '',
         status: ''
       },
       searchQuery: {
         agency: '',
         owner: '',
         serviceName: '',
-        createDate: '',
+        createTime: '',
         status: ''
       },
       pageData: {
@@ -130,7 +138,7 @@ export default {
     cancelApply() {
       this.showApplySelect = false
       this.selectdDataList = []
-      this.dataList = this.dataList.map((v) => {
+      this.tableData = this.tableData.map((v) => {
         return {
           ...v,
           showSelect: false
@@ -194,15 +202,19 @@ export default {
       this.tableData = this.tableData.map((v) => {
         return {
           ...v,
-          showSelect: true
+          showSelect: !v.isOnwer
         }
       })
     },
     // 获取服务列表
     async getPublishList() {
       const { page_offset, page_size } = this.pageData
-      const { agency = '', owner = '', serviceName = '', createDate = '' } = this.searchQuery
-      let params = handleParamsValid({ agency, owner, serviceName, createDate })
+      const { agency = '', owner = '', serviceName = '', createTime = '', status } = this.searchQuery
+      let params = handleParamsValid({ agency, owner, serviceName, status })
+      if (createTime && createTime.length) {
+        params.startTime = createTime[0]
+        params.endTime = createTime[1]
+      }
       params = { condition: { ...params, serviceId: '' }, serviceIdList: [], pageNum: page_offset, pageSize: page_size }
       this.loadingFlag = true
       const res = await serviceManageServer.getPublishList(params)
@@ -217,6 +229,9 @@ export default {
             showSelect: false
           }
         })
+        if (this.showApplySelect) {
+          this.filterApplyAbleSelectData()
+        }
         this.total = total
       } else {
         this.tableData = []
@@ -243,6 +258,9 @@ export default {
           this.$router.push({ path: '/pirServerCreate', query: { type: 'edit', serviceId } })
           break
         case serviceTypeEnum.XGB:
+          this.$router.push({ path: '/modelServerCreate', query: { type: 'edit', serviceId } })
+          break
+        case serviceTypeEnum.LR:
           this.$router.push({ path: '/modelServerCreate', query: { type: 'edit', serviceId } })
           break
         default:

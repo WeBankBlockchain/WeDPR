@@ -63,6 +63,7 @@
                       value-format="yyyy-MM-dd"
                       style="width: 160px"
                       v-model="scope.row[item.key]"
+                      :picker-options="pickerOptions"
                       type="date"
                       placeholder="请选择日期"
                     >
@@ -82,13 +83,17 @@
         </div>
         <div
           class="whole"
-          v-if="(dataInfo.currentApplyNode === userId && dataInfo.currentApplyNodeAgency === agencyId) || (dataInfo.applicant === userId && dataInfo.applicantAgency === agencyId)"
+          v-if="
+            dataInfo.status !== 'ApproveCanceled' &&
+            ((dataInfo.currentApplyNode === userId && dataInfo.currentApplyNodeAgency === agencyId) || (dataInfo.applicant === userId && dataInfo.applicantAgency === agencyId))
+          "
         >
           <div class="operate">
             <span class="title">操作：</span>
             <span class="handle action" v-if="dataInfo.currentApplyNode === userId && dataInfo.currentApplyNodeAgency === agencyId" :title="dataInfo.datasetTitle">
-              <img @click="showAgreeConfirm(dataInfo)" src="~Assets/images/agree.png" />
-              <img @click="showDisAgreeConfirm(dataInfo)" src="~Assets/images/refuse.png" />
+              <el-button style="margin-right: 10px" size="small" class="sub" @click="reSubmit" v-if="dataInfo.status === 'ApproveRejected'">重新提交</el-button>
+              <img @click="showAgreeConfirm(dataInfo)" src="~Assets/images/agree.png" v-if="dataInfo.status !== 'ApproveRejected'" />
+              <img @click="showDisAgreeConfirm(dataInfo)" src="~Assets/images/refuse.png" v-if="dataInfo.status !== 'ApproveRejected'" />
             </span>
             <span class="handle" v-if="dataInfo.applicant === userId && dataInfo.applicantAgency === agencyId">
               <img src="~Assets/images/modifyApply.png" v-if="modifyAbleStatus.includes(dataInfo.status)" size="small" type="primary" @click="reApply" />
@@ -147,12 +152,14 @@ export default {
       resultMap: {
         Agree: '同意',
         Reject: '驳回',
-        Submit: '提出申请'
+        Submit: '提出申请',
+        Cancel: '废弃'
       },
       resultTypeMap: {
         Agree: 'success',
         Reject: 'danger',
-        Submit: ''
+        Submit: '',
+        Cancel: 'info'
       },
       active: 1,
       applyType: ''
@@ -169,6 +176,11 @@ export default {
     ...mapGetters(['userId', 'agencyId'])
   },
   methods: {
+    pickerOptions: {
+      disabledDate(time) {
+        return time.getTime() > Date.now()
+      }
+    },
     async queryAuthTemplateDetails(params) {
       const res = await authManageServer.queryAuthTemplateDetails(params)
       console.log(res)
@@ -216,6 +228,26 @@ export default {
         console.log(this.dataInfo, 'this.dataInfo')
       } else {
         this.dataInfo = {}
+      }
+    },
+    // 相当于更新审批单内容
+    async reSubmit() {
+      const { applyTitle, applyDesc, followers, applyChain, applyContent, id, applyType } = this.dataInfo
+      console.log(this.dataInfo, 'this.dataInfo')
+      const params = {
+        applyType,
+        applyContent,
+        applyTitle,
+        applyDesc,
+        applyTemplateName: applyType,
+        applyChain: JSON.stringify({ chain: applyChain }),
+        followers,
+        id
+      }
+      const res = await authManageServer.updateAuth({ authList: [params] })
+      if (res.code === 0) {
+        this.$message.success('重新提交成功')
+        this.getDetail()
       }
     },
     showAgreeConfirm(params) {
@@ -284,17 +316,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .create-data {
-  display: flex;
   width: 100%;
-  div.approveInfo {
-    flex: 1;
-  }
   div.record {
     width: 340px;
-    padding-left: 40px;
 
     .step-con {
       display: flex;
+      padding-left: 60px;
       .step {
         transform: translateY(13px);
       }

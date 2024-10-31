@@ -34,6 +34,7 @@
                 v-model="scope.row[item.key]"
                 type="date"
                 placeholder="请选择日期"
+                :picker-options="pickerOptions"
               >
               </el-date-picker>
               <el-select style="width: 160px" v-model="scope.row[item.key]" v-else-if="item.type === 'select'" placeholder="请选择" clearable>
@@ -82,6 +83,11 @@ export default {
         applyTitle: [{ required: true, message: '申请标题不能为空', trigger: 'blur' }],
         followers: [{ required: false, message: '关注人不能为空', trigger: 'blur' }],
         applyDesc: [{ required: true, message: '申请背景不能为空', trigger: 'blur' }]
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() <= Date.now()
+        }
       }
     }
   },

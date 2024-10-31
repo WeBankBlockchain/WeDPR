@@ -34,6 +34,7 @@
                 v-model="scope.row[item.key]"
                 type="date"
                 placeholder="请选择日期"
+                :picker-options="pickerOptions"
               >
               </el-date-picker>
               <el-select style="width: 160px" v-model="scope.row[item.key]" v-else-if="item.type === 'select'" placeholder="请选择" clearable>
@@ -81,7 +82,12 @@ export default {
       },
       columns: [],
       authID: '',
-      accessKeyList: []
+      accessKeyList: [],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() <= Date.now()
+        }
+      }
     }
   },
   created() {
