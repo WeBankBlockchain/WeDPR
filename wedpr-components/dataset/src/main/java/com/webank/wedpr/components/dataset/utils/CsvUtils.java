@@ -206,7 +206,22 @@ public class CsvUtils {
 
                         // write line values
                         for (int i = 0; i < rowValues.size(); ++i) {
-                            csvWriter.write(rowValues.get(i));
+
+                            String rowValue = rowValues.get(i);
+
+                            if (rowValue == null) {
+                                logger.error(
+                                        "table field value is null, dbType: {}, sql: {}",
+                                        dbType,
+                                        dbDataSource.getSql());
+                                throw new DatasetException(
+                                        "table field value is null, dbType: "
+                                                + dbType
+                                                + ", sql"
+                                                + dbDataSource.getSql());
+                            }
+
+                            csvWriter.write(rowValue);
                             if (i < rowValues.size() - 1) {
                                 // add a comma separator after each cell.
                                 csvWriter.print(CSV_SEPARATOR);

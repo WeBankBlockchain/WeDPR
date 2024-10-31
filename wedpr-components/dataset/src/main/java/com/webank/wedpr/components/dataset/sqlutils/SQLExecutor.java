@@ -28,7 +28,7 @@ public class SQLExecutor {
 
     @FunctionalInterface
     public interface ExecutorCallback {
-        void onReadRowData(List<String> fields, List<String> rowValues);
+        void onReadRowData(List<String> fields, List<String> rowValues) throws DatasetException;
     }
 
     public static String generateJdbcUrl(
