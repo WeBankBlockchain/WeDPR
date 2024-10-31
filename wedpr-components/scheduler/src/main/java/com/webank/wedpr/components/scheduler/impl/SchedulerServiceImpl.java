@@ -55,7 +55,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         JobDO jobDO = jobDOList.get(0);
         // run failed, no need to fetch the result
         if (!JobStatus.success(jobDO.getStatus())) {
-            return new JobDetailResponse(jobDO, null, null);
+            return new JobDetailResponse(jobDO, null, null, null);
         }
         // the ml job
         if (jobDO.getType().mlJob()) {
@@ -66,7 +66,10 @@ public class SchedulerServiceImpl implements SchedulerService {
                                     new GetTaskResultRequest(
                                             user, jobDO.getId(), jobDO.getJobType()));
             return new JobDetailResponse(
-                    jobDO, modelJobData.getJobPlanetResult(), modelJobData.getModelData());
+                    jobDO,
+                    modelJobData.getJobPlanetResult(),
+                    modelJobData.getModelData(),
+                    modelJobData.getLogData());
         }
         JobDetailResponse response = new JobDetailResponse(jobDO);
         // the psi job, parse the output

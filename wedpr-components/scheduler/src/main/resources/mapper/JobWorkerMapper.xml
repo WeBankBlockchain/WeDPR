@@ -10,6 +10,7 @@
         <result property="type" column="type" />
         <result property="status" column="status" />
         <result property="args" column="args" />
+        <result property="exec_result" column="execResult" />
         <result property="upstreams" column="upstreams" />
 <!--        <result property="inputsStatement" column="inputs_statement" />-->
 <!--        <result property="outputs" column="outputs" />-->
@@ -19,16 +20,7 @@
 
     <select id="selectJobWorkerById" resultMap="JobWorkerResultMap">
         SELECT
-            worker_id,
-            job_id,
-            type,
-            status,
-            args,
-            upstreams,
-            inputs_statement,
-            outputs,
-            create_time,
-            update_time
+            *
         FROM wedpr_job_worker_table WHERE worker_id = #{workerId}
     </select>
 

@@ -19,6 +19,8 @@ public class JobWorker {
     // private String outputs;
     private String createTime;
     private String updateTime;
+    // Note: execResult is updated by the worker
+    private String execResult;
 
     public List<WorkFlowUpstream> toUpstreams() throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper()

@@ -15,90 +15,57 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.common.utils.BaseResponse;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
-import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
+import com.webank.wedpr.components.scheduler.dag.worker.WorkerStatus;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
+@ToString
 public class MLResponse implements BaseResponse {
+
+    @Data
+    @ToString
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Result {
         private String status;
 
         @JsonProperty("traffic_volume")
         private String trafficVolume;
 
-        @JsonProperty("time_costs")
-        private String timeCosts;
+        @JsonProperty("exec_result")
+        private String execResult;
 
-        public String getStatus() {
-            return status;
-        }
+        private WorkerStatus workerStatus;
 
         public void setStatus(String status) {
             this.status = status;
+            if (StringUtils.isNotBlank(status)) {
+                this.workerStatus = WorkerStatus.deserialize(status);
+            }
         }
 
-        public String getTrafficVolume() {
-            return trafficVolume;
-        }
-
-        public void setTrafficVolume(String trafficVolume) {
-            this.trafficVolume = trafficVolume;
-        }
-
-        public String getTimeCosts() {
-            return timeCosts;
-        }
-
-        public void setTimeCosts(String timeCosts) {
-            this.timeCosts = timeCosts;
-        }
-
-        @Override
-        public String toString() {
-            return "Result{"
-                    + "status='"
-                    + status
-                    + '\''
-                    + ", trafficVolume='"
-                    + trafficVolume
-                    + '\''
-                    + ", timeCosts='"
-                    + timeCosts
-                    + '\''
-                    + '}';
+        public void setWorkerStatus(WorkerStatus workerStatus) {
+            this.workerStatus = workerStatus;
+            if (this.workerStatus != null) {
+                this.status = this.workerStatus.getStatus();
+            }
         }
     }
 
     private Integer errorCode;
     private String message;
     private Result data;
-
-    public Integer getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Result getData() {
-        return data;
-    }
-
-    public void setData(Result data) {
-        this.data = data;
-    }
 
     @Override
     public Boolean statusOk() {
@@ -109,14 +76,14 @@ public class MLResponse implements BaseResponse {
         if (data == null) {
             return Boolean.FALSE;
         }
-        return data.getStatus().compareToIgnoreCase(MLExecutorConfig.getSuccessStatus()) == 0;
+        return data.getWorkerStatus().isSuccess();
     }
 
     public Boolean failed() {
         if (data == null) {
             return Boolean.FALSE;
         }
-        return data.getStatus().equals(MLExecutorConfig.getFailedStatus());
+        return data.getWorkerStatus().isFailed();
     }
 
     public static MLResponse deserialize(String data) throws JsonProcessingException {
@@ -126,18 +93,5 @@ public class MLResponse implements BaseResponse {
     @Override
     public String serialize() throws Exception {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
-    }
-
-    @Override
-    public String toString() {
-        return "MLResponse{"
-                + "errorCode="
-                + errorCode
-                + ", message='"
-                + message
-                + '\''
-                + ", data="
-                + data
-                + '}';
     }
 }
