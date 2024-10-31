@@ -11,8 +11,6 @@ public class MPCExecutorHook implements ExecutorHook {
         MPCJobParam jobParam = (MPCJobParam) jobDO.getJobParam();
 
         MPCJobRequest mpcJobRequest = (MPCJobRequest) jobParam.toMPCJobRequest();
-
-        mpcJobRequest.setTaskID(jobDO.getTaskID());
         return mpcJobRequest;
     }
 }

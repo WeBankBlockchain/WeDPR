@@ -7,6 +7,7 @@ import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
+import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.WorkerUtils;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
@@ -37,14 +38,17 @@ public class ModelClient {
                         new MLResponseFactory());
     }
 
-    public String submitTask(String params) throws Exception {
+    public String submitTask(String params, JobWorker jobWorker) throws Exception {
 
-        logger.info("begin submit job to ML node, jobRequest: {}", params);
+        logger.info(
+                "begin submit job to ML node, jobRequest: {}, workerId: {}",
+                params,
+                jobWorker.getWorkerId());
 
         ModelJobRequest modelJobRequest =
                 ObjectMapperFactory.getObjectMapper().readValue(params, ModelJobRequest.class);
 
-        String taskId = modelJobRequest.getTaskID();
+        String taskId = jobWorker.getWorkerId();
         String requestUrl = MLExecutorConfig.getRunTaskApiUrl(url, taskId);
 
         logger.info("taskId: {}, requestUrl: {}", taskId, requestUrl);

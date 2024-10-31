@@ -28,10 +28,6 @@ public class MLExecutorConfig {
     private static final String OBTAIN_JOB_RESULT_API_PATH =
             WeDPRConfig.apply(
                     "wedpr.executor.ml.method.getJobResult", DEFAULT_GET_JOB_RESULT_API_PATH);
-    private static final String SUCCESS_STATUS =
-            WeDPRConfig.apply("wedpr.executor.ml.status.success", "COMPLETED");
-    private static final String FAILED_STATUS =
-            WeDPRConfig.apply("wedpr.executor.ml.status.failed", "FAILED");
     private static final Integer CONNECTION_REQUEST_TIME_OUT =
             WeDPRConfig.apply("wedpr.executor.ml.connect.request.timeout.ms", 10000);
     private static final Integer CONNECTION_TIME_OUT =
@@ -55,14 +51,6 @@ public class MLExecutorConfig {
 
     public static String getObtainJobResultApiUrl(String url, String jobID) {
         return url + "/" + OBTAIN_JOB_RESULT_API_PATH + "/" + jobID;
-    }
-
-    public static String getSuccessStatus() {
-        return SUCCESS_STATUS;
-    }
-
-    public static String getFailedStatus() {
-        return FAILED_STATUS;
     }
 
     public static Integer getMaxTotalConnection() {

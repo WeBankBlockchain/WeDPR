@@ -150,6 +150,7 @@ CREATE TABLE if not exists wedpr_job_worker_table (
     upstreams TEXT,
     inputs_statement TEXT,
     outputs TEXT,
+    exec_result TEXT,
     create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (worker_id),

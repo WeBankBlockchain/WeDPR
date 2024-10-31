@@ -50,9 +50,9 @@ public class ModelWorker extends Worker {
 
             ModelClient modelClient = new ModelClient(url);
             // submit task
-            String taskId = modelClient.submitTask(args);
+            String taskId = modelClient.submitTask(args, getJobWorker());
             // poll until the task finished
-            modelClient.pollTask(taskId);
+            modelClient.pollTask(getJobWorker().getWorkerId());
 
         } finally {
             long endTimeMillis = System.currentTimeMillis();
