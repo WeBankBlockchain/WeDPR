@@ -33,6 +33,9 @@ public interface JobWorkerMapper {
      */
     int updateJobWorkerStatus(@Param("workerId") String workerId, @Param("status") String status);
 
+    int updateWorkersStatusByCondition(
+            @Param("status") String status, @Param("condition") JobWorker condition);
+
     /**
      * @param jobWorkers
      * @return

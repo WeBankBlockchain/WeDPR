@@ -21,9 +21,13 @@ import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.api.SchedulerApi;
+import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
+import com.webank.wedpr.components.scheduler.dag.worker.WorkerStatus;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManager;
+import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
+import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +37,12 @@ public class SchedulerImpl implements SchedulerApi {
     private final ProjectMapperWrapper projectMapperWrapper;
     private final String agency;
     private final ThreadPoolService threadPoolService;
-    // private final JobOrchestrate jobOrchestrate;
+    private final JobWorkerMapper jobWorkerMapper;
     private final ExecutorManager executorManager;
 
     public SchedulerImpl(
             String agency,
+            JobWorkerMapper jobWorkerMapper,
             ExecutorManager executorManager,
             ThreadPoolService threadPoolService,
             ProjectMapperWrapper projectMapperWrapper,
@@ -45,10 +50,7 @@ public class SchedulerImpl implements SchedulerApi {
             FileStorageInterface fileStorageInterface,
             FileMetaBuilder fileMetaBuilder) {
         this.agency = agency;
-        //        this.jobOrchestrate =
-        //                new JobOrchestrate(
-        //                        executorManager, projectMapperWrapper, jobChecker,
-        // fileMetaBuilder);
+        this.jobWorkerMapper = jobWorkerMapper;
         this.projectMapperWrapper = projectMapperWrapper;
         this.threadPoolService = threadPoolService;
         this.executorManager = executorManager;
@@ -79,9 +81,16 @@ public class SchedulerImpl implements SchedulerApi {
             if (!jobDO.isJobParty(this.agency)) {
                 continue;
             }
-
             // set the job status to running
             this.projectMapperWrapper.updateSingleJobStatus(null, null, jobDO, JobStatus.Running);
+            // update the status of the failed sub-tasks to pending
+            JobWorker condition = new JobWorker();
+            condition.setJobId(jobDO.getId());
+            condition.setStatusList(
+                    Arrays.asList(
+                            WorkerStatus.FAILURE.getStatus(), WorkerStatus.KILLED.getStatus()));
+            this.jobWorkerMapper.updateWorkersStatusByCondition(
+                    WorkerStatus.PENDING.getStatus(), condition);
             threadPoolService
                     .getThreadPool()
                     .execute(
