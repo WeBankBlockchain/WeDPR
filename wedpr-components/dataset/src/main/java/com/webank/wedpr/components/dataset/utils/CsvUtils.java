@@ -88,10 +88,17 @@ public class CsvUtils {
             // default to using the first worksheet.
             Sheet sheet = workbook.getSheetAt(sheetNum);
 
+            int lastRowNum = sheet.getLastRowNum();
+            int firstRowNum = sheet.getFirstRowNum();
+
             // iterate through each row of the worksheet.
             for (Row row : sheet) {
+                int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+
+                int index = 1;
                 // iterate through each cell in the row.
                 for (Cell cell : row) {
+
                     // read data based on the cell type.
                     switch (cell.getCellType()) {
                         case STRING:
@@ -119,8 +126,11 @@ public class CsvUtils {
                                             + " ,cellValue: "
                                             + cellValue);
                     }
-                    // add a comma separator after each cell.
-                    csvWriter.print(CSV_SEPARATOR);
+
+                    if (index++ < physicalNumberOfCells) {
+                        // add a comma separator after each cell.
+                        csvWriter.print(CSV_SEPARATOR);
+                    }
                 }
 
                 // add a newline at the end of each row
