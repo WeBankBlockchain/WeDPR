@@ -1,0 +1,136 @@
+# PSI_OPTION=True
+
+# BIT_LENGTH = 128
+
+# This file is generated automatically by ams
+'''
+SELECT COUNT(s1.field3) + COUNT(s2.field3) AS r0,
+       SUM(s1.field3) + COUNT(s0.field0) AS 'count',
+       (MAX(s0.field1) + MAX(s2.field1)) / 2 AS r1,
+       (AVG(s1.field2) + AVG(s2.field2)) / 2 AS r2,
+       MIN(s1.field0) - MIN(s0.field0) AS r3
+FROM (source0 AS s0
+      INNER JOIN source1 AS s1 ON s0.id = s1.id)
+INNER JOIN source2 AS s2 ON s0.id = s2.id;
+'''
+
+from ppc import *
+
+n_threads = 8
+value_type = pfix
+
+pfix.set_precision(16, 47)
+
+SOURCE0 = 0
+source0_record_count = $(source0_record_count)
+source0_column_count = 2
+source0_record = Matrix(source0_record_count, source0_column_count, value_type)
+
+SOURCE1 = 1
+source1_record_count = $(source1_record_count)
+source1_column_count = 4
+source1_record = Matrix(source1_record_count, source1_column_count, value_type)
+
+SOURCE2 = 2
+source2_record_count = $(source2_record_count)
+source2_column_count = 4
+source2_record = Matrix(source2_record_count, source2_column_count, value_type)
+
+results = Matrix(1, 5, value_type)
+
+
+def read_data_collection(data_collection, party_id):
+    if data_collection.sizes[0] > 0:
+        data_collection.input_from(party_id)
+
+
+def compute_sum(source, record_count, col_index):
+    records_sum = Array(1, value_type)
+    records_sum[0] = source[0][col_index]
+
+    @for_range(1, record_count)
+    def _(i):
+        records_sum[0] = records_sum[0] + source[i][col_index]
+
+    return records_sum[0]
+
+
+def compute_count(record_count):
+    return record_count
+
+
+def compute_avg(source, record_count, col_index):
+    records_sum = Array(1, value_type)
+    records_sum[0] = source[0][col_index]
+
+    @for_range(1, record_count)
+    def _(i):
+        records_sum[0] = records_sum[0] + source[i][col_index]
+
+    return records_sum[0] / record_count
+
+
+def compute_max(source, record_count, col_index):
+    max_record = Array(1, value_type)
+    max_record[0] = source[0][col_index]
+
+    @for_range(1, record_count)
+    def _(i):
+        max_record[0] = condition(max_record[0] < source[i][col_index], source[i][col_index], max_record[0])
+
+    return max_record[0]
+
+
+def compute_min(source, record_count, col_index):
+    min_record = Array(1, value_type)
+    min_record[0] = source[0][col_index]
+
+    @for_range(1, record_count)
+    def _(i):
+        min_record[0] = condition(min_record[0] > source[i][col_index], source[i][col_index], min_record[0])
+
+    return min_record[0]
+
+
+def calculate_result_0():
+    results[0][0] = compute_count(source1_record_count)+compute_count(source2_record_count)
+
+
+def calculate_result_1():
+    results[0][1] = compute_sum(source1_record, source1_record_count, 3)+compute_count(source0_record_count)
+
+
+def calculate_result_2():
+    results[0][2] = (compute_max(source0_record, source0_record_count, 1)+compute_max(source2_record, source2_record_count, 1))/2
+
+
+def calculate_result_3():
+    results[0][3] = (compute_avg(source1_record, source1_record_count, 2)+compute_avg(source2_record, source2_record_count, 2))/2
+
+
+def calculate_result_4():
+    results[0][4] = compute_min(source1_record, source1_record_count, 0)-compute_min(source0_record, source0_record_count, 0)
+
+
+def print_results():
+    result_fields = ['r0', 'count', 'r1', 'r2', 'r3']
+    set_display_field_names(result_fields)
+
+    result_values = [results[0][0].reveal(), results[0][1].reveal(), results[0][2].reveal(), results[0][3].reveal(), results[0][4].reveal()]
+    display_data(result_values)
+
+
+def ppc_main():
+    read_data_collection(source0_record, SOURCE0)
+    read_data_collection(source1_record, SOURCE1)
+    read_data_collection(source2_record, SOURCE2)
+    calculate_result_0()
+    calculate_result_1()
+    calculate_result_2()
+    calculate_result_3()
+    calculate_result_4()
+
+    print_results()
+
+
+ppc_main()

@@ -1,0 +1,234 @@
+# PSI_OPTION=True
+
+# BIT_LENGTH = 128
+
+# This file is generated automatically by ams
+'''
+SELECT 3*s1.field4 AS r0,
+       COUNT(s1.field4) AS 'count',
+       AVG(s0.field1) * 2 + s1.field4 AS r1,
+       (SUM(s0.field2) + SUM(s1.field2))/(COUNT(s1.field3) + 100/(MIN(s0.field1)+MIN(s1.field1))) + 10,
+       MAX(s1.field1),
+       MIN(s2.field2)
+FROM (source0 AS s0
+      INNER JOIN source1 AS s1 ON s0.id = s1.id)
+INNER JOIN source2 AS s2 ON s0.id = s2.id
+GROUP BY s1.field4;
+'''
+
+from ppc import *
+
+n_threads = 8
+value_type = pfix
+
+pfix.set_precision(16, 47)
+
+SOURCE0 = 0
+source0_record_count = $(source0_record_count)
+source0_column_count = 3
+source0_record = Matrix(source0_record_count, source0_column_count, value_type)
+
+SOURCE1 = 1
+source1_record_count = $(source1_record_count)
+source1_column_count = 5
+source1_record = Matrix(source1_record_count, source1_column_count, value_type)
+
+SOURCE2 = 2
+source2_record_count = $(source2_record_count)
+source2_column_count = 3
+source2_record = Matrix(source2_record_count, source2_column_count, value_type)
+
+# group by means all parties have same number of record
+source_record_count = $(source0_record_count)
+result_record = cint(source_record_count)
+results = Matrix(source_record_count, 6, value_type)
+
+
+def read_data_collection(data_collection, party_id):
+    if data_collection.sizes[0] > 0:
+        data_collection.input_from(party_id)
+
+
+# matrix of indexes after group by:
+#     0         1         2
+# 0 count1 start_index end_index
+# 1 count2 start_index end_index
+# 2 count3 start_index end_index
+# ...
+# source_record_count - 1 ...
+group_indexes_key = Array(source_record_count, value_type)
+group_indexes_matrix = Matrix(source_record_count, 3, pint)
+group_column = Array(source_record_count, value_type)
+
+
+def compute_group_by_indexes(source, col_index):
+    # group_count group_index group_flag
+    group_states = Array(3, cint)
+
+    @for_range_opt(source_record_count)
+    def _(i):
+        group_column[i] = source[i][col_index]
+        group_states[1] = 0
+        group_states[2] = 0
+
+        @for_range(group_states[0])
+        def _(j):
+            @if_(pint(group_indexes_key[j] == source[i][col_index]).reveal())
+            def _():
+                group_states[1] = j
+                group_states[2] = 1
+
+        @if_e(group_states[2] == 0)
+        def _():
+            # new item
+            group_indexes_key[group_states[0]] = source[i][col_index]
+            group_indexes_matrix[group_states[0]][0] = 1
+            group_indexes_matrix[group_states[0]][1] = i
+            group_indexes_matrix[group_states[0]][2] = i
+            group_states[0] = group_states[0] + 1
+
+        @else_
+        def _():
+            group_indexes_matrix[group_states[1]][0] = group_indexes_matrix[group_states[1]][0] + 1
+            group_indexes_matrix[group_states[1]][2] = i
+
+    global result_record
+    result_record = group_states[0]
+
+
+def compute_sum_with_group_by(source, col_index, group_row_index):
+    records_sum = Array(1, value_type)
+
+    start_index = group_indexes_matrix[group_row_index][1].reveal()
+    end_index = group_indexes_matrix[group_row_index][2].reveal()
+
+    records_sum[0] = source[start_index][col_index]
+
+    @for_range(start_index + 1, end_index + 1)
+    def _(i):
+        @if_(pint(group_indexes_key[group_row_index] == group_column[i]).reveal())
+        def _():
+            records_sum[0] = records_sum[0] + source[i][col_index]
+
+    return records_sum[0]
+
+
+def compute_count_with_group_by(group_row_index):
+    return group_indexes_matrix[group_row_index][0]
+
+
+def compute_avg_with_group_by(source, col_index, group_row_index):
+    records_sum = Array(1, value_type)
+
+    start_index = group_indexes_matrix[group_row_index][1].reveal()
+    end_index = group_indexes_matrix[group_row_index][2].reveal()
+
+    records_sum[0] = source[start_index][col_index]
+
+    @for_range(start_index + 1, end_index + 1)
+    def _(i):
+        @if_(pint(group_indexes_key[group_row_index] == group_column[i]).reveal())
+        def _():
+            records_sum[0] = records_sum[0] + source[i][col_index]
+
+    return value_type(records_sum[0] / group_indexes_matrix[group_row_index][0])
+
+
+def compute_max_with_group_by(source, col_index, group_row_index):
+    max_records = Array(1, value_type)
+
+    start_index = group_indexes_matrix[group_row_index][1].reveal()
+    end_index = group_indexes_matrix[group_row_index][2].reveal()
+
+    max_records[0] = source[start_index][col_index]
+
+    @for_range(start_index + 1, end_index + 1)
+    def _(i):
+        @if_(pint(group_indexes_key[group_row_index] == group_column[i]).reveal())
+        def _():
+            max_records[0] = condition(max_records[0] < source[i][col_index], source[i][col_index], max_records[0])
+
+    return max_records[0]
+
+
+def compute_min_with_group_by(source, col_index, group_row_index):
+    min_records = Array(1, value_type)
+
+    start_index = group_indexes_matrix[group_row_index][1].reveal()
+    end_index = group_indexes_matrix[group_row_index][2].reveal()
+
+    min_records[0] = source[start_index][col_index]
+
+    @for_range(start_index + 1, end_index + 1)
+    def _(i):
+        @if_(pint(group_indexes_key[group_row_index] == group_column[i]).reveal())
+        def _():
+            min_records[0] = condition(min_records[0] > source[i][col_index], source[i][col_index], min_records[0])
+
+    return min_records[0]
+
+
+def calculate_result_0():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][0] = 3*group_indexes_key[i]
+
+
+def calculate_result_1():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][1] = compute_count_with_group_by(i)
+
+
+def calculate_result_2():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][2] = compute_avg_with_group_by(source0_record, 1, i)*2+group_indexes_key[i]
+
+
+def calculate_result_3():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][3] = (compute_sum_with_group_by(source0_record, 2, i)+compute_sum_with_group_by(source1_record, 2, i))/(compute_count_with_group_by(i)+100/(compute_min_with_group_by(source0_record, 1, i)+compute_min_with_group_by(source1_record, 1, i)))+10
+
+
+def calculate_result_4():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][4] = compute_max_with_group_by(source1_record, 1, i)
+
+
+def calculate_result_5():
+    @for_range_opt_multithread(n_threads, result_record)
+    def _(i):
+        results[i][5] = compute_min_with_group_by(source2_record, 2, i)
+
+
+def print_results():
+    result_fields = ['r0', 'count', 'r1', 'result3', 'result4', 'result5']
+    set_display_field_names(result_fields)
+
+    @for_range_opt(result_record)
+    def _(i):
+        result_values = [results[i][0].reveal(), results[i][1].reveal(), results[i][2].reveal(), results[i][3].reveal(), results[i][4].reveal(), results[i][5].reveal()]
+        display_data(result_values)
+
+
+def ppc_main():
+    read_data_collection(source0_record, SOURCE0)
+    read_data_collection(source1_record, SOURCE1)
+    read_data_collection(source2_record, SOURCE2)
+
+    compute_group_by_indexes(source1_record, 4)
+
+    calculate_result_0()
+    calculate_result_1()
+    calculate_result_2()
+    calculate_result_3()
+    calculate_result_4()
+    calculate_result_5()
+
+    print_results()
+
+
+ppc_main()
