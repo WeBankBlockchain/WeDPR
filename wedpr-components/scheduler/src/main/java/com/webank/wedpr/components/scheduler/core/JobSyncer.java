@@ -146,7 +146,7 @@ public class JobSyncer {
     public void onReceiveKillAction(ResourceSyncer.CommitArgs commitArgs)
             throws JsonProcessingException {
         BatchJobList jobList =
-                BatchJobList.deserialize(commitArgs.getResourceActionRecord().getResourceAction());
+                BatchJobList.deserialize(commitArgs.getResourceActionRecord().getResourceContent());
         logger.info("onReceiveKillAction, job size: {}", jobList.getJobs());
         this.scheduler.batchKillJobs(jobList.getJobs());
     }

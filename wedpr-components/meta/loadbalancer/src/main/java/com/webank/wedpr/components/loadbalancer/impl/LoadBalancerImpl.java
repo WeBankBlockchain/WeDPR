@@ -31,6 +31,11 @@ public class LoadBalancerImpl implements LoadBalancer {
     }
 
     @Override
+    public List<EntryPointInfo> selectAllEndPoint(String serviceType) {
+        return entryPointFetcher.getAliveEntryPoints(serviceType);
+    }
+
+    @Override
     public EntryPointInfo selectService(Policy policy, String serviceType) {
         List<EntryPointInfo> entryPointInfoList =
                 entryPointFetcher.getAliveEntryPoints(serviceType);

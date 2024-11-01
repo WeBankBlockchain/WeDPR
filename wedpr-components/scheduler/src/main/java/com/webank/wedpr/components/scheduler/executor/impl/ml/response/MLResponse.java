@@ -86,6 +86,13 @@ public class MLResponse implements BaseResponse {
         return data.getWorkerStatus().isFailed();
     }
 
+    public Boolean killed() {
+        if (data == null) {
+            return Boolean.FALSE;
+        }
+        return data.getWorkerStatus().isKilled();
+    }
+
     public static MLResponse deserialize(String data) throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper().readValue(data, MLResponse.class);
     }

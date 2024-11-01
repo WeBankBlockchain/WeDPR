@@ -23,7 +23,7 @@ public class MpcWorker extends Worker {
     }
 
     @Override
-    public void engineRun() throws WeDPRException {
+    public WorkerStatus engineRun() throws WeDPRException {
 
         EntryPointInfo entryPoint =
                 getLoadBalancer()
@@ -33,5 +33,6 @@ public class MpcWorker extends Worker {
         }
 
         logger.info("## getting mpc client: {}", entryPoint);
+        return WorkerStatus.SUCCESS;
     }
 }

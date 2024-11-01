@@ -23,8 +23,11 @@ public enum WorkerStatus {
     }
 
     public boolean isFailed() {
-        return ordinal() == WorkerStatus.FAILURE.ordinal()
-                || ordinal() == WorkerStatus.KILLED.ordinal();
+        return ordinal() == WorkerStatus.FAILURE.ordinal();
+    }
+
+    public boolean isKilled() {
+        return ordinal() == WorkerStatus.KILLED.ordinal();
     }
 
     public boolean isSuccess() {

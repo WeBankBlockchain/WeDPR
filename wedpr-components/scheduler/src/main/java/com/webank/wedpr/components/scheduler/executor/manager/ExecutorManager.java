@@ -25,7 +25,6 @@ public interface ExecutorManager {
 
     void kill(JobDO jobDO) throws Exception;
 
-    @Deprecated
     void registerOnTaskFinished(String executorType, TaskFinishedHandler finishedHandler);
 
     TaskFinishedHandler getTaskFinishHandler(String executorType);

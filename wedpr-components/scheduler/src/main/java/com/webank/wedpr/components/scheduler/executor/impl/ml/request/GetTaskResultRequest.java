@@ -15,13 +15,20 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.BaseRequest;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import lombok.Data;
+import lombok.ToString;
 
+@Data
+@ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GetTaskResultRequest implements BaseRequest {
     String jobID;
     String user;
     String jobType;
+    Boolean onlyFetchLog;
 
     public GetTaskResultRequest() {}
 
@@ -29,42 +36,6 @@ public class GetTaskResultRequest implements BaseRequest {
         this.user = user;
         this.jobID = jobID;
         this.jobType = jobType;
-    }
-
-    public String getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
-    }
-
-    @Override
-    public String toString() {
-        return "GetTaskResultRequest{"
-                + "user='"
-                + user
-                + '\''
-                + ", jobType='"
-                + jobType
-                + '\''
-                + '}';
     }
 
     @Override
