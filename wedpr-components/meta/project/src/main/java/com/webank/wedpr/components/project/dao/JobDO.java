@@ -148,6 +148,7 @@ public class JobDO extends TimeRange {
     @JsonIgnore private transient List<FollowerDO> taskParties;
 
     @JsonIgnore private transient Integer limitItems = -1;
+    @JsonIgnore private transient Boolean killed = false;
 
     // shouldSync or not
     private Boolean shouldSync;
@@ -303,6 +304,9 @@ public class JobDO extends TimeRange {
     public Boolean isJobParty(String agency) {
         if (this.ownerAgency.compareToIgnoreCase(agency) == 0) {
             return Boolean.TRUE;
+        }
+        if (taskParties == null) {
+            return Boolean.FALSE;
         }
         for (FollowerDO followerDO : taskParties) {
             if (followerDO.getAgency().compareToIgnoreCase(agency) == 0) {

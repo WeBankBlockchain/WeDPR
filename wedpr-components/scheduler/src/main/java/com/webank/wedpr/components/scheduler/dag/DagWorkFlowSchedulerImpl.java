@@ -189,10 +189,13 @@ public class DagWorkFlowSchedulerImpl implements WorkFlowScheduler {
                         workerId);
                 return;
             }
-            worker.run(jobWorker.getStatus());
-
-            jobWorkerMapper.updateJobWorkerStatus(workerId, WorkerStatus.SUCCESS.name());
-            logger.info("worker executed successfully, jobId: {}, workId: {}", jobId, workerId);
+            WorkerStatus status = worker.run(jobWorker.getStatus());
+            if (status != WorkerStatus.KILLED) {
+                jobWorkerMapper.updateJobWorkerStatus(workerId, status.name());
+                logger.info("worker executed successfully, jobId: {}, workId: {}", jobId, workerId);
+            } else {
+                logger.info("worker has been killed, jobId: {}, workId: {}", jobId, workerId);
+            }
         } catch (Exception e) {
             logger.error("worker executed failed, jobId: {}, workId: {}, e: ", jobId, workerId, e);
             jobWorkerMapper.updateJobWorkerStatus(workerId, WorkerStatus.FAILURE.name());

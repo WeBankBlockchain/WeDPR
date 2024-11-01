@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.loadbalancer;
 
+import java.util.List;
+
 public interface LoadBalancer {
     public static enum Policy {
         ROUND_ROBIN,
@@ -22,4 +24,6 @@ public interface LoadBalancer {
     }
 
     EntryPointInfo selectService(Policy policy, String serviceType);
+
+    List<EntryPointInfo> selectAllEndPoint(String serviceType);
 }

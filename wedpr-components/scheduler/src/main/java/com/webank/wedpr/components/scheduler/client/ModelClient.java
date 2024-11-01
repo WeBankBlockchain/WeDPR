@@ -9,6 +9,7 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.WorkerUtils;
+import com.webank.wedpr.components.scheduler.dag.worker.WorkerStatus;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.MLExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.response.MLResponse;
@@ -71,7 +72,7 @@ public class ModelClient {
     }
 
     @SneakyThrows
-    public void pollTask(String taskId) throws WeDPRException {
+    public WorkerStatus pollTask(String taskId) throws WeDPRException {
 
         String requestUrl = MLExecutorConfig.getRunTaskApiUrl(url, taskId);
 
@@ -102,9 +103,13 @@ public class ModelClient {
                                 + " ,response: "
                                 + response);
             }
+            if (response.killed()) {
+                logger.info("The ml task {} has been killed, response: {}", taskId, response);
+                return response.getData().getWorkerStatus();
+            }
 
             if (response.success()) {
-                return;
+                return response.getData().getWorkerStatus();
             }
 
             // task is running

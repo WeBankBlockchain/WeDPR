@@ -24,7 +24,7 @@ public class ModelWorker extends Worker {
     }
 
     @Override
-    public void engineRun() throws Exception {
+    public WorkerStatus engineRun() throws Exception {
 
         String jobId = getJobId();
         String workerId = getWorkerId();
@@ -52,8 +52,7 @@ public class ModelWorker extends Worker {
             // submit task
             String taskId = modelClient.submitTask(args, getJobWorker());
             // poll until the task finished
-            modelClient.pollTask(getJobWorker().getWorkerId());
-
+            return modelClient.pollTask(getJobWorker().getWorkerId());
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             logger.info(

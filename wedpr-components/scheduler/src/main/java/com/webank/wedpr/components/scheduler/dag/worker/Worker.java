@@ -81,16 +81,16 @@ public abstract class Worker {
      *
      * @return
      */
-    public abstract void engineRun() throws Exception;
+    public abstract WorkerStatus engineRun() throws Exception;
 
-    public boolean run(String workerStatus) throws Exception {
+    public WorkerStatus run(String workerStatus) throws Exception {
 
         if (workerStatus.equals(WorkerStatus.SUCCESS.name())) {
             logger.info(
                     "worker has been executed successfully, jobId: {}, workId: {}",
                     jobId,
                     workerId);
-            return false;
+            return WorkerStatus.SUCCESS;
         }
 
         logWorker();
@@ -101,9 +101,9 @@ public abstract class Worker {
         while (attemptTimes++ < retryTimes) {
             try {
                 logger.info(workerStartLog(workerId));
-                this.engineRun();
+                WorkerStatus status = this.engineRun();
                 logger.info(workerEndLog(workerId));
-                return true;
+                return status;
             } catch (Exception e) {
                 if (attemptTimes >= retryTimes) {
                     logger.error(
@@ -125,7 +125,7 @@ public abstract class Worker {
             }
         }
 
-        return false;
+        return WorkerStatus.FAILURE;
     }
 
     String workerStartLog(String workId) {

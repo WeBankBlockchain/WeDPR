@@ -198,7 +198,7 @@
         select
         <choose>
             <when test="onlyMeta == true">
-                `id`, `owner`, `owner_agency`, `job_type`
+                `id`, `owner`, `owner_agency`, `job_type`, `parties`
             </when>
             <otherwise>
                 *

@@ -24,7 +24,7 @@ public class PsiWorker extends Worker {
     }
 
     @Override
-    public void engineRun() throws Exception {
+    public WorkerStatus engineRun() throws Exception {
 
         String jobId = getJobId();
         String workerId = getWorkerId();
@@ -57,6 +57,7 @@ public class PsiWorker extends Worker {
             String taskId = psiClient.submitTask(workerArgs);
             // poll until the task finished
             psiClient.pollTask(taskId);
+            return WorkerStatus.SUCCESS;
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             logger.info(

@@ -18,6 +18,7 @@ package com.webank.wedpr.components.scheduler.config;
 import static com.webank.wedpr.components.scheduler.SchedulerBuilder.WORKER_NAME;
 
 import com.webank.wedpr.common.protocol.ExecutorType;
+import com.webank.wedpr.common.protocol.JobStatus;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
@@ -132,7 +133,33 @@ public class SchedulerLoader {
                         new ExecutiveContextBuilder(projectMapperWrapper),
                         threadPoolService);
         executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
-        // register the pir executor, TODO: implement the taskFinishHandler
+        // default
+        TaskFinishedHandler taskFinishedHandler =
+                new TaskFinishedHandler() {
+                    @Override
+                    public void onFinish(JobDO jobDO, ExecuteResult result) {
+                        try {
+                            if (result.getResultStatus() == null
+                                    || result.getResultStatus().failed()) {
+                                projectMapperWrapper.updateFinalJobResult(
+                                        jobDO, JobStatus.RunFailed, result.serialize());
+                            } else {
+                                projectMapperWrapper.updateFinalJobResult(
+                                        jobDO, JobStatus.RunSuccess, result.serialize());
+                            }
+                        } catch (Exception e) {
+                            logger.error(
+                                    "update job status for job {} failed, result: {}, error: ",
+                                    jobDO.getId(),
+                                    result.toString(),
+                                    e);
+                        }
+                    }
+                };
+
+        executorManager.registerOnTaskFinished(ExecutorType.DAG.getType(), taskFinishedHandler);
+
+        // register the pir executor
         executorManager.registerExecutor(
                 ExecutorType.PIR.getType(),
                 new PirExecutor(
