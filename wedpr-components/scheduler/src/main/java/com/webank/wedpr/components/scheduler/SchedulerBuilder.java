@@ -100,6 +100,7 @@ public class SchedulerBuilder {
 
         return new SchedulerImpl(
                 agency,
+                jobWorkerMapper,
                 executorManager,
                 schedulerWorker,
                 projectMapperWrapper,

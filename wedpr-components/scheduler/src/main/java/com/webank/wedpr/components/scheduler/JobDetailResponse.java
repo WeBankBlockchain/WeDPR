@@ -27,13 +27,13 @@ public class JobDetailResponse {
     private Object modelResultDetail;
     private FileMeta resultFileInfo;
     private String model;
-    private String log;
+    private Object log;
 
     public JobDetailResponse(JobDO job) {
         this.job = job;
     }
 
-    public JobDetailResponse(JobDO job, Object modelResultDetail, String model, String log) {
+    public JobDetailResponse(JobDO job, Object modelResultDetail, String model, Object log) {
         this.job = job;
         this.modelResultDetail = modelResultDetail;
         this.model = model;

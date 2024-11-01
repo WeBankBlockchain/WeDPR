@@ -40,5 +40,29 @@
     <update id="updateJobWorkerStatus" parameterType="map">
         UPDATE wedpr_job_worker_table SET status = #{status} WHERE worker_id = #{workerId}
     </update>
-
+    <update id="updateWorkersStatusByCondition">
+        UPDATE wedpr_job_worker_table SET status = #{status} WHERE 1 = 1
+        <choose>
+        <when test="condition != null and condition != ''">
+            <if test="condition.workerId != null and condition.workerId !=''">
+                and `worker_id` = #{condition.workerId}
+            </if>
+            <if test="condition.jobId != null and condition.jobId !=''">
+                and `job_id` = #{condition.jobId}
+            </if>
+            <if test="condition.type != null and condition.type !=''">
+                and `type` = #{condition.type}
+            </if>
+            <if test="condition.status != null and condition.status !=''">
+                and `status` = #{condition.status}
+            </if>
+            <if test="condition.statusList != null and condition.statusList.size > 0">
+                and `status` in
+                <foreach item="status" collection="condition.statusList" open="(" close=")" separator=",">
+                    #{status}
+                </foreach>
+            </if>
+        </when>
+        </choose>
+    </update>
 </mapper>

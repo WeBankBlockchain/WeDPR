@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.dag.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
@@ -21,6 +22,7 @@ public class JobWorker {
     private String updateTime;
     // Note: execResult is updated by the worker
     private String execResult;
+    @JsonIgnore private List<String> statusList;
 
     public List<WorkFlowUpstream> toUpstreams() throws JsonProcessingException {
         return ObjectMapperFactory.getObjectMapper()

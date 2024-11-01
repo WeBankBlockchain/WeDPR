@@ -69,7 +69,7 @@ public class SchedulerServiceImpl implements SchedulerService {
                     jobDO,
                     modelJobData.getJobPlanetResult(),
                     modelJobData.getModelData(),
-                    modelJobData.getLogData());
+                    modelJobData.getLogDetail());
         }
         JobDetailResponse response = new JobDetailResponse(jobDO);
         // the psi job, parse the output
