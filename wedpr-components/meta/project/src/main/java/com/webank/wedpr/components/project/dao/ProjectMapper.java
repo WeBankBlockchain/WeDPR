@@ -38,9 +38,9 @@ public interface ProjectMapper {
     // query the project count according to given condition
     public long queryProjectCount(@Param("condition") ProjectDO condition);
 
-    public long queryJobCount(@Param("condition") JobDO condition);
+    public Long queryJobCount(@Param("condition") JobDO condition);
 
-    public long queryFollowerJobCount(
+    public Long queryFollowerJobCount(
             @Param("followerUser") String followerUser,
             @Param("followerAgency") String followerAgency,
             @Param("condition") JobDO condition);

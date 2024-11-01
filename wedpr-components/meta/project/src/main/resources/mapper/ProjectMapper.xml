@@ -211,10 +211,10 @@
                     and `id` = #{condition.id}
                 </if>
                 <if test="condition.name != null and condition.name !=''">
-                    and `name` like concat(#{condition.id}, "%")
+                    and `name` = #{condition.name}
                 </if>
                 <if test="condition.projectId != null and condition.projectId !=''">
-                    and `project_id` like concat(#{condition.projectId}, "%")
+                    and `project_id` = #{condition.projectId}
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
@@ -267,10 +267,10 @@
         <choose>
             <when test="condition != null and condition != ''">
                 <if test="condition.name != null and condition.name !=''">
-                    and `name` like concat(#{condition.id}, "%")
+                    and `name` = #{condition.name}
                 </if>
                 <if test="condition.projectId != null and condition.projectId !=''">
-                    and `project_id` like concat(#{condition.projectId}, "%")
+                    and `project_id` = #{condition.projectId}
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}

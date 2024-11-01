@@ -198,6 +198,14 @@ public class ProjectServiceImpl implements ProjectService {
                     this.projectMapperWrapper
                             .getProjectMapper()
                             .queryProject(condition.getOnlyMeta(), condition.getProject());
+            // stat the job count
+            JobDO jobCondition = new JobDO();
+            jobCondition.setId("");
+            for (ProjectDO projectDO : projectDOList) {
+                jobCondition.setProjectId(projectDO.getId());
+                projectDO.setJobCount(
+                        this.projectMapperWrapper.getProjectMapper().queryJobCount(jobCondition));
+            }
             response.setData(
                     new ProjectList(
                             new PageInfo<ProjectDO>(projectDOList).getTotal(), projectDOList));
