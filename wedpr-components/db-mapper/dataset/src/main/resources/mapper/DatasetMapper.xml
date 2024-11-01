@@ -113,6 +113,10 @@
                 AND t1.dataset_title LIKE CONCAT(#{datasetTitle}, '%')
             </if>
 
+            <if test="dataSourceType != null and dataSourceType.trim() != '' ">
+                AND (t1.data_source_type = #{dataSourceType})
+            </if>
+
             <if test="startTime != null and startTime.trim() != ''">
                 <![CDATA[ and DATEDIFF(t1.create_at, #{startTime}) >= 0]]>
             </if>

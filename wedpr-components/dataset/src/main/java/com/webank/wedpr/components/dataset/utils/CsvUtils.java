@@ -88,10 +88,17 @@ public class CsvUtils {
             // default to using the first worksheet.
             Sheet sheet = workbook.getSheetAt(sheetNum);
 
+            int lastRowNum = sheet.getLastRowNum();
+            int firstRowNum = sheet.getFirstRowNum();
+
             // iterate through each row of the worksheet.
             for (Row row : sheet) {
+                int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+
+                int index = 1;
                 // iterate through each cell in the row.
                 for (Cell cell : row) {
+
                     // read data based on the cell type.
                     switch (cell.getCellType()) {
                         case STRING:
@@ -119,8 +126,11 @@ public class CsvUtils {
                                             + " ,cellValue: "
                                             + cellValue);
                     }
-                    // add a comma separator after each cell.
-                    csvWriter.print(CSV_SEPARATOR);
+
+                    if (index++ < physicalNumberOfCells) {
+                        // add a comma separator after each cell.
+                        csvWriter.print(CSV_SEPARATOR);
+                    }
                 }
 
                 // add a newline at the end of each row
@@ -196,7 +206,22 @@ public class CsvUtils {
 
                         // write line values
                         for (int i = 0; i < rowValues.size(); ++i) {
-                            csvWriter.write(rowValues.get(i));
+
+                            String rowValue = rowValues.get(i);
+
+                            if (rowValue == null) {
+                                logger.error(
+                                        "table field value is null, dbType: {}, sql: {}",
+                                        dbType,
+                                        dbDataSource.getSql());
+                                throw new DatasetException(
+                                        "table field value is null, dbType: "
+                                                + dbType
+                                                + ", sql"
+                                                + dbDataSource.getSql());
+                            }
+
+                            csvWriter.write(rowValue);
                             if (i < rowValues.size() - 1) {
                                 // add a comma separator after each cell.
                                 csvWriter.print(CSV_SEPARATOR);
