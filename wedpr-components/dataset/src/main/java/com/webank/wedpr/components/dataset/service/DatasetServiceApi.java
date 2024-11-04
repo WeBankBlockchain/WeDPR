@@ -87,6 +87,7 @@ public interface DatasetServiceApi {
             String dataSourceType,
             String startTime,
             String endTime,
+            Integer status,
             Integer pageOffset,
             Integer pageSize)
             throws DatasetException;

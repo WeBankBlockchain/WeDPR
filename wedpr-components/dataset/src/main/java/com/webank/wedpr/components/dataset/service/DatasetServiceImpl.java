@@ -488,6 +488,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
             String dataSourceType,
             String startTime,
             String endTime,
+            Integer status,
             Integer pageNum,
             Integer pageSize)
             throws DatasetException {
@@ -495,7 +496,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         long startTimeMillis = System.currentTimeMillis();
 
         logger.info(
-                "list dataset begin, ownerAgency: {}, ownerUser: {}, datasetTitle: {}, permissionType: {}, dataSourceType: {}, startTime: {}, endTime: {}, pageNum: {}, pageSize: {}",
+                "list dataset begin, ownerAgency: {}, ownerUser: {}, datasetTitle: {}, permissionType: {}, dataSourceType: {}, startTime: {}, endTime: {}, status: {}, pageNum: {}, pageSize: {}",
                 ownerAgency,
                 ownerUser,
                 datasetTitle,
@@ -503,6 +504,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                 dataSourceType,
                 startTime,
                 endTime,
+                status,
                 pageNum,
                 pageSize);
 
@@ -538,7 +540,8 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                                 permissionType,
                                 dataSourceType,
                                 startTime,
-                                endTime);
+                                endTime,
+                                status);
 
                 if (!datasetList.isEmpty()) {
                     for (Dataset dataset : datasetList) {
