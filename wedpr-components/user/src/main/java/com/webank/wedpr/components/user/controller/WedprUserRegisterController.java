@@ -12,6 +12,8 @@ import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.user.service.WedprUserService;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
         produces = {"application/json"})
 @Slf4j
 public class WedprUserRegisterController {
+    private static final Logger logger = LoggerFactory.getLogger(WedprUserRegisterController.class);
 
     @Autowired private WedprUserService wedprUserService;
 
@@ -78,7 +81,9 @@ public class WedprUserRegisterController {
                     Constant.WEDPR_SUCCESS_MSG,
                     new WedprImageCodeResponse(randomToken, imageBase64));
         } catch (Exception e) {
-            return new WeDPRResponse(Constant.WEDPR_FAILED, "验证码生成失败");
+            logger.warn("generate image code failed, error: ", e);
+            return new WeDPRResponse(
+                    Constant.WEDPR_FAILED, "Generate image-code failed, error: " + e.getMessage());
         }
     }
 }

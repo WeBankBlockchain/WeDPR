@@ -181,7 +181,7 @@ create table if not exists `wedpr_setting_template`(
     primary key (`id`),
     index name_index(`name`(128)),
     index type_index(`type`(128)),
-    index agency_index(`agency`(128)
+    index agency_index(`agency`(128))
 )ENGINE=InnoDB default charset=utf8mb4 default collate=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE if not exists `wedpr_dataset` (
