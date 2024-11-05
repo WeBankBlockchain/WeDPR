@@ -50,6 +50,6 @@ public class PSIExecutorHook implements ExecutorHook {
         // download and prepare the psi file
         psiJobParam.prepare(this.fileMetaBuilder, storage);
         // convert to PSIRequest
-        jobDO.setJobRequest(psiJobParam.convert(jobDO.getOwnerAgency()));
+        jobDO.setJobRequest(psiJobParam.convert(jobDO.getType(), jobDO.getOwnerAgency()));
     }
 }

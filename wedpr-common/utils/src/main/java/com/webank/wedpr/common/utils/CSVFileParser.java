@@ -173,6 +173,8 @@ public class CSVFileParser {
                                         new FileWriter(extractConfig.getExtractFilePath()),
                                         extractConfig.getWriteChunkSize())) {
                             // write the data(Note: here no need to write the header)
+                            writer.write(
+                                    Constant.DEFAULT_ID_FIELD + Constant.DEFAULT_LINE_SPLITTER);
                             while ((row = reader.readMap()) != null) {
                                 int column = 0;
                                 for (String field : extractConfig.getExtractFields()) {

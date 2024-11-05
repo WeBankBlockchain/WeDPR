@@ -154,7 +154,7 @@ public class PSIJobParam {
         }
     }
 
-    public PSIRequest convert(String ownerAgency) throws Exception {
+    public PSIRequest convert(JobType jobType, String ownerAgency) throws Exception {
         PSIRequest psiRequest = new PSIRequest();
         psiRequest.setTaskID(this.taskID);
         psiRequest.setParties(toPSIParam(ownerAgency));
@@ -162,7 +162,10 @@ public class PSIJobParam {
         List<String> receivers = new ArrayList<>();
         boolean syncResult = false;
         for (PartyResourceInfo partyInfo : partyResourceInfoList) {
-            if (partyInfo.getReceiveResult()) {
+            // Note: the ml-psi and mpc-psi case, all parties are the receivers
+            if (jobType == JobType.ML_PSI
+                    || jobType == JobType.MPC_PSI
+                    || partyInfo.getReceiveResult()) {
                 receivers.add(partyInfo.getDataset().getOwnerAgency());
                 syncResult = true;
             }
