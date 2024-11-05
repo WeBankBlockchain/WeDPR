@@ -9,7 +9,6 @@ import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEng
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.PreprocessingRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
-import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCJobParam;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlow;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlowNode;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
@@ -17,9 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Getter
 public class JobWorkFlowBuilderManager {
 
     private static final Logger logger = LoggerFactory.getLogger(JobWorkFlowBuilderManager.class);
@@ -27,10 +28,6 @@ public class JobWorkFlowBuilderManager {
     private final FileMetaBuilder fileMetaBuilder;
     private final FileStorageInterface storage;
     private final JobChecker jobChecker;
-
-    public JobChecker getJobChecker() {
-        return jobChecker;
-    }
 
     protected Map<String, JobWorkFlowBuilderApi> jobWorkFlowBuilderMap = new ConcurrentHashMap<>();
 
@@ -68,7 +65,8 @@ public class JobWorkFlowBuilderManager {
 
         logger.info("register MPC workflow builder success");
         registerJobWorkFlowBuilder(
-                JobType.MPC.getType(), new JobWorkFlowBuilderImpl(new MPCExecutorHook(), this));
+                JobType.MPC.getType(),
+                new JobWorkFlowBuilderImpl(new MPCExecutorHook(storage, fileMetaBuilder), this));
 
         logger.info("register ML workflow builder success");
         registerJobWorkFlowBuilder(
@@ -111,14 +109,8 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.MPC_PSI.getType(),
                 (jobDO, workflow, upstream) -> {
-                    MPCJobParam mpcJobParam = (MPCJobParam) jobDO.getJobParam();
-                    mpcJobParam.toMPCJobRequest();
-                    /*
-                    PreprocessingRequest preprocessingRequest =
-                            mpcJobParam.toPreprocessingRequest(fileMetaBuilder);
-                    jobDO.setJobRequest(preprocessingRequest);
-                    jobDO.setJobType(JobType.MPC.getType())
-                    */
+                    jobDO.setJobType(JobType.MPC.getType());
+
                     JobWorkFlowBuilderImpl jobWorkFlowBuilder =
                             new JobWorkFlowBuilderImpl(getExecutorHook(jobDO.getJobType()), this);
                     jobWorkFlowBuilder.appendWorkFlowNode(jobDO, workflow, upstream);

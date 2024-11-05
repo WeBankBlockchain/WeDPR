@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.scheduler.executor.impl.model.AlgorithmType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode(callSuper = false)
 public class PreprocessingRequest extends ModelJobRequest {
 
     @JsonProperty("need_run_psi")

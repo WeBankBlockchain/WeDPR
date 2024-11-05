@@ -31,22 +31,46 @@ public class ExecutorConfig {
     private static String PSI_PREPARE_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.psi.prepare.file.name", "psi_prepare.csv");
 
-    private static String PSI_RESULT_FILE =
+    private static String PSI_RESULT_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.psi.result.file.name", "psi_result.csv");
 
     private static String MPC_PREPARE_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.mpc.prepare.file.name", "mpc_prepare.csv");
 
-    private static String MPC_RESULbT_FILE =
+    private static String MPC_RESULT_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.mpc.result.file.name", "mpc_result.csv");
 
     private static String MPC_OUTPUT_FILE =
             WeDPRConfig.apply("wedpr.executor.mpc.output.file.name", "mpc_output.txt");
+
+    private static String MPC_PSI_OPTION_REGEX =
+            WeDPRConfig.apply("wedpr.executor.mpc.psi.option.regex", "PSI_OPTION\\s*=\\s*True");
+
+    private static String MPC_CODE_GENERATOR_SCRIPT_PATH =
+            WeDPRConfig.apply(
+                    "wedpr.executor.mpc.code.generator.script.path",
+                    "./mpc_generator/mpc_generator_main.py");
+
+    private static String MPC_CODE_GENERATOR_ENV_PATH =
+            WeDPRConfig.apply("wedpr.executor.mpc.code.generator.python.env", "");
+
     private static String PIR_RESULT_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.pir.result.file.name", "pir_result");
 
     public static String getJobCacheDir() {
         return JOB_CACHE_DIR;
+    }
+
+    public static String getMpcPsiOptionRegex() {
+        return MPC_PSI_OPTION_REGEX;
+    }
+
+    public static String getMpcCodeGeneratorEnvPath() {
+        return MPC_CODE_GENERATOR_ENV_PATH;
+    }
+
+    public static String getMpcCodeGeneratorScriptPath() {
+        return MPC_CODE_GENERATOR_SCRIPT_PATH;
     }
 
     public static String getJobCacheDir(String jobID) {
@@ -65,13 +89,21 @@ public class ExecutorConfig {
         return Common.joinPath(jobID, PSI_PREPARE_FILE_NAME);
     }
 
-    public static String getPSIPrepareFileName() {
+    public static String getPsiPrepareFileName() {
         return PSI_PREPARE_FILE_NAME;
     }
 
     public static String getDefaultPSIResultPath(String user, String jobID) {
         return WeDPRCommonConfig.getUserJobCachePath(
-                user, JobType.PSI.getType(), jobID, PSI_RESULT_FILE);
+                user, JobType.PIR.getType(), jobID, PSI_RESULT_FILE_NAME);
+    }
+
+    public static String getMpcResultFileName() {
+        return MPC_RESULT_FILE_NAME;
+    }
+
+    public static String getPsiResultFileName() {
+        return PSI_RESULT_FILE_NAME;
     }
 
     public static String getPirJobResultPath(String user, String jobID) {
@@ -84,7 +116,7 @@ public class ExecutorConfig {
         return PIR_RESULT_FILE_NAME;
     }
 
-    public static String getMPCPrepareFileName() {
+    public static String getMpcPrepareFileName() {
         return MPC_PREPARE_FILE_NAME;
     }
 }

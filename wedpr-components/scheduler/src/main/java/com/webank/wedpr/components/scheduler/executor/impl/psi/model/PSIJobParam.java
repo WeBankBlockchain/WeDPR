@@ -263,7 +263,7 @@ public class PSIJobParam {
                             owner,
                             JobType.PSI.getType(),
                             jobID,
-                            ExecutorConfig.getPSIPrepareFileName());
+                            ExecutorConfig.getPsiPrepareFileName());
 
             // update the input
             FileMeta updatedInput =

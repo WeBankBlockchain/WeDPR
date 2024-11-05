@@ -23,8 +23,6 @@ public class WorkerFactory {
         String jobId = jobWorker.getJobId();
         String workerType = jobWorker.getType();
 
-        //        JobType jobType = JobType.deserialize(workerType);
-
         if (JobType.isPSIJob(workerType)) {
             return new PsiWorker(
                     jobWorker,
