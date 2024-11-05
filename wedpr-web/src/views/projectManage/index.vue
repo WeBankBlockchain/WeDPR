@@ -46,6 +46,9 @@
               <span :title="item.name">{{ item.name }}</span>
             </div>
             <ul>
+              <li class="ell">
+                任务数量: <span>{{ item.jobCount }}</span>
+              </li>
               <li class="ell" @click.stop="() => {}">
                 项目ID: <span>{{ item.id }}</span>
               </li>

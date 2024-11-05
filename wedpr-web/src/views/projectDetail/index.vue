@@ -81,8 +81,10 @@
         <el-table-column label="创建时间" prop="createTime" />
         <el-table-column label="任务状态" prop="status">
           <template v-slot="scope">
-            <el-tag size="small" v-if="scope.row.status === 'RunSuccess'" effect="dark" color="#52B81F">成功</el-tag>
-            <el-tag size="small" v-else-if="scope.row.status == 'RunFailed'" effect="dark" color="#FF4D4F">失败</el-tag>
+            <el-tag size="small" v-if="scope.row.status === 'RunSuccess'" effect="dark" color="#52B81F">运行成功</el-tag>
+            <el-tag size="small" v-else-if="['RunFailed', 'KillFailed', 'Killed'].includes(scope.row.status)" effect="dark" color="#FF4D4F">{{
+              jobStatusMap[scope.row.status]
+            }}</el-tag>
             <el-tag size="small" v-else-if="scope.row.status === 'Running'" effect="dark" color="#3071F2">运行中</el-tag>
             <el-tag size="small" v-else effect="dark" color="#3071F2">{{ jobStatusMap[scope.row.status] }}</el-tag>
           </template>
@@ -92,14 +94,14 @@
             <el-button size="small" @click="goDetail(scope.row.id)" type="text">查看详情</el-button>
             <el-button
               size="small"
-              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && scope.row.status === 'Running'"
+              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && !['RunFailed', 'Killed', 'RunSuccess'].includes(scope.row.status)"
               @click="showKillJobConfirm(scope.row)"
               type="primary"
               >终止任务</el-button
             >
             <el-button
               size="small"
-              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && scope.row.status === 'RunFailed'"
+              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && scope.row.status !== 'Running'"
               @click="retryJobs(scope.row)"
               type="primary"
               >重试任务</el-button
@@ -154,7 +156,7 @@ export default {
       dataInfo: {},
       pageData: {
         page_offset: 1,
-        page_size: 5
+        page_size: 10
       },
       tableData: [],
       total: -1,

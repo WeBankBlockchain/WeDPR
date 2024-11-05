@@ -52,7 +52,7 @@
             </ul>
             <ul>
               <li><img src="~Assets/images/services.png" alt="" /></li>
-              <li class="count ell" :title="userCount">11</li>
+              <li class="count ell" :title="userCount">{{ serviceTotal }}</li>
               <li class="des">发布服务数量</li>
             </ul>
           </div>
@@ -158,7 +158,7 @@
 <script>
 import * as echarts from 'echarts'
 import { mapGetters } from 'vuex'
-import { dataManageServer, accountManageServer, projectManageServer, jobManageServer } from 'Api'
+import { dataManageServer, accountManageServer, projectManageServer, jobManageServer, serviceManageServer } from 'Api'
 import dayjs from 'dayjs'
 import { jobStatusMap } from 'Utils/constant.js'
 import modifyUser from './modifyUser/index.vue'
@@ -194,7 +194,8 @@ export default {
       tableData: [],
       jobStatusMap,
       showModifyModal: false,
-      myChart: null
+      myChart: null,
+      serviceTotal: 0
     }
   },
   computed: {
@@ -204,6 +205,7 @@ export default {
     this.getListDataset()
     this.getUserCount()
     this.queryProject()
+    this.getPublishList()
     this.queryJobOverview()
     this.getGroupCount()
     this.queryFollowerJobByCondition()
@@ -241,6 +243,17 @@ export default {
     },
     goTaskDetail(item) {
       this.$router.push({ path: 'jobDetail', query: { id: item.id } })
+    },
+    // 获取服务列表
+    async getPublishList() {
+      const params = { condition: { serviceId: '', status: 'PublishSuccess' }, serviceIdList: [], pageNum: 1, pageSize: 1 }
+      const res = await serviceManageServer.getPublishList(params)
+      if (res.code === 0 && res.data) {
+        const { total } = res.data
+        this.serviceTotal = total
+      } else {
+        this.serviceTotal = 0
+      }
     },
     async queryFollowerJobByCondition() {
       const res = await jobManageServer.queryFollowerJobByCondition({
@@ -392,7 +405,7 @@ export default {
           }
         })
         console.log(series, 'series')
-        const rowLength = parseInt(algNames.length / 4) + 1
+        const rowLength = Math.ceil(algNames.length / 4) + 1
         this.option = {
           xAxis: {
             type: 'category',

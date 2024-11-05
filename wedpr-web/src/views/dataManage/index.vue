@@ -1,5 +1,8 @@
 <template>
-  <div class="group-manage">
+  <div class="data-manage">
+    <div class="tip" v-if="fileUploadTask && fileUploadTask.datasetId">
+      <el-alert center show-icon title="当前有文件正在上传中，请不要刷新或关闭本页面，否则上传会失败。" type="warning" effect="light" :closable="false"> </el-alert>
+    </div>
     <div class="form-search">
       <el-form :inline="true" @submit="queryHandle" :model="searchForm" ref="searchForm" size="small">
         <el-form-item prop="ownerAgencyName" label="所属机构：">
@@ -425,11 +428,22 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+div.data-manage {
+  div.tip {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 80%;
+    transform: translateX(-50%);
+    z-index: 999;
+  }
+}
 div.card-container {
   overflow: hidden;
   margin-left: -16px;
   margin-right: -16px;
 }
+
 div.handle {
   span {
     width: 75px;

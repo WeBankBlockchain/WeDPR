@@ -163,14 +163,16 @@ export default {
       const res = await settingManageServer.getConfig({ key: 'wedpr_algorithm_templates' })
       if (res.code === 0 && res.data) {
         const realData = JSON.parse(res.data)
-        const algList = realData.templates.map((v) => {
-          return {
-            ...v,
-            label: v.title,
-            value: v.name,
-            src: require('../../assets/images/alg/' + v.name + '.png')
-          }
-        })
+        const algList = realData.templates
+          .filter((v) => v.supportable)
+          .map((v) => {
+            return {
+              ...v,
+              label: v.title,
+              value: v.name,
+              src: require('../../assets/images/alg/' + v.name + '.png')
+            }
+          })
         console.log(algList, 'algList', realData.templates)
         this.SET_ALGLIST(algList)
         this.userAgency()

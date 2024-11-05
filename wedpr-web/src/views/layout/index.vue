@@ -103,6 +103,7 @@ export default {
       height: 100%;
       min-width: 960px;
       overflow-x: auto;
+      position: relative;
       .bread-con {
         height: 50px;
         line-height: 20px;

@@ -8,7 +8,15 @@
         <el-input style="width: 160px" v-model="searchForm.ownerUserName" placeholder="请输入"> </el-input>
       </el-form-item>
       <el-form-item prop="createTime" label="创建时间：">
-        <el-date-picker value-format="yyyy-MM-dd" style="width: 160px" v-model="searchForm.createTime" type="date" placeholder="请选择日期"> </el-date-picker>
+        <el-date-picker
+          style="width: 360px"
+          value-format="yyyy-MM-dd"
+          v-model="searchForm.createTime"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :loading="loadingFlag" @click="queryHandle">
@@ -132,7 +140,11 @@ export default {
       const { page_offset, page_size } = this.pageData
       const { ownerAgencyName = '' } = this
       const { ownerUserName = '', datasetTitle = '', createTime = '' } = this.searchQuery
-      let params = handleParamsValid({ ownerAgencyName, ownerUserName, datasetTitle, createTime })
+      let params = handleParamsValid({ ownerAgencyName, ownerUserName, datasetTitle })
+      if (createTime && createTime.length) {
+        params.startTime = createTime[0]
+        params.endTime = createTime[1]
+      }
       params = { ...params, pageNum: page_offset, pageSize: page_size, permissionType: 'usable' }
       this.loadingFlag = true
       const res = await dataManageServer.listDataset(params)

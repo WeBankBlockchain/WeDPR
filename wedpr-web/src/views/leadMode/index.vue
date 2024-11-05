@@ -15,7 +15,7 @@
     <!-- step1 ==================================================== -->
     <formCard key="1" title="请选择模板" v-show="active === 0">
       <div class="alg-container">
-        <div :class="selectedAlg.value === item.value ? 'alg active' : 'alg'" v-for="item in algList" @click="selectAlg(item)" :key="item.value">
+        <div :class="selectedAlg.value === item.value ? 'alg active' : 'alg'" v-for="item in filteredAlgList" @click="selectAlg(item)" :key="item.value">
           <img :src="item.src" alt="" />
           <span class="title">{{ item.label }}</span>
         </div>
@@ -157,7 +157,7 @@
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -215,7 +215,7 @@
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -262,7 +262,7 @@
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -347,7 +347,7 @@
           </div>
           <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
             <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-              <el-option :key="item" v-for="item in agencyList" :label="item.label" :value="item.value"></el-option>
+              <el-option :key="item" v-for="item in agencyListAble" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -441,7 +441,8 @@ export default {
       searchTypeEnum,
       selectedServiceConfig: {},
       tagAgency: '',
-      filterPaticipateAgency: []
+      filterPaticipateAgency: [],
+      agencyListAble: []
     }
   },
   created() {
@@ -483,6 +484,8 @@ export default {
     },
     selectedData(v) {
       console.log(v, 'selectedData=================')
+      const ownerAgencyNameList = v.map((v) => v.ownerAgencyName)
+      this.agencyListAble = this.agencyList.filter((v) => ownerAgencyNameList.includes(v.value))
       if (this.selectedAlg.value === jobEnum.PSI) {
         this.jobSettingForm.selectedData = v.map((v) => {
           return { ...v, datasetFieldsSelected: [] }
@@ -496,6 +499,10 @@ export default {
   },
   computed: {
     ...mapGetters(['agencyList', 'algList']),
+    filteredAlgList() {
+      console.log(this.algList, '=========================')
+      return this.algList.filter((v) => v.enable)
+    },
     nextDisabaled() {
       if (this.active === 0) {
         return !this.selectedAlg.value
@@ -912,6 +919,11 @@ export default {
           // psi 可同一机构下多个数据集
           if (!this.calcParticipateNumberMatch(participateNumber, validDataLength)) {
             this.$message.error(`请添加至少${parseInt(participateNumber)}个参与方`)
+            return
+          }
+          // psi 至少有一个自己的数据集
+          if (!participateAgencyList.includes(this.agencyId)) {
+            this.$message.error('请添加至少一个己方的数据集')
             return
           }
         } else if (this.selectedAlg.value === jobEnum.PIR) {

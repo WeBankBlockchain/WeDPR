@@ -472,13 +472,14 @@ export function spliceLegendHome(legendData, color = 'white') {
     x: 'center',
     textStyle: {
       color,
-      fontSize: 12,
+      fontSize: 10,
       align: 'left',
       // 文字块背景色，一定要加上，否则对齐不会生效
       backgroundColor: 'transparent',
       rich: {
         b: {
-          width: 94
+          width: 94,
+          lineHeight: 10
         }
       }
     }

@@ -95,7 +95,7 @@
         style="height: 190px"
         class="upload-loading"
         v-loading="true"
-        element-loading-text="数据处理中"
+        element-loading-text="服务端数据处理中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="transparent"
       ></div>
@@ -138,7 +138,8 @@ export default {
   },
   data() {
     return {
-      loading: true
+      loading: true,
+      uploadType: ['CSV', 'EXCEL']
       // checked: false
     }
   },
@@ -159,14 +160,24 @@ export default {
     showInfo() {
       return this.dataInfo.status === dataStatusEnum.Success
     },
+    // 上传失败 需要重试
     showReupload() {
       return this.dataInfo.status === dataStatusEnum.Failure || this.dataInfo.status === dataStatusEnum.Fatal
     },
+    // 上传中
     showUploading() {
-      return this.dataInfo.status === dataStatusEnum.Created && this.fileUploadTask && this.fileUploadTask.datasetId
+      if (this.uploadType.includes(this.dataInfo.dataSourceType)) {
+        return this.dataInfo.status === dataStatusEnum.Created && this.fileUploadTask && this.fileUploadTask.datasetId && this.fileUploadTask.datasetId === this.dataInfo.datasetId
+      } else {
+        return false
+      }
     },
+    // 处理中  只要是created状态 且未在上传分片中 就展示后端处理中
     showServerDataHandle() {
-      return ![dataStatusEnum.Success, dataStatusEnum.Failure, dataStatusEnum.Fatal, dataStatusEnum.Created].includes(this.dataInfo.status)
+      return (
+        ![dataStatusEnum.Success, dataStatusEnum.Failure, dataStatusEnum.Fatal].includes(this.dataInfo.status) &&
+        !(this.fileUploadTask && this.fileUploadTask.datasetId && this.fileUploadTask.datasetId === this.dataInfo.datasetId)
+      )
     }
   },
   methods: {

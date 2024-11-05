@@ -193,9 +193,17 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="工作流视图" name="second" v-if="false"> </el-tab-pane>
-      <el-tab-pane label="审计信息" name="third" v-if="false"> </el-tab-pane>
-      <el-tab-pane label="查看结果" name="four" v-if="jobInfo.jobType !== jobEnum.PIR && jobInfo.status === 'RunSuccess' && receiverList.includes(agencyId)">
+      <el-tab-pane label="运行日志" name="second" v-if="logSize">
+        <div class="log-container">
+          日志下载： <el-button type="text" @click="downloadLog(logPath)">{{ 'job.log' }}</el-button>
+        </div>
+        <div class="log-container" v-if="logContent">
+          <div class="log" v-html="logContent"></div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="工作流视图" name="third" v-if="false"> </el-tab-pane>
+      <el-tab-pane label="审计信息" name="four" v-if="false"> </el-tab-pane>
+      <el-tab-pane label="查看结果" name="five" v-if="jobInfo.jobType !== jobEnum.PIR && jobInfo.status === 'RunSuccess' && receiverList.includes(agencyId)">
         <xgbResult
           v-if="[jobEnum.LR_TRAINING, jobEnum.LR_PREDICTING, jobEnum.XGB_TRAINING, jobEnum.XGB_PREDICTING].includes(jobInfo.jobType)"
           :jobID="jobID"
@@ -215,8 +223,10 @@ import baseResult from './result/baseResult.vue'
 import { jobStatusMap, jobEnum, searchTypeEnum, searchTypeDesEnum, settingMap, modelSettingMap } from 'Utils/constant.js'
 import { copy } from 'Utils'
 import { mapGetters } from 'vuex'
+import { downloadLargeFile } from 'Mixin/downloadLargeFile.js'
 export default {
   name: 'groupManage',
+  mixins: [downloadLargeFile],
   components: {
     xgbResult,
     baseResult
@@ -248,7 +258,10 @@ export default {
       loading: false,
       xgbJobSavedModelData: [],
       xgbJobOriginModelData: [],
-      timer: null
+      timer: null,
+      logContent: '',
+      logPath: '',
+      logSize: 0
     }
   },
   created() {
@@ -332,7 +345,7 @@ export default {
       this.loading = false
       console.log(res)
       if (res.code === 0 && res.data) {
-        const { job = {}, modelResultDetail = {}, resultFileInfo, model } = res.data
+        const { job = {}, modelResultDetail = {}, resultFileInfo, model, log } = res.data
         const { parties = '', param } = job
         const { jobStatusInfo = {} } = job
         this.jobInfo = { ...job }
@@ -379,10 +392,38 @@ export default {
         this.modelResultDetail = modelResultDetail
         this.jobStatusInfo = jobStatusInfo
         this.resultFileInfo = resultFileInfo
+        if (log) {
+          const { logContent, logPath, logSize } = log
+          this.logSize = logSize
+          // 高亮运行日志
+          if (logContent) {
+            this.logContent = this.highLightLog(logContent)
+          } else {
+            this.logPath = logPath
+          }
+        }
         this.startInterVal()
       } else {
         this.jobInfo = {}
       }
+    },
+    highLightLog(logContent) {
+      const content = logContent.replace(/\n/g, '<br>')
+      const dataArray = content.split('<br>')
+      const dataDrawedList = dataArray.map((v) => {
+        if (v.toLowerCase().indexOf('error') > -1) {
+          return `<span class='error'>${v}</span>`
+        }
+        if (v.toLowerCase().indexOf('warn') > -1) {
+          return `<span class='warn'>${v}</span>`
+        }
+        return v
+      })
+      console.log(dataDrawedList, 'dataDrawedList')
+      return dataDrawedList.join('<br>')
+    },
+    downloadLog(path) {
+      this.downloadLargeFile({ filePath: path }, 'job.log')
     },
     startInterVal() {
       this.timer && clearInterval(this.timer)
@@ -542,6 +583,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+::v-deep .el-tabs--card > .el-tabs__header {
+  border-color: #ccc;
+}
 div.whole {
   display: flex;
   margin-bottom: 16px;
@@ -556,6 +600,21 @@ div.con {
 .tips {
   color: #b3b5b9;
   margin-bottom: 10px;
+}
+.log-container {
+  .log {
+    line-height: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    ::v-deep .error {
+      display: inline-block;
+      background-color: rgb(255, 77, 79);
+    }
+    ::v-deep .warn {
+      display: inline-block;
+      background-color: #e6a23c;
+    }
+  }
 }
 div.info-container {
   margin-bottom: 44px;
