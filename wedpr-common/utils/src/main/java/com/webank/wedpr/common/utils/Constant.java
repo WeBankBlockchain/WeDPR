@@ -25,6 +25,7 @@ public class Constant {
     public static String WEDPR_SUCCESS_MSG = "success";
 
     public static Integer WEDPR_FAILED = -1;
+    public static Integer WEDPR_AUTH_FAILED = 401;
 
     public static String CHAIN_CONFIG_FILE = "config.toml";
 

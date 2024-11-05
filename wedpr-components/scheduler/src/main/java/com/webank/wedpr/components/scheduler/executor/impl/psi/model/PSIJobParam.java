@@ -31,11 +31,13 @@ import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Data
 public class PSIJobParam {
     private static final Logger logger = LoggerFactory.getLogger(PSIJobParam.class);
 
@@ -95,22 +97,6 @@ public class PSIJobParam {
 
     @JsonIgnore private List<String> datasetIDList;
 
-    public String getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public List<PartyResourceInfo> getPartyResourceInfoList() {
-        return partyResourceInfoList;
-    }
-
-    public void setPartyResourceInfoList(List<PartyResourceInfo> partyResourceInfoList) {
-        this.partyResourceInfoList = partyResourceInfoList;
-    }
-
     public static PSIJobParam deserialize(String data) throws Exception {
         if (StringUtils.isBlank(data)) {
             throw new WeDPRException("The PSIJobParam must be non-empty!");
@@ -154,7 +140,7 @@ public class PSIJobParam {
         }
     }
 
-    public PSIRequest convert(String ownerAgency) throws Exception {
+    public PSIRequest convert(JobType jobType, String ownerAgency) throws Exception {
         PSIRequest psiRequest = new PSIRequest();
         psiRequest.setTaskID(this.taskID);
         psiRequest.setParties(toPSIParam(ownerAgency));
@@ -162,7 +148,10 @@ public class PSIJobParam {
         List<String> receivers = new ArrayList<>();
         boolean syncResult = false;
         for (PartyResourceInfo partyInfo : partyResourceInfoList) {
-            if (partyInfo.getReceiveResult()) {
+            // Note: the ml-psi and mpc-psi case, all parties are the receivers
+            if (jobType == JobType.ML_PSI
+                    || jobType == JobType.MPC_PSI
+                    || partyInfo.getReceiveResult()) {
                 receivers.add(partyInfo.getDataset().getOwnerAgency());
                 syncResult = true;
             }
@@ -172,19 +161,28 @@ public class PSIJobParam {
         return psiRequest;
     }
 
+    @SneakyThrows(Exception.class)
     private List<PartyInfo> toPSIParam(String ownerAgency) {
         List<PartyInfo> partyInfoList = new ArrayList<>();
+        boolean selfParticipant = false;
         for (PartyResourceInfo party : partyResourceInfoList) {
             String agency = party.getDataset().getOwnerAgency();
             PartyInfo partyInfo = new PartyInfo(agency);
             if (agency.compareToIgnoreCase(ownerAgency) == 0) {
                 partyInfo.setPartyIndex(PartyInfo.PartyType.SERVER.getType());
+                selfParticipant = true;
             } else {
                 partyInfo.setPartyIndex(PartyInfo.PartyType.CLIENT.getType());
             }
             partyInfo.setData(
                     new PartyInfo.PartyData(jobID, party.getDataset(), party.getOutput()));
             partyInfoList.add(partyInfo);
+        }
+        if (!selfParticipant) {
+            throw new WeDPRException(
+                    "The agency "
+                            + WeDPRCommonConfig.getAgency()
+                            + " must participant the PSI job!");
         }
         return partyInfoList;
     }
@@ -294,22 +292,6 @@ public class PSIJobParam {
             Common.deleteFile(new File(downloadedFilePath));
             Common.deleteFile(new File(extractFilePath));
         }
-    }
-
-    public String getTaskID() {
-        return taskID;
-    }
-
-    public void setTaskID(String taskID) {
-        this.taskID = taskID;
-    }
-
-    public List<String> getDatasetIDList() {
-        return datasetIDList;
-    }
-
-    public void setDatasetIDList(List<String> datasetIDList) {
-        this.datasetIDList = datasetIDList;
     }
 
     public String serialize() throws Exception {
