@@ -12,8 +12,14 @@
       </div>
       <div class="whole">
         <div class="half">
+          <span class="title">项目ID：</span>
+          <span class="info" :title="dataInfo.id"> {{ dataInfo.id }} </span>
+        </div>
+      </div>
+      <div class="whole">
+        <div class="half">
           <span class="title">项目简介：</span>
-          <span class="info" :title="dataInfo.desc"> {{ dataInfo.desc }} </span>
+          <span class="info" :title="dataInfo.projectDesc"> {{ dataInfo.projectDesc }} </span>
         </div>
       </div>
       <div class="whole">
@@ -121,7 +127,8 @@ export default {
       },
       jobStatusList,
       jobStatusMap,
-      pageMode: process.env.VUE_APP_MODE
+      pageMode: process.env.VUE_APP_MODE,
+      projectName: ''
     }
   },
   created() {
@@ -179,7 +186,7 @@ export default {
     // 获取任务列表
     async queryJobByCondition() {
       this.loadingFlag = true
-      const { name: projectName } = this.dataInfo
+      const { id } = this.dataInfo
       const { page_offset, page_size } = this.pageData
       const { jobType, status, createTime } = this.searchForm
       const params = handleParamsValid({ jobType, status })
@@ -187,8 +194,8 @@ export default {
         params.startTime = createTime[0]
         params.endTime = createTime[1]
       }
-      params.ownerAgency = this.dataInfo.ownerAgency
-      const res = await projectManageServer.adminQuerylistJobInProject({ projectName, ...params, pageNum: page_offset, pageSize: page_size })
+      // params.ownerAgency = this.dataInfo.ownerAgency
+      const res = await projectManageServer.adminQuerylistJobInProject({ projectId: id, ...params, pageNum: page_offset, pageSize: page_size })
       this.loadingFlag = false
       if (res.code === 0 && res.data) {
         const { jobList = [], total } = res.data

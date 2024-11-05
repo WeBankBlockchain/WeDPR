@@ -41,7 +41,7 @@ export default {
         agencyDesc: [{ required: true, message: '机构简介不能为空', trigger: 'blur' }],
         agencyContact: [{ required: true, message: '机构联系人不能为空', trigger: 'blur' }],
         contactPhone: [{ required: true, message: '机构联系方式不能为空', trigger: 'blur' }],
-        gatewayEndpoint: [{ required: true, message: '机构网关不能为空', trigger: 'blur' }]
+        gatewayEndpoint: [{ required: true, validator: this.validateGateway, trigger: 'blur' }]
       },
       agencyId: ''
     }
@@ -75,6 +75,15 @@ export default {
         } else {
           this.$router.push({ path: '/agencyManage' })
         }
+      }
+    },
+    validateGateway(rule, value, callback) {
+      if (!value) {
+        return callback(new Error('机构网关地址不能为空'))
+      } else if (!/^([a-zA-Z0-9.-]+|\d{1,3}(\.\d{1,3}){3}):\d{1,5}$/.test(value)) {
+        return callback(new Error('机构网关地址格式有误'))
+      } else {
+        callback()
       }
     },
     submit() {

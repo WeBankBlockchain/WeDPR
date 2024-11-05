@@ -40,6 +40,9 @@
               <el-radio :label="1"> true </el-radio>
               <el-radio :label="0"> false </el-radio>
             </el-radio-group>
+            <el-select size="small" v-if="item.type === 'select'" style="width: 140px" v-model="item.value" placeholder="请选择">
+              <el-option v-for="selectValue in item.value_list" :label="selectValue" :value="selectValue" :key="selectValue"></el-option>
+            </el-select>
             <span v-if="item.type !== 'bool'" class="tips">{{ item.description }}</span>
           </el-form-item>
         </el-form>
@@ -54,7 +57,6 @@
 <script>
 import formCard from '@/components/formCard.vue'
 import { jobManageServer, settingManageServer, projectManageServer, dataManageServer } from 'Api'
-import { jobEnum } from 'Utils/constant.js'
 export default {
   name: 'pirServerCreate',
   components: {
@@ -66,13 +68,14 @@ export default {
         setting: []
       },
       jobID: '',
+      jobType: '',
       jobInfo: {},
       modelModule: [],
       modelSetting: {},
       xgbSettingForm: {},
       xgbSettingFormRules: [],
       parties: [],
-      projectName: '',
+      projectId: '',
       tableData: [],
       receiverStr: ''
     }
@@ -80,6 +83,7 @@ export default {
   created() {
     const { jobID, jobType } = this.$route.query
     this.jobID = jobID
+    this.jobType = jobType
     this.querySettings({
       onlyMeta: false,
       condition: {
@@ -92,14 +96,14 @@ export default {
   },
   methods: {
     handleXGBdata() {
-      const { modelModule, dataSetList, parties, projectName } = this
+      const { modelModule, dataSetList, parties, projectId, jobType } = this
       const modelSetting = {}
       modelModule.forEach((v) => {
         const key = v.label
         modelSetting[key] = v.value
       })
       const param = { dataSetList, modelSetting }
-      const params = { jobType: jobEnum.XGB_TRAINING, projectName, param: JSON.stringify(param) }
+      const params = { jobType, projectId, param: JSON.stringify(param) }
       const taskParties = parties.map((v) => {
         return {
           userName: v.userName,
@@ -156,7 +160,7 @@ export default {
       if (res.code === 0 && res.data) {
         const { jobs = [] } = res.data
         this.jobInfo = jobs[0]
-        const { parties, param, projectName } = this.jobInfo
+        const { parties, param, projectId } = this.jobInfo
         const { modelSetting = {}, dataSetList = {} } = JSON.parse(param)
         console.log(dataSetList, 'dataSetList', JSON.parse(param))
         this.modelSetting = modelSetting
@@ -165,7 +169,7 @@ export default {
           v.value = this.modelSetting[v.label]
         })
         this.parties = JSON.parse(parties)
-        this.projectName = projectName
+        this.projectId = projectId
         const datasetIdList = dataSetList.map((v) => {
           return v.dataset.datasetID
         })

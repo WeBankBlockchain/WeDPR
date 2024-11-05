@@ -1,5 +1,8 @@
 <template>
-  <div class="group-manage">
+  <div class="data-manage">
+    <div class="tip" v-if="fileUploadTask && fileUploadTask.datasetId">
+      <el-alert center show-icon title="当前有文件正在上传中，请不要刷新或关闭本页面，否则上传会失败。" type="warning" effect="light" :closable="false"> </el-alert>
+    </div>
     <div class="form-search">
       <el-form :inline="true" @submit="queryHandle" :model="searchForm" ref="searchForm" size="small">
         <el-form-item prop="ownerAgencyName" label="所属机构：">
@@ -7,7 +10,7 @@
             <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="type" label="数据类型：">
+        <el-form-item prop="dataSourceType" label="数据类型：">
           <el-select size="small" style="width: 120px" v-model="searchForm.dataSourceType" placeholder="请选择">
             <el-option :key="item" v-for="item in typeList" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -39,7 +42,7 @@
             <el-option label="失败" :value="-1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="createTime" label="上传时间：">
+        <el-form-item prop="createTime" label="创建时间：">
           <el-date-picker
             style="width: 280px"
             value-format="yyyy-MM-dd"
@@ -121,6 +124,7 @@ export default {
   },
   data() {
     return {
+      activeName: 'first',
       searchForm: {
         ownerAgencyName: '',
         ownerUserGroupId: '',
@@ -172,8 +176,33 @@ export default {
       return !(selectdDataList.length && selectdDataList.every((v) => !v.permissions.usable))
     }
   },
+  watch: {
+    activeName() {
+      this.$refs.searchForm.resetFields()
+      this.pageData = {
+        page_offset: 1,
+        page_size: 8
+      }
+      this.query()
+    }
+  },
   methods: {
     ...mapMutations([SET_FILEUPLOADTASK]),
+    handleClick() {},
+    query() {
+      const { activeName } = this
+      switch (activeName) {
+        case 'first':
+          this.queryFollowerAuthList()
+          break
+        case 'second':
+          this.queryMyApplyList()
+          break
+        case 'third':
+          this.queryMyFollowList()
+          break
+      }
+    },
     checkTask() {
       const { fileUploadTask } = this
       const that = this
@@ -216,7 +245,9 @@ export default {
       }
     },
     getDetail(row) {
-      this.$router.push({ path: '/dataDetail', query: { datasetId: row.datasetId } })
+      if (!this.showDeleteSelect && !this.showApplySelect) {
+        this.$router.push({ path: '/dataDetail', query: { datasetId: row.datasetId } })
+      }
     },
     startApplySelect() {
       this.showApplySelect = true
@@ -372,6 +403,8 @@ export default {
       console.log(res)
       if (res.code === 0) {
         this.$message.success('数据批量删除成功')
+        this.showDeleteSelect = false
+        this.selectdDataList = []
         this.getListDataset()
       }
     },
@@ -395,11 +428,22 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+div.data-manage {
+  div.tip {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 80%;
+    transform: translateX(-50%);
+    z-index: 999;
+  }
+}
 div.card-container {
   overflow: hidden;
   margin-left: -16px;
   margin-right: -16px;
 }
+
 div.handle {
   span {
     width: 75px;

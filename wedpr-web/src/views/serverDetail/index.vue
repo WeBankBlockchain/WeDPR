@@ -96,6 +96,14 @@
           </span>
         </div>
       </div>
+      <div class="whole" v-if="serviceInfo.owner === userId && serviceInfo.agency === agencyId && serviceInfo.status === 'PublishFailed'">
+        <div>
+          <span class="title">发布日志：</span>
+          <span class="info log" :title="serviceInfo.statusMsg">
+            <pre><code>{{ serviceInfo.statusMsg }}</code></pre>
+          </span>
+        </div>
+      </div>
     </div>
     <div v-if="serviceInfo.owner === userId && serviceInfo.agency === agencyId">
       <div class="con">
@@ -136,6 +144,8 @@ import { jobStatusList, jobStatusMap, searchTypeEnum, serviceTypeEnum, servicePu
 import { mapGetters } from 'vuex'
 import wePagination from '@/components/wePagination.vue'
 import serverApply from './serviceApply'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/a11y-light.min.css'
 export default {
   name: 'projectDetail',
   mixins: [tableHeightHandle],
@@ -253,6 +263,10 @@ export default {
           this.serviceAuthInfos = serviceAuthInfos
           this.getServerUseRecord()
         }
+        // 高亮错误日志
+        this.$nextTick(() => {
+          hljs.highlightAll() // 获取更新后的 DOM 状态
+        })
       } else {
         this.serviceInfo = {}
       }
@@ -384,6 +398,12 @@ div.info-container {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  span.log {
+    display: inline-block;
+    width: calc(100% - 200px);
+    border: 1px solid #ccc;
+    border-radius: 4px;
   }
   .el-row {
     margin-bottom: 16px;

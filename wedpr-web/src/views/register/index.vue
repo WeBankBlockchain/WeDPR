@@ -95,7 +95,7 @@ export default {
         password: [{ validator: this.validPassword, trigger: 'blur' }],
         passwordRepeat: [{ validator: this.validatePasswordReapeat, trigger: 'blur' }],
         phone: [{ validator: this.validateMobile, trigger: 'blur' }],
-        email: [{ required: true, message: '邮箱不能为空', trigger: 'blur' }]
+        email: [{ validator: this.validateEmail, trigger: 'blur' }]
       },
       userNameRule: {
         lengthStatus: false,
@@ -165,7 +165,7 @@ export default {
       } else {
         this.passwordRule.lengthStatus = false
       }
-      if (/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]+$/.test(password)) {
+      if (/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[\S])^[0-9A-Za-z\S]+$/.test(password)) {
         this.passwordRule.charStatus = true
       } else {
         this.passwordRule.charStatus = false
@@ -178,7 +178,7 @@ export default {
       } else {
         this.passwordRepeatRule.lengthStatus = false
       }
-      if (/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]+$/.test(password)) {
+      if (/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[\S])^[0-9A-Za-z\S]+$/.test(password)) {
         this.passwordRepeatRule.charStatus = true
       } else {
         this.passwordRepeatRule.charStatus = false
@@ -187,7 +187,8 @@ export default {
     validateMobile(rule, value, callback) {
       if (!value) {
         return callback(new Error('手机号不能为空'))
-      } else if (!/^1[3-9]\d{9}$/.test(value)) {
+        // } else if (!/^1[3-9]\d{9}$/.test(value)) {
+      } else if (!/^\d{1,}$/.test(value)) {
         return callback(new Error('手机号格式有误'))
       } else {
         callback()
@@ -214,8 +215,17 @@ export default {
     validPassword(rule, str, callback) {
       if (!str) {
         return callback(new Error('密码不能为空'))
-      } else if (!/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/.test(str)) {
+      } else if (!/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/.test(str)) {
         return callback(new Error('密码格式有误'))
+      } else {
+        callback()
+      }
+    },
+    validateEmail(rule, str, callback) {
+      if (!str) {
+        return callback(new Error('邮箱不能为空'))
+      } else if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(str)) {
+        return callback(new Error('邮箱格式有误'))
       } else {
         callback()
       }

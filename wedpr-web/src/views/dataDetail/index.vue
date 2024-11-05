@@ -34,11 +34,11 @@
       </div>
       <div class="whole">
         <div class="half">
-          <span class="title right">上传时间：</span>
+          <span class="title">创建时间：</span>
           <span class="info" :title="dataInfo.createTcreateAtime"> {{ dataInfo.createAt }} </span>
         </div>
         <div class="half">
-          <span class="title">特征：</span>
+          <span class="title right">特征：</span>
           <span class="info" :title="dataInfo.datasetFields"> {{ dataInfo.datasetFields }} </span>
         </div>
       </div>
@@ -66,8 +66,8 @@
     <div class="title-radius" v-if="dataInfo.isOwner">使用记录</div>
     <div class="tableContent autoTableWrap" v-if="dataInfo.isOwner && total">
       <el-table :max-height="tableHeight" size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
-        <el-table-column label="任务ID" prop="taskID" />
-        <el-table-column label="所属项目" prop="projectName" />
+        <el-table-column label="任务ID" prop="taskID" show-overflow-tooltip />
+        <el-table-column label="所属项目" prop="projectName" show-overflow-tooltip />
         <el-table-column label="发起机构" prop="ownerAgency" />
         <el-table-column label="发起用户" prop="owner" />
         <el-table-column label="创建时间" prop="createTime" />
@@ -100,9 +100,13 @@ import { dataManageServer, projectManageServer } from 'Api'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { mapGetters } from 'vuex'
 import { jobStatusMap } from 'Utils/constant.js'
+import wePagination from '@/components/wePagination.vue'
 export default {
   name: 'dataDetail',
   mixins: [tableHeightHandle],
+  components: {
+    wePagination
+  },
   data() {
     return {
       dataInfo: {
@@ -113,7 +117,7 @@ export default {
         page_size: 10
       },
       tableData: [],
-      total: 0,
+      total: -1,
       rangeMap: {
         selfUserGroup: '本用户组内',
         selfAgency: '本机构内',
@@ -153,11 +157,18 @@ export default {
         this.dataInfo = {}
       }
     },
+    // 分页切换
+    paginationHandle(pageData) {
+      console.log(pageData, 'pagData')
+      this.pageData = { ...pageData }
+      this.queryJobsByDatasetID()
+    },
     // 获取数据集详情
     async queryJobsByDatasetID() {
       this.loadingFlag = true
       const { datasetId } = this
-      const res = await projectManageServer.queryJobsByDatasetID({ datasetID: datasetId })
+      const { page_offset, page_size } = this.pageData
+      const res = await projectManageServer.queryJobsByDatasetID({ datasetID: datasetId, pageNum: page_offset, pageSize: page_size })
       this.loadingFlag = false
       console.log(res)
       if (res.code === 0 && res.data) {
@@ -166,7 +177,6 @@ export default {
         this.tableData = content
       }
     },
-    paginationHandle() {},
     subApply() {
       const { datasetId } = this.dataInfo
       this.$router.push({ path: '/dataApply', query: { selectdDataStr: encodeURIComponent(datasetId), applyType: 'wedpr_data_auth' } })

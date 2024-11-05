@@ -58,7 +58,7 @@ export default {
     validateMobile(rule, value, callback) {
       if (!value) {
         return callback(new Error('手机号不能为空'))
-      } else if (!/^1[3-9]\d{9}$/.test(value)) {
+      } else if (!/^\d{1,}$/.test(value)) {
         return callback(new Error('手机号格式有误'))
       } else {
         callback()

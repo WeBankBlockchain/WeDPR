@@ -2,19 +2,18 @@
   <div class="server-con" :key="serviceInfo">
     <div class="img-con">
       <img class="type" v-if="serviceInfo.serviceType === serviceTypeEnum.PIR" src="~Assets/images/icon_service1.png" alt="" />
-      <img class="type" v-if="serviceInfo.serviceType === serviceTypeEnum.XGB" src="~Assets/images/icon_service2.png" alt="" />
+      <img class="type" v-else src="~Assets/images/icon_service2.png" alt="" />
 
       <el-checkbox v-if="serviceInfo.showSelect" @change="handleSelect" :value="selected"></el-checkbox>
     </div>
-
-    <span class="auth" v-if="serviceInfo.serviceAuthStatus === serviceAuthStatus.Authorized">已授权</span>
-    <span v-else class="auth" :style="{ backgroundColor: colorMap[serviceInfo.status] }">{{ servicePulishStatus[serviceInfo.status] }}</span>
+    <span v-if="serviceInfo.isOnwer" class="auth" :style="{ backgroundColor: colorMap[serviceInfo.status] }">{{ servicePulishStatus[serviceInfo.status] }}</span>
+    <span class="auth" v-if="!serviceInfo.isOnwer && serviceInfo.serviceAuthStatus === serviceAuthStatus.Authorized">已授权</span>
     <dl @click="getDetail(serviceInfo)">
       <dt>
         {{ serviceInfo.serviceName }}
       </dt>
       <dd>
-        发布人：<span class="count">{{ serviceInfo.owner }}</span>
+        发布用户：<span class="count">{{ serviceInfo.owner }}</span>
       </dd>
       <dd>
         发布机构：<span class="count">{{ serviceInfo.agency }}</span>
@@ -26,7 +25,7 @@
         创建时间：<span>{{ serviceInfo.createTime }}</span>
       </dd>
     </dl>
-    <div class="edit">
+    <div class="edit" v-if="showEdit">
       <div class="op-con" v-if="serviceInfo.isOnwer">
         <img src="~Assets/images/icon_edit.png" alt="" @click.stop="modifyData(serviceInfo)" />
         <img @click.stop="deleteService(serviceInfo)" src="~Assets/images/icon_delete.png" alt="" />
@@ -43,6 +42,7 @@
 
 <script>
 import { serviceTypeEnum, serviceAuthStatus, servicePulishStatus } from 'Utils/constant.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'serviceCard',
   props: {
@@ -53,6 +53,10 @@ export default {
     selected: {
       type: Boolean,
       default: false
+    },
+    showEdit: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -67,7 +71,9 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['userId', 'agencyId'])
+  },
   methods: {
     handleSelect(checked) {
       this.$emit('selected', checked)
@@ -101,6 +107,8 @@ div.server-con {
   background-color: #f6f8fc;
   margin: 20px 16px;
   min-width: 240px;
+  // max-height: 306px;
+  // overflow: hidden;
   position: relative;
   ::v-deep .el-tag {
     padding: 0 12px;

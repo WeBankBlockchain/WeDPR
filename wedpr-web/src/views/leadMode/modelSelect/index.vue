@@ -20,7 +20,7 @@ import { settingManageServer } from 'Api'
 import wePagination from '@/components/wePagination.vue'
 import { mapGetters } from 'vuex'
 import modelCard from '@/components/modelCard.vue'
-
+import { jobModelSettingMap } from 'Utils/constant.js'
 export default {
   name: 'modelSelect',
   model: {
@@ -35,6 +35,16 @@ export default {
       type: Array,
       default: () => {
         return [8, 12, 16, 24, 32]
+      }
+    },
+    jobType: {
+      type: String,
+      default: ''
+    },
+    queriedTypes: {
+      type: Array,
+      default: () => {
+        return []
       }
     }
   },
@@ -68,17 +78,24 @@ export default {
     },
     async getModelData() {
       const { page_offset, page_size } = this.pageData
+      const { jobType, queriedTypes } = this
       const params = { pageNum: page_offset, pageSize: page_size }
       this.loadingFlag = true
+      const condition = {
+        id: '',
+        name: '',
+        owner: ''
+      }
+      if (jobType) {
+        condition.type = jobModelSettingMap[jobType]
+      }
+      if (queriedTypes && queriedTypes.length) {
+        condition.queriedTypes = queriedTypes
+      }
       const res = await settingManageServer.querySettings({
         onlyMeta: false,
         ...params,
-        condition: {
-          id: '',
-          name: '',
-          type: 'MODEL_SETTING',
-          owner: ''
-        }
+        condition
       })
       this.loadingFlag = false
       console.log(res)

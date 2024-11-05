@@ -12,9 +12,12 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="queryFlag" @click="queryHandle">
+          <el-button :disabled="showDeleteSelect" type="primary" :loading="queryFlag" @click="queryHandle">
             {{ queryFlag ? '查询中...' : '查询' }}
           </el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="default" :disabled="showDeleteSelect" :loading="queryFlag" @click="reset"> 重置 </el-button>
         </el-form-item>
         <el-form-item>
           <el-button icon="el-icon-plus" type="primary" @click="createProject"> 新建项目 </el-button>
@@ -22,33 +25,33 @@
         <el-form-item>
           <el-button icon="el-icon-folder-opened" type="primary" @click="getJupterLink"> 打开juypter </el-button>
         </el-form-item>
+        <el-form-item v-if="!showDeleteSelect">
+          <el-button icon="el-icon-delete" style="color: red" @click="startDelete"> 批量删除 </el-button>
+        </el-form-item>
       </el-form>
+      <div class="handle" v-if="showDeleteSelect">
+        <span>已选{{ selectdDataList.length }}项</span><el-button style="color: red" size="small" :disabled="!selectdDataList.length" @click="showDeleteMore"> 确认删除 </el-button
+        ><el-button size="small" type="info" @click="cancelDelete"> 取消 </el-button>
+      </div>
     </div>
     <div class="record">
       <div class="card-container" v-if="tableData.length">
         <div class="card" v-for="item in tableData" :key="item.id" @click="goDetail(item)">
           <div class="bg">
             <img :src="bindIcon(item.randomIndex)" alt="" />
+            <el-checkbox v-if="item.showSelect" @change="(checked) => handleSelect(checked, item)" :value="selectdDataList.map((v) => v.id).includes(item.id)"></el-checkbox>
           </div>
           <div class="info">
             <div class="project-title">
               <span :title="item.name">{{ item.name }}</span>
             </div>
-            <div class="count-detail" v-if="false">
-              <dl>
-                <dt>机构数量</dt>
-                <dd>6</dd>
-              </dl>
-              <dl>
-                <dt>数据资源数量</dt>
-                <dd>6</dd>
-              </dl>
-              <dl>
-                <dt>模型数量</dt>
-                <dd>6</dd>
-              </dl>
-            </div>
             <ul>
+              <li class="ell">
+                任务数量: <span>{{ item.jobCount }}</span>
+              </li>
+              <li class="ell" @click.stop="() => {}">
+                项目ID: <span>{{ item.id }}</span>
+              </li>
               <li class="ell">
                 发起人： <span>{{ item.owner }}</span>
               </li>
@@ -101,7 +104,9 @@ export default {
       tableData: [],
       loadingFlag: false,
       showAddModal: false,
-      projectNameSelectList: []
+      projectNameSelectList: [],
+      selectdDataList: [],
+      showDeleteSelect: false
     }
   },
   computed: {
@@ -111,6 +116,43 @@ export default {
     this.queryProject()
   },
   methods: {
+    handleSelect(checked, row) {
+      const { id } = row
+      if (checked) {
+        this.selectdDataList.push({ ...row })
+      } else {
+        this.selectdDataList = this.selectdDataList.filter((v) => v.id !== id)
+      }
+      console.log(this.selectdDataList, 'selectdDataList')
+    },
+    cancelDelete() {
+      this.showDeleteSelect = false
+      this.selectdDataList = []
+      this.tableData = this.tableData.map((v) => {
+        return {
+          ...v,
+          showSelect: false
+        }
+      })
+    },
+    startDelete() {
+      this.showDeleteSelect = true
+      this.selectdDataList = []
+      this.filterDeleteAbleSelectData()
+    },
+    // 删除项目
+    showDeleteMore() {
+      this.$confirm('确认批量删除项目吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          // const params = JSON.stringify(this.selectdDataList.map((v) => v.id))
+          this.deleteProject(this.selectdDataList.map((v) => v.id))
+        })
+        .catch(() => {})
+    },
     async getJupterLink(params) {
       const res = await jupyterManageServer.getJupterLink(params)
       if (res.code === 0 && res.data) {
@@ -143,7 +185,9 @@ export default {
       })
     },
     goDetail(row) {
-      this.$router.push({ path: '/projectDetail', query: { projectId: row.id } })
+      if (!this.showDeleteSelect) {
+        this.$router.push({ path: '/projectDetail', query: { projectId: row.id } })
+      }
     },
     async getProjectNameSelect(projectName) {
       if (!projectName) {
@@ -169,6 +213,14 @@ export default {
       this.pageData = { ...pageData }
       this.queryProject()
     },
+    filterDeleteAbleSelectData() {
+      this.tableData = this.tableData.map((v) => {
+        return {
+          ...v,
+          showSelect: v.isOwner
+        }
+      })
+    },
     async queryProject() {
       console.log(this.searchQuery, 'this.searchQuery')
       const { page_offset, page_size } = this.pageData
@@ -188,13 +240,29 @@ export default {
         this.tableData = dataList.map((v) => {
           return {
             ...v,
-            randomIndex: Math.ceil(v.id % 7)
+            randomIndex: (v.id % 7) + 1,
+            isOwner: v.ownerAgencyName === this.agencyId && v.ownerUserName === this.userId,
+            showSelect: false
           }
         })
+        // 翻页后初始化选择按钮
+        if (this.showDeleteSelect) {
+          this.filterDeleteAbleSelectData()
+        }
         this.total = total
       } else {
         this.tableData = []
         this.total = 0
+      }
+    },
+    async deleteProject(params) {
+      const res = await projectManageServer.deleteProject(params)
+      console.log(res)
+      if (res.code === 0) {
+        this.$message.success('项目批量删除成功')
+        this.showDeleteSelect = false
+        this.selectdDataList = []
+        this.queryProject()
       }
     },
     reset() {
@@ -223,7 +291,29 @@ export default {
       box-sizing: border-box;
       min-width: 220px;
       position: relative;
+      ::v-deep .el-checkbox {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+      ::v-deep .el-checkbox__inner {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+        border: 1px solid #3071f2;
+        box-shadow: 0 0 3px #3071f2;
+      }
+      ::v-deep .el-checkbox__inner::after {
+        left: 7px;
+        width: 4px;
+        height: 8px;
+        top: 3px;
+      }
       div.bg {
+        position: relative;
+        overflow: hidden;
         img {
           width: 100%;
           height: auto;
@@ -282,15 +372,6 @@ export default {
             overflow: hidden;
             white-space: nowrap;
           }
-          span.data-size {
-            i {
-              font-size: 28px;
-              font-style: normal;
-            }
-          }
-        }
-        li:first-child {
-          line-height: 28px;
         }
       }
     }
@@ -300,5 +381,16 @@ export default {
 div.card:hover {
   box-shadow: 0px 2px 10px 2px #00000014;
   cursor: pointer;
+}
+div.handle {
+  span {
+    width: 75px;
+    color: #787b84;
+    float: left;
+    line-height: 32px;
+  }
+  ::v-deep .el-button--small {
+    margin-left: 10px;
+  }
 }
 </style>

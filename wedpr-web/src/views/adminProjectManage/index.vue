@@ -28,6 +28,9 @@
             {{ queryFlag ? '查询中...' : '查询' }}
           </el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="default" :loading="queryFlag" @click="reset"> 重置 </el-button>
+        </el-form-item>
       </el-form>
     </div>
     <div class="record">
@@ -39,20 +42,6 @@
           <div class="info">
             <div class="title">
               <span :title="item.name">{{ item.name }}</span>
-            </div>
-            <div class="count-detail" v-if="false">
-              <dl>
-                <dt>所属机构</dt>
-                <dd class="ell" :title="item.ownerAgency">{{ item.ownerAgency }}</dd>
-              </dl>
-              <dl>
-                <dt>所属用户</dt>
-                <dd class="ell">{{ item.owner }}</dd>
-              </dl>
-              <dl>
-                <dt>创建时间</dt>
-                <dd class="ell">{{ item.createTime }}</dd>
-              </dl>
             </div>
             <ul>
               <li>
@@ -181,7 +170,7 @@ export default {
         this.tableData = projectList.map((v) => {
           return {
             ...v,
-            randomIndex: Math.ceil(v.id % 7)
+            randomIndex: (v.id % 7) + 1
           }
         })
         this.total = total

@@ -72,8 +72,15 @@
             />
           </el-form-item>
         </el-form-item>
-        <el-form-item v-if="dataForm.dataSourceType.includes('HIVE')" label-width="126px" label="数据库信息：" prop="sql">
-          <el-input v-model="dataForm.sql" placeholder="请输入" type="textarea" :autosize="{ minRows: 4 }" style="width: 480px" @focus="onSqlFocus" />
+        <el-form-item v-if="dataForm.dataSourceType.includes('HIVE')" label-width="126px" label="Hive SQL：" prop="sql">
+          <el-input
+            v-model="dataForm.sql"
+            placeholder="请输入Hive SQL语句查询数据集，示例： select id, x1, x2 from test limit 0, 10"
+            type="textarea"
+            :autosize="{ minRows: 4 }"
+            style="width: 480px"
+            @focus="onHiveSqlFocus"
+          />
         </el-form-item>
         <el-form-item v-if="dataForm.dataSourceType.includes('HDFS')" label-width="126px" label="访问文件URL：" prop="filePath">
           <el-input v-model="dataForm.filePath" placeholder="请输入访问文件URL" type="text" style="width: 480px" />
@@ -259,7 +266,7 @@ export default {
         ],
         datasetLabel: [
           {
-            required: true,
+            required: false,
             message: '请输入资源标签',
             trigger: 'blur'
           }
@@ -441,6 +448,8 @@ export default {
               const params = { dataSourceType, dataFile, datasetId, status: 'waitting', percentage: 0 }
               this.SET_FILEUPLOADTASK(params) // 上传任务推到队列
               this.$router.push({ path: 'dataManage' })
+            } else {
+              this.deleteDataset({ datasetId })
             }
           }
         })
@@ -490,11 +499,10 @@ export default {
       return true
     },
     beforeUploadExcel(file) {
-      console.log(file, 1)
-      const supportType = ['xls', 'xlsx']
-      const isCSV = supportType.includes(file.type)
+      const isType = file.type === 'application/vnd.ms-excel'
+      const isTypeComputer = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       const isLt2G = file.size / 1024 / 1024 < 2048
-      if (!isCSV) {
+      if (!isType && !isTypeComputer) {
         this.$message.error('文件只能是xls, xlsx格式!')
         return false
       }
@@ -524,6 +532,11 @@ export default {
             this.dataForm.sql = 'select id, x1, x2 from test'
             break
         }
+      }
+    },
+    onHiveSqlFocus() {
+      if (!this.dataForm.sql) {
+        this.dataForm.sql = 'select id, x1, x2 from test limit 0, 10'
       }
     },
     async getDataUploadType() {
@@ -649,6 +662,14 @@ export default {
       datasetVisibilityDetails.permissionDes = permissionDes
       return datasetVisibilityDetails
     },
+    // 删除失败数据
+    async deleteDataset(params) {
+      const res = await dataManageServer.deleteDataset(params)
+      console.log(res)
+      if (res.code === 0) {
+        this.createSubmit()
+      }
+    },
     createSubmit() {
       try {
         this.$refs.dataForm.validate((valid) => {
@@ -661,10 +682,14 @@ export default {
             const params = { datasetTitle, datasetDesc, datasetLabel, datasetVisibility, dataSourceType: sourceType }
             if (sourceType === 'DB') {
               const { dbIp, dbPort, database, userName, password, dynamicDataSource, sql } = this.dataForm
-              params.dataSourceMeta = { ...params, dbIp, dbPort, database, userName, password, dbType, sql, dynamicDataSource }
+              params.dataSourceMeta = { dbIp, dbPort, database, userName, password, dbType, sql, dynamicDataSource }
             }
             if (sourceType === 'HDFS') {
-              params.filePath = filePath
+              params.dataSourceMeta = { filePath }
+            }
+            if (sourceType === 'HIVE') {
+              const { dynamicDataSource, sql } = this.dataForm
+              params.dataSourceMeta = { dynamicDataSource, sql }
             }
             // 权限中文描述 及参数处理
             const datasetVisibilityDetails = this.handlePermissionDes({ datasetVisibility, setting, agencyList, userList, groupIdList })

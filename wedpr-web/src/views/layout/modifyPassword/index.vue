@@ -9,7 +9,7 @@
         </el-form-item>
 
         <el-form-item prop="newPassword" label="新的密码：">
-          <el-tooltip class="item" effect="dark" :content="passwordtips" placement="left-start">
+          <el-tooltip class="item" effect="dark" :content="passwordtips" placement="bottom">
             <el-input v-model="userForm.newPassword" placeholder="请输入" show-password style="width: 280px">
               <template slot="prepend"> 密码 </template>
             </el-input>
@@ -63,7 +63,7 @@ export default {
     validPassword(rule, str, callback) {
       if (!str) {
         return callback(new Error('密码不能为空'))
-      } else if (!/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/.test(str)) {
+      } else if (!/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/.test(str)) {
         return callback(new Error('密码格式有误'))
       } else {
         callback()

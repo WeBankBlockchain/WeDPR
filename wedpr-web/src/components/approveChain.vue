@@ -11,7 +11,7 @@
         <el-popover v-model="item.visible" placement="top-start" width="363" trigger="click">
           <p style="margin-bottom: 20px">添加审批节点</p>
           <el-form :inline="false" :rules="userInfoRules" :model="addUserInfo" ref="addUserInfo" size="small">
-            <el-form-item label-width="116px" label="本机构用户ID:" prop="user">
+            <el-form-item label-width="116px" label="本机构用户名:" prop="user">
               <el-select loading-text="搜索中" filterable style="width: 209px" v-model="addUserInfo.user" remote :remote-method="getUserNameSelect" placeholder="请选择">
                 <el-option v-for="item in userNameSelectList" :label="item.label" :value="item.value" :key="item.value"></el-option>
               </el-select>

@@ -15,7 +15,7 @@
     <!-- step1 ==================================================== -->
     <formCard key="1" title="请选择模板" v-show="active === 0">
       <div class="alg-container">
-        <div :class="selectedAlg.value === item.value ? 'alg active' : 'alg'" v-for="item in algList" @click="selectAlg(item)" :key="item.value">
+        <div :class="selectedAlg.value === item.value ? 'alg active' : 'alg'" v-for="item in filteredAlgList" @click="selectAlg(item)" :key="item.value">
           <img :src="item.src" alt="" />
           <span class="title">{{ item.label }}</span>
         </div>
@@ -24,7 +24,7 @@
     <!-- step2 ==================================================== -->
     <div v-show="active === 1 && selectedAlg.value !== jobEnum.PIR">
       <formCard style="width: 1124px" title="请选择模型" v-if="[jobEnum.XGB_PREDICTING, jobEnum.LR_PREDICTING].includes(selectedAlg.value)">
-        <modelSelect  @modelSelectedChange="modelSelectedChange" v-model="jobSettingForm.modelPredictAlgorithm" />
+        <modelSelect :jobType="selectedAlg.value" @modelSelectedChange="modelSelectedChange" v-model="jobSettingForm.modelPredictAlgorithm" />
       </formCard>
       <div class="tags data-container" v-if="selectedAlg.needTagsProvider">
         <p>
@@ -71,6 +71,28 @@
     </div>
     <div v-show="active === 1 && selectedAlg.value === jobEnum.PIR">
       <serviceSelect :serviceType="serviceTypeEnum.PIR" @selected="handleServiceSelected" />
+      <div class="participates data-container" v-if="selectedServiceConfig.datasetId">
+        <p>服务详情</p>
+        <div class="area table-area">
+          <el-table size="small" :data="jobSettingForm.selectedData" :border="true" class="table-wrap">
+            <el-table-column label="服务名称" prop="serviceName" show-overflow-tooltip />
+            <el-table-column label="数据集" prop="datasetId" show-overflow-tooltip />
+            <el-table-column label="主键" prop="idField" show-overflow-tooltip />
+            <el-table-column label="支持的查询方式" prop="searchType" show-overflow-tooltip>
+              <template v-slot="scope">
+                <span v-if="scope.row.searchType === searchTypeEnum.ALL">查询存在性，查询字段值</span>
+                <span v-if="scope.row.searchType === searchTypeEnum.SearchExist">查询存在性</span>
+                <span v-if="scope.row.searchType === searchTypeEnum.SearchValue">查询字段值</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields">
+              <template v-slot="scope">
+                {{ scope.row.accessibleValueQueryFields && scope.row.accessibleValueQueryFields.join(',') }}
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
     </div>
     <!-- step3 ==================================================== -->
     <div v-show="active === 2">
@@ -126,13 +148,16 @@
                 <el-radio :label="1"> true </el-radio>
                 <el-radio :label="0"> false </el-radio>
               </el-radio-group>
+              <el-select size="small" v-if="item.type === 'select'" style="width: 140px" v-model="item.value" placeholder="请选择">
+                <el-option v-for="selectValue in item.value_list" :label="selectValue" :value="selectValue" :key="selectValue"></el-option>
+              </el-select>
               <span v-if="item.type !== 'bool'" class="tips">{{ item.description }}</span>
             </el-form-item>
           </div>
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -181,13 +206,16 @@
                 <el-radio :label="1"> true </el-radio>
                 <el-radio :label="0"> false </el-radio>
               </el-radio-group>
+              <el-select size="small" v-if="item.type === 'select'" style="width: 140px" v-model="item.value" placeholder="请选择">
+                <el-option v-for="selectValue in item.value_list" :label="selectValue" :value="selectValue" :key="selectValue"></el-option>
+              </el-select>
               <span v-if="item.type !== 'bool'" class="tips">{{ item.description }}</span>
             </el-form-item>
           </div>
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -234,7 +262,7 @@
         </formCard>
         <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
           <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-            <el-option :key="item" v-for="item in agencyList" multiple :label="item.label" :value="item.value"></el-option>
+            <el-option :key="item" v-for="item in agencyListAble" multiple :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -254,7 +282,11 @@
                   <span v-if="scope.row.searchType === searchTypeEnum.SearchValue">查询字段值</span>
                 </template>
               </el-table-column>
-              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields" />
+              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields">
+                <template v-slot="scope">
+                  {{ scope.row.accessibleValueQueryFields && scope.row.accessibleValueQueryFields.join(',') }}
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -315,7 +347,7 @@
           </div>
           <el-form-item label="结果接收方：" prop="receiver" label-width="120px">
             <el-select size="small" style="width: 360px" v-model="jobSettingForm.receiver" multiple placeholder="请选择">
-              <el-option :key="item" v-for="item in agencyList" :label="item.label" :value="item.value"></el-option>
+              <el-option :key="item" v-for="item in agencyListAble" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -349,7 +381,7 @@ import tagSelect from './tagSelect/index.vue'
 import participateSelect from './participateSelect/index.vue'
 import modelSelect from './modelSelect/index.vue'
 import { mapGetters } from 'vuex'
-import { jobEnum, searchTypeEnum, serviceTypeEnum } from 'Utils/constant.js'
+import { jobEnum, searchTypeEnum, serviceTypeEnum, settingMap } from 'Utils/constant.js'
 import editorCom from '@/components/editorCom.vue'
 import serviceSelect from './serviceSelect/index.vue'
 export default {
@@ -409,7 +441,8 @@ export default {
       searchTypeEnum,
       selectedServiceConfig: {},
       tagAgency: '',
-      filterPaticipateAgency: []
+      filterPaticipateAgency: [],
+      agencyListAble: []
     }
   },
   created() {
@@ -430,12 +463,12 @@ export default {
       switch (selectedAlg.value) {
         case jobEnum.XGB_TRAINING:
           this.queryDefaultSettings('SYS_' + jobEnum.XGB_TRAINING)
-          this.queryModelSettingList()
+          this.queryModelSettingList(settingMap[selectedAlg.value])
           break
         // FIXME:
         case jobEnum.LR_TRAINING:
           this.queryDefaultSettings('SYS_' + jobEnum.LR_TRAINING)
-          // this.queryModelSettingList()
+          this.queryModelSettingList(settingMap[selectedAlg.value])
           break
         case jobEnum.XGB_PREDICTING:
           this.queryDefaultSettings('SYS_PREDICTING')
@@ -451,6 +484,8 @@ export default {
     },
     selectedData(v) {
       console.log(v, 'selectedData=================')
+      const ownerAgencyNameList = v.map((v) => v.ownerAgencyName)
+      this.agencyListAble = this.agencyList.filter((v) => ownerAgencyNameList.includes(v.value))
       if (this.selectedAlg.value === jobEnum.PSI) {
         this.jobSettingForm.selectedData = v.map((v) => {
           return { ...v, datasetFieldsSelected: [] }
@@ -464,6 +499,10 @@ export default {
   },
   computed: {
     ...mapGetters(['agencyList', 'algList']),
+    filteredAlgList() {
+      console.log(this.algList, '=========================')
+      return this.algList.filter((v) => v.enable)
+    },
     nextDisabaled() {
       if (this.active === 0) {
         return !this.selectedAlg.value
@@ -577,7 +616,7 @@ export default {
     async queryProject() {
       this.loadingFlag = true
       const { projectId } = this
-      const res = await projectManageServer.queryProject({ project: { id: projectId } })
+      const res = await projectManageServer.queryProject({ project: { id: projectId }, onlyMeta: false })
       this.loadingFlag = false
       console.log(res)
       if (res.code === 0 && res.data) {
@@ -597,19 +636,19 @@ export default {
     handlePIRdata() {
       const { searchType, queriedFields = [], searchIdList } = this.jobSettingForm
       const { serviceId } = this.jobSettingForm.selectedData[0]
-      const { name } = this.dataInfo
+      const { projectId } = this
       const params = {
         serviceId,
         searchIdList: searchIdList.split(','),
         queriedFields,
         searchType
       }
-      this.submitJob({ job: { param: JSON.stringify(params), jobType: jobEnum.PIR, projectName: name } })
+      this.submitJob({ job: { param: JSON.stringify(params), jobType: jobEnum.PIR, projectId } })
     },
     handlePsiJobData() {
       const { selectedAlg } = this
       const { selectedData, receiver } = this.jobSettingForm
-      const { name } = this.dataInfo
+      const { projectId } = this
       const dataSetList = selectedData.map((v) => {
         console.log(v, v.datasetStoragePath, JSON.parse(v.datasetStoragePath))
         const dataset = {
@@ -626,7 +665,7 @@ export default {
         }
       })
       const param = { dataSetList }
-      const params = { jobType: selectedAlg.value, projectName: name, param: JSON.stringify(param) }
+      const params = { jobType: selectedAlg.value, projectId, param: JSON.stringify(param) }
       const taskParties = selectedData.map((v) => {
         return {
           userName: v.ownerUserName,
@@ -639,7 +678,7 @@ export default {
     handleTraingData() {
       const { selectedAlg, modelModule } = this
       const { selectedData, receiver } = this.jobSettingForm
-      const { name } = this.dataInfo
+      const { projectId } = this
       console.log(selectedData, 'selectedData')
       const dataSetList = selectedData.map((v) => {
         const dataset = {
@@ -663,7 +702,7 @@ export default {
       })
       const param = { dataSetList, modelSetting }
       console.log(param, 'modelSettingmodel')
-      const params = { jobType: selectedAlg.value, projectName: name, param: JSON.stringify(param) }
+      const params = { jobType: selectedAlg.value, projectId, param: JSON.stringify(param) }
       const taskParties = selectedData.map((v) => {
         return {
           userName: v.ownerUserName,
@@ -677,7 +716,7 @@ export default {
     handlePredictingData() {
       const { selectedAlg, modelModule } = this
       const { selectedData, receiver, modelPredictAlgorithm } = this.jobSettingForm
-      const { name } = this.dataInfo
+      const { projectId } = this
       console.log(selectedData, 'selectedData')
       const dataSetList = selectedData.map((v, i) => {
         const dataset = {
@@ -700,7 +739,7 @@ export default {
         modelSetting[key] = v.value
       })
       const param = { dataSetList, modelSetting, modelPredictAlgorithm: JSON.stringify(modelPredictAlgorithm) }
-      const params = { jobType: selectedAlg.value, projectName: name, param: JSON.stringify(param) }
+      const params = { jobType: selectedAlg.value, projectId, param: JSON.stringify(param) }
       const taskParties = selectedData.map((v) => {
         return {
           userName: v.ownerUserName,
@@ -732,7 +771,7 @@ export default {
         this.dataInfo = []
       }
     },
-    // 查询xgb默认模板参数
+    // 查询xgb和lr默认模板参数
     async queryDefaultSettings(name) {
       const res = await settingManageServer.querySettings({
         onlyMeta: false,
@@ -750,19 +789,20 @@ export default {
       }
     },
     // 查询用户自定义setting模板list
-    async queryModelSettingList() {
+    async queryModelSettingList(type) {
       const res = await settingManageServer.querySettings({
         onlyMeta: false,
         condition: {
           id: '',
           name: '',
-          type: 'XGB_SETTING',
+          type,
           owner: ''
         }
       })
       console.log(res)
       if (res.code === 0 && res.data) {
-        this.modelSettingList = res.data.map((v) => {
+        const { dataList } = res.data
+        this.modelSettingList = dataList.map((v) => {
           return {
             label: v.name,
             value: v
@@ -879,6 +919,11 @@ export default {
           // psi 可同一机构下多个数据集
           if (!this.calcParticipateNumberMatch(participateNumber, validDataLength)) {
             this.$message.error(`请添加至少${parseInt(participateNumber)}个参与方`)
+            return
+          }
+          // psi 至少有一个自己的数据集
+          if (!participateAgencyList.includes(this.agencyId)) {
+            this.$message.error('请添加至少一个己方的数据集')
             return
           }
         } else if (this.selectedAlg.value === jobEnum.PIR) {

@@ -119,7 +119,7 @@ export const uploadFile = {
 
       function awaitRequest() {
         const percentage = parseInt((index / requests.length) * 100)
-        that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, percentage })
+        that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, percentage, status: 'pending' })
         console.log(percentage, 'percentage')
         if (index === requests.length) {
           console.log('所有请求已进入promise.all')
@@ -129,6 +129,7 @@ export const uploadFile = {
       }
 
       function cancelRequest() {
+        that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, status: 'fail' })
         return Promise.reject(new Error('upload chunk Failed'))
       }
 
@@ -147,19 +148,23 @@ export const uploadFile = {
             .then((response) => {
               if (response.code === 0) {
                 // Message.success('上传文件成功')
+                that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, status: 'success' })
                 onSuccess && onSuccess()
               } else {
+                that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, status: 'fail' })
                 // Message.error('上传文件失败！')
                 onFail && onFail()
               }
             })
             .catch((error) => {
               // Message.error('上传文件失败！')
+              that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, status: 'fail' })
               console.log(error)
               onFail && onFail()
             })
         })
         .catch((err) => {
+          that.SET_FILEUPLOADTASK({ ...that.fileUploadTask, status: 'fail' })
           onFail && onFail()
           Message.error('上传文件失败！')
           console.log(err)
