@@ -2,6 +2,7 @@ package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
+import com.webank.wedpr.components.dataset.config.HiveConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.service.ChunkUploadApi;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
@@ -24,6 +25,7 @@ public class DataSourceProcessorContext {
     private FileStorageInterface.FilePermissionInfo filePermissionInfo;
     private DatasetTransactionalWrapper datasetTransactionalWrapper;
     private DatasetConfig datasetConfig;
+    private HiveConfig hiveConfig;
     private UserInfo userInfo;
 
     // intermediate state

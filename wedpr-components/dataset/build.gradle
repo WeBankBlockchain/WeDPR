@@ -15,6 +15,12 @@ dependencies {
     compile project(":wedpr-components-storage")
     compile project(":wedpr-components-authorization")
 
+    // hive
+    compile("org.apache.hive:hive-jdbc:${hiveVersion}") {
+        exclude group: "org.apache.zookeeper", module: "zookeeper4"
+        exclude group: "org.eclipse.jetty.aggregate", module: "jetty-all"
+    }
+
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-excelant:${poiVersion}"
     compile "com.opencsv:opencsv:${opencsvVersion}"
