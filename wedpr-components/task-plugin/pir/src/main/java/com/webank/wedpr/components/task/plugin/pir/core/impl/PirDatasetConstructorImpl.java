@@ -17,6 +17,7 @@ package com.webank.wedpr.components.task.plugin.pir.core.impl;
 
 import com.webank.wedpr.common.utils.CSVFileParser;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
@@ -29,7 +30,6 @@ import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
-import com.webank.wedpr.components.task.plugin.pir.utils.Constant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,15 +59,17 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
     public void construct(PirServiceSetting serviceSetting) throws Exception {
         List<String> allTables = this.nativeSQLMapper.showAllTables();
         String datasetID = serviceSetting.getDatasetId();
-        String tableId = Constant.datasetId2tableId(datasetID);
+        String tableId =
+                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                        datasetID);
         if (allTables.contains(tableId)) {
             logger.info("The dataset {} has already been constructed into {}", datasetID, tableId);
             return;
         }
         Dataset dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
         DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
-        if (dataSourceType != DataSourceType.CSV) {
-            throw new WeDPRException("PIR only support CSV DataSources now!");
+        if (dataSourceType != DataSourceType.CSV && dataSourceType != DataSourceType.EXCEL) {
+            throw new WeDPRException("PIR only support CSV and excel DataSources now!");
         }
         logger.info("constructFromCSV, dataset: {}", dataset.getDatasetId());
         constructFromCSV(dataset, serviceSetting.getIdField());
@@ -89,7 +91,13 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                 Arrays.stream(dataset.getDatasetFields().trim().split(","))
                         .map(String::trim)
                         .toArray(String[]::new);
-
+        List<String> datasetFieldsList = Arrays.asList(datasetFields);
+        if (datasetFieldsList.contains(Constant.PIR_ID_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_FIELD_NAME);
+        }
+        if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
+        }
         List<List<String>> sqlValues =
                 CSVFileParser.processCsv2SqlMap(datasetFields, localFilePath);
         if (sqlValues.size() == 0) {
@@ -99,7 +107,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                     localFilePath);
             return;
         }
-        String tableId = Constant.datasetId2tableId(dataset.getDatasetId());
+        String tableId =
+                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                        dataset.getDatasetId());
 
         // all the field + id_hash field
         String[] fieldsWithType = new String[datasetFields.length + 1];
@@ -108,8 +118,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         for (int i = 0; i < datasetFields.length; i++) {
             // the idField
             if (idField.equalsIgnoreCase(datasetFields[i])) {
-                fieldsWithType[i] = Constant.ID_FIELD_NAME + " VARCHAR(255)";
-                tableFields.add(Constant.ID_FIELD_NAME);
+                fieldsWithType[i] = Constant.PIR_ID_FIELD_NAME + " VARCHAR(255)";
+                tableFields.add(Constant.PIR_ID_FIELD_NAME);
                 idFieldIndex = i;
             } else {
                 fieldsWithType[i] = datasetFields[i] + " TEXT";
@@ -117,16 +127,16 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
             }
         }
         // add the id_hash field at the last
-        fieldsWithType[datasetFields.length] = Constant.ID_HASH_FIELD_NAME + " VARCHAR(64)";
-        tableFields.add(Constant.ID_HASH_FIELD_NAME);
+        fieldsWithType[datasetFields.length] = Constant.PIR_ID_HASH_FIELD_NAME + " VARCHAR(64)";
+        tableFields.add(Constant.PIR_ID_HASH_FIELD_NAME);
 
         String sql =
                 String.format(
                         "CREATE TABLE %s ( %s , PRIMARY KEY (`%s`) USING BTREE, index id_index(`%s`(128)) )",
                         tableId,
                         String.join(",", fieldsWithType),
-                        Constant.ID_HASH_FIELD_NAME,
-                        Constant.ID_FIELD_NAME);
+                        Constant.PIR_ID_HASH_FIELD_NAME,
+                        Constant.PIR_ID_FIELD_NAME);
         logger.info("constructFromCSV, execute sql: {}", sql);
         this.nativeSQLMapper.executeNativeUpdateSql(sql);
 

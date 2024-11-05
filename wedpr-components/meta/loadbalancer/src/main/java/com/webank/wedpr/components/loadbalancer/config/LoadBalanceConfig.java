@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Scope;
 public class LoadBalanceConfig {
     @Bean(name = "loadBalancer")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    // @ConditionalOnProperty(value = "wedpr.service.debugMode", havingValue = "true")
     @ConditionalOnMissingBean
     public LoadBalancer debugModeloadBalancer() {
         return new LoadBalancerImpl(new EntryPointConfigLoader());

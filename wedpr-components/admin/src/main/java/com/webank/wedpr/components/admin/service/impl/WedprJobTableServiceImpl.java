@@ -52,7 +52,7 @@ public class WedprJobTableServiceImpl extends ServiceImpl<WedprJobTableMapper, W
     @Override
     public ListJobResponse listJob(GetWedprJobListRequest request) {
         LambdaQueryWrapper<WedprJobTable> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        String projectName = request.getProjectName();
+        String projectId = request.getProjectId();
         String ownerAgency = request.getOwnerAgency();
         String jobType = request.getJobType();
         String status = request.getStatus();
@@ -60,7 +60,7 @@ public class WedprJobTableServiceImpl extends ServiceImpl<WedprJobTableMapper, W
         String endTimeStr = request.getEndTime();
         Integer pageNum = request.getPageNum();
         Integer pageSize = request.getPageSize();
-        lambdaQueryWrapper.eq(WedprJobTable::getProjectName, projectName);
+        lambdaQueryWrapper.eq(WedprJobTable::getProjectId, projectId);
         if (!StringUtils.isEmpty(ownerAgency)) {
             lambdaQueryWrapper.eq(WedprJobTable::getOwnerAgency, ownerAgency);
         }

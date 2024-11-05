@@ -20,6 +20,7 @@ import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,5 +46,18 @@ public class ServiceAuthInfo extends TimeRange {
     @JsonProperty("expired")
     public boolean expired() {
         return Common.isDateExpired(Constant.DEFAULT_TIMESTAMP_FORMAT, expireTime);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServiceAuthInfo)) return false;
+        ServiceAuthInfo that = (ServiceAuthInfo) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

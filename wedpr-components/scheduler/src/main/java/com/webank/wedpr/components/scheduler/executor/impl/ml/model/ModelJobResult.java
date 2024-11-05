@@ -28,6 +28,7 @@ public class ModelJobResult {
     public static class ModelJobData {
         private Object jobPlanetResult;
         private String modelData;
+        private Object logDetail;
     }
 
     private Integer errorCode;

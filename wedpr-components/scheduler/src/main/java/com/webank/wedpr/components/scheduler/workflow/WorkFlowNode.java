@@ -15,7 +15,7 @@ public class WorkFlowNode {
     private List<WorkFlowUpstream> upstreams = new ArrayList<>();
 
     private String type;
-    private List<String> args;
+    private Object args;
 
     public void addUpstream(int upstream) {
         WorkFlowUpstream workflowUpstream = new WorkFlowUpstream();

@@ -16,10 +16,14 @@
 package com.webank.wedpr.components.meta.resource.follower.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FollowerDO extends TimeRange {
     public enum FollowerType {
         AUTH_FOLLOWER("auth_follower"),
@@ -79,41 +83,9 @@ public class FollowerDO extends TimeRange {
         setFollowerType(followerType);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getResourceID() {
-        return resourceID;
-    }
-
-    public void setResourceID(String resourceID) {
-        this.resourceID = resourceID;
-    }
-
-    public String getFollowerType() {
-        return followerType;
-    }
-
     public void setFollowerType(String followerType) {
         this.followerType = followerType;
         this.type = FollowerType.deserialize(this.followerType);
-    }
-
-    public FollowerType getType() {
-        return type;
     }
 
     public void setType(FollowerType type) {
@@ -122,29 +94,5 @@ public class FollowerDO extends TimeRange {
             return;
         }
         this.followerType = type.getType();
-    }
-
-    public String getAgency() {
-        return agency;
-    }
-
-    public void setAgency(String agency) {
-        this.agency = agency;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 }

@@ -13,11 +13,12 @@
  *
  */
 
-package com.webank.wedpr.components.scheduler.pir.impl;
+package com.webank.wedpr.components.scheduler.impl;
 
 import com.webank.wedpr.common.protocol.JobStatus;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.JobDetailResponse;
@@ -31,6 +32,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +40,10 @@ public class SchedulerServiceImpl implements SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerServiceImpl.class);
     @Autowired private ProjectMapperWrapper projectMapperWrapper;
     @Autowired private FileMetaBuilder fileMetaBuilder;
+
+    @Autowired
+    @Qualifier("loadBalancer")
+    private LoadBalancer loadBalancer;
 
     @Override
     public Object queryJobDetail(String user, String agency, String jobID) throws Exception {
@@ -47,19 +53,28 @@ public class SchedulerServiceImpl implements SchedulerService {
         }
         // query the jobDetail
         JobDO jobDO = jobDOList.get(0);
-        // run failed, no need to fetch the result
+        // run failed, no need to fetch the result, only fetch the log
         if (!JobStatus.success(jobDO.getStatus())) {
-            return new JobDetailResponse(jobDO, null, null);
+            GetTaskResultRequest getTaskResultRequest =
+                    new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
+            getTaskResultRequest.setOnlyFetchLog(Boolean.TRUE);
+            ModelJobResult.ModelJobData modelJobData =
+                    (ModelJobResult.ModelJobData)
+                            MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
+            return new JobDetailResponse(jobDO, null, null, modelJobData.getLogDetail());
         }
         // the ml job
         if (jobDO.getType().mlJob()) {
+            GetTaskResultRequest getTaskResultRequest =
+                    new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
             ModelJobResult.ModelJobData modelJobData =
                     (ModelJobResult.ModelJobData)
-                            MLExecutorClient.getJobResult(
-                                    new GetTaskResultRequest(
-                                            user, jobDO.getId(), jobDO.getJobType()));
+                            MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
             return new JobDetailResponse(
-                    jobDO, modelJobData.getJobPlanetResult(), modelJobData.getModelData());
+                    jobDO,
+                    modelJobData.getJobPlanetResult(),
+                    modelJobData.getModelData(),
+                    modelJobData.getLogDetail());
         }
         JobDetailResponse response = new JobDetailResponse(jobDO);
         // the psi job, parse the output

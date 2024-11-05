@@ -72,6 +72,7 @@ public class HttpClientImpl {
             httpPost.setEntity(requestEntity);
             httpPost.setHeader(CONTENT_TYPE_KEY, DEFAULT_CONTENT_TYPE);
             response = httpClient.execute(httpPost);
+
             if (successCode != null) {
                 if (response.getStatusLine().getStatusCode() != successCode) {
                     throw new WeDPRException(
@@ -83,12 +84,15 @@ public class HttpClientImpl {
                                     + EntityUtils.toString(response.getEntity()));
                 }
             }
+
             String result = EntityUtils.toString(response.getEntity());
+
             logger.info(
-                    "##### executePostAndGetString, request: {}, response: {}, response: {}",
-                    request,
-                    result,
-                    response);
+                    "##### executePostAndGetString, request: {}, response: {}, result: {}",
+                    httpPost,
+                    response,
+                    result);
+
             return result;
         } finally {
             releaseResource(response, requestEntity);
@@ -101,7 +105,8 @@ public class HttpClientImpl {
 
     public String executePostAndGetString(BaseRequest request, Integer successCode)
             throws Exception {
-        return executePostAndGetString(request.serialize(), successCode);
+        String strRequest = request.serialize();
+        return executePostAndGetString(strRequest, successCode);
     }
 
     private void releaseResource(CloseableHttpResponse response, StringEntity requestEntity)
@@ -136,7 +141,15 @@ public class HttpClientImpl {
             httpRequestBase.setHeader(CONTENT_TYPE_KEY, DEFAULT_CONTENT_TYPE);
             response = httpClient.execute(httpRequestBase);
 
-            return factory.build(EntityUtils.toString(response.getEntity()));
+            String strResponse = EntityUtils.toString(response.getEntity());
+
+            logger.info(
+                    "##### execute, request: {}, response: {}, result: {}",
+                    httpRequestBase,
+                    response,
+                    strResponse);
+
+            return factory.build(strResponse);
         } finally {
             releaseResource(response, null);
         }

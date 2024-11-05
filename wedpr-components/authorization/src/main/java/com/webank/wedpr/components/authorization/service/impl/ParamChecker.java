@@ -25,9 +25,11 @@ import com.webank.wedpr.components.authorization.model.*;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParamChecker {
-
+    private static final Logger logger = LoggerFactory.getLogger(ParamChecker.class);
     private final AuthMapperWrapper authMapperWrapper;
     private final String agency;
 
@@ -138,9 +140,18 @@ public class ParamChecker {
                     "Invalid updateAuth request for the auth is read-only, auth: "
                             + authorizationDO.getId());
         }
-        // update the authStatus to ToConfirm when original status is  AuthReject
-        if (result.get(0).getAuthStatus().rejected()) {
+        // update the authStatus to ToConfirm when original status is AuthReject
+        if (authorizationDO.getAuthStatus() == null && result.get(0).getAuthStatus().rejected()) {
+            logger.info(
+                    "Reset the rejected auth to ToConfirm status, authInfo: {}",
+                    authorizationDO.toString());
             authorizationDO.setAuthStatus(AuthorizationDO.AuthStatus.ToConfirm);
+            updateAuthResult(applicant, authorizationDO, result.get(0), AuthResultStatus.Submit);
+        }
+        // the cancel case
+        if (authorizationDO.getAuthStatus() != null && authorizationDO.getAuthStatus().cancel()) {
+            logger.info("The auth {} canceled, record the result", authorizationDO.toString());
+            updateAuthResult(applicant, authorizationDO, result.get(0), AuthResultStatus.Cancel);
         }
         // not first AuthNode, can't update the content
         if (result.get(0).getCurrentApplyNode().compareToIgnoreCase(applicant) != 0
@@ -148,6 +159,21 @@ public class ParamChecker {
             throw new WeDPRException(
                     "Invalid updateAuth request, not permit to update the auth content now!");
         }
+    }
+
+    private void updateAuthResult(
+            String applicant,
+            AuthorizationDO authorizationDO,
+            AuthorizationDO lastRecorder,
+            AuthResultStatus authResultStatus) {
+        if (authorizationDO.getAuthChain() == null) {
+            authorizationDO.setAuthChain(lastRecorder.getAuthChain());
+        }
+        authorizationDO.setResult(lastRecorder.getResult());
+        // update the authResult
+        AuthResult.AuthResultDetail authResultDetail = new AuthResult.AuthResultDetail();
+        authResultDetail.setAuthResultStatus(authResultStatus);
+        authorizationDO.updateResult(applicant, authResultDetail);
     }
 
     @SneakyThrows(WeDPRException.class)

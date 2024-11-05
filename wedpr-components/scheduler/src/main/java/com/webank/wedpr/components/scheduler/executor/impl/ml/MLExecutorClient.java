@@ -16,15 +16,28 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml;
 
 import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
+import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
+import com.webank.wedpr.components.loadbalancer.LoadBalancer;
+import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobResult;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.GetTaskResultRequest;
 
 public class MLExecutorClient {
-    public static Object getJobResult(GetTaskResultRequest request) throws Exception {
+    public static Object getJobResult(LoadBalancer loadBalancer, GetTaskResultRequest request)
+            throws Exception {
+
+        EntryPointInfo entryPoint =
+                loadBalancer.selectService(
+                        LoadBalancer.Policy.ROUND_ROBIN, ServiceName.MODEL.getValue());
+        if (entryPoint == null) {
+            throw new WeDPRException("Cannot find ml client endpoint");
+        }
+        String url = entryPoint.getUrl(null);
         HttpClientImpl httpClient =
                 new HttpClientImpl(
-                        MLExecutorConfig.getObtainJobResultApiUrl(request.getJobID()),
+                        MLExecutorConfig.getObtainJobResultApiUrl(url, request.getJobID()),
                         MLExecutorConfig.getMaxTotalConnection(),
                         MLExecutorConfig.buildConfig(),
                         null);

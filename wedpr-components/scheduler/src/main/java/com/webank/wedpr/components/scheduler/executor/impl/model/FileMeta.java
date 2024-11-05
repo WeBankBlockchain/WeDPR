@@ -50,6 +50,7 @@ public class FileMeta {
     protected String path;
     protected String owner;
     protected String ownerAgency;
+    protected long datasetRecordCount;
 
     public FileMeta() {}
 
@@ -58,6 +59,7 @@ public class FileMeta {
         this.path = path;
         this.owner = owner;
         this.ownerAgency = ownerAgency;
+        this.datasetRecordCount = 0;
     }
 
     public String serialize() throws Exception {
@@ -156,6 +158,14 @@ public class FileMeta {
             }
             Common.requireNonEmpty(path, "filePath");
         }
+    }
+
+    public long getDatasetRecordCount() {
+        return datasetRecordCount;
+    }
+
+    public void setDatasetRecordCount(long datasetRecordCount) {
+        this.datasetRecordCount = datasetRecordCount;
     }
 
     public String getDatasetID() {

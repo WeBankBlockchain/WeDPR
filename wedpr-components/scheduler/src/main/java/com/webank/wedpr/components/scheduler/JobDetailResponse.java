@@ -27,15 +27,17 @@ public class JobDetailResponse {
     private Object modelResultDetail;
     private FileMeta resultFileInfo;
     private String model;
+    private Object log;
 
     public JobDetailResponse(JobDO job) {
         this.job = job;
     }
 
-    public JobDetailResponse(JobDO job, Object modelResultDetail, String model) {
+    public JobDetailResponse(JobDO job, Object modelResultDetail, String model, Object log) {
         this.job = job;
         this.modelResultDetail = modelResultDetail;
         this.model = model;
+        this.log = log;
     }
 
     @Override

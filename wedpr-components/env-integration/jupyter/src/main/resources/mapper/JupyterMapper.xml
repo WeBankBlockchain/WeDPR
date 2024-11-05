@@ -79,7 +79,7 @@
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.agency != null and condition.agency !=''">
-                    and `agency` like concat(#{condition.agency}, '%')
+                    and `agency` = #{condition.agency}
                 </if>
                 <if test="condition.status!= null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -98,7 +98,7 @@
         order by `last_update_time` desc
     </select>
     <select id="queryJupyterRecordCount" resultType="java.lang.Integer">
-        select 1
+        select count(1)
         from wedpr_jupyter_table where 1=1
         <choose>
             <when test="condition != null and condition != ''">

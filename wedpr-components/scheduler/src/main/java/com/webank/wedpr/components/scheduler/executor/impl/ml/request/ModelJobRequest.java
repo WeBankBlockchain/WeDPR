@@ -38,9 +38,6 @@ public class ModelJobRequest implements BaseRequest {
     @JsonProperty("job_id")
     protected String jobID;
 
-    @JsonProperty("task_id")
-    protected String taskID;
-
     @JsonProperty("is_label_holder")
     protected Boolean isLabelProvider;
 
@@ -83,7 +80,6 @@ public class ModelJobRequest implements BaseRequest {
         this.setModelParam(modelJobRequest.getModelParam());
         this.setParticipantIDList(modelJobRequest.getParticipantIDList());
         this.setResultReceiverIDList(modelJobRequest.getResultReceiverIDList());
-        this.setTaskID(modelJobRequest.getTaskID());
         this.setTaskType(modelJobRequest.getTaskType());
         this.setIsLabelProvider(modelJobRequest.getIsLabelProvider());
     }
@@ -109,13 +105,6 @@ public class ModelJobRequest implements BaseRequest {
             return;
         }
         this.datasetID = Common.getFileName(datasetPath);
-    }
-
-    public void setTaskID(String taskID) {
-        if (StringUtils.isBlank(taskID)) {
-            return;
-        }
-        this.taskID = taskID;
     }
 
     public void setIdFilePath(String idFilePath) {

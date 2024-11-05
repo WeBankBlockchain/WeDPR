@@ -134,7 +134,7 @@ public class JobDO extends TimeRange {
     @JsonIgnore private transient Object jobParam;
     private String owner;
     private String ownerAgency;
-    private String projectName;
+    private String projectId;
     private String param;
 
     @JsonIgnore private transient Object jobRequest;
@@ -148,6 +148,7 @@ public class JobDO extends TimeRange {
     @JsonIgnore private transient List<FollowerDO> taskParties;
 
     @JsonIgnore private transient Integer limitItems = -1;
+    @JsonIgnore private transient Boolean killed = false;
 
     // shouldSync or not
     private Boolean shouldSync;
@@ -292,7 +293,7 @@ public class JobDO extends TimeRange {
         if (!StringUtils.isBlank(this.getResult())) {
             throw new WeDPRException("Invalid submitJob request, not permit to set the result");
         }
-        Common.requireNonEmpty("projectName", projectName);
+        Common.requireNonEmpty("projectId", projectId);
         Common.requireNonEmpty("param", param);
     }
 
@@ -303,6 +304,9 @@ public class JobDO extends TimeRange {
     public Boolean isJobParty(String agency) {
         if (this.ownerAgency.compareToIgnoreCase(agency) == 0) {
             return Boolean.TRUE;
+        }
+        if (taskParties == null) {
+            return Boolean.FALSE;
         }
         for (FollowerDO followerDO : taskParties) {
             if (followerDO.getAgency().compareToIgnoreCase(agency) == 0) {
@@ -341,13 +345,13 @@ public class JobDO extends TimeRange {
                 && Objects.equals(jobType, jobDO.jobType)
                 && Objects.equals(owner, jobDO.owner)
                 && Objects.equals(ownerAgency, jobDO.ownerAgency)
-                && Objects.equals(projectName, jobDO.projectName)
+                && Objects.equals(projectId, jobDO.projectId)
                 && Objects.equals(status, jobDO.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, parties, jobType, owner, ownerAgency, projectName, status);
+        return Objects.hash(id, name, parties, jobType, owner, ownerAgency, projectId, status);
     }
 
     @Override
@@ -365,8 +369,8 @@ public class JobDO extends TimeRange {
                 + ", ownerAgency='"
                 + ownerAgency
                 + '\''
-                + ", projectName='"
-                + projectName
+                + ", projectId='"
+                + projectId
                 + '\''
                 + ", param='"
                 + param

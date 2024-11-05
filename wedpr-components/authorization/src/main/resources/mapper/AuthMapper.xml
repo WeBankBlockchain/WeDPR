@@ -111,10 +111,10 @@
                     and `id` like concat(#{condition.id}, '%')
                 </if>
                 <if test="condition.applicant != null and condition.applicant !=''">
-                    and `applicant` like concat(#{condition.applicant}, '%')
+                    and `applicant` = #{condition.applicant}
                 </if>
                 <if test="condition.applicantAgency != null and condition.applicantAgency !=''">
-                    and `applicant_agency` like concat(#{condition.applicantAgency}, '%')
+                    and `applicant_agency` = #{condition.applicantAgency}
                 </if>
                 <if test="condition.currentApplyNode != null and condition.currentApplyNode !=''">
                     and `current_auth_node` = #{condition.currentApplyNode}
@@ -178,10 +178,10 @@
                     and `id` like concat(#{condition.id}, '%')
                 </if>
                 <if test="condition.applicant != null and condition.applicant !=''">
-                    and `applicant` like concat(#{condition.applicant}, '%')
+                    and `applicant` = #{condition.applicant}
                 </if>
                 <if test="condition.applicantAgency != null and condition.applicantAgency !=''">
-                    and `applicant_agency` like concat(#{condition.applicantAgency}, '%')
+                    and `applicant_agency` = #{condition.applicantAgency}
                 </if>
                 <if test="condition.applyType != null and condition.applyType !=''">
                     and `apply_type` = #{condition.applyType}

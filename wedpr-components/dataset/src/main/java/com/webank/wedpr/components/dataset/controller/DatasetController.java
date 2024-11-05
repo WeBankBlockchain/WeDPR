@@ -101,10 +101,8 @@ public class DatasetController {
             Common.requireNonEmpty("datasetTitle", datasetTitle);
 
             String datasetLabel = createDatasetRequest.getDatasetLabel();
-            Common.requireNonEmpty("datasetLabel", datasetLabel);
 
             String datasetDesc = createDatasetRequest.getDatasetDesc();
-            Common.requireNonEmpty("datasetDesc", datasetDesc);
 
             Integer datasetVisibility = createDatasetRequest.getDatasetVisibility();
             Common.requireNonNull("datasetVisibility", datasetVisibility);
@@ -230,8 +228,10 @@ public class DatasetController {
             @RequestParam(value = "ownerUserName", required = false) String ownerUser,
             @RequestParam(value = "permissionType", required = false) String permissionType,
             @RequestParam(value = "datasetTitle", required = false) String datasetTitle,
+            @RequestParam(value = "dataSourceType", required = false) String dataSourceType,
             @RequestParam(value = "startTime", required = false) String startTime,
             @RequestParam(value = "endTime", required = false) String endTime,
+            @RequestParam(value = "status", required = false) Integer status,
             @RequestParam(value = "pageNum", required = false) Integer pageNum,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
 
@@ -269,8 +269,10 @@ public class DatasetController {
                             ownerUser,
                             datasetTitle,
                             type,
+                            dataSourceType,
                             startTime,
                             endTime,
+                            status,
                             pageNum,
                             pageSize);
             weDPRResponse.setData(listDatasetResponse);

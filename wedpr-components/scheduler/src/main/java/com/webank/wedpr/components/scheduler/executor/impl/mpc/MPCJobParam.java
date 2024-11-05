@@ -6,113 +6,41 @@ import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.components.scheduler.client.SchedulerClient;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
-import com.webank.wedpr.components.scheduler.executor.impl.mpc.request.MPCJobRequest;
+import com.webank.wedpr.components.scheduler.executor.impl.mpc.utils.MpcUtils;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
-import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIRequest;
-import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Data
 public class MPCJobParam {
 
     private static final Logger logger = LoggerFactory.getLogger(MPCJobParam.class);
 
-    public static final int DEFAULT_MPC_SHARE_BYTES_LENGTH = 64;
-
     @JsonIgnore private transient String jobID;
     @JsonIgnore private transient JobType jobType;
-    @JsonIgnore private transient DatasetInfo selfDataset;
-    @JsonIgnore private transient int selfIndex;
 
     private String sql;
     private String mpcContent;
-    private boolean needRunPSI;
+    private boolean needRunPsi = false;
     private int shareBytesLength;
-
-    // TODO:
-    private String workspace;
-    private String jobCacheDir;
-
-    /*
-    self.workspace = workspace
-    self.job_cache_dir = "{}{}{}".format(self.workspace, os.sep, self.job_id)
-    self.dataset_file_path = "{}{}{}".format(self.job_cache_dir, os.sep, self.dataset_id)
-    self.psi_prepare_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.PSI_PREPARE_FILE)
-    self.psi_result_index_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.PSI_RESULT_INDEX_FILE)
-    self.psi_result_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.PSI_RESULT_FILE)
-    self.mpc_file_name = "{}.mpc".format(self.job_id)
-    self.mpc_model_module_name = "{}.json".format(self.job_id)
-    self.mpc_file_path = "{}{}{}".format(self.job_cache_dir, os.sep, self.mpc_file_name)
-    self.mpc_prepare_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.MPC_PREPARE_FILE)
-    self.mpc_result_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.MPC_RESULT_FILE)
-    self.mpc_output_path = "{}{}{}".format(self.job_cache_dir, os.sep, JobContext.MPC_OUTPUT_FILE)
-    */
 
     // the dataset information
     private List<DatasetInfo> dataSetList;
 
+    @JsonIgnore private DatasetInfo selfDataset;
+    @JsonIgnore private int selfIndex = -1;
     @JsonIgnore private transient List<String> datasetIDList;
 
-    public void transferSQL2MpcCode() throws Exception {
-        if (Common.isEmptyStr(sql)) {
-            return;
-        }
-
-        if (!Common.isEmptyStr(mpcContent)) {
-            return;
-        }
-
-        SchedulerClient schedulerClient = new SchedulerClient();
-        String mpcContent = schedulerClient.transferSQL2MPCContent(jobID, sql);
-
-        this.mpcContent = mpcContent;
-
-        logger.info(
-                "transfer sql to mpc code, jobId: {}, sql: {}, mpc code: {}",
-                jobID,
-                sql,
-                mpcContent);
-    }
-
-    public boolean checkNeedRunPSI() {
-
-        if (this.mpcContent == null) {
-            return false;
-        }
-
-        // TODO: make it config item
-        String regex = "PSI_OPTION\\s*=\\s*True";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(this.mpcContent);
-
-        return matcher.find();
-    }
-
-    public int getShareBytesLength(String mpcContent) {
-        String target = "# BIT_LENGTH = ";
-        if (mpcContent.contains(target)) {
-            int start = mpcContent.indexOf(target);
-            int end = mpcContent.indexOf('\n', start + target.length());
-            String bitLengthStr = mpcContent.substring(start + target.length(), end).trim();
-            int bitLength = Integer.parseInt(bitLengthStr);
-            logger.info("OUTPUT_BIT_LENGTH = {}", bitLength);
-            return bitLength;
-        } else {
-            logger.info("OUTPUT_BIT_LENGTH = 64");
-            return DEFAULT_MPC_SHARE_BYTES_LENGTH;
-        }
-    }
-
     public void check() throws Exception {
+
+        String agency = WeDPRCommonConfig.getAgency();
+
         if (dataSetList == null || dataSetList.isEmpty()) {
             throw new WeDPRException("Invalid mpc job param, must define the dataSet information!");
         }
@@ -121,45 +49,48 @@ public class MPCJobParam {
         }
 
         if (Common.isEmptyStr(sql) && Common.isEmptyStr(mpcContent)) {
-            // sql and mpcCode is all empty
+            // sql and mpc content is both empty
             throw new WeDPRException("Invalid mpc job param, must define the mpc code or sql!");
         }
 
-        this.transferSQL2MpcCode();
-        this.needRunPSI = checkNeedRunPSI();
-        this.shareBytesLength = getShareBytesLength(mpcContent);
+        if (!Common.isEmptyStr(sql)) {
+            this.mpcContent = MpcUtils.transSql2MpcCode(sql);
 
-        String selfAgency = WeDPRCommonConfig.getAgency();
+            if (logger.isDebugEnabled()) {
+                logger.debug(
+                        "trans sql to mpc code, jobId: {}, sql: {}, mpc code: {}",
+                        jobID,
+                        sql,
+                        mpcContent);
+            }
+        }
+
+        this.shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
+        this.needRunPsi = MpcUtils.checkNeedRunPsi(jobID, mpcContent);
 
         int index = 0;
         for (DatasetInfo datasetInfo : dataSetList) {
             datasetInfo.setDatasetIDList(datasetIDList);
             datasetInfo.check();
 
-            if (datasetInfo.getDataset().getOwnerAgency().compareToIgnoreCase(selfAgency) == 0) {
-                this.selfDataset = datasetInfo;
-                this.selfIndex = index;
+            String ownerAgency = datasetInfo.getDataset().getOwnerAgency();
+            if (agency.equals(ownerAgency)) {
+                selfDataset = datasetInfo;
+                selfIndex = index;
             }
-            //            if (datasetInfo.getReceiveResult()) {
-            //                modelRequest
-            //                        .getResultReceiverIDList()
-            //                        .add(datasetInfo.getDataset().getOwnerAgency());
-            //            }
 
             index++;
         }
 
-        if (this.selfDataset == null) {
-            throw new WeDPRException(
-                    "Invalid mpc job param, the dataSet for participant agency "
-                            + selfAgency
-                            + " not set!");
-        }
-        // TODO:
+        logger.info(
+                "## check params, selfIndex: {}, selfDataset: {}, shareBytesLength: {}, needRunPsi: {}",
+                selfIndex,
+                selfDataset,
+                shareBytesLength,
+                needRunPsi);
     }
 
-    public PSIJobParam toPSIJobParam(FileMetaBuilder fileMetaBuilder, FileStorageInterface storage)
-            throws Exception {
+    public PSIJobParam toPSIJobParam(FileMetaBuilder fileMetaBuilder) {
         PSIJobParam psiJobParam = new PSIJobParam();
         psiJobParam.setJobID(jobID);
         List<PSIJobParam.PartyResourceInfo> partyResourceInfos = new ArrayList<>();
@@ -174,66 +105,12 @@ public class MPCJobParam {
             partyResourceInfos.add(partyResourceInfo);
         }
         psiJobParam.setPartyResourceInfoList(partyResourceInfos);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("to psi params, psiJobParam: {}", psiJobParam);
+        }
+
         return psiJobParam;
-    }
-
-    public String getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public JobType getJobType() {
-        return jobType;
-    }
-
-    public void setJobType(JobType jobType) {
-        this.jobType = jobType;
-    }
-
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
-
-    public String getMpcContent() {
-        return mpcContent;
-    }
-
-    public void setMpcContent(String mpcContent) {
-        this.mpcContent = mpcContent;
-    }
-
-    public List<DatasetInfo> getDataSetList() {
-        return dataSetList;
-    }
-
-    public void setDataSetList(List<DatasetInfo> dataSetList) {
-        this.dataSetList = dataSetList;
-    }
-
-    public List<String> getDatasetIDList() {
-        return datasetIDList;
-    }
-
-    public void setDatasetIDList(List<String> datasetIDList) {
-        this.datasetIDList = datasetIDList;
-    }
-
-    public Object toMPCJobRequest() {
-        MPCJobRequest mpcJobRequest = new MPCJobRequest();
-        mpcJobRequest.setJobId(jobID);
-        return null;
-    }
-
-    public Object toPSIRequest() {
-        PSIRequest psiRequest = new PSIRequest();
-        return psiRequest;
     }
 
     public String serialize() throws Exception {

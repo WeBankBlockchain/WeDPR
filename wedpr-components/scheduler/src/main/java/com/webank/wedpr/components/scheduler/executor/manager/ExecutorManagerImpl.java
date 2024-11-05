@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.scheduler.executor.manager;
 
-import com.webank.wedpr.common.protocol.JobStatus;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRException;
@@ -28,7 +27,6 @@ import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandl
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContext;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import lombok.SneakyThrows;
@@ -41,7 +39,7 @@ public class ExecutorManagerImpl implements ExecutorManager {
 
     protected Map<String, Executor> executors = new ConcurrentHashMap<>();
 
-    protected List<ExecutiveContext> proceedingJobs = new CopyOnWriteArrayList<>();
+    protected Map<String, ExecutiveContext> proceedingJobs = new ConcurrentHashMap<>();
     protected ScheduledExecutorService queryStatusWorker = new ScheduledThreadPoolExecutor(1);
 
     private final Integer queryStatusIntervalMs;
@@ -72,30 +70,37 @@ public class ExecutorManagerImpl implements ExecutorManager {
     }
 
     protected void queryAllJobStatus() {
-        for (ExecutiveContext context : proceedingJobs) {
+        for (ExecutiveContext context : proceedingJobs.values()) {
             querySingleJobStatus(context);
         }
     }
 
     protected void querySingleJobStatus(ExecutiveContext executiveContext) {
+        String jobId = executiveContext.getJob().getId();
         try {
             Executor executor = getExecutor(executiveContext.getJob().getJobType());
             // Note: unreachable here
             if (executor == null) {
-                proceedingJobs.remove(executiveContext);
+                proceedingJobs.remove(jobId);
                 return;
             }
+
+            JobDO.JobResult jobResult = executiveContext.getJob().getJobResult();
             // the job has already been finished(the sync case)
-            if (executiveContext.getJob().getJobResult() != null
-                    && executiveContext.getJob().getJobResult().getJobStatus() != null
-                    && executiveContext.getJob().getJobResult().getJobStatus().finished()) {
-                proceedingJobs.remove(executiveContext);
+            if (jobResult != null
+                    && jobResult.getJobStatus() != null
+                    && jobResult.getJobStatus().finished()) {
+                proceedingJobs.remove(jobId);
                 return;
             }
-            ExecuteResult result = executor.queryStatus(executiveContext.getJob().getId());
+            ExecuteResult result = executor.queryStatus(executiveContext.getTaskID());
+            if (result == null) {
+                return;
+            }
+
             if (result.finished()) {
                 executiveContext.onTaskFinished(result);
-                proceedingJobs.remove(executiveContext);
+                proceedingJobs.remove(jobId);
             }
         } catch (Exception e) {
             logger.error(
@@ -109,12 +114,12 @@ public class ExecutorManagerImpl implements ExecutorManager {
                                     + " failed for "
                                     + e.getMessage(),
                             ExecuteResult.ResultStatus.FAILED));
-            proceedingJobs.remove(executiveContext);
+            proceedingJobs.remove(jobId);
         }
 
         int proceedingJobsSize = proceedingJobs.size();
         if (proceedingJobsSize > 0) {
-            logger.info("## query all jobs status proceeding jobs size: {}", proceedingJobsSize);
+            logger.info("## query all jobs status, proceeding jobs number: {}", proceedingJobsSize);
         } else {
             logger.info("## query all jobs status, no jobs is proceeding");
         }
@@ -145,7 +150,9 @@ public class ExecutorManagerImpl implements ExecutorManager {
                                 Constant.WEDPR_SUCCESS_MSG, ExecuteResult.ResultStatus.SUCCESS));
                 return;
             }
-            proceedingJobs.add(
+            logger.info("Begin to execute job: {}", jobDO.getId());
+            proceedingJobs.put(
+                    jobDO.getId(),
                     new ExecutiveContext(
                             jobDO,
                             getTaskFinishHandler(jobType),
@@ -179,7 +186,17 @@ public class ExecutorManagerImpl implements ExecutorManager {
         if (executor == null) {
             return;
         }
+        //// find out the proceeding job, update the status to kill
+        if (this.proceedingJobs.containsKey(jobDO.getId())) {
+            ExecutiveContext proceedingJobCtx = proceedingJobs.get(jobDO.getId());
+            // set the job to kill status
+            proceedingJobCtx.getJob().setKilled(true);
+            logger.info("Remove job: {} from proceedingJobs", jobDO.getId());
+            proceedingJobs.remove(jobDO.getId());
+        }
+        logger.info("kill job: {}", jobDO.getId());
         executor.kill(jobDO);
+        logger.info("kill job: {} finished", jobDO.getId());
     }
 
     @Override
@@ -192,28 +209,7 @@ public class ExecutorManagerImpl implements ExecutorManager {
         if (this.handlers.containsKey(executorType)) {
             return this.handlers.get(executorType);
         }
-
-        // default
-        return new TaskFinishedHandler() {
-            @Override
-            public void onFinish(JobDO jobDO, ExecuteResult result) {
-                try {
-                    if (result.getResultStatus() == null || result.getResultStatus().failed()) {
-                        projectMapperWrapper.updateFinalJobResult(
-                                jobDO, JobStatus.RunFailed, result.serialize());
-                    } else {
-                        projectMapperWrapper.updateFinalJobResult(
-                                jobDO, JobStatus.RunSuccess, result.serialize());
-                    }
-                } catch (Exception e) {
-                    logger.error(
-                            "update job status to success for job {} failed, result: {}, error: ",
-                            jobDO.getId(),
-                            result.toString(),
-                            e);
-                }
-            }
-        };
+        return null;
     }
 
     @Override

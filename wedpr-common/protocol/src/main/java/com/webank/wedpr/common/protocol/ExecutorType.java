@@ -20,7 +20,7 @@ import lombok.Getter;
 @Getter
 public enum ExecutorType {
     PIR("PIR"),
-    REMOTE("REMOTE");
+    DAG("DAG");
 
     private final String type;
 

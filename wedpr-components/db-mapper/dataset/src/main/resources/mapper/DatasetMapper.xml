@@ -113,6 +113,10 @@
                 AND t1.dataset_title LIKE CONCAT(#{datasetTitle}, '%')
             </if>
 
+            <if test="dataSourceType != null and dataSourceType.trim() != '' ">
+                AND (t1.data_source_type = #{dataSourceType})
+            </if>
+
             <if test="startTime != null and startTime.trim() != ''">
                 <![CDATA[ and DATEDIFF(t1.create_at, #{startTime}) >= 0]]>
             </if>
@@ -126,6 +130,10 @@
             </if>
             <if test="ownerAgency != null and ownerAgency.trim() != ''">
                 AND t1.owner_agency_name = #{ownerAgency}
+            </if>
+
+            <if test="status != null">
+                AND t1.status = #{status}
             </if>
 
             <if test="loginAgency != null and loginAgency.trim() != ''">
@@ -142,8 +150,10 @@
                                     OR
                                     t1.owner_agency_name != #{loginAgency}
                                 )
-                                AND
-                                t1.status = 0
+
+                                <if test="status == null">
+                                    AND t1.status = 0
+                                </if>
                             )
                         )
                 </if>

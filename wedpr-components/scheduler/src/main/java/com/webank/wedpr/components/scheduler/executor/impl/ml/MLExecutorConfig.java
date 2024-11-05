@@ -22,17 +22,12 @@ public class MLExecutorConfig {
     private static final String DEFAULT_RUNTASK_API_PATH = "/api/ppc-model/pml/run-model-task/";
     private static final String DEFAULT_GET_JOB_RESULT_API_PATH =
             "api/ppc-model/pml/get-job-result/";
-    private static final String URL = WeDPRConfig.apply("wedpr.executor.ml.url", null, true);
     private static final String RUN_TASK_API_PATH =
             WeDPRConfig.apply("wedpr.executor.ml.method.runTask", DEFAULT_RUNTASK_API_PATH);
 
     private static final String OBTAIN_JOB_RESULT_API_PATH =
             WeDPRConfig.apply(
                     "wedpr.executor.ml.method.getJobResult", DEFAULT_GET_JOB_RESULT_API_PATH);
-    private static final String SUCCESS_STATUS =
-            WeDPRConfig.apply("wedpr.executor.ml.status.success", "COMPLETED");
-    private static final String FAILED_STATUS =
-            WeDPRConfig.apply("wedpr.executor.ml.status.failed", "FAILED");
     private static final Integer CONNECTION_REQUEST_TIME_OUT =
             WeDPRConfig.apply("wedpr.executor.ml.connect.request.timeout.ms", 10000);
     private static final Integer CONNECTION_TIME_OUT =
@@ -50,24 +45,12 @@ public class MLExecutorConfig {
                 .build();
     }
 
-    public static String getUrl() {
-        return URL;
+    public static String getRunTaskApiUrl(String url, String jobID) {
+        return url + RUN_TASK_API_PATH + jobID;
     }
 
-    public static String getRunTaskApiUrl(String jobID) {
-        return URL + "/" + RUN_TASK_API_PATH + jobID;
-    }
-
-    public static String getObtainJobResultApiUrl(String jobID) {
-        return URL + "/" + OBTAIN_JOB_RESULT_API_PATH + "/" + jobID;
-    }
-
-    public static String getSuccessStatus() {
-        return SUCCESS_STATUS;
-    }
-
-    public static String getFailedStatus() {
-        return FAILED_STATUS;
+    public static String getObtainJobResultApiUrl(String url, String jobID) {
+        return url + "/" + OBTAIN_JOB_RESULT_API_PATH + "/" + jobID;
     }
 
     public static Integer getMaxTotalConnection() {

@@ -15,12 +15,18 @@
 
 package com.webank.wedpr.components.project.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.TimeRange;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
+import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@ToString
 public class ProjectDO extends TimeRange {
     public static enum ProjectType {
         Expert("Expert"),
@@ -54,14 +60,8 @@ public class ProjectDO extends TimeRange {
     private String owner;
     private String ownerAgency;
     private String label = "";
-
-    public Integer getReportStatus() {
-        return reportStatus;
-    }
-
-    public void setReportStatus(Integer reportStatus) {
-        this.reportStatus = reportStatus;
-    }
+    // the jobCount
+    private Long jobCount;
 
     private Integer reportStatus;
     private String type;
@@ -83,94 +83,14 @@ public class ProjectDO extends TimeRange {
         setName(name);
     }
 
-    public void setLimitItems(int limitItems) {
-        this.limitItems = limitItems;
-    }
-
-    public Integer getLimitItems() {
-        return this.limitItems;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getProjectDesc() {
-        return projectDesc;
-    }
-
-    public void setProjectDesc(String projectDesc) {
-        this.projectDesc = projectDesc;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getOwnerAgency() {
-        return ownerAgency;
-    }
-
-    public void setOwnerAgency(String ownerAgency) {
-        this.ownerAgency = ownerAgency;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     public void setType(String type) {
         this.type = type;
         this.projectType = ProjectType.deserialize(type);
     }
 
-    public ProjectType getProjectType() {
-        return projectType;
-    }
-
     public void setProjectType(ProjectType projectType) {
         this.projectType = projectType;
         this.type = projectType.getType();
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getLastUpdateTime() {
-        return lastUpdateTime;
-    }
-
-    public void setLastUpdateTime(String lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
     }
 
     public void checkCreate() throws WeDPRException {
@@ -184,42 +104,5 @@ public class ProjectDO extends TimeRange {
 
     public void checkUpdate() {
         Common.requireNonEmpty("id", "projectID");
-    }
-
-    @Override
-    public String toString() {
-        return "ProjectDO{"
-                + "id='"
-                + id
-                + '\''
-                + ", name='"
-                + name
-                + '\''
-                + ", projectDesc='"
-                + projectDesc
-                + '\''
-                + ", owner='"
-                + owner
-                + '\''
-                + ", ownerAgency='"
-                + ownerAgency
-                + '\''
-                + ", label='"
-                + label
-                + '\''
-                + ", reportStatus="
-                + reportStatus
-                + ", type='"
-                + type
-                + '\''
-                + ", projectType="
-                + projectType
-                + ", createTime='"
-                + createTime
-                + '\''
-                + ", lastUpdateTime='"
-                + lastUpdateTime
-                + '\''
-                + '}';
     }
 }

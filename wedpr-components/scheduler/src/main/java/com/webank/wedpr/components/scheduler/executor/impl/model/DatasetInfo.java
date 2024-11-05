@@ -31,8 +31,6 @@ public class DatasetInfo {
     protected String labelField = Constant.DEFAULT_LABEL_FIELD;
     protected Boolean receiveResult = false;
     protected List<String> idFields = new ArrayList<>(Arrays.asList(Constant.DEFAULT_ID_FIELD));
-    // TODO:
-    protected Integer datasetRecordCount;
 
     @JsonIgnore protected List<String> datasetIDList;
 

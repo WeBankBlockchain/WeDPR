@@ -52,6 +52,13 @@ public class ExecutiveContext {
     }
 
     public void onTaskFinished(ExecuteResult result) {
+        //  need to kill the job, no need to call the handler
+        if (job.getKilled()) {
+            logger.info(
+                    "onTaskFinished return directly for the job is been killed, job: {}",
+                    job.toString());
+            return;
+        }
         JobDO.JobResultItem subJobResult =
                 new JobDO.JobResultItem(
                         taskID, result.getResultStatus().success(), result.serialize());

@@ -15,23 +15,28 @@
 
 package com.webank.wedpr.components.scheduler.config;
 
+import static com.webank.wedpr.components.scheduler.SchedulerBuilder.WORKER_NAME;
+
 import com.webank.wedpr.common.protocol.ExecutorType;
+import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
+import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.SchedulerBuilder;
-import com.webank.wedpr.components.scheduler.client.SchedulerClient;
 import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
+import com.webank.wedpr.components.scheduler.executor.impl.dag.DagSchedulerExecutor;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.pir.PirExecutor;
-import com.webank.wedpr.components.scheduler.executor.impl.remote.RemoteSchedulerExecutor;
 import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManager;
+import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
@@ -55,6 +60,11 @@ import org.springframework.context.annotation.Scope;
 public class SchedulerLoader {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerLoader.class);
     @Autowired private ProjectMapperWrapper projectMapperWrapper;
+    @Autowired private JobWorkerMapper jobWorkerMapper;
+
+    @Autowired
+    @Qualifier("loadBalancer")
+    private LoadBalancer loadBalancer;
 
     @Autowired private LocalStorageConfig localStorageConfig;
     @Autowired private HdfsStorageConfig hdfsConfig;
@@ -79,45 +89,77 @@ public class SchedulerLoader {
     public SchedulerTaskImpl schedulerTaskImpl() throws Exception {
         FileMetaBuilder fileMetaBuilder =
                 new FileMetaBuilder(new StoragePathBuilder(hdfsConfig, localStorageConfig));
+
+        ThreadPoolService schedulerWorker =
+                new ThreadPoolService(WORKER_NAME, SchedulerTaskConfig.getWorkerQueueSize());
+
         SchedulerTaskImpl schedulerTask =
                 SchedulerBuilder.buildSchedulerTask(
-                        projectMapperWrapper, storage, resourceSyncer, fileMetaBuilder, jobChecker);
+                        projectMapperWrapper,
+                        jobWorkerMapper,
+                        loadBalancer,
+                        storage,
+                        resourceSyncer,
+                        fileMetaBuilder,
+                        jobChecker,
+                        schedulerWorker);
+
         // register the executors
         if (schedulerTask.getScheduler().getExecutorManager() != null) {
             logger.info("Register Executor for the ExecutorManager");
-            registerExecutors(schedulerTask.getScheduler().getExecutorManager(), fileMetaBuilder);
+            registerExecutors(
+                    schedulerTask.getScheduler().getExecutorManager(),
+                    fileMetaBuilder,
+                    schedulerWorker);
         }
         schedulerTask.start();
         return schedulerTask;
     }
 
     protected void registerExecutors(
-            ExecutorManager executorManager, FileMetaBuilder fileMetaBuilder) throws Exception {
+            ExecutorManager executorManager,
+            FileMetaBuilder fileMetaBuilder,
+            ThreadPoolService threadPoolService)
+            throws Exception {
 
-        SchedulerClient schedulerClient = new SchedulerClient();
-        RemoteSchedulerExecutor remoteSchedulerExecutor =
-                new RemoteSchedulerExecutor(schedulerClient, jobChecker, storage, fileMetaBuilder);
-        executorManager.registerExecutor(ExecutorType.REMOTE.getType(), remoteSchedulerExecutor);
+        DagSchedulerExecutor dagSchedulerExecutor =
+                new DagSchedulerExecutor(
+                        loadBalancer,
+                        jobWorkerMapper,
+                        jobChecker,
+                        storage,
+                        fileMetaBuilder,
+                        executorManager,
+                        new ExecutiveContextBuilder(projectMapperWrapper),
+                        threadPoolService);
+        executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
+        // default
+        TaskFinishedHandler taskFinishedHandler =
+                new TaskFinishedHandler() {
+                    @Override
+                    public void onFinish(JobDO jobDO, ExecuteResult result) {
+                        try {
+                            if (result.getResultStatus() == null
+                                    || result.getResultStatus().failed()) {
+                                projectMapperWrapper.updateFinalJobResult(
+                                        jobDO, JobStatus.RunFailed, result.serialize());
+                            } else {
+                                projectMapperWrapper.updateFinalJobResult(
+                                        jobDO, JobStatus.RunSuccess, result.serialize());
+                            }
+                        } catch (Exception e) {
+                            logger.error(
+                                    "update job status for job {} failed, result: {}, error: ",
+                                    jobDO.getId(),
+                                    result.toString(),
+                                    e);
+                        }
+                    }
+                };
 
-        /*
-        // register the executor
-        PSIExecutor psiExecutor = new PSIExecutor(storage, fileMetaBuilder, jobChecker);
-        executorManager.registerExecutor(JobType.PSI.getType(), psiExecutor);
+        executorManager.registerOnTaskFinished(ExecutorType.DAG.getType(), taskFinishedHandler);
 
-        logger.info("register PSIExecutor success");
-        MLPSIExecutor mlpsiExecutor = new MLPSIExecutor(storage, fileMetaBuilder);
-        executorManager.registerExecutor(JobType.ML_PSI.getType(), mlpsiExecutor);
-
-        logger.info("register ML-PSIExecutor success");
-        MLExecutor mlExecutor = new MLExecutor();
-        executorManager.registerExecutor(JobType.MLPreprocessing.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.FeatureEngineer.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.XGB_TRAIN.getType(), mlExecutor);
-        executorManager.registerExecutor(JobType.XGB_PREDICT.getType(), mlExecutor);
-        logger.info("register MLExecutor success");
-        */
-
-        // register the pir executor, TODO: implement the taskFinishHandler
+        // register the pir executor
         executorManager.registerExecutor(
                 ExecutorType.PIR.getType(),
                 new PirExecutor(

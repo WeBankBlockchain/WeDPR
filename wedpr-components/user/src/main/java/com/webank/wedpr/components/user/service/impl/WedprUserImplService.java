@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.webank.wedpr.common.protocol.UserRoleEnum;
 import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.common.utils.FormatCheckUtils;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.hook.UserHook;
@@ -96,6 +97,15 @@ public class WedprUserImplService extends ServiceImpl<WedprUserMapper, WedprUser
             // 检查用户名是否存在
             LambdaQueryWrapper<WedprUser> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             String username = userRegisterRequest.getUsername();
+            if (!FormatCheckUtils.checkParamFormat(username, FormatCheckUtils.USERNAME_PATTERN)) {
+                throw new WeDPRException(
+                        "username format error, please provide username range in 3-18 chars");
+            }
+            if (!FormatCheckUtils.checkParamFormat(
+                    userRegisterRequest.getEmail(), FormatCheckUtils.EMAIL_PATTERN)) {
+                throw new WeDPRException(
+                        "email format error, please provide email xxx@xxx.xxx format");
+            }
             lambdaQueryWrapper.eq(WedprUser::getUsername, username);
             WedprUser queriedWedprUser = getOne(lambdaQueryWrapper);
             if (queriedWedprUser != null) {

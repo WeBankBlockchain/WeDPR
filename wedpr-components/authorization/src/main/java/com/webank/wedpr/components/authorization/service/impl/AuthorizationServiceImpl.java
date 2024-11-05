@@ -159,25 +159,31 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             updatedAuth.setAuthChain(result.getAuthChain());
             // update the authResult
             updatedAuth.updateResult(authorizer, authResultRequest.getAuthResultDetail());
+            boolean progressToNextAuditor = false;
             if (authResultRequest.getAuthResultDetail().getAuthResultStatus().agree()) {
                 // progress to next applyNode if the auth-result is agreed
                 updatedAuth.progressToNextAuthNode();
+                progressToNextAuditor = true;
                 // update the status to approving
                 if (result.getAuthStatus().toConfirmed()) {
                     updatedAuth.setAuthStatus(AuthorizationDO.AuthStatus.Approving);
                 }
-            } else {
+            } else if (authResultRequest.getAuthResultDetail().getAuthResultStatus().reject()) {
                 // return to the applicant if the auth-result is rejected
                 updatedAuth.progressToApplicant(result.getApplicant(), result.getApplicantAgency());
+                progressToNextAuditor = true;
             }
-            // set the CurrentApplyNode to the follower
-            FollowerDO followerDO =
-                    new FollowerDO(
-                            updatedAuth.getCurrentApplyNode(),
-                            updatedAuth.getCurrentApplyNodeAgency(),
-                            updatedAuth.getId(),
-                            FollowerDO.FollowerType.AUTH_AUDITOR.getType());
-            updatedAuth.setFollowerDOList(new ArrayList<>(Collections.singletonList(followerDO)));
+            if (progressToNextAuditor) {
+                // set the CurrentApplyNode to the follower
+                FollowerDO followerDO =
+                        new FollowerDO(
+                                updatedAuth.getCurrentApplyNode(),
+                                updatedAuth.getCurrentApplyNodeAgency(),
+                                updatedAuth.getId(),
+                                FollowerDO.FollowerType.AUTH_AUDITOR.getType());
+                updatedAuth.setFollowerDOList(
+                        new ArrayList<>(Collections.singletonList(followerDO)));
+            }
             return updateAuth(authorizer, new AuthRequest(updatedAuth, false), false);
         } catch (Exception e) {
             logger.warn(
@@ -186,16 +192,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                     authResultRequest.getAuthID(),
                     authResultRequest.getAuthResultDetail().toString(),
                     e);
-            WeDPRResponse response =
-                    new WeDPRResponse(
-                            Constant.WEDPR_FAILED,
-                            "updateAuthResult failed,  authorizer: "
-                                    + authorizer
-                                    + ", ID: "
-                                    + authResultRequest.getAuthID()
-                                    + ", reason: "
-                                    + e.getMessage());
-            return response;
+            return new WeDPRResponse(
+                    Constant.WEDPR_FAILED,
+                    "updateAuthResult failed,  authorizer: "
+                            + authorizer
+                            + ", ID: "
+                            + authResultRequest.getAuthID()
+                            + ", reason: "
+                            + e.getMessage());
         }
     }
 
@@ -288,6 +292,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         List<String> authStatusList = new ArrayList<>();
         authStatusList.add(AuthorizationDO.AuthStatus.ToConfirm.getStatus());
         authStatusList.add(AuthorizationDO.AuthStatus.Approving.getStatus());
+        authStatusList.add(AuthorizationDO.AuthStatus.ApproveRejected.getStatus());
         try (PageHelperWrapper pageHelperWrapper = new PageHelperWrapper(condition)) {
             List<AuthorizationDO> result =
                     this.authMapperWrapper

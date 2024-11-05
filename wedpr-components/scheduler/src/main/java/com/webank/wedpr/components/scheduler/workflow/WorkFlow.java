@@ -2,13 +2,14 @@ package com.webank.wedpr.components.scheduler.workflow;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Data
+@Getter
 public class WorkFlow {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkFlow.class);
@@ -30,17 +31,17 @@ public class WorkFlow {
         return index++;
     }
 
-    public WorkFlowNode addWorkFlowNode(List<Integer> upstreams, String type, String args) {
+    public WorkFlowNode addWorkFlowNode(List<Integer> upstreams, String type, Object args) {
         return addWorkFlowNode(getNextIndex(), upstreams, type, args);
     }
 
-    public WorkFlowNode addWorkFlowNode(
-            int index, List<Integer> upstreams, String type, String args) {
+    private WorkFlowNode addWorkFlowNode(
+            int index, List<Integer> upstreams, String type, Object args) {
 
         WorkFlowNode workflowNode = new WorkFlowNode();
         workflowNode.setIndex(index);
         workflowNode.setType(type);
-        workflowNode.setArgs(Collections.singletonList(args));
+        workflowNode.setArgs(args);
 
         if (upstreams != null && !upstreams.isEmpty()) {
             upstreams.forEach(workflowNode::addUpstream);

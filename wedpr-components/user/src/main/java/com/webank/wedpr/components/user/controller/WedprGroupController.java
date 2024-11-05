@@ -350,9 +350,7 @@ public class WedprGroupController {
             publicUserInfoUpdateEvent(groupId);
             WeDPRResponse wedprResponse =
                     new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
-            LambdaQueryWrapper<WedprGroupDetail> lambdaQueryWrapper2 = new LambdaQueryWrapper<>();
-            lambdaQueryWrapper2.eq(WedprGroupDetail::getUsername, username);
-            wedprGroupDetailService.remove(lambdaQueryWrapper2);
+            wedprGroupDetailService.remove(lambdaQueryWrapper);
 
             // call userHook
             userHook.onUserDeleted(username);

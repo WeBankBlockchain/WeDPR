@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper">
+    <resultMap id="JobWorkerResultMap" type="com.webank.wedpr.components.scheduler.dag.entity.JobWorker">
+        <id property="workerId" column="worker_id" />
+        <result property="jobId" column="job_id" />
+        <result property="type" column="type" />
+        <result property="status" column="status" />
+        <result property="args" column="args" />
+        <result property="exec_result" column="execResult" />
+        <result property="upstreams" column="upstreams" />
+<!--        <result property="inputsStatement" column="inputs_statement" />-->
+<!--        <result property="outputs" column="outputs" />-->
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <select id="selectJobWorkerById" resultMap="JobWorkerResultMap">
+        SELECT
+            *
+        FROM wedpr_job_worker_table WHERE worker_id = #{workerId}
+    </select>
+
+    <insert id="insertJobWorker" parameterType="com.webank.wedpr.components.scheduler.dag.entity.JobWorker">
+        INSERT IGNORE INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams)
+        VALUES (#{workerId}, #{jobId}, #{type}, #{status}, #{args}, #{upstreams})
+    </insert>
+
+    <insert id="batchInsertJobWorkers" parameterType="java.util.List">
+        INSERT IGNORE INTO wedpr_job_worker_table (worker_id, job_id, type, status, args, upstreams, inputs_statement, outputs)
+        VALUES
+        <foreach collection="list" item="jobWorker" separator=",">
+            (#{jobWorker.workerId}, #{jobWorker.jobId}, #{jobWorker.type}, #{jobWorker.status}, #{jobWorker.args}, #{jobWorker.upstreams})
+        </foreach>
+    </insert>
+
+    <update id="updateJobWorkerStatus" parameterType="map">
+        UPDATE wedpr_job_worker_table SET status = #{status} WHERE worker_id = #{workerId}
+    </update>
+    <update id="updateWorkersStatusByCondition">
+        UPDATE wedpr_job_worker_table SET status = #{status} WHERE 1 = 1
+        <choose>
+        <when test="condition != null and condition != ''">
+            <if test="condition.workerId != null and condition.workerId !=''">
+                and `worker_id` = #{condition.workerId}
+            </if>
+            <if test="condition.jobId != null and condition.jobId !=''">
+                and `job_id` = #{condition.jobId}
+            </if>
+            <if test="condition.type != null and condition.type !=''">
+                and `type` = #{condition.type}
+            </if>
+            <if test="condition.status != null and condition.status !=''">
+                and `status` = #{condition.status}
+            </if>
+            <if test="condition.statusList != null and condition.statusList.size > 0">
+                and `status` in
+                <foreach item="status" collection="condition.statusList" open="(" close=")" separator=",">
+                    #{status}
+                </foreach>
+            </if>
+        </when>
+        </choose>
+    </update>
+</mapper>

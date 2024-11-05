@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.meta.setting.template.dao;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.Common;
@@ -45,7 +44,8 @@ public class SettingTemplateDO extends TimeRange {
     private String setting;
     private String createTime;
     private String lastUpdateTime;
-    @JsonIgnore private transient List<String> queriedOwners;
+    private List<String> queriedOwners;
+    private List<String> queriedTypes;
 
     @SneakyThrows(WeDPRException.class)
     public void checkInsert(Boolean admin) {

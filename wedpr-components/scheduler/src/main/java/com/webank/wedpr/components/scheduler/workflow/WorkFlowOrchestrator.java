@@ -57,9 +57,9 @@ public class WorkFlowOrchestrator implements WorkFlowOrchestratorApi {
         if (JobType.isPSIJob(jobType)) {
             workflow = buildPSIWorkFlow(jobDO);
         } else if (JobType.isMultiPartyMlJob(jobType)) {
-            workflow = buildXGBWorkFlow(jobDO, workflow);
+            workflow = buildXGBWorkFlow(jobDO);
         } else if (JobType.isMPCJob(jobType)) {
-            workflow = buildMPCWorkFlow(jobDO, workflow);
+            workflow = buildMPCWorkFlow(jobDO);
         } else {
             throw new UnsupportedOperationException("Unsupported job type: " + jobType);
         }
@@ -75,7 +75,7 @@ public class WorkFlowOrchestrator implements WorkFlowOrchestratorApi {
     }
 
     // ML
-    public WorkFlow buildXGBWorkFlow(JobDO jobDO, WorkFlow workflow) throws Exception {
+    public WorkFlow buildXGBWorkFlow(JobDO jobDO) throws Exception {
 
         ModelJobParam modelJobParam = (ModelJobParam) jobChecker.checkAndParseParam(jobDO);
         jobDO.setJobParam(modelJobParam);
@@ -100,11 +100,11 @@ public class WorkFlowOrchestrator implements WorkFlowOrchestratorApi {
     }
 
     // MPC
-    public WorkFlow buildMPCWorkFlow(JobDO jobDO, WorkFlow workFlow) throws Exception {
+    public WorkFlow buildMPCWorkFlow(JobDO jobDO) throws Exception {
         MPCJobParam mpcJobParam = (MPCJobParam) jobChecker.checkAndParseParam(jobDO);
         jobDO.setJobParam(mpcJobParam);
 
-        if (mpcJobParam.checkNeedRunPSI()) {
+        if (mpcJobParam.isNeedRunPsi()) {
             // mpc-psi
             jobDO.setJobType(JobType.MPC_PSI.getType());
         }

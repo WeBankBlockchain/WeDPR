@@ -18,6 +18,7 @@ package com.webank.wedpr.components.scheduler;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.api.SchedulerApi;
@@ -27,6 +28,7 @@ import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder
 import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManager;
 import com.webank.wedpr.components.scheduler.executor.manager.ExecutorManagerImpl;
 import com.webank.wedpr.components.scheduler.impl.SchedulerImpl;
+import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.sync.ResourceSyncer;
 import org.slf4j.Logger;
@@ -34,14 +36,17 @@ import org.slf4j.LoggerFactory;
 
 public class SchedulerBuilder {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerBuilder.class);
-    private static final String WORKER_NAME = "scheduler";
+    public static final String WORKER_NAME = "scheduler";
 
     public static SchedulerTaskImpl buildSchedulerTask(
             ProjectMapperWrapper projectMapperWrapper,
+            JobWorkerMapper jobWorkerMapper,
+            LoadBalancer loadBalancer,
             FileStorageInterface storage,
             ResourceSyncer resourceSyncer,
             FileMetaBuilder fileMetaBuilder,
-            JobChecker jobChecker)
+            JobChecker jobChecker,
+            ThreadPoolService schedulerWorker)
             throws Exception {
         try {
             String agency = WeDPRCommonConfig.getAgency();
@@ -50,7 +55,14 @@ public class SchedulerBuilder {
 
             SchedulerApi scheduler =
                     buildScheduler(
-                            agency, projectMapperWrapper, storage, fileMetaBuilder, jobChecker);
+                            agency,
+                            projectMapperWrapper,
+                            jobWorkerMapper,
+                            loadBalancer,
+                            storage,
+                            fileMetaBuilder,
+                            jobChecker,
+                            schedulerWorker);
 
             SchedulerTaskImpl schedulerTask =
                     new SchedulerTaskImpl(projectMapperWrapper, resourceSyncer, scheduler);
@@ -65,14 +77,18 @@ public class SchedulerBuilder {
     public static SchedulerApi buildScheduler(
             String agency,
             ProjectMapperWrapper projectMapperWrapper,
+            JobWorkerMapper jobWorkerMapper,
+            LoadBalancer loadBalancer,
             FileStorageInterface storage,
             FileMetaBuilder fileMetaBuilder,
-            JobChecker jobChecker) {
+            JobChecker jobChecker,
+            ThreadPoolService schedulerWorker) {
 
         logger.info("## build scheduler service");
-
-        ThreadPoolService schedulerWorker =
-                new ThreadPoolService(WORKER_NAME, SchedulerTaskConfig.getWorkerQueueSize());
+        //
+        //        ThreadPoolService schedulerWorker =
+        //                new ThreadPoolService(WORKER_NAME,
+        // SchedulerTaskConfig.getWorkerQueueSize());
 
         ExecutorManager executorManager =
                 new ExecutorManagerImpl(
@@ -84,6 +100,7 @@ public class SchedulerBuilder {
 
         return new SchedulerImpl(
                 agency,
+                jobWorkerMapper,
                 executorManager,
                 schedulerWorker,
                 projectMapperWrapper,

@@ -1,11 +1,9 @@
 package com.webank.wedpr.components.scheduler.workflow.builder;
 
 import com.webank.wedpr.common.protocol.WorkerNodeType;
-import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.project.dao.JobDO;
-import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
-import com.webank.wedpr.components.scheduler.executor.Executor;
+import com.webank.wedpr.components.scheduler.executor.hook.ExecutorHook;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlow;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlowNode;
 import java.util.Collections;
@@ -17,18 +15,23 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
 
     private static final Logger logger = LoggerFactory.getLogger(JobWorkFlowBuilderImpl.class);
 
-    private final Executor executor;
+    private final ExecutorHook executorHook;
     private final JobWorkFlowBuilderManager jobWorkflowBuilderManager;
 
     public JobWorkFlowBuilderImpl(
-            Executor executor, JobWorkFlowBuilderManager jobWorkflowBuilderManager) {
-        this.executor = executor;
+            ExecutorHook executorHook, JobWorkFlowBuilderManager jobWorkflowBuilderManager) {
+        this.executorHook = executorHook;
         this.jobWorkflowBuilderManager = jobWorkflowBuilderManager;
     }
 
     @Override
+    public ExecutorHook getExecutorHook() {
+        return this.executorHook;
+    }
+
+    @Override
     public WorkFlow createWorkFlow(JobDO jobDO) throws Exception {
-        Object args = this.prepare(jobDO);
+        Object args = this.executorHook.prepare(jobDO);
         if (args == null) {
             logger.error("executor prepare ret null, job: {}", jobDO);
             throw new WeDPRException("executor prepare ret null, jobId: " + jobDO.getId());
@@ -52,7 +55,7 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
     @Override
     public void appendWorkFlowNode(JobDO jobDO, WorkFlow workflow, WorkFlowNode upstream)
             throws Exception {
-        Object args = this.prepare(jobDO);
+        Object args = this.executorHook.prepare(jobDO);
         int index = upstream.getIndex();
         WorkFlowNode workflowNode =
                 addWorkFlowNode(
@@ -76,28 +79,8 @@ public class JobWorkFlowBuilderImpl implements JobWorkFlowBuilderApi {
             WorkFlow workflow, List<Integer> upstreams, WorkerNodeType workerNodeType, Object args)
             throws Exception {
         // args
-        String argsAsString = ObjectMapperFactory.getObjectMapper().writeValueAsString(args);
+        // String argsAsString = ObjectMapperFactory.getObjectMapper().writeValueAsString(args);
         // workflow build
-        return workflow.addWorkFlowNode(upstreams, workerNodeType.getType(), argsAsString);
-    }
-
-    @Override
-    public Object prepare(JobDO jobDO) throws Exception {
-        return executor.prepare(jobDO);
-    }
-
-    @Override
-    public void execute(JobDO jobDO) throws Exception {
-        throw new UnsupportedOperationException("Not supported");
-    }
-
-    @Override
-    public void kill(JobDO jobDO) throws Exception {
-        throw new UnsupportedOperationException("Not supported");
-    }
-
-    @Override
-    public ExecuteResult queryStatus(String jobID) throws Exception {
-        throw new UnsupportedOperationException("Not supported");
+        return workflow.addWorkFlowNode(upstreams, workerNodeType.getType(), args);
     }
 }

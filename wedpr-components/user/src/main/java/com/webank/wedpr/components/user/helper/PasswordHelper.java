@@ -10,7 +10,7 @@ public class PasswordHelper {
 
     /** 强密码判断规则：验证一个至少包含8个字符，并且至少包含一个大写字母、一个小写字母、一个数字和一个特殊字符的密码 */
     private static final String STRONG_PASSWORD_PATTERN =
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$";
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,18}$";
 
     // 解密前端传入密码
     public static String decryptPassword(String cipherText, String privateKey)

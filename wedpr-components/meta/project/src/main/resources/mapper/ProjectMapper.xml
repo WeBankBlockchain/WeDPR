@@ -37,7 +37,7 @@
         <result column="owner_agency" property="ownerAgency"/>
         <result column="job_type" property="jobType"/>
         <result column="parties" property="parties"/>
-        <result column="project_name" property="projectName"/>
+        <result column="project_id" property="projectId"/>
         <result column="param" property="param"/>
         <result column="status" property="status"/>
         <result column="job_result" property="result"/>
@@ -99,13 +99,13 @@
         </foreach>
     </update>
     <delete id="deleteProjects" parameterType="java.util.List">
-        delete from `wedpr_project_table`
         <foreach collection="projectList" item = "projectID" index = "index" separator=",">
+            delete from `wedpr_project_table`
             where `id` = #{projectID}
+            <if test="owner != null and owner !=''">
+                and `owner` = #{owner}
+            </if>
         </foreach>
-        <if test="owner != null and owner !=''">
-            and `owner` = #{owner}
-        </if>
     </delete>
     <select id="queryProject" resultMap="ProjectDOMap">
         select
@@ -181,10 +181,10 @@
         </choose>
     </select>
     <insert id="insertJobInfo" parameterType="com.webank.wedpr.components.project.dao.JobDO">
-        insert into `wedpr_job_table`(`id`, `name`, `job_type`, `project_name`, `parties`,
+        insert into `wedpr_job_table`(`id`, `name`, `job_type`, `project_id`, `parties`,
             `owner`, `owner_agency` , `param`, `status`, `job_result`, `create_time`)
         values
-        (#{jobDO.id}, #{jobDO.name}, #{jobDO.jobType}, #{jobDO.projectName}, #{jobDO.parties}, #{jobDO.owner},
+        (#{jobDO.id}, #{jobDO.name}, #{jobDO.jobType}, #{jobDO.projectId}, #{jobDO.parties}, #{jobDO.owner},
          #{jobDO.ownerAgency}, #{jobDO.param},#{jobDO.status}, #{jobDO.result}, NOW())
     </insert>
     <insert id="batchInsertJobDatasetRelationInfo">
@@ -198,7 +198,7 @@
         select
         <choose>
             <when test="onlyMeta == true">
-                `id`, `owner`, `owner_agency`, `job_type`
+                `id`, `owner`, `owner_agency`, `job_type`, `parties`
             </when>
             <otherwise>
                 *
@@ -211,16 +211,16 @@
                     and `id` = #{condition.id}
                 </if>
                 <if test="condition.name != null and condition.name !=''">
-                    and `name` like concat(#{condition.id}, "%")
+                    and `name` = #{condition.name}
                 </if>
-                <if test="condition.projectName != null and condition.projectName !=''">
-                    and `project_name` like concat(#{condition.projectName}, "%")
+                <if test="condition.projectId != null and condition.projectId !=''">
+                    and `project_id` = #{condition.projectId}
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -267,16 +267,16 @@
         <choose>
             <when test="condition != null and condition != ''">
                 <if test="condition.name != null and condition.name !=''">
-                    and `name` like concat(#{condition.id}, "%")
+                    and `name` = #{condition.name}
                 </if>
-                <if test="condition.projectName != null and condition.projectName !=''">
-                    and `project_name` like concat(#{condition.projectName}, "%")
+                <if test="condition.projectId != null and condition.projectId !=''">
+                    and `project_id` = #{condition.projectId}
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -316,14 +316,14 @@
                 <if test="condition.id != null and condition.id !=''">
                     and `id` like concat(#{condition.id}, "%")
                 </if>
-                <if test="condition.projectName != null and condition.projectName !=''">
-                    and `project_name` like concat(#{condition.projectName}, "%")
+                <if test="condition.projectId != null and condition.projectId !=''">
+                    and `project_id` like concat(#{condition.projecftId}, "%")
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}
@@ -360,14 +360,14 @@
                 <if test="condition.id != null and condition.id !=''">
                     and `id` like concat(#{condition.id}, "%")
                 </if>
-                <if test="condition.projectName != null and condition.projectName !=''">
-                    and `project_name` like concat(#{condition.projectName}, "%")
+                <if test="condition.projectId != null and condition.projectId !=''">
+                    and `project_id` like concat(#{condition.projectId}, "%")
                 </if>
                 <if test="condition.owner != null and condition.owner !=''">
                     and `owner` = #{condition.owner}
                 </if>
                 <if test="condition.ownerAgency != null and condition.ownerAgency !=''">
-                    and `owner_agency` like concat(#{condition.ownerAgency}, "%")
+                    and `owner_agency` = #{condition.ownerAgency}
                 </if>
                 <if test="condition.status != null and condition.status !=''">
                     and `status` = #{condition.status}

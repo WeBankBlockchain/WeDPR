@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +35,9 @@ public class EntryPointInfo {
     }
 
     public String getUrl(String uriPath) {
+        if (StringUtils.isBlank(uriPath)) {
+            return Common.getUrl(entryPoint);
+        }
         if (uriPath.startsWith(Constant.URI_SPLITER)) {
             return Common.getUrl(entryPoint + uriPath);
         }

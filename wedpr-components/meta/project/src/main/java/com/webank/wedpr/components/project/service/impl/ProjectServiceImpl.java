@@ -64,19 +64,6 @@ public class ProjectServiceImpl implements ProjectService {
             }
             // check
             project.checkCreate();
-            // check the existence
-            ProjectDO condition = new ProjectDO(project.getName());
-            condition.setId(null);
-            List<ProjectDO> existedProjects =
-                    this.projectMapperWrapper
-                            .getProjectMapper()
-                            .queryProject(Boolean.TRUE, condition);
-            if (existedProjects != null && !existedProjects.isEmpty()) {
-                throw new WeDPRException(
-                        "The project "
-                                + project.getName()
-                                + " already exists, please try another project name!");
-            }
             this.projectMapperWrapper.getProjectMapper().insertProjectInfo(project);
             logger.info("createProject success, detail: {}", projectDetail.toString());
             response.setData(project.getId());
@@ -211,6 +198,14 @@ public class ProjectServiceImpl implements ProjectService {
                     this.projectMapperWrapper
                             .getProjectMapper()
                             .queryProject(condition.getOnlyMeta(), condition.getProject());
+            // stat the job count
+            JobDO jobCondition = new JobDO();
+            jobCondition.setId("");
+            for (ProjectDO projectDO : projectDOList) {
+                jobCondition.setProjectId(projectDO.getId());
+                projectDO.setJobCount(
+                        this.projectMapperWrapper.getProjectMapper().queryJobCount(jobCondition));
+            }
             response.setData(
                     new ProjectList(
                             new PageInfo<ProjectDO>(projectDOList).getTotal(), projectDOList));
