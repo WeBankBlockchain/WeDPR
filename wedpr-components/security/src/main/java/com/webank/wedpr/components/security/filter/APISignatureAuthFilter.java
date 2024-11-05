@@ -73,7 +73,8 @@ public class APISignatureAuthFilter extends BasicAuthenticationFilter {
             chain.doFilter(requestWrapper, response);
         } catch (Exception e) {
             logger.warn("APISignatureAuthFilter exception, error: ", e);
-            TokenUtils.responseToClient(response, e.getMessage(), HttpServletResponse.SC_FORBIDDEN);
+            TokenUtils.responseToClient(
+                    response, e.getMessage(), HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }

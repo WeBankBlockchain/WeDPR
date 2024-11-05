@@ -98,6 +98,7 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
             throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
         }
+        Long startTime = System.currentTimeMillis();
         List<List<String>> sqlValues =
                 CSVFileParser.processCsv2SqlMap(datasetFields, localFilePath);
         if (sqlValues.size() == 0) {
@@ -107,6 +108,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                     localFilePath);
             return;
         }
+        logger.info(
+                "processCsv2SqlMap success, timecost: {}ms",
+                System.currentTimeMillis() - startTime);
         String tableId =
                 com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
                         dataset.getDatasetId());

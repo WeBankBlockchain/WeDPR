@@ -139,6 +139,8 @@ public class JobDO extends TimeRange {
 
     @JsonIgnore private transient Object jobRequest;
     private String status;
+    private JobStatus jobStatus;
+
     @JsonIgnore private String result;
     private List<String> datasetList;
 
@@ -178,6 +180,18 @@ public class JobDO extends TimeRange {
             return;
         }
         this.name = name;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+        this.jobStatus = JobStatus.deserialize(status);
+    }
+
+    public void setJobStatus(JobStatus jobStatus) {
+        this.jobStatus = jobStatus;
+        if (this.jobStatus != null) {
+            this.status = this.jobStatus.getStatus();
+        }
     }
 
     public void setResult(String result) {

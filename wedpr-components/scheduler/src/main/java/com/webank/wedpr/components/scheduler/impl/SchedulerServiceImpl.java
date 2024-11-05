@@ -55,13 +55,17 @@ public class SchedulerServiceImpl implements SchedulerService {
         JobDO jobDO = jobDOList.get(0);
         // run failed, no need to fetch the result, only fetch the log
         if (!JobStatus.success(jobDO.getStatus())) {
-            GetTaskResultRequest getTaskResultRequest =
-                    new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
-            getTaskResultRequest.setOnlyFetchLog(Boolean.TRUE);
-            ModelJobResult.ModelJobData modelJobData =
-                    (ModelJobResult.ModelJobData)
-                            MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
-            return new JobDetailResponse(jobDO, null, null, modelJobData.getLogDetail());
+            Object logDetail = null;
+            if (jobDO.getJobStatus().finished()) {
+                GetTaskResultRequest getTaskResultRequest =
+                        new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
+                getTaskResultRequest.setOnlyFetchLog(Boolean.TRUE);
+                ModelJobResult.ModelJobData modelJobData =
+                        (ModelJobResult.ModelJobData)
+                                MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
+                logDetail = modelJobData.getLogDetail();
+            }
+            return new JobDetailResponse(jobDO, null, null, logDetail);
         }
         // the ml job
         if (jobDO.getType().mlJob()) {

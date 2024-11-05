@@ -76,9 +76,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         } catch (Exception e) {
             logger.info("jwt auth failed, error: ", e);
             String wedprResponse =
-                    new WeDPRResponse(Constant.WEDPR_FAILED, "auth failed for " + e.getMessage())
+                    new WeDPRResponse(
+                                    Constant.WEDPR_AUTH_FAILED, "auth failed for " + e.getMessage())
                             .serialize();
-            TokenUtils.responseToClient(response, wedprResponse, HttpServletResponse.SC_FORBIDDEN);
+            TokenUtils.responseToClient(
+                    response, wedprResponse, HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }
