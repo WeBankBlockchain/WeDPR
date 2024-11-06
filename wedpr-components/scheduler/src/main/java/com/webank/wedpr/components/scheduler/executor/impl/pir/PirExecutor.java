@@ -208,7 +208,12 @@ public class PirExecutor implements Executor {
             throws Exception {
         String localFilePath = ExecutorConfig.getPirJobResultPath(jobDO.getOwner(), jobDO.getId());
         logger.info("storePirResult for job: {}, localFilePath: {}", jobDO.getId(), localFilePath);
-        boolean result = pirResult.persistentResult(localFilePath);
+        boolean result = false;
+        if (pirResult != null) {
+            result = pirResult.persistentResult(localFilePath);
+        } else {
+            logger.warn("storePirResult failed for empty pirResult");
+        }
         if (!result) {
             executiveContext.onTaskFinished(executeResult);
             return;
