@@ -36,7 +36,6 @@ import com.webank.wedpr.components.pir.sdk.core.OtResult;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.Obfuscator;
@@ -101,11 +100,7 @@ public class PirServiceImpl implements PirService {
         this.obfuscator = new ObfuscatorImpl();
         this.nativeSQLMapperWrapper = new NativeSQLMapperWrapper(nativeSQLMapper);
         this.pirDatasetConstructor =
-                new PirDatasetConstructorImpl(
-                        datasetMapper,
-                        fileStorage,
-                        new StoragePathBuilder(hdfsConfig, localStorageConfig),
-                        nativeSQLMapper);
+                new PirDatasetConstructorImpl(datasetMapper, fileStorage, nativeSQLMapper);
         this.pirServiceHook = new PirServiceHook(serviceHook, serviceInvokeMapper);
         this.pirTopicSubscriber =
                 new PirTopicSubscriberImpl(
