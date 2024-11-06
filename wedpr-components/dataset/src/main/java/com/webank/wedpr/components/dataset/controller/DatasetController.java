@@ -400,14 +400,14 @@ public class DatasetController {
 
             for (UpdateDatasetRequest updateDatasetRequest : updateDatasetRequestList) {
                 String datasetTitle = updateDatasetRequest.getDatasetTitle();
-                String datasetLabel = updateDatasetRequest.getDatasetLabel();
+                // String datasetLabel = updateDatasetRequest.getDatasetLabel();
                 String datasetDesc = updateDatasetRequest.getDatasetDesc();
                 String datasetId = updateDatasetRequest.getDatasetId();
                 String approvalChain = updateDatasetRequest.getApprovalChain();
 
                 Common.requireNonEmpty("datasetId", datasetId);
                 Common.requireNonEmpty("datasetTitle", datasetTitle);
-                Common.requireNonEmpty("datasetLabel", datasetLabel);
+                // Common.requireNonEmpty("datasetLabel", datasetLabel);
                 Common.requireNonEmpty("datasetDesc", datasetDesc);
 
                 Integer datasetVisibility = updateDatasetRequest.getDatasetVisibility();

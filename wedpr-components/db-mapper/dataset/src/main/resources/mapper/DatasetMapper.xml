@@ -249,7 +249,9 @@
             wedpr_dataset
         SET
             dataset_title = #{datasetTitle},
+        <if test="datasetLabel != null and datasetLabel.trim() != ''">
             dataset_label = #{datasetLabel},
+        </if>
             dataset_desc = #{datasetDesc},
             visibility = #{visibility},
             visibility_details = #{visibilityDetails},
