@@ -249,8 +249,11 @@ public class DatasetTransactionalWrapper {
             int deleteDatasetPermissionCount =
                     datasetPermissionMapper.deleteDatasetPermissionListByDatasetId(datasetId);
             // insert into new permissions
-            int insertDatasetPermissionCount =
-                    datasetPermissionMapper.insertDatasetPermissionList(datasetPermissionList);
+            int insertDatasetPermissionCount = 0;
+            if (!datasetPermissionList.isEmpty()) {
+                insertDatasetPermissionCount =
+                        datasetPermissionMapper.insertDatasetPermissionList(datasetPermissionList);
+            }
 
             logger.info(
                     "update one dataset success, datasetId: {}, updateCount: {}, deleteDatasetPermissionCount :{}, insertDatasetPermissionCount: {}",
