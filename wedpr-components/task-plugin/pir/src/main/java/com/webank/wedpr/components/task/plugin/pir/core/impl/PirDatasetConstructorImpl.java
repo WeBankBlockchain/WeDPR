@@ -67,15 +67,21 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         }
         Dataset dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
         DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
-        if (dataSourceType != DataSourceType.CSV && dataSourceType != DataSourceType.EXCEL) {
-            throw new WeDPRException("PIR only support CSV and excel DataSources now!");
-        }
-        logger.info("constructFromCSV, dataset: {}", dataset.getDatasetId());
+        long startT = System.currentTimeMillis();
+        logger.info(
+                "Load pir service, dataset: {}, type: {}",
+                dataset.getDatasetId(),
+                dataSourceType.name());
+
         constructFromCSV(dataset, serviceSetting.getIdField());
-        logger.info("constructFromCSV success, dataset: {}", dataset.getDatasetId());
+        logger.info(
+                "Load pir success, dataset: {}, type: {}, timecost: {}ms",
+                dataset.getDatasetId(),
+                dataSourceType.name(),
+                System.currentTimeMillis() - startT);
     }
 
-    private Pair<List<String>, Integer> createTable(
+    private Pair<List<String>, Integer> createPirTableForDataset(
             String tableId, String idField, String[] datasetFields) {
 
         logger.info("Create table {}", tableId);
@@ -86,8 +92,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         for (int i = 0; i < datasetFields.length; i++) {
             // the idField
             if (idField.equalsIgnoreCase(datasetFields[i])) {
-                fieldsWithType[i] = Constant.PIR_ID_FIELD_NAME + " VARCHAR(255)";
-                tableFields.add(Constant.PIR_ID_FIELD_NAME);
+                fieldsWithType[i] = idField + " VARCHAR(255)";
+                tableFields.add(idField);
                 idFieldIndex = i;
             } else {
                 fieldsWithType[i] = datasetFields[i] + " TEXT";
@@ -104,8 +110,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                         tableId,
                         String.join(",", fieldsWithType),
                         Constant.PIR_ID_HASH_FIELD_NAME,
-                        Constant.PIR_ID_FIELD_NAME);
-        logger.info("createTable, execute sql: {}", sql);
+                        idField);
+        logger.info("createPirTableForDataset, execute sql: {}", sql);
         this.nativeSQLMapper.executeNativeUpdateSql(sql);
         return new ImmutablePair<>(tableFields, idFieldIndex);
     }
@@ -126,9 +132,6 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                         .map(String::trim)
                         .toArray(String[]::new);
         List<String> datasetFieldsList = Arrays.asList(datasetFields);
-        if (datasetFieldsList.contains(Constant.PIR_ID_FIELD_NAME)) {
-            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_FIELD_NAME);
-        }
         if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
             throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
         }
@@ -136,7 +139,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         String tableId =
                 com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
                         dataset.getDatasetId());
-        Pair<List<String>, Integer> tableInfo = createTable(tableId, idField, datasetFields);
+        Pair<List<String>, Integer> tableInfo =
+                createPirTableForDataset(tableId, idField, datasetFields);
         Integer idFieldIndex = tableInfo.getRight();
 
         long startTime = System.currentTimeMillis();

@@ -87,7 +87,7 @@ public class NativeSQLMapperWrapper {
                         tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
-        return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
+        return toPirDataList(serviceSetting, this.nativeSQLMapper.executeNativeQuerySql(sql));
     }
 
     public List<PirDataItem> executeFuzzyMatchQuery(
@@ -108,11 +108,11 @@ public class NativeSQLMapperWrapper {
                         tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
-        return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
+        return toPirDataList(serviceSetting, this.nativeSQLMapper.executeNativeQuerySql(sql));
     }
 
-    protected static List<PirDataItem> toPirDataList(List<Map<String, Object>> values)
-            throws Exception {
+    protected static List<PirDataItem> toPirDataList(
+            PirServiceSetting serviceSetting, List<Map<String, Object>> values) throws Exception {
         if (values == null || values.isEmpty()) {
             return null;
         }
@@ -123,7 +123,7 @@ public class NativeSQLMapperWrapper {
             pirTable.setId(i);
             // the key, Note: here must use the idField value since the client use the idField value
             // to calculateZ0
-            pirTable.setPirKey((String) row.get(Constant.PIR_ID_FIELD_NAME));
+            pirTable.setPirKey((String) row.get(serviceSetting.getIdField()));
             // the values
             pirTable.setPirValue(ObjectMapperFactory.getObjectMapper().writeValueAsString(row));
             logger.trace("toPirDataList result: {}", pirTable.toString());
