@@ -128,3 +128,7 @@ project(":wedpr-components-service-publish").projectDir=file("wedpr-components/s
 
 include ":wedpr-components-service-sdk-pir"
 project(":wedpr-components-service-sdk-pir").projectDir=file("wedpr-components/service-sdk/pir")
+
+include ':wedpr-components-key-generator'
+project(':wedpr-components-key-generator').projectDir=file("wedpr-components/key-generator")
+
