@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.webank.wedpr.components.dataset.common.DatasetStatus;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
+import com.webank.wedpr.components.dataset.config.HiveConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.dispatch.DataSourceProcessorDispatcher;
 import com.webank.wedpr.components.dataset.datasource.processor.DataSourceProcessor;
@@ -52,6 +53,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasetServiceImpl.class);
 
+    @Autowired private HiveConfig hiveConfig;
     @Autowired private DatasetConfig datasetConfig;
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private DatasetPermissionMapper datasetPermissionMapper;
@@ -214,6 +216,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                             DataSourceProcessorContext.builder()
                                     .dataset(dataset)
                                     .dataSourceMeta(dataSourceMeta)
+                                    .hiveConfig(hiveConfig)
                                     .datasetConfig(datasetConfig)
                                     .userInfo(userInfo)
                                     .datasetTransactionalWrapper(datasetTransactionalWrapper)

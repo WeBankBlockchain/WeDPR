@@ -3,7 +3,6 @@ package com.webank.wedpr.components.dataset.sqlutils;
 import com.alibaba.druid.util.JdbcUtils;
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import com.webank.wedpr.components.dataset.datasource.DBType;
-import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +30,16 @@ public class SQLExecutor {
         void onReadRowData(List<String> fields, List<String> rowValues) throws DatasetException;
     }
 
+    /**
+     * generate jdbc url
+     *
+     * @param dbType
+     * @param dbIp
+     * @param dbPort
+     * @param database
+     * @param extraParams
+     * @return
+     */
     public static String generateJdbcUrl(
             DBType dbType,
             String dbIp,
@@ -60,7 +69,13 @@ public class SQLExecutor {
         return stringBuilder.toString();
     }
 
-    public void initializeJdbcDriver(String url) throws DatasetException {
+    /**
+     * load class driver
+     *
+     * @param url
+     * @throws DatasetException
+     */
+    public static void initializeJdbcDriver(String url) throws DatasetException {
         String driverClassName = null;
         try {
             driverClassName = JdbcUtils.getDriverClassName(url);
@@ -76,22 +91,14 @@ public class SQLExecutor {
     }
 
     // explain sql for test db connectivity and check sql syntax
-    public void explainSQL(DBType dbType, DBDataSource dbDataSource) throws DatasetException {
+    public void explainSQL(String jdbcUrl, String user, String password, String sql)
+            throws DatasetException {
 
-        String dbIp = dbDataSource.getDbIp();
-        Integer dbPort = dbDataSource.getDbPort();
-        String database = dbDataSource.getDatabase();
-
-        String user = dbDataSource.getUserName();
-        String password = dbDataSource.getPassword();
-
-        String sql = dbDataSource.getSql();
         String explainSql = "EXPLAIN " + sql;
 
-        String url = generateJdbcUrl(dbType, dbIp, dbPort, database, null);
-        initializeJdbcDriver(url);
+        SQLExecutor.initializeJdbcDriver(jdbcUrl);
 
-        try (Connection connection = DriverManager.getConnection(url, user, password);
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
                 PreparedStatement preparedStatement = connection.prepareStatement(explainSql)) {
 
             ResultSetMetaData metaData = preparedStatement.getMetaData();
@@ -121,89 +128,61 @@ public class SQLExecutor {
 
             logger.info(
                     "execute explain sql success, url: {}, sql: {}, columnCount: {}",
-                    url,
+                    jdbcUrl,
                     sql,
                     columnCount);
 
         } catch (SQLSyntaxErrorException sqlSyntaxErrorException) {
             logger.error(
-                    "sql syntax error, url: {}, sql: {}, e: ", url, sql, sqlSyntaxErrorException);
+                    "sql syntax error, url: {}, sql: {}, e: ",
+                    jdbcUrl,
+                    sql,
+                    sqlSyntaxErrorException);
             throw new DatasetException("sql syntax error, sql: " + sql);
         } catch (CommunicationsException communicationsException) {
             logger.error(
                     "connect to db server error, url: {}, sql: {}, e: ",
-                    url,
+                    jdbcUrl,
                     sql,
                     communicationsException);
             throw new DatasetException("connect to db server error, sql: " + sql);
         } catch (SQLException sqlException) {
             logger.error(
-                    "execute explain sql SQLException, url: {}, sql: {}, e: ", url, sqlException);
+                    "execute explain sql SQLException, url: {}, sql: {}, e: ",
+                    jdbcUrl,
+                    sqlException);
             throw new DatasetException(
                     "execute explain sql SQLException, e: " + sqlException.getMessage());
         } catch (Exception e) {
-            logger.error("execute explain sql Exception, url: {}, sql: {}, e: ", url, e);
+            logger.error("execute explain sql Exception, url: {}, sql: {}, e: ", jdbcUrl, e);
             throw new DatasetException("execute explain sql Exception, e: " + e.getMessage());
         }
     }
 
-    public void executeSQL(DBType dbType, DBDataSource dbDataSource, ExecutorCallback callback)
+    public void executeSQL(
+            String jdbcUrl, String user, String password, String sql, ExecutorCallback callback)
             throws DatasetException {
-
         long startTimeMillis = System.currentTimeMillis();
 
-        String dbIp = dbDataSource.getDbIp();
-        Integer dbPort = dbDataSource.getDbPort();
-        String database = dbDataSource.getDatabase();
-        String user = dbDataSource.getUserName();
-        String password = dbDataSource.getPassword();
-        String sql = dbDataSource.getSql();
+        // load jdbc driver class
+        initializeJdbcDriver(jdbcUrl);
 
-        String url = generateJdbcUrl(dbType, dbIp, dbPort, database, null);
+        logger.info("try to execute sql, url: {}, sql: {}", jdbcUrl, sql);
 
-        logger.info("try to execute sql, url: {}, sql: {}", url, sql);
-
-        initializeJdbcDriver(url);
-
-        try (Connection connection = DriverManager.getConnection(url, user, password);
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
                 PreparedStatement preparedStatement =
                         connection.prepareStatement(
                                 sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
 
-            ResultSetMetaData metaData = preparedStatement.getMetaData();
-
-            List<String> fieldList = new ArrayList<>();
-            // query fields list
-            int columnCount = metaData.getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                String tableName = metaData.getTableName(i);
-                String columnClassName = metaData.getColumnClassName(i);
-                String catalogName = metaData.getCatalogName(i);
-                String columnName = metaData.getColumnName(i);
-                String schemaName = metaData.getSchemaName(i);
-                String columnLabel = metaData.getColumnLabel(i);
-                int scale = metaData.getScale(i);
-                int columnType = metaData.getColumnType(i);
-                String columnTypeName = metaData.getColumnTypeName(i);
-
-                logger.info(" {}. tableName: {}", i, tableName);
-                logger.info(" {}. columnName: {}", i, columnName);
-                logger.info(" {} .schemaName: {}", i, schemaName);
-                logger.info(" {} .columnClassName: {}", i, columnClassName);
-                logger.info(" {} .catalogName: {}", i, catalogName);
-                logger.info(" {} .columnLabel: {}", i, columnLabel);
-                logger.info(" {} .scale: {}", i, scale);
-                logger.info(" {} .columnType: {}", i, columnType);
-                logger.info(" {} .columnTypeName: {}", i, columnTypeName);
-
-                fieldList.add(columnName);
-            }
-
-            callback.onReadRowData(fieldList, null);
-
             // set stream query
-            preparedStatement.setFetchSize(Integer.MIN_VALUE);
-            ResultSet resultSet = preparedStatement.executeQuery(sql);
+            //            preparedStatement.setFetchSize(Integer.MIN_VALUE);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+
+            List<String> fieldList = getQueryResultColumnList(metaData);
+            callback.onReadRowData(fieldList, null);
+            int columnCount = fieldList.size();
 
             int rowCount = 0;
             while (resultSet.next()) {
@@ -228,7 +207,7 @@ public class SQLExecutor {
 
             logger.info(
                     "execute sql success, url: {}, sql: {}, columnCount: {}, rowCount: {}, cost(ms): {}",
-                    url,
+                    jdbcUrl,
                     sql,
                     columnCount,
                     rowCount,
@@ -238,7 +217,8 @@ public class SQLExecutor {
             long endTimeMillis = System.currentTimeMillis();
             logger.error(
                     "execute sql SQLException, url: {}, sql: {}, cost(ms): {}, e: ",
-                    url,
+                    jdbcUrl,
+                    sql,
                     (endTimeMillis - startTimeMillis),
                     sqlException);
             throw new DatasetException("execute sql SQLException, e: " + sqlException.getMessage());
@@ -246,10 +226,24 @@ public class SQLExecutor {
             long endTimeMillis = System.currentTimeMillis();
             logger.error(
                     "execute sql Exception, url: {}, sql: {}, cost(ms): {}, e: ",
-                    url,
+                    jdbcUrl,
                     (endTimeMillis - startTimeMillis),
                     e);
             throw new DatasetException("execute sql Exception, e: " + e.getMessage());
         }
+    }
+
+    public List<String> getQueryResultColumnList(ResultSetMetaData metaData) throws SQLException {
+
+        List<String> columnList = new ArrayList<>();
+        // query fields list
+        int columnCount = metaData.getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
+            logger.info(" {}. columnName: {}", i, columnName);
+            columnList.add(columnName);
+        }
+
+        return columnList;
     }
 }

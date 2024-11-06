@@ -16,8 +16,25 @@ public class SQLUtils {
 
     public static void validateDataSourceParameters(DBType dbType, DBDataSource dbDataSource)
             throws DatasetException {
+
+        String dbIp = dbDataSource.getDbIp();
+        Integer dbPort = dbDataSource.getDbPort();
+        String database = dbDataSource.getDatabase();
+        String user = dbDataSource.getUserName();
+        String password = dbDataSource.getPassword();
+        String sql = dbDataSource.getSql();
+
+        // build jdbc url
+        String jdbcUrl = SQLExecutor.generateJdbcUrl(dbType, dbIp, dbPort, database, null);
+        validateDataSourceParameters(jdbcUrl, user, password, sql);
+    }
+
+    public static void validateDataSourceParameters(
+            String jdbcUrl, String user, String password, String sql) throws DatasetException {
+
         SQLExecutor sqlExecutor = new SQLExecutor();
-        sqlExecutor.explainSQL(dbType, dbDataSource);
+        // explain sql for test db connectivity and check sql syntax
+        sqlExecutor.explainSQL(jdbcUrl, user, password, sql);
     }
 
     public static void isSingleSelectStatement(String sql) throws DatasetException {

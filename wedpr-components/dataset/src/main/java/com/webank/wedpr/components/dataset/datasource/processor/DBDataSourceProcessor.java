@@ -6,6 +6,7 @@ import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
+import com.webank.wedpr.components.dataset.sqlutils.SQLExecutor;
 import com.webank.wedpr.components.dataset.sqlutils.SQLUtils;
 import com.webank.wedpr.components.dataset.utils.CsvUtils;
 import com.webank.wedpr.components.dataset.utils.FileUtils;
@@ -88,7 +89,20 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
         String datasetBaseDir = datasetConfig.getDatasetBaseDir();
         String cvsFilePath = datasetBaseDir + File.separator + datasetId;
 
-        CsvUtils.convertDBDataToCsv(dbType, dbDataSource, cvsFilePath);
+        String jdbcUrl =
+                SQLExecutor.generateJdbcUrl(
+                        dbType,
+                        dbDataSource.getDbIp(),
+                        dbDataSource.getDbPort(),
+                        dbDataSource.getDatabase(),
+                        null);
+
+        CsvUtils.convertDBDataToCsv(
+                jdbcUrl,
+                dbDataSource.getUserName(),
+                dbDataSource.getPassword(),
+                dbDataSource.getSql(),
+                cvsFilePath);
 
         dataSourceProcessorContext.setCvsFilePath(cvsFilePath);
 
