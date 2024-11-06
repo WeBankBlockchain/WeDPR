@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -115,6 +116,12 @@ public class MybatisConfigurationFactory {
         properties.setProperty("helperDialect", "mysql");
         pageInterceptor.setProperties(properties);
         return pageInterceptor;
+    }
+
+    @Bean
+    @Primary
+    public JdbcTemplate primaryJdbcTemplate() {
+        return new JdbcTemplate(dataSource);
     }
 
     @Bean
