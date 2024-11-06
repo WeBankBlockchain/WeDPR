@@ -29,6 +29,7 @@ import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
+import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,7 +119,7 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
 
         logger.info("Create table {}", tableId);
         // all the field + id_hash field
-        String[] fieldsWithType = new String[datasetFields.length + 1];
+        String[] fieldsWithType = new String[datasetFields.length + 2];
         List<String> tableFields = new ArrayList<>();
         int idFieldIndex = 0;
         for (int i = 0; i < datasetFields.length; i++) {
@@ -132,8 +133,11 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                 tableFields.add(datasetFields[i]);
             }
         }
+        // add the id fields(uuid)
+        fieldsWithType[datasetFields.length] = Constant.PIR_ID_FIELD_NAME + " VARCHAR(64)";
+        tableFields.add(Constant.PIR_ID_FIELD_NAME);
         // add the id_hash field at the last
-        fieldsWithType[datasetFields.length] = Constant.PIR_ID_HASH_FIELD_NAME + " VARCHAR(64)";
+        fieldsWithType[datasetFields.length + 1] = Constant.PIR_ID_HASH_FIELD_NAME + " VARCHAR(64)";
         tableFields.add(Constant.PIR_ID_HASH_FIELD_NAME);
 
         String sql =
@@ -141,7 +145,7 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                         "CREATE TABLE %s ( %s , PRIMARY KEY (`%s`) USING BTREE, index id_index(`%s`(128)) )",
                         tableId,
                         String.join(",", fieldsWithType),
-                        Constant.PIR_ID_HASH_FIELD_NAME,
+                        Constant.PIR_ID_FIELD_NAME,
                         idField);
         logger.info("createPirTableForDataset, execute sql: {}", sql);
         this.jdbcTemplate.execute(sql);
@@ -168,6 +172,9 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
             throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
         }
+        if (datasetFieldsList.contains(Constant.PIR_ID_FIELD_NAME)) {
+            throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_FIELD_NAME);
+        }
         Pair<List<String>, Integer> tableInfo =
                 createPirTableForDataset(tableId, idField, datasetFields);
         Integer idFieldIndex = tableInfo.getRight();
@@ -182,6 +189,8 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                     @Override
                     public void handle(List<String> rowContent) throws Exception {
                         StringBuilder sb = new StringBuilder();
+                        // the id field
+                        rowContent.add(WeDPRUuidGenerator.generateID());
                         // add hash for the idField
                         rowContent.add(CryptoToolkitFactory.hash(rowContent.get(idFieldIndex)));
                         sb.append("(")

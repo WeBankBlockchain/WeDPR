@@ -15,7 +15,6 @@
 
 package com.webank.wedpr.components.pir.sdk.config;
 
-import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 
@@ -41,7 +40,7 @@ public class PirSDKConfig {
     }
 
     public static String getPirComponent(String serviceID) {
-        return PIR_COMPONENT_PREFIX + WeDPRCommonConfig.getAgency() + "_" + serviceID;
+        return PIR_COMPONENT_PREFIX + "_" + serviceID;
     }
 
     public static String getPirTopic(String serviceID) {
