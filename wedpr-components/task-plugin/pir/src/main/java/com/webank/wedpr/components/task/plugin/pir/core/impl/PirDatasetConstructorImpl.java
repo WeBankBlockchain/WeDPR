@@ -29,56 +29,88 @@ import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.task.plugin.pir.config.PirServiceConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
-import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PirDatasetConstructorImpl implements PirDatasetConstructor {
     private static final Logger logger = LoggerFactory.getLogger(PirDatasetConstructor.class);
 
     private final DatasetMapper datasetMapper;
     private final FileStorageInterface fileStorageInterface;
-    private final NativeSQLMapper nativeSQLMapper;
+    private final JdbcTemplate jdbcTemplate;
+    private final String dbName;
 
     public PirDatasetConstructorImpl(
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            NativeSQLMapper nativeSQLMapper) {
+            JdbcTemplate jdbcTemplate)
+            throws SQLException {
         this.datasetMapper = datasetMapper;
         this.fileStorageInterface = fileStorageInterface;
-        this.nativeSQLMapper = nativeSQLMapper;
+        this.jdbcTemplate = jdbcTemplate;
+        this.dbName = this.jdbcTemplate.getDataSource().getConnection().getCatalog();
+        logger.info("Current database name: {}", this.dbName);
     }
 
     @Override
     public void construct(PirServiceSetting serviceSetting) throws Exception {
-        List<String> allTables = this.nativeSQLMapper.showAllTables();
-        String datasetID = serviceSetting.getDatasetId();
-        String tableId =
-                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
-                        datasetID);
-        if (allTables.contains(tableId)) {
-            logger.info("The dataset {} has already been constructed into {}", datasetID, tableId);
-            return;
-        }
-        Dataset dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
-        DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
-        long startT = System.currentTimeMillis();
-        logger.info(
-                "Load pir service, dataset: {}, type: {}",
-                dataset.getDatasetId(),
-                dataSourceType.name());
+        Dataset dataset = null;
+        String tableId = null;
+        try {
+            String datasetID = serviceSetting.getDatasetId();
+            tableId =
+                    com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
+                            datasetID);
+            if (tableExists(tableId)) {
+                logger.info(
+                        "The dataset {} has already been constructed into {}", datasetID, tableId);
+                return;
+            }
+            dataset = this.datasetMapper.getDatasetByDatasetId(datasetID, false);
+            // create table
+            DataSourceType dataSourceType = DataSourceType.fromStr(dataset.getDataSourceType());
+            long startT = System.currentTimeMillis();
+            logger.info(
+                    "Load pir service, dataset: {}, type: {}",
+                    dataset.getDatasetId(),
+                    dataSourceType.name());
 
-        constructFromCSV(dataset, serviceSetting.getIdField());
-        logger.info(
-                "Load pir success, dataset: {}, type: {}, timecost: {}ms",
-                dataset.getDatasetId(),
-                dataSourceType.name(),
-                System.currentTimeMillis() - startT);
+            constructFromCSV(tableId, dataset, serviceSetting.getIdField());
+            logger.info(
+                    "Load pir success, dataset: {}, type: {}, timecost: {}ms",
+                    dataset.getDatasetId(),
+                    dataSourceType.name(),
+                    System.currentTimeMillis() - startT);
+        } catch (Exception e) {
+            logger.warn(
+                    "Publish pir service failed, dataset: {}, e: ",
+                    (dataset == null ? "empty" : dataset.getDatasetId()),
+                    e);
+            if (StringUtils.isNotBlank(tableId)) {
+                logger.info("Revert the created table: {}", tableId);
+                this.jdbcTemplate.execute("drop table if exists " + tableId);
+            }
+            throw e;
+        }
+    }
+
+    private boolean tableExists(String tableName) {
+        String query =
+                String.format(
+                        "select count(*) "
+                                + "from information_schema.tables "
+                                + "where table_name = ? and table_schema = '%s'",
+                        this.dbName);
+        Integer result = jdbcTemplate.queryForObject(query, Integer.class, tableName);
+        return result != null && result > 0;
     }
 
     private Pair<List<String>, Integer> createPirTableForDataset(
@@ -112,11 +144,12 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                         Constant.PIR_ID_HASH_FIELD_NAME,
                         idField);
         logger.info("createPirTableForDataset, execute sql: {}", sql);
-        this.nativeSQLMapper.executeNativeUpdateSql(sql);
+        this.jdbcTemplate.execute(sql);
         return new ImmutablePair<>(tableFields, idFieldIndex);
     }
 
-    private void constructFromCSV(Dataset dataset, String idField) throws Exception {
+    private void constructFromCSV(String tableId, Dataset dataset, String idField)
+            throws Exception {
         StoragePath storagePath =
                 StoragePathBuilder.getInstance(
                         dataset.getDatasetStorageType(), dataset.getDatasetStoragePath());
@@ -135,10 +168,6 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
         if (datasetFieldsList.contains(Constant.PIR_ID_HASH_FIELD_NAME)) {
             throw new WeDPRException("Conflict with sys field " + Constant.PIR_ID_HASH_FIELD_NAME);
         }
-        // create table
-        String tableId =
-                com.webank.wedpr.components.task.plugin.pir.utils.Constant.datasetId2tableId(
-                        dataset.getDatasetId());
         Pair<List<String>, Integer> tableInfo =
                 createPirTableForDataset(tableId, idField, datasetFields);
         Integer idFieldIndex = tableInfo.getRight();
@@ -172,7 +201,7 @@ public class PirDatasetConstructorImpl implements PirDatasetConstructor {
                                     publishedRecorders[0],
                                     (System.currentTimeMillis() - startTime));
                         }
-                        nativeSQLMapper.executeNativeUpdateSql(sql);
+                        jdbcTemplate.execute(sql);
                     }
                 });
         logger.info(
