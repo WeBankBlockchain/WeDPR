@@ -387,75 +387,32 @@ export const graphChartOption = {
 }
 
 export function spliceLegend(legendData, color = 'white') {
-  if (legendData.length < 4) {
-    return {
-      data: legendData,
-      textStyle: {
-        color: 'white',
-        fontSize: '10px'
-      },
-      left: 'center',
-      bottom: -6,
-      icon: 'circle',
-      // type: 'scroll',
-      orient: 'horizontal' // vertical
+  return {
+    data: legendData,
+    left: 'center',
+    bottom: '4px',
+    icon: 'circle',
+    orient: 'horizontal', // vertical
+    itemWidth: 8,
+    itemHeight: 8,
+    formatter: (name) => {
+      return `{b|${name}} `
+    },
+    x: 'center',
+    textStyle: {
+      color,
+      fontSize: 10,
+      align: 'left',
+      // 文字块背景色，一定要加上，否则对齐不会生效
+      backgroundColor: 'transparent',
+      rich: {
+        b: {
+          width: 94,
+          lineHeight: 10
+        }
+      }
     }
   }
-  const middleIndex = Math.ceil(legendData.length / 2) // 获取数组中间下标
-  const oneData = legendData.slice(0, middleIndex)
-  const twoData = legendData.slice(-middleIndex)
-  return [
-    {
-      data: oneData,
-      orient: 'horizontal',
-      icon: 'circle',
-      align: 'left',
-      bottom: 20,
-      itemWidth: 8,
-      itemHeight: 8,
-      formatter: (name) => {
-        return `{b|${name}} `
-      },
-      x: 'center',
-      textStyle: {
-        color,
-        fontSize: 12,
-        align: 'left',
-        // 文字块背景色，一定要加上，否则对齐不会生效
-        backgroundColor: 'transparent',
-        rich: {
-          b: {
-            width: 100
-          }
-        }
-      }
-    },
-    {
-      data: twoData,
-      orient: 'horizontal',
-      icon: 'circle',
-      align: 'left',
-      bottom: 0,
-      itemWidth: 8,
-      itemHeight: 8,
-      formatter: (name) => {
-        return `{b|${name}} `
-      },
-      x: 'center',
-      textStyle: {
-        color,
-        fontSize: 12,
-        align: 'left',
-        // 文字块背景色，一定要加上，否则对齐不会生效
-        backgroundColor: 'transparent',
-        rich: {
-          b: {
-            width: 100
-          }
-        }
-      }
-    }
-  ]
 }
 export function spliceLegendHome(legendData, color = 'white') {
   return {

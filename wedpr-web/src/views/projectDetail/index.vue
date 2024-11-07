@@ -96,12 +96,13 @@
               size="small"
               v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && !['RunFailed', 'Killed', 'RunSuccess'].includes(scope.row.status)"
               @click="showKillJobConfirm(scope.row)"
-              type="primary"
+              style="background-color: rgb(255, 77, 79)"
+              type="danger"
               >终止任务</el-button
             >
             <el-button
               size="small"
-              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && scope.row.status !== 'Running'"
+              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && !['Running', 'RunSuccess'].includes(scope.row.status)"
               @click="retryJobs(scope.row)"
               type="primary"
               >重试任务</el-button
@@ -375,6 +376,9 @@ span.info {
     padding: 0 12px;
     border: none;
     line-height: 24px;
+  }
+  ::v-deep .el-button--small {
+    padding: 6px 12px;
   }
 }
 </style>

@@ -57,7 +57,11 @@
     <div class="tableContent autoTableWrap" v-if="total">
       <el-table :max-height="tableHeight" size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
         <el-table-column label="任务ID" prop="id" show-overflow-tooltip />
-        <el-table-column label="所属项目" prop="projectName" show-overflow-tooltip />
+        <el-table-column label="所属项目" prop="projectId" show-overflow-tooltip>
+          <template v-slot="scope">
+            <span class="link" @click="goProjectDetail(scope.row.projectId)">{{ scope.row.projectId }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="发起机构" prop="ownerAgency" />
         <el-table-column label="参与机构" prop="participate" />
         <el-table-column label="发起用户" prop="owner" />
@@ -120,6 +124,9 @@ export default {
     ...mapGetters(['userId', 'agencyId'])
   },
   methods: {
+    goProjectDetail(projectId) {
+      this.$router.push({ path: '/projectDetail', query: { projectId } })
+    },
     // 获取数据集详情
     async getDetail() {
       this.loadingFlag = true
@@ -181,7 +188,10 @@ div.all {
   width: 100%;
   display: flex;
 }
-
+span.link {
+  cursor: pointer;
+  color: #3071f2;
+}
 .el-empty {
   margin-top: 0;
 }

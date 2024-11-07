@@ -401,10 +401,19 @@ export default {
           }
         })
         if (this.type === 'reupload') {
-          dataForm.dataSourceType = dataSourceType
+          dataForm.dataSourceType = [dataSourceType]
           if (dataSourceType === 'DB') {
             const { dbType } = JSON.parse(dataSourceMeta)
             dataForm.dataSourceType = [dataSourceType, dbType]
+          }
+          if (dataSourceType === 'HIVE') {
+            const { sql, dynamicDataSource } = JSON.parse(dataSourceMeta)
+            dataForm.sql = sql
+            dataForm.dynamicDataSource = dynamicDataSource
+          }
+          if (dataSourceType === 'HDFS') {
+            const { filePath } = JSON.parse(dataSourceMeta)
+            dataForm.filePath = filePath
           }
         }
         this.dataForm = { ...dataForm }
@@ -440,6 +449,7 @@ export default {
           if (valid) {
             const { datasetId } = this
             const { dataSourceType, dataFile } = this.dataForm
+            console.log(dataSourceType, 'dataSourceType')
             if (dataSourceType === 'CSV' || dataSourceType === 'EXCEL') {
               if (this.fileUploadTask && this.fileUploadTask.datasetId) {
                 this.$message.info('有其他数据集正在上传，请稍后再试')

@@ -112,7 +112,7 @@
               </el-table>
             </div>
           </div>
-          <div class="con" v-if="xgbJobSavedModelData.length || xgbJobOriginModelData.length">
+          <div class="con" v-if="[jobEnum.LR_TRAINING, jobEnum.LR_PREDICTING, jobEnum.XGB_TRAINING, jobEnum.XGB_PREDICTING].includes(jobInfo.jobType)">
             <div class="title-radius">配置信息</div>
             <div class="tableContent autoTableWrap">
               <el-table :max-height="300" size="small" :data="settingTableData" :border="true" class="table-wrap">

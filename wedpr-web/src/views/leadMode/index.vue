@@ -85,7 +85,7 @@
                 <span v-if="scope.row.searchType === searchTypeEnum.SearchValue">查询字段值</span>
               </template>
             </el-table-column>
-            <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields">
+            <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields" show-overflow-tooltip>
               <template v-slot="scope">
                 {{ scope.row.accessibleValueQueryFields && scope.row.accessibleValueQueryFields.join(',') }}
               </template>
@@ -282,7 +282,7 @@
                   <span v-if="scope.row.searchType === searchTypeEnum.SearchValue">查询字段值</span>
                 </template>
               </el-table-column>
-              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields">
+              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields" show-overflow-tooltip>
                 <template v-slot="scope">
                   {{ scope.row.accessibleValueQueryFields && scope.row.accessibleValueQueryFields.join(',') }}
                 </template>
@@ -498,7 +498,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['agencyList', 'algList']),
+    ...mapGetters(['agencyList', 'algList', 'agencyId']),
     filteredAlgList() {
       console.log(this.algList, '=========================')
       return this.algList.filter((v) => v.enable)
@@ -602,6 +602,12 @@ export default {
             case jobEnum.PIR:
               this.handlePIRdata()
               break
+            case jobEnum.MPC:
+              this.handleMPCdata()
+              break
+            case jobEnum.SQL:
+              this.handleMPCdata()
+              break
             default:
               break
           }
@@ -633,6 +639,7 @@ export default {
         this.jobSettingForm.modelPredictAlgorithm = {}
       }
     },
+    // pir
     handlePIRdata() {
       const { searchType, queriedFields = [], searchIdList } = this.jobSettingForm
       const { serviceId } = this.jobSettingForm.selectedData[0]
@@ -645,6 +652,7 @@ export default {
       }
       this.submitJob({ job: { param: JSON.stringify(params), jobType: jobEnum.PIR, projectId } })
     },
+    // psi
     handlePsiJobData() {
       const { selectedAlg } = this
       const { selectedData, receiver } = this.jobSettingForm
@@ -675,6 +683,44 @@ export default {
       const datasetList = selectedData.map((v) => v.datasetId)
       this.submitJob({ job: params, taskParties, datasetList })
     },
+    // mpc sql
+    handleMPCdata() {
+      const { selectedAlg } = this
+      const { selectedData, receiver, python, sql } = this.jobSettingForm
+      const { projectId } = this
+      const dataSetList = selectedData.map((v) => {
+        console.log(v, v.datasetStoragePath, JSON.parse(v.datasetStoragePath))
+        const dataset = {
+          owner: v.ownerUserName,
+          ownerAgency: v.ownerAgencyName,
+          path: JSON.parse(v.datasetStoragePath).filePath,
+          storageTypeStr: v.datasetStorageType,
+          datasetID: v.datasetId,
+          datasetRecordCount: v.recordCount
+        }
+        return {
+          dataset,
+          receiveResult: receiver.includes(v.ownerAgencyName)
+        }
+      })
+      const param = { dataSetList }
+      if (selectedAlg.value === jobEnum.SQL) {
+        param.sql = sql
+      }
+      if (selectedAlg.value === jobEnum.MPC) {
+        param.mpcContent = python
+      }
+      const params = { jobType: selectedAlg.value, projectId, param: JSON.stringify(param) }
+      const taskParties = selectedData.map((v) => {
+        return {
+          userName: v.ownerUserName,
+          agency: v.ownerAgencyName
+        }
+      })
+      const datasetList = selectedData.map((v) => v.datasetId)
+      this.submitJob({ job: params, taskParties, datasetList })
+    },
+    // xgb lr traing
     handleTraingData() {
       const { selectedAlg, modelModule } = this
       const { selectedData, receiver } = this.jobSettingForm
@@ -713,6 +759,7 @@ export default {
       console.log({ job: params, taskParties }, receiver)
       this.submitJob({ job: params, taskParties, datasetList })
     },
+    // xgb lr predict
     handlePredictingData() {
       const { selectedAlg, modelModule } = this
       const { selectedData, receiver, modelPredictAlgorithm } = this.jobSettingForm
@@ -868,6 +915,12 @@ export default {
         const validpaticipateSelect = this.paticipateSelectList.filter((v) => v.datasetId)
         const validDataLength = validpaticipateSelect.length // 有效数据集数量
         const participateAgencyList = validpaticipateSelect.map((v) => v.ownerAgencyName)
+        if (this.selectedAlg.value !== jobEnum.PIR) {
+          if (!this.agencyListAble.some((v) => v.value === this.agencyId)) {
+            this.$message.error('请添加至少一个己方机构数据集')
+            return
+          }
+        }
         // 参与机构数量
         const uniqueAgencyLength = Array.from(new Set(participateAgencyList)).length
         if ([jobEnum.XGB_TRAINING, jobEnum.LR_TRAINING, jobEnum.LR_PREDICTING, jobEnum.XGB_PREDICTING].includes(this.selectedAlg.value)) {
@@ -919,11 +972,6 @@ export default {
           // psi 可同一机构下多个数据集
           if (!this.calcParticipateNumberMatch(participateNumber, validDataLength)) {
             this.$message.error(`请添加至少${parseInt(participateNumber)}个参与方`)
-            return
-          }
-          // psi 至少有一个自己的数据集
-          if (!participateAgencyList.includes(this.agencyId)) {
-            this.$message.error('请添加至少一个己方的数据集')
             return
           }
         } else if (this.selectedAlg.value === jobEnum.PIR) {

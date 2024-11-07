@@ -128,13 +128,13 @@ export default {
       jobStatusList,
       jobStatusMap,
       pageMode: process.env.VUE_APP_MODE,
-      projectName: ''
+      projectId: ''
     }
   },
   created() {
-    const { projectName } = this.$route.query
-    this.projectName = projectName
-    projectName && this.queryProject()
+    const { projectId } = this.$route.query
+    this.projectId = projectId
+    projectId && this.queryProject()
   },
   computed: {
     ...mapGetters(['algList', 'agencyList'])
@@ -150,8 +150,8 @@ export default {
     // 获取项目详情
     async queryProject() {
       this.loadingFlag = true
-      const { projectName } = this
-      const res = await projectManageServer.adminQueryProject({ projectName, pageNum: 1, pageSize: 10 })
+      const { projectId } = this
+      const res = await projectManageServer.adminQueryProject({ id: projectId, pageNum: 1, pageSize: 10 })
       this.loadingFlag = false
       console.log(res)
       if (res.code === 0 && res.data) {

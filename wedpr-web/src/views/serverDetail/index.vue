@@ -39,7 +39,9 @@
       <div class="whole" v-if="serviceInfo.serviceType === serviceTypeEnum.PIR">
         <div class="half">
           <span class="title">发布数据：</span>
-          <span class="info"> {{ serviceInfo.datasetId }} </span>
+          <span class="info link" @click="goDataDetail(serviceInfo.datasetId)">
+            {{ serviceInfo.datasetId }}
+          </span>
         </div>
       </div>
       <div class="whole">
@@ -50,7 +52,7 @@
       </div>
 
       <div class="whole" v-if="serviceInfo.serviceType === serviceTypeEnum.PIR">
-        <div class="half">
+        <div class="half tableinfo">
           <span class="title">查询规则：</span>
           <span class="info">
             <el-table size="small" :data="serviceConfigList" :border="true" class="table-wrap">
@@ -62,13 +64,17 @@
                   <span v-if="scope.row.searchType === searchTypeEnum.SearchValue">查询字段值</span>
                 </template>
               </el-table-column>
-              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields" />
+              <el-table-column label="可查的字段列表" prop="accessibleValueQueryFields" show-overflow-tooltip>
+                <template v-slot="scope">
+                  {{ scope.row.accessibleValueQueryFields && scope.row.accessibleValueQueryFields.join(',') }}
+                </template>
+              </el-table-column>
             </el-table>
           </span>
         </div>
       </div>
       <div class="whole" v-if="serviceInfo.serviceType !== serviceTypeEnum.PIR">
-        <div class="half">
+        <div class="half tableinfo">
           <span class="title">模型内容：</span>
           <span class="info">
             <el-table size="small" :data="serviceConfigList" :border="true" class="table-wrap" :span-method="objectSpanMethod">
@@ -82,7 +88,7 @@
         </div>
       </div>
       <div class="whole" v-if="serviceInfo.owner === userId && serviceInfo.agency === agencyId">
-        <div class="half">
+        <div class="half tableinfo">
           <span class="title">授权信息：</span>
           <span class="info">
             <el-table size="small" v-if="serviceAuthInfos.length" :data="serviceAuthInfos" :border="true" class="table-wrap">
@@ -110,18 +116,15 @@
         <div class="title-radius">使用记录</div>
       </div>
       <div class="tableContent autoTableWrap" v-if="total">
-        <el-table :max-height="tableHeight" size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
+        <el-table size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
           <el-table-column label="调用ID" prop="invokeId" />
           <el-table-column label="调用机构" prop="invokeAgency" />
           <el-table-column label="调用用户" prop="invokeUser" />
-          <el-table-column label="申请时间" prop="applyTime" />
-          <el-table-column label="有效期至" prop="expireTime" />
-          <el-table-column label="任务状态" prop="status">
+          <el-table-column label="调用时间" prop="invokeTime" />
+          <el-table-column label="调用状态" prop="invokeStatus">
             <template v-slot="scope">
-              <el-tag size="small" v-if="scope.row.status === 'RunSuccess'" effect="dark" color="#52B81F">成功</el-tag>
-              <el-tag size="small" v-else-if="scope.row.status == 'RunFailed'" effect="dark" color="#FF4D4F">失败</el-tag>
-              <el-tag size="small" v-else-if="scope.row.status === 'Running'" effect="dark" color="#3071F2">运行中</el-tag>
-              <el-tag size="small" v-else effect="dark" color="#3071F2">{{ jobStatusMap[scope.row.status] }}</el-tag>
+              <el-tag size="small" v-if="scope.row.invokeStatus === 'InvokeSuccess'" effect="dark" color="#52B81F">调用成功</el-tag>
+              <el-tag size="small" v-if="scope.row.invokeStatus == 'InvokeFailed'" effect="dark" color="#FF4D4F">调用失败</el-tag>
             </template>
           </el-table-column>
         </el-table>
@@ -206,6 +209,9 @@ export default {
     ...mapGetters(['algList', 'agencyId', 'userId'])
   },
   methods: {
+    goDataDetail(datasetId) {
+      this.$router.push({ path: '/dataDetail', query: { datasetId } })
+    },
     handleData(key) {
       const data = this.algList.filter((v) => v.value === key)
       return data[0] || {}
@@ -325,7 +331,7 @@ export default {
       this.loadingFlag = true
       const { serviceId } = this
       const { page_offset, page_size } = this.pageData
-      const res = await serviceManageServer.getServerUseRecord({ condition: { serviceId, id: '' }, pageNum: page_offset, pageSize: page_size })
+      const res = await serviceManageServer.getServerUseRecord({ condition: { serviceId, invokeId: '' }, pageNum: page_offset, pageSize: page_size })
       this.loadingFlag = false
       console.log(res)
       if (res.code === 0 && res.data) {
@@ -373,6 +379,9 @@ div.half {
   width: 50%;
   display: flex;
 }
+div.half.tableinfo {
+  width: 75%;
+}
 div.info-container {
   margin-bottom: 44px;
   span {
@@ -417,6 +426,10 @@ div.info-container {
 }
 span.info {
   color: #262a32;
+}
+div.info-container span.info.link {
+  cursor: pointer;
+  color: #3071f2;
 }
 .tableContent {
   ::v-deep .el-tag {

@@ -516,6 +516,7 @@ export default {
           }
         })
         barJobOption.legend = spliceLegend(jobTypeList)
+        barJobOption.grid.bottom = (Math.ceil(jobTypeList.length / 4) + 1) * 22
         this.initJobBarData()
       }
     },
@@ -541,8 +542,8 @@ export default {
         })
         lineJobOption.xAxis.data = dateList
         lineJobOption.legend = spliceLegend(jobTypeList)
+        lineJobOption.grid.bottom = (Math.ceil(jobTypeList.length / 4) + 1) * 22
         lineJobOption.series = series
-        console.log(lineJobOption, 'lineJobOption======================')
         this.initJobLineData()
       }
     },

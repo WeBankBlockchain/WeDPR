@@ -263,7 +263,7 @@ export default {
         const { credentials = [] } = res.data
         this.accessKeyList = credentials.map((v) => {
           return {
-            label: v.desc,
+            label: v.desc + '-' + v.accessKeyID,
             value: v.accessKeyID
           }
         })

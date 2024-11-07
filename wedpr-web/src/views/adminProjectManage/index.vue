@@ -125,7 +125,7 @@ export default {
       })
     },
     goDetail(row) {
-      this.$router.push({ path: '/projectDetail', query: { projectName: row.name } })
+      this.$router.push({ path: '/projectDetail', query: { projectId: row.id } })
     },
     async getProjectNameSelect(projectName) {
       if (!projectName) {
