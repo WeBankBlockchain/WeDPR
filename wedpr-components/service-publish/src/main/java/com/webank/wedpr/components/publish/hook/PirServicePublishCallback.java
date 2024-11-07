@@ -23,10 +23,10 @@ import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthInfo
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
-import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.config.ServicePublisherConfig;
 import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
     @Override
     public void onPublish(Object serviceInfo) throws Exception {
         PublishCreateRequest publishedServiceInfo = (PublishCreateRequest) serviceInfo;
-        EntryPointInfo selectedEntryPoint =
+        ServiceMeta.EntryPointMeta selectedEntryPoint =
                 loadBalancer.selectService(
                         LoadBalancer.Policy.ROUND_ROBIN, publishedServiceInfo.getServiceType());
         if (selectedEntryPoint == null) {
