@@ -46,13 +46,12 @@ public class ReportQuartzJob implements Job {
 
     @Transactional(rollbackFor = Exception.class)
     private void doReport() {
-        log.info("do report...");
+        log.debug("do report...");
         try {
             String adminAgency = WeDPRCommonConfig.getAdminAgency();
             reportProjectInfo(adminAgency);
             reportJobInfo(adminAgency);
             reportJobDatasteRelationInfo(adminAgency);
-            //            reportSysConfig(adminAgency);
         } catch (Exception e) {
             log.warn("report error", e);
         }
@@ -62,10 +61,10 @@ public class ReportQuartzJob implements Job {
         SysConfigReportMessageHandler sysConfigReportMessageHandler =
                 new SysConfigReportMessageHandler(sysConfigMapper);
         List<SysConfigDO> sysConfigDOList = sysConfigMapper.queryAllConfig();
-        log.info("report sysConfigDOList:{}", sysConfigDOList);
         if (sysConfigDOList.isEmpty()) {
             return;
         }
+        log.info("report sysConfigDOList:{}", sysConfigDOList);
         byte[] payload = ObjectMapperFactory.getObjectMapper().writeValueAsBytes(sysConfigDOList);
         weDPRTransport.asyncSendMessageByComponent(
                 TransportTopicEnum.SYS_CONFIG_REPORT.name(),
@@ -85,10 +84,10 @@ public class ReportQuartzJob implements Job {
         jobDatasetDO.setReportStatus(ReportStatusEnum.NO_REPORT.getReportStatus());
         jobDatasetDO.setLimitItems(Constant.DEFAULT_REPORT_PAGE_SIZE);
         List<JobDatasetDO> jobDatasetDOList = projectMapper.queryJobDatasetInfo(jobDatasetDO);
-        log.info("report jobDatasetDOList:{}", jobDatasetDOList);
         if (jobDatasetDOList.isEmpty()) {
             return;
         }
+        log.info("report jobDatasetDOList:{}", jobDatasetDOList);
         byte[] payload = ObjectMapperFactory.getObjectMapper().writeValueAsBytes(jobDatasetDOList);
         weDPRTransport.asyncSendMessageByComponent(
                 TransportTopicEnum.JOB_DATASET_REPORT.name(),
@@ -109,10 +108,10 @@ public class ReportQuartzJob implements Job {
         jobDO.setReportStatus(ReportStatusEnum.NO_REPORT.getReportStatus());
         jobDO.setLimitItems(Constant.DEFAULT_REPORT_PAGE_SIZE);
         List<JobDO> jobDOList = projectMapper.queryJobs(false, jobDO, null);
-        log.info("report jobDOList:{}", jobDOList);
         if (jobDOList.isEmpty()) {
             return;
         }
+        log.info("report jobDOList:{}", jobDOList);
         byte[] payload = ObjectMapperFactory.getObjectMapper().writeValueAsBytes(jobDOList);
         weDPRTransport.asyncSendMessageByComponent(
                 TransportTopicEnum.JOB_REPORT.name(),
@@ -133,10 +132,10 @@ public class ReportQuartzJob implements Job {
         projectDO.setReportStatus(ReportStatusEnum.NO_REPORT.getReportStatus());
         projectDO.setLimitItems(Constant.DEFAULT_REPORT_PAGE_SIZE);
         List<ProjectDO> projectDOList = projectMapper.queryProject(false, projectDO);
-        log.info("report projectDOList:{}", projectDOList);
         if (projectDOList.isEmpty()) {
             return;
         }
+        log.info("report projectDOList:{}", projectDOList);
         byte[] payload = ObjectMapperFactory.getObjectMapper().writeValueAsBytes(projectDOList);
         weDPRTransport.asyncSendMessageByComponent(
                 TransportTopicEnum.PROJECT_REPORT.name(),

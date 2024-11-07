@@ -20,8 +20,11 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoadBalancerImpl implements LoadBalancer {
+    private static final Logger logger = LoggerFactory.getLogger(LoadBalancerImpl.class);
 
     private final EntryPointFetcher entryPointFetcher;
     private final AtomicInteger lastIdx = new AtomicInteger(0);
@@ -50,6 +53,7 @@ public class LoadBalancerImpl implements LoadBalancer {
         int idx = serviceType.hashCode() % entryPointInfoList.size();
         int selectedIdx = Math.max(idx, 0);
         lastIdx.set(selectedIdx);
+        logger.info("selectService: {}", entryPointInfoList.get(selectedIdx).toString());
         return entryPointInfoList.get(selectedIdx);
     }
 }

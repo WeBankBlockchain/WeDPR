@@ -82,4 +82,7 @@ public class Constant {
     // the pir related fields
     public static final String PIR_ID_FIELD_NAME = "pir_sys_id";
     public static final String PIR_ID_HASH_FIELD_NAME = "pir_sys_id_hash";
+
+    //// the serviceType
+    public static final String PIR_SERVICE_TYPE = "PIR";
 }
