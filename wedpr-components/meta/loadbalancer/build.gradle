@@ -5,5 +5,6 @@ plugins {
 }
 dependencies{
     compile project(":wedpr-common-utils")
+    compile project(":wedpr-components-transport")
     compile libraries.spring, libraries.spring_boot
 }

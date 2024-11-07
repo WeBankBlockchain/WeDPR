@@ -54,7 +54,7 @@ public class PublishQuartzJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) {
-        log.info("PublishQuartzJob run");
+        log.debug("PublishQuartzJob run");
         try {
             syncPublishSuccessServiceInfo();
         } catch (Throwable e) {
@@ -64,7 +64,7 @@ public class PublishQuartzJob implements Job {
 
     // Note: only sync the publishing success service
     private void syncPublishSuccessServiceInfo() {
-        log.info("syncPublishSuccessServiceInfo...");
+        log.debug("syncPublishSuccessServiceInfo...");
         ServiceInfoQueryRequest request =
                 new ServiceInfoQueryRequest(0, ServiceStatus.PublishSuccess);
         request.setPageNum(1);

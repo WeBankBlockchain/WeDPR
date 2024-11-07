@@ -15,9 +15,15 @@
 
 package com.webank.wedpr.components.loadbalancer.config;
 
+import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.loadbalancer.impl.EntryPointConfigLoader;
+import com.webank.wedpr.components.loadbalancer.impl.EntryPointFetcherImpl;
 import com.webank.wedpr.components.loadbalancer.impl.LoadBalancerImpl;
+import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -26,10 +32,20 @@ import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class LoadBalanceConfig {
+    private static final Logger logger = LoggerFactory.getLogger(LoadBalanceConfig.class);
+    @Autowired private WeDPRTransport weDPRTransport;
+
+    private static boolean DEBUG_MODE = WeDPRConfig.apply("wedpr.service.debugMode", false);
+
     @Bean(name = "loadBalancer")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public LoadBalancer debugModeloadBalancer() {
-        return new LoadBalancerImpl(new EntryPointConfigLoader());
+    public LoadBalancer loadBalancer() {
+        if (DEBUG_MODE) {
+            logger.info("Create debug mode LoadBalancerImpl, load service config from config file");
+            return new LoadBalancerImpl(new EntryPointConfigLoader());
+        }
+        logger.info("Create LoadBalancerImpl, fetch the alive node from the gateway");
+        return new LoadBalancerImpl(new EntryPointFetcherImpl(weDPRTransport));
     }
 }

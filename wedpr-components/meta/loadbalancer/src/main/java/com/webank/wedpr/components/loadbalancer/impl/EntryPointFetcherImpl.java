@@ -13,18 +13,22 @@
  *
  */
 
-package com.webank.wedpr.components.loadbalancer;
+package com.webank.wedpr.components.loadbalancer.impl;
 
+import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
+import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.List;
 
-public interface LoadBalancer {
-    public static enum Policy {
-        ROUND_ROBIN,
-        HASH,
+public class EntryPointFetcherImpl implements EntryPointFetcher {
+    private final WeDPRTransport weDPRTransport;
+
+    public EntryPointFetcherImpl(WeDPRTransport weDPRTransport) {
+        this.weDPRTransport = weDPRTransport;
     }
 
-    ServiceMeta.EntryPointMeta selectService(Policy policy, String serviceType);
-
-    List<ServiceMeta.EntryPointMeta> selectAllEndPoint(String serviceType);
+    @Override
+    public List<ServiceMeta.EntryPointMeta> getAliveEntryPoints(String serviceName) {
+        return this.weDPRTransport.getAliveEntryPoints(serviceName);
+    }
 }

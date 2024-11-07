@@ -5,7 +5,6 @@ import com.webank.wedpr.common.utils.BaseResponse;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
-import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
@@ -27,6 +26,7 @@ import com.webank.wedpr.components.scheduler.workflow.WorkFlow;
 import com.webank.wedpr.components.scheduler.workflow.WorkFlowOrchestrator;
 import com.webank.wedpr.components.scheduler.workflow.builder.JobWorkFlowBuilderManager;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,14 +136,14 @@ public class DagSchedulerExecutor implements Executor {
     // Note: since the job may exist in any node, establish kill command to all nodes
     public void killModelJob(JobDO jobDO) throws Exception {
         logger.info("killModelJob: {}", jobDO.getId());
-        List<EntryPointInfo> aliveEntryPoint =
+        List<ServiceMeta.EntryPointMeta> aliveEntryPoint =
                 loadBalancer.selectAllEndPoint(ServiceName.MODEL.getValue());
         if (aliveEntryPoint == null || aliveEntryPoint.isEmpty()) {
             return;
         }
         boolean failed = false;
         String reason = "";
-        for (EntryPointInfo entryPointInfo : aliveEntryPoint) {
+        for (ServiceMeta.EntryPointMeta entryPointInfo : aliveEntryPoint) {
             try {
                 logger.info("kill job: {}, entrypoint: {}", jobDO.toString(), entryPointInfo);
                 HttpClientImpl httpClient =

@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.initializer;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.common.utils.WeDPRException;
 import java.io.InputStream;
@@ -33,6 +34,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.webank"})
@@ -53,7 +55,12 @@ public class WeDPRApplication extends SpringBootServletInitializer {
                         if (applicationContext == null) {
                             applicationContext = event.getApplicationContext();
                         }
-                        initWeDPRApplication(serviceName);
+                        Environment environment = applicationContext.getEnvironment();
+                        String serverListenPort = environment.getProperty("server.port");
+                        logger.info(
+                                "init WeDPRApplication application, listen port: {}",
+                                serverListenPort);
+                        initWeDPRApplication(serviceName, serverListenPort);
                         logger.info("init WeDPRApplication application success");
                     }
                 });
@@ -61,7 +68,7 @@ public class WeDPRApplication extends SpringBootServletInitializer {
         applicationContext = application.run(ArrayUtils.addAll(args, springArgs));
     }
 
-    protected static void initWeDPRApplication(String serviceName) {
+    protected static void initWeDPRApplication(String serviceName, String serverListenPort) {
         try {
             serviceInfo = new ServiceInfo();
             String appName =
@@ -82,7 +89,8 @@ public class WeDPRApplication extends SpringBootServletInitializer {
             }
             // load config
             loadConfig(serviceInfo.getConfigFile());
-
+            // Note: must load WeDPRCommonConfig after config file loaded
+            WeDPRCommonConfig.setServerListenPort(serverListenPort);
             logger.info("initWeDPRApplication for {} success", appName);
         } catch (Exception e) {
             logger.error("initWeDPRApplication failed, error: ", e);

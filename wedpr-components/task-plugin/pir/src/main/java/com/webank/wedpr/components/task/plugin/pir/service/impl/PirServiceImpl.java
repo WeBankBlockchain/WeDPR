@@ -16,10 +16,7 @@
 package com.webank.wedpr.components.task.plugin.pir.service.impl;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
-import com.webank.wedpr.common.utils.Constant;
-import com.webank.wedpr.common.utils.ThreadPoolService;
-import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.common.utils.WeDPRResponse;
+import com.webank.wedpr.common.utils.*;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialVerifierImpl;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
@@ -49,6 +46,7 @@ import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
+import com.webank.wedpr.sdk.jni.transport.TransportConfig;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -105,6 +103,15 @@ public class PirServiceImpl implements PirService {
         this.pirTopicSubscriber =
                 new PirTopicSubscriberImpl(
                         weDPRTransport, new CredentialVerifierImpl(null), pirServiceHook);
+        // get the access entrypoint
+        TransportConfig transportConfig = weDPRTransport.getTransportConfig();
+        String accessEntryPoint =
+                Common.getUrl(
+                        transportConfig.getSelfEndPoint().getHostIP()
+                                + ":"
+                                + WeDPRCommonConfig.getServerListenPort());
+        this.weDPRTransport.registerService(Constant.PIR_SERVICE_TYPE, accessEntryPoint);
+        logger.info("PirServiceImpl, register service, accessEntryPoint: {}", accessEntryPoint);
         registerPublishedServices();
         this.serviceAuthVerifier = new ServiceAuthVerifierImpl(serviceAuthMapper);
     }
