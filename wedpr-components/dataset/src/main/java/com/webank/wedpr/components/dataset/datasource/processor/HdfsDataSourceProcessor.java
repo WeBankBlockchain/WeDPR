@@ -2,6 +2,7 @@ package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.webank.wedpr.common.protocol.StorageType;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.category.HdfsDataSource;
@@ -15,6 +16,7 @@ import com.webank.wedpr.components.storage.impl.hdfs.HDFSStoragePath;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,10 +103,13 @@ public class HdfsDataSourceProcessor implements DataSourceProcessor {
                 endTimeMillis - startTimeMillis);
     }
 
+    @SneakyThrows
     @Override
     public void analyzeData() throws DatasetException {
         String cvsFilePath = dataSourceProcessorContext.getCvsFilePath();
         Dataset dataset = dataSourceProcessorContext.getDataset();
+        HdfsDataSource hdfsDataSource =
+                (HdfsDataSource) dataSourceProcessorContext.getDataSourceMeta();
 
         long startTimeMillis = System.currentTimeMillis();
 
@@ -131,6 +136,15 @@ public class HdfsDataSourceProcessor implements DataSourceProcessor {
         this.dataSourceProcessorContext.getDataset().setDatasetRecordCount(rowNum);
         this.dataSourceProcessorContext.getDataset().setDatasetVersionHash(md5Hash);
         this.dataSourceProcessorContext.getDataset().setDatasetSize(fileSize);
+
+        HDFSStoragePath storagePath = new HDFSStoragePath(hdfsDataSource.getFilePath());
+        String storagePathStr =
+                ObjectMapperFactory.getObjectMapper().writeValueAsString(storagePath);
+        this.dataSourceProcessorContext
+                .getDataset()
+                .setDatasetStorageType(storagePath.getStorageType());
+        this.dataSourceProcessorContext.getDataset().setDatasetStoragePath(storagePathStr);
+        this.dataSourceProcessorContext.setStoragePath(storagePath);
 
         String datasetId = dataset.getDatasetId();
 
