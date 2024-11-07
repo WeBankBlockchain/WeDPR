@@ -12,6 +12,7 @@ public class MpcRunJobRequest {
     private int selfIndex;
     private boolean isMalicious;
     private int bitLength;
-    private String inputFileName;
-    private String outputFileName;
+    private String mpcFilePath;
+    private String inputFilePath;
+    private String outputFilePath;
 }
