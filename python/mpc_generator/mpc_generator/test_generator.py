@@ -3,8 +3,8 @@
 import os
 import unittest
 
-from generator import CodeGenerator
-from mpc_exception import MpcCodeGenErrorCode, MpcCodeGenException
+from mpc_generator.generator import CodeGenerator
+from mpc_generator.mpc_exception import MpcCodeGenErrorCode, MpcCodeGenException
 
 FILE_PATH = os.path.abspath(__file__)
 

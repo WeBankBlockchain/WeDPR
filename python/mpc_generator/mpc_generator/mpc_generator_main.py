@@ -9,7 +9,7 @@ current_dir = os.path.dirname(current_file_real_path)
 
 sys.path.append(current_dir)
 
-from generator import CodeGenerator
+from mpc_generator.generator import CodeGenerator
 
 if len(sys.argv) <= 1:
     print("Usage: python generator_main.py <sql>")
