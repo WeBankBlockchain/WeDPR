@@ -102,9 +102,6 @@ project(":wedpr-components-hook").projectDir=file("wedpr-components/hook")
 include "wedpr-components-user"
 project(":wedpr-components-user").projectDir=file("wedpr-components/user")
 
-include "wedpr-components-admin"
-project(":wedpr-components-admin").projectDir=file("wedpr-components/admin")
-
 include ":wedpr-components-initializer"
 project(":wedpr-components-initializer").projectDir=file("wedpr-components/initializer")
 
@@ -116,9 +113,6 @@ project(":wedpr-pir").projectDir=file("wedpr-pir")
 
 include "wedpr-site"
 project(":wedpr-site").projectDir=file("wedpr-site")
-
-include 'wedpr-admin'
-project(":wedpr-admin").projectDir=file("wedpr-admin")
 
 include "wedpr-components-report"
 project(":wedpr-components-report").projectDir=file("wedpr-components/report")
