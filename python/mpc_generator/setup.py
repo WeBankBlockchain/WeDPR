@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
-# -----------------------------------------------------------------------------
-# Minimal Python version sanity check (from IPython/Jupyterhub)
-# -----------------------------------------------------------------------------
-
 import sys
 
 from setuptools import find_packages, setup
@@ -25,24 +18,19 @@ class bdist_egg_disabled(bdist_egg):
 
 
 setup_args = dict(
-    name='wedpr-authenticator',
+    name='wedpr_mpc_generator',
     packages=find_packages(),
     version="1.0.0.dev",
-    description="WeDPR Authenticator: Authenticate JupyterHub users with wedpr providers",
+    description="wedpr-mpc-generator: The mpc generator for WeDPR",
     long_description_content_type="text/markdown",
-    author="WeDPR Team",
-    author_email="jupyter@googlegroups.com",
-    url="https://jupyter.org",
-    license="BSD",
+    author="WeDPR Development Team",
+    author_email="wedpr@webank.com",
+    url="https://github.com/WeBankBlockchain/WeDPR",
+    license="Apache-2.0",
     platforms="Linux, Mac OS X, Windows",
     keywords=['Interactive', 'Interpreter', 'Shell', 'Web'],
     python_requires=">=3.8",
     include_package_data=True,
-    entry_points={
-        'jupyter_server.IdentityProviders': [
-            'wedpr-identity-provider = authenticator.wedpr_identity_provider.WeDPRIdentityProvider'
-        ],
-    },
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
