@@ -121,18 +121,10 @@ export default {
           text: '用户管理',
           icon_src: 'user',
           icon_active_src: 'user_active'
-        },
-        {
-          name: 'certificateManage',
-          path: '/certificateManage',
-          text: '证书管理',
-          icon_src: 'cert',
-          icon_active_src: 'cert_active'
         }
       ],
       defaultIndex: '',
-      timer: null,
-      isAgencyMode: process.env.VUE_APP_MODE === 'agency'
+      timer: null
     }
   },
   computed: {
@@ -145,8 +137,8 @@ export default {
     if (this.bread && this.bread.length) {
       this.defaultIndex = this.bread[0].name
     }
-    this.isAgencyMode && this.queryTODOCount()
-    this.isAgencyMode && (this.timer = setInterval(this.queryTODOCount, 90000))
+    this.queryTODOCount()
+    this.timer = setInterval(this.queryTODOCount, 90000)
   },
   watch: {
     defaultIndex(n) {
@@ -271,6 +263,6 @@ span.todo {
 }
 span.after-title {
   position: static;
-  margin-left: 6px
+  margin-left: 6px;
 }
 </style>

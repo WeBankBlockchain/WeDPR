@@ -84,7 +84,6 @@
 </template>
 <script>
 import { jobManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { jobStatusMap, jobStatusList } from 'Utils/constant.js'
 import { mapGetters } from 'vuex'
@@ -92,9 +91,6 @@ import { handleParamsValid } from 'Utils/index.js'
 export default {
   name: 'groupManage',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {

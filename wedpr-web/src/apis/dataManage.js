@@ -23,10 +23,6 @@ const queryDataset = (params) => http.get('/dataset/queryDataset', params)
 // 获取数据集
 const getFileShardsInfo = (params) => http.get('/dataset/getFileShardsInfo', params)
 const downloadFileShardData = (params) => http.postStream('/dataset/downloadFileShardData', params)
-// 机构管理员获取数据集
-const adminListDataset = (params) => http.get('/admin/listDataset', params)
-// 机构管理员获取数据集详情
-const adminQueryDataset = (params) => http.get('/admin/queryDataset', params)
 
 export default {
   downloadFileShardData,
@@ -40,7 +36,5 @@ export default {
   updateDataset,
   deleteDataset,
   listDataset,
-  queryDataset,
-  adminListDataset,
-  adminQueryDataset
+  queryDataset
 }

@@ -107,7 +107,6 @@
 </template>
 <script>
 import { dataManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import dataCard from '@/components/dataCard.vue'
 import { uploadFile } from 'Mixin/uploadFile.js'
 import { mapGetters, mapMutations } from 'vuex'
@@ -119,7 +118,6 @@ export default {
   name: 'dataManage',
   mixins: [uploadFile, userSelect],
   components: {
-    wePagination,
     dataCard
   },
   data() {

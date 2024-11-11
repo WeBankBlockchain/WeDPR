@@ -8,7 +8,7 @@ function resolve(dir) {
 }
 
 module.exports = defineConfig({
-  outputDir: process.env.VUE_APP_MODE === 'agency' ? 'dist' : 'manage',
+  outputDir: 'dist',
   transpileDependencies: true,
   parallel: true,
   publicPath: './',
@@ -37,6 +37,7 @@ module.exports = defineConfig({
         // target: 'http://apidesign.weoa.com/apidesign-core/mock/18220',
         // target: 'http://139.159.202.235:13000',
         target: 'http://139.159.202.235:8005',
+        // target: 'http://139.159.202.235:8016',
         // target: 'http://139.159.202.235:6855',
         // target: 'http://175.178.109.119:5810',
         secure: false,

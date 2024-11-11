@@ -96,12 +96,13 @@
               size="small"
               v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && !['RunFailed', 'Killed', 'RunSuccess'].includes(scope.row.status)"
               @click="showKillJobConfirm(scope.row)"
-              type="primary"
+              style="background-color: rgb(255, 77, 79)"
+              type="danger"
               >终止任务</el-button
             >
             <el-button
               size="small"
-              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && scope.row.status !== 'Running'"
+              v-if="scope.row.owner === userId && scope.row.ownerAgency === agencyId && !['Running', 'RunSuccess'].includes(scope.row.status)"
               @click="retryJobs(scope.row)"
               type="primary"
               >重试任务</el-button
@@ -132,13 +133,9 @@
 import { projectManageServer, jobManageServer, settingManageServer } from 'Api'
 import { jobStatusList, jobStatusMap, jobEnum } from 'Utils/constant.js'
 import { mapGetters } from 'vuex'
-import wePagination from '@/components/wePagination.vue'
 import { handleParamsValid } from 'Utils/index.js'
 export default {
   name: 'projectDetail',
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {
@@ -167,7 +164,6 @@ export default {
       typeList: [],
       jobStatusList,
       jobStatusMap,
-      pageMode: process.env.VUE_APP_MODE,
       jobEnum
     }
   },
@@ -375,6 +371,9 @@ span.info {
     padding: 0 12px;
     border: none;
     line-height: 24px;
+  }
+  ::v-deep .el-button--small {
+    padding: 6px 12px;
   }
 }
 </style>

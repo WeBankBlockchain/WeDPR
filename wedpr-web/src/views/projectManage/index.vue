@@ -77,14 +77,10 @@
 </template>
 <script>
 import { projectManageServer, jupyterManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { handleParamsValid } from 'Utils/index.js'
 import { mapGetters } from 'vuex'
 export default {
   name: 'dataManage',
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {

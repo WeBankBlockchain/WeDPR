@@ -64,7 +64,7 @@
           <el-form-item prop="sql">
             <el-input
               v-model="dataForm.sql"
-              placeholder="请输入SQL语句查询数据集，支持标准MySQL语句，示例：select id, x1, x2 from test limit 0, 10"
+              placeholder="请输入SQL语句查询数据集，支持标准MySQL语句，示例：select id, x1, x2 from table limit 0, 10"
               type="textarea"
               :autosize="{ minRows: 4 }"
               style="width: 480px"
@@ -75,7 +75,7 @@
         <el-form-item v-if="dataForm.dataSourceType.includes('HIVE')" label-width="126px" label="Hive SQL：" prop="sql">
           <el-input
             v-model="dataForm.sql"
-            placeholder="请输入Hive SQL语句查询数据集，示例： select id, x1, x2 from test limit 0, 10"
+            placeholder="请输入Hive SQL语句查询数据集，示例： select id, x1, x2 from table limit 0, 10"
             type="textarea"
             :autosize="{ minRows: 4 }"
             style="width: 480px"
@@ -176,17 +176,16 @@
 </template>
 <script>
 import { dataManageServer } from 'Api'
-import formCard from '@/components/formCard.vue'
 import weUpLoad from '@/components/upLoad.vue'
 import { SET_FILEUPLOADTASK } from 'Store/mutation-types.js'
 import { mapMutations, mapGetters } from 'vuex'
 import { userSelect } from 'Mixin/userSelect.js'
 import approveChain from '@/components/approveChain.vue'
+const sm2 = require('sm-crypto').sm2
 export default {
   name: 'dataCreate',
   mixins: [userSelect],
   components: {
-    formCard,
     weUpLoad,
     approveChain
   },
@@ -247,7 +246,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['fileUploadTask', 'agencyList', 'agencyId', 'groupList', 'userId']),
+    ...mapGetters(['fileUploadTask', 'agencyList', 'agencyId', 'groupList', 'userId', 'pbKey']),
     rules() {
       return {
         datasetTitle: [
@@ -376,6 +375,12 @@ export default {
         }
       ]
     },
+    encodePassword(password) {
+      const { pbKey } = this
+      const cipherMode = 1
+      const encryptedPassword = sm2.doEncrypt(password, pbKey, cipherMode)
+      return encryptedPassword
+    },
     // 获取数据集详情
     async getDetail(params) {
       this.loadingFlag = true
@@ -401,10 +406,19 @@ export default {
           }
         })
         if (this.type === 'reupload') {
-          dataForm.dataSourceType = dataSourceType
+          dataForm.dataSourceType = [dataSourceType]
           if (dataSourceType === 'DB') {
             const { dbType } = JSON.parse(dataSourceMeta)
             dataForm.dataSourceType = [dataSourceType, dbType]
+          }
+          if (dataSourceType === 'HIVE') {
+            const { sql, dynamicDataSource } = JSON.parse(dataSourceMeta)
+            dataForm.sql = sql
+            dataForm.dynamicDataSource = dynamicDataSource
+          }
+          if (dataSourceType === 'HDFS') {
+            const { filePath } = JSON.parse(dataSourceMeta)
+            dataForm.filePath = filePath
           }
         }
         this.dataForm = { ...dataForm }
@@ -440,6 +454,7 @@ export default {
           if (valid) {
             const { datasetId } = this
             const { dataSourceType, dataFile } = this.dataForm
+            console.log(dataSourceType, 'dataSourceType')
             if (dataSourceType === 'CSV' || dataSourceType === 'EXCEL') {
               if (this.fileUploadTask && this.fileUploadTask.datasetId) {
                 this.$message.info('有其他数据集正在上传，请稍后再试')
@@ -517,26 +532,26 @@ export default {
         const { dataSourceType } = this.dataForm
         switch (dataSourceType) {
           case 'MYSQL':
-            this.dataForm.sql = 'select id, x1, x2 from test'
+            this.dataForm.sql = 'select id, x1, x2 from table'
             break
           case 'ORACLE':
-            this.dataForm.sql = 'select id, x1, x2 from test'
+            this.dataForm.sql = 'select id, x1, x2 from table'
             break
           case 'DM':
-            this.dataForm.sql = 'select id, x1, x2 from test'
+            this.dataForm.sql = 'select id, x1, x2 from table'
             break
           case 'GAUSS':
-            this.dataForm.sql = 'select id, x1, x2 from test'
+            this.dataForm.sql = 'select id, x1, x2 from table'
             break
           default:
-            this.dataForm.sql = 'select id, x1, x2 from test'
+            this.dataForm.sql = 'select id, x1, x2 from table'
             break
         }
       }
     },
     onHiveSqlFocus() {
       if (!this.dataForm.sql) {
-        this.dataForm.sql = 'select id, x1, x2 from test limit 0, 10'
+        this.dataForm.sql = 'select id, x1, x2 from table limit 0, 10'
       }
     },
     async getDataUploadType() {
@@ -682,7 +697,7 @@ export default {
             const params = { datasetTitle, datasetDesc, datasetLabel, datasetVisibility, dataSourceType: sourceType }
             if (sourceType === 'DB') {
               const { dbIp, dbPort, database, userName, password, dynamicDataSource, sql } = this.dataForm
-              params.dataSourceMeta = { dbIp, dbPort, database, userName, password, dbType, sql, dynamicDataSource }
+              params.dataSourceMeta = { dbIp, dbPort, database, userName: this.encodePassword(userName), password: this.encodePassword(password), dbType, sql, dynamicDataSource }
             }
             if (sourceType === 'HDFS') {
               params.dataSourceMeta = { filePath }

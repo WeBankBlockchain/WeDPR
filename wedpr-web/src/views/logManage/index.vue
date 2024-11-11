@@ -60,16 +60,12 @@
 </template>
 <script>
 import { projectManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { opType, opTypeList, actionMap, actionStatus, actionStatusList, actionMapList, dataActionMapList, approveActionMapList, jobActionMapList } from 'Utils/constant.js'
 import { handleParamsValid } from 'Utils/index.js'
 export default {
   name: 'groupManage',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {

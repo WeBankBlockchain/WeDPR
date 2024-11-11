@@ -12,7 +12,6 @@
         <div class="custom-content-con-box">
           <div class="custom-content-con">
             <div class="info-con">
-              <img class="full" v-if="manageMode" @click="fullScreen" src="~Assets/images/full.png" alt="" />
               <el-dropdown>
                 <img class="av" src="~Assets/images/avatar_male.png" />
                 <el-dropdown-menu slot="dropdown">
@@ -42,8 +41,7 @@ export default {
   },
   data() {
     return {
-      showModifyModal: false,
-      manageMode: process.env.VUE_APP_MODE === 'manage'
+      showModifyModal: false
     }
   },
   props: {

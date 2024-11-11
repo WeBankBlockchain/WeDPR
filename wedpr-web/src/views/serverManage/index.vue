@@ -3,18 +3,18 @@
     <div class="form-search">
       <el-form :inline="true" @submit="queryHandle" :model="searchForm" ref="searchForm" size="small">
         <el-form-item prop="agency" label="发布机构：">
-          <el-select clearable size="small" style="width: 160px" v-model="searchForm.agency" placeholder="请选择">
+          <el-select clearable size="small" style="width: 150px" v-model="searchForm.agency" placeholder="请选择">
             <el-option :key="item" v-for="item in agencyList" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="owner" label="发布用户：">
-          <el-input clearable style="width: 160px" v-model="searchForm.owner" placeholder="请输入"> </el-input>
+          <el-input clearable style="width: 150px" v-model="searchForm.owner" placeholder="请输入"> </el-input>
         </el-form-item>
         <el-form-item prop="serviceName" label="服务名称：">
-          <el-input clearable style="width: 160px" v-model="searchForm.serviceName" placeholder="请输入"> </el-input>
+          <el-input clearable style="width: 150px" v-model="searchForm.serviceName" placeholder="请输入"> </el-input>
         </el-form-item>
         <el-form-item prop="status" label="发布状态：">
-          <el-select clearable size="small" style="width: 160px" v-model="searchForm.status" placeholder="请选择">
+          <el-select clearable size="small" style="width: 150px" v-model="searchForm.status" placeholder="请选择">
             <el-option :key="item" v-for="item in servicePulishStatusList" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -35,43 +35,52 @@
           </el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="default" :loading="queryFlag" @click="reset"> 重置 </el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button icon="el-icon-plus" type="primary" @click="startApplySelect"> 批量申请授权 </el-button>
+          <el-button type="default" @click="reset"> 重置 </el-button>
         </el-form-item>
         <div class="op-container">
           <div class="btn" @click="creatPsi"><img class="icon-btn" src="~Assets/images/lead icon_service1.png" alt="" /> 发布匿踪查询服务</div>
           <div class="btn model" @click="creatModel"><img class="icon-btn" src="~Assets/images/lead icon_service2.png" alt="" /> 发布模型预测服务</div>
         </div>
+      </el-form>
+    </div>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane label="我的服务" name="IsOwner"></el-tab-pane>
+      <el-tab-pane label="可申请的" name="NoPermission"></el-tab-pane>
+      <el-tab-pane label="已授权的" name="Authorized"></el-tab-pane>
+    </el-tabs>
+    <div>
+      <div v-if="activeName === 'NoPermission'" class="apply-container">
+        <el-button size="small" icon="el-icon-plus" type="primary" @click="startApplySelect"> 批量申请授权 </el-button>
         <div class="handle" v-if="showApplySelect">
           <span>已选{{ selectdDataList.length }}项</span><el-button size="small" :disabled="!selectdDataList.length" type="primary" @click="applyAuth"> 确认申请 </el-button
           ><el-button size="small" type="info" @click="cancelApply"> 取消 </el-button>
         </div>
-      </el-form>
+      </div>
+      <div class="card-container" v-loading="loadingFlag">
+        <serviceCard
+          @selected="(checked) => selected(checked, item)"
+          :selected="selectdDataList.map((v) => v.serviceId).includes(item.serviceId)"
+          @deleteService="showDeleteModal(item)"
+          @modifyData="modifyData(item)"
+          v-for="item in tableData"
+          :serviceInfo="item"
+          :key="item.serviceId"
+        />
+      </div>
+      <we-pagination
+        :pageSizesOption="[8, 12, 16, 24, 32]"
+        :total="total"
+        :page_offset="pageData.page_offset"
+        :page_size="pageData.page_size"
+        @paginationChange="paginationHandle"
+      ></we-pagination>
     </div>
-    <div class="card-container">
-      <serviceCard
-        @selected="(checked) => selected(checked, item)"
-        :selected="selectdDataList.map((v) => v.serviceId).includes(item.serviceId)"
-        @deleteService="showDeleteModal(item)"
-        @modifyData="modifyData(item)"
-        v-for="item in tableData"
-        :serviceInfo="item"
-        :key="item.serviceId"
-      />
-    </div>
-    <we-pagination
-      :pageSizesOption="[8, 12, 16, 24, 32]"
-      :total="total"
-      :page_offset="pageData.page_offset"
-      :page_size="pageData.page_size"
-      @paginationChange="paginationHandle"
-    ></we-pagination>
+    <el-empty v-if="!total" :image-size="120" desccription="暂无数据">
+      <img slot="image" src="~Assets/images/pic_empty_news.png" alt="" />
+    </el-empty>
   </div>
 </template>
 <script>
-import wePagination from '@/components/wePagination.vue'
 import { serviceManageServer } from 'Api'
 import { handleParamsValid } from 'Utils/index.js'
 import { serviceTypeEnum, servicePulishStatusList } from 'Utils/constant.js'
@@ -80,7 +89,6 @@ import serviceCard from '@/components/serviceCard.vue'
 export default {
   name: 'serverManage',
   components: {
-    wePagination,
     serviceCard
   },
   data() {
@@ -125,7 +133,8 @@ export default {
       ],
       selectdDataList: [],
       showApplySelect: false,
-      servicePulishStatusList
+      servicePulishStatusList,
+      activeName: 'IsOwner'
     }
   },
   computed: {
@@ -135,6 +144,22 @@ export default {
     this.getPublishList()
   },
   methods: {
+    handleClick() {
+      this.getPublishList()
+    },
+    getParams() {
+      const { activeName } = this
+      let params = {}
+      switch (activeName) {
+        case 'IsOwner':
+          params = { agency: this.agencyId, owner: this.userId }
+          break
+        default:
+          params = { authStatus: activeName }
+          break
+      }
+      return params
+    },
     cancelApply() {
       this.showApplySelect = false
       this.selectdDataList = []
@@ -215,7 +240,7 @@ export default {
         params.startTime = createTime[0]
         params.endTime = createTime[1]
       }
-      params = { condition: { ...params, serviceId: '' }, serviceIdList: [], pageNum: page_offset, pageSize: page_size }
+      params = { condition: { ...params, serviceId: '', ...this.getParams() }, serviceIdList: [], pageNum: page_offset, pageSize: page_size }
       this.loadingFlag = true
       const res = await serviceManageServer.getPublishList(params)
       this.loadingFlag = false
@@ -301,6 +326,12 @@ div.card-container {
   margin-left: -16px;
   margin-right: -16px;
   overflow: hidden;
+}
+div.apply-container {
+  display: flex;
+  div.handle{
+    padding-left: 20px;
+  }
 }
 div.handle {
   span {

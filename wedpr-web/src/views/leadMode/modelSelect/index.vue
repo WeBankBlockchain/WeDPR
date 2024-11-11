@@ -17,7 +17,6 @@
 </template>
 <script>
 import { settingManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { mapGetters } from 'vuex'
 import modelCard from '@/components/modelCard.vue'
 import { jobModelSettingMap } from 'Utils/constant.js'
@@ -49,8 +48,7 @@ export default {
     }
   },
   components: {
-    modelCard,
-    wePagination
+    modelCard
   },
   data() {
     return {

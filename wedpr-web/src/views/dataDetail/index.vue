@@ -67,7 +67,11 @@
     <div class="tableContent autoTableWrap" v-if="dataInfo.isOwner && total">
       <el-table :max-height="tableHeight" size="small" v-loading="loadingFlag" :data="tableData" :border="true" class="table-wrap">
         <el-table-column label="任务ID" prop="taskID" show-overflow-tooltip />
-        <el-table-column label="所属项目" prop="projectName" show-overflow-tooltip />
+        <el-table-column label="所属项目" prop="projectId" show-overflow-tooltip>
+          <template v-slot="scope">
+            <span class="link" @click="goProjectDetail(scope.row.projectId)">{{ scope.row.projectId }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="发起机构" prop="ownerAgency" />
         <el-table-column label="发起用户" prop="owner" />
         <el-table-column label="创建时间" prop="createTime" />
@@ -100,13 +104,9 @@ import { dataManageServer, projectManageServer } from 'Api'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { mapGetters } from 'vuex'
 import { jobStatusMap } from 'Utils/constant.js'
-import wePagination from '@/components/wePagination.vue'
 export default {
   name: 'dataDetail',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       dataInfo: {
@@ -137,6 +137,9 @@ export default {
     ...mapGetters(['userId', 'agencyId'])
   },
   methods: {
+    goProjectDetail(projectId) {
+      this.$router.push({ path: '/projectDetail', query: { projectId } })
+    },
     // 获取数据集详情
     async getDetail() {
       this.loadingFlag = true
@@ -240,6 +243,10 @@ div.info-container {
 }
 span.info {
   color: #262a32;
+}
+span.link {
+  cursor: pointer;
+  color: #3071f2;
 }
 .tableContent {
   ::v-deep .el-tag {

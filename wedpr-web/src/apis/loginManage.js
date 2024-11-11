@@ -14,11 +14,9 @@ const loginOut = (params) => http.delete('/logout', params)
 const register = (params) => http.post('/register', params)
 // 登录
 const login = (params) => http.post('/login', params)
-// 登录
-const adminLogin = (params) => http.post('/admin/login', params)
 // 机构信息
 const userAgency = (params) => http.get('/userAgency', params)
 
 // 快捷登录
 
-export default { adminLogin, register, login, loginOut, userAgency }
+export default { register, login, loginOut, userAgency }

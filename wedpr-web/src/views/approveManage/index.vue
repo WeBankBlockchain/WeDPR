@@ -138,7 +138,6 @@
 </template>
 <script>
 import { authManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { approveStatusList, approveStatusMap } from 'Utils/constant.js'
 import { handleParamsValid } from 'Utils/index.js'
@@ -147,9 +146,6 @@ import { SET_TODONUM } from 'Store/mutation-types.js'
 export default {
   name: 'approveManage',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       PendingStatus: ['ToConfirm', 'Progressing', 'Approving'],

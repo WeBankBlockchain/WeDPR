@@ -70,20 +70,16 @@
   </div>
 </template>
 <script>
-import formCard from '@/components/formCard.vue'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import dataCard from '@/components/dataCard.vue'
 import { serviceManageServer, dataManageServer, accessKeyManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { searchTypeEnum, serviceTypeEnum } from 'Utils/constant.js'
 import { mapGetters } from 'vuex'
 export default {
   name: 'pirServerCreate',
   mixins: [tableHeightHandle],
   components: {
-    formCard,
-    dataCard,
-    wePagination
+    dataCard
   },
   data() {
     return {
@@ -263,7 +259,7 @@ export default {
         const { credentials = [] } = res.data
         this.accessKeyList = credentials.map((v) => {
           return {
-            label: v.desc,
+            label: v.desc + '-' + v.accessKeyID,
             value: v.accessKeyID
           }
         })
