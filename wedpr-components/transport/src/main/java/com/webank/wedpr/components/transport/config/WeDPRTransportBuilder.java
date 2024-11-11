@@ -34,7 +34,7 @@ public class WeDPRTransportBuilder {
     @Bean(name = "weDPRTransport")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @ConditionalOnMissingBean
-    public WeDPRTransport weDPRTransport() {
+    public WeDPRTransport weDPRTransport() throws Exception {
         // create the transportConfig
         TransportConfig config =
                 new TransportConfig(
