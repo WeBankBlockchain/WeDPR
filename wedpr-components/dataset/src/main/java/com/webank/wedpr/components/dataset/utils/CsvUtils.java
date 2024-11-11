@@ -175,6 +175,12 @@ public class CsvUtils {
                 sql,
                 outputCsvFilePath);
 
+        // trim ;
+        sql = sql.trim();
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
+
         final boolean[] bFirst = {true};
 
         // Create an output stream for writing to a CSV file.
@@ -182,6 +188,7 @@ public class CsvUtils {
                 PrintWriter csvWriter = new PrintWriter(fileWriter)) {
 
             SQLExecutor sqlExecutor = new SQLExecutor();
+            String finalSql = sql;
             sqlExecutor.executeSQL(
                     jdbcUrl,
                     user,
@@ -217,12 +224,12 @@ public class CsvUtils {
                                 logger.error(
                                         "table field value is null, jdbcUrl: {}, sql: {}",
                                         jdbcUrl,
-                                        sql);
+                                        finalSql);
                                 throw new DatasetException(
                                         "table field value is null, jdbcUrl: "
                                                 + jdbcUrl
                                                 + ", sql"
-                                                + sql);
+                                                + finalSql);
                             }
 
                             csvWriter.write(rowValue);

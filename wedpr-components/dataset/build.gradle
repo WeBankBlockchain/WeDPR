@@ -11,6 +11,7 @@ ext {
 }
 
 dependencies {
+    compile project(":wedpr-components-user")
     compile project(":wedpr-components-db-mapper-dataset")
     compile project(":wedpr-components-storage")
     compile project(":wedpr-components-authorization")

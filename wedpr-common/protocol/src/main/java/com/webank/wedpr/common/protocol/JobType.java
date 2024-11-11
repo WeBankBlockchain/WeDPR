@@ -117,6 +117,11 @@ public enum JobType {
                 || ordinal() == JobType.LR_PREDICT.ordinal()) {
             return WorkerNodeType.MODEL;
         }
+
+        if (ordinal() == JobType.MPC.ordinal()) {
+            return WorkerNodeType.MPC;
+        }
+
         throw new WeDPRException("Not find the workerNodeType for the " + getType() + " job!");
     }
 

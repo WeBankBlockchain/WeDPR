@@ -35,7 +35,7 @@ public class MpcUtils {
     public static final int DEFAULT_MPC_CONTENT_SHARE_BYTES_LENGTH = 64;
     public static final String MPC_FIELD_NORMALIZED_NAMES = "field%d";
     public static final String MPC_SOURCE_RECORD_COUNT_LABEL = "$(source%d_record_count)";
-    public static final String MPC_SHARE_BYTES_LENGTH_LABEL = "# BIT_LENGTH = ";
+    public static final String MPC_SHARE_BYTES_LENGTH_PATTERN = "BIT_LENGTH = (\\d+)";
 
     public static String transSql2MpcCode(String sql)
             throws WeDPRException, IOException, InterruptedException {
@@ -59,58 +59,30 @@ public class MpcUtils {
     }
 
     public static int getShareBytesLength(String mpcContent) {
-        String target = MPC_SHARE_BYTES_LENGTH_LABEL;
-        int startIndex = mpcContent.indexOf(target);
-        if (startIndex != -1) {
-            int endIndex = mpcContent.indexOf('\n', startIndex + target.length());
-            if (endIndex != -1) {
-                String bitLengthStr =
-                        mpcContent.substring(startIndex + target.length(), endIndex).trim();
-                try {
-                    return Integer.parseInt(bitLengthStr);
-                } catch (NumberFormatException e) {
-                    return DEFAULT_MPC_CONTENT_SHARE_BYTES_LENGTH;
-                }
-            }
+
+        Pattern pattern = Pattern.compile(MPC_SHARE_BYTES_LENGTH_PATTERN);
+        Matcher matcher = pattern.matcher(mpcContent);
+
+        int shareBitLength = DEFAULT_MPC_CONTENT_SHARE_BYTES_LENGTH;
+        if (matcher.find()) {
+            shareBitLength = Integer.parseInt(matcher.group(1));
         }
-        return DEFAULT_MPC_CONTENT_SHARE_BYTES_LENGTH;
+        return shareBitLength;
     }
 
     public static int getDatasetColumnCount(String mpcContent, int selfIndex)
             throws WeDPRException {
-        String[] lines = mpcContent.split("\n");
-        // String pattern = "source" + selfIndex + "_column_count\\s*=\\s*";
-        Pattern pattern = Pattern.compile("source" + selfIndex + "_column_count\\s*=\\s*");
-        for (String line : lines) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.find()) {
-                int index = line.indexOf('=');
-                if (index != -1) {
-                    String columnCountStr = line.substring(index + 1).trim().replace("\n", "");
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "mpc content dataset column count: {}, index: {}",
-                                columnCountStr,
-                                selfIndex);
-                    }
+        String strPattern = "source" + selfIndex + "_column_count\\s*=\\s*(\\d+)";
+        Pattern pattern = Pattern.compile(strPattern);
+        Matcher matcher = pattern.matcher(mpcContent);
 
-                    try {
-                        return Integer.parseInt(columnCountStr);
-                    } catch (NumberFormatException e) {
-                        logger.warn(
-                                "invalid mpc content, line: {}, index: {}, NumberFormatException: ",
-                                columnCountStr,
-                                selfIndex,
-                                e);
-                        throw new WeDPRException(
-                                "Not found valid dataset column count in mpc content");
-                    }
-                }
-            }
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
         }
 
-        throw new WeDPRException("Not found dataset column count in mpc content");
+        throw new WeDPRException(
+                "Not found \"source" + selfIndex + "_column_count\" in mpc content");
     }
 
     public static int getIdFieldIndex(List<String> fieldNames) throws WeDPRException {
@@ -359,5 +331,14 @@ public class MpcUtils {
         }
 
         return lineNum;
+    }
+
+    public static void main(String[] args) throws WeDPRException {
+        String mpcContent =
+                "## original SQL => select 2 * source0.field0 * source1.field0 from source0,source1;\\\\n# BIT_LENGTH = 128\\\\n\\\\n# This file is generated automatically by ams\\\\n'''\\\\nSELECT 2 * source0.field0 * source1.field0\\\\nFROM source0,\\\\n     source1;\\\\n'''\\\\n\\\\nfrom ppc import *\\\\n\\\\nn_threads = 8\\\\nvalue_type = pfix\\\\n\\\\npfix.set_precision(16, 47)\\\\n\\\\nSOURCE0 = 0\\\\nsource0_record_count = $(source0_record_count)\\\\nsource0_column_count = 1\\\\nsource0_record = Matrix(source0_record_count, source0_column_count, value_type)\\\\n\\\\nSOURCE1 = 1\\\\nsource1_record_count = $(source1_record_count)\\\\nsource1_column_count = 1\\\\nsource1_record = Matrix(source1_record_count, source1_column_count, value_type)\\\\n\\\\n# basic arithmetic operation means that all parties have same number of record\\\\nresult_record = $(source0_record_count)\\\\nresults = Matrix(result_record, 1, value_type)\\\\n\\\\n\\\\ndef read_data_collection(data_collection, party_id):\\\\n    if data_collection.sizes[0] > 0:\\\\n        data_collection.input_from(party_id)\\\\n\\\\n\\\\ndef calculate_result_0():\\\\n    @for_range_opt_multithread(n_threads, result_record)\\\\n    def _(i):\\\\n        results[i][0] = 2*source0_record[i][0]*source1_record[i][0]\\\\n\\\\n\\\\ndef print_results():\\\\n    result_fields = ['result0']\\\\n    set_display_field_names(result_fields)\\\\n\\\\n    @for_range_opt(result_record)\\\\n    def _(i):\\\\n        result_values = [results[i][0].reveal()]\\\\n        display_data(result_values)\\\\n\\\\n\\\\ndef ppc_main():\\\\n    read_data_collection(source0_record, SOURCE0)\\\\n    read_data_collection(source1_record, SOURCE1)\\\\n    calculate_result_0()\\\\n\\\\n    print_results()\\\\n\\\\n\\\\nppc_main()\\\\n\\\"}";
+        int datasetColumnCount0 = getDatasetColumnCount(mpcContent, 0);
+        int datasetColumnCount1 = getDatasetColumnCount(mpcContent, 1);
+        System.out.println(datasetColumnCount0);
+        System.out.println(datasetColumnCount1);
     }
 }

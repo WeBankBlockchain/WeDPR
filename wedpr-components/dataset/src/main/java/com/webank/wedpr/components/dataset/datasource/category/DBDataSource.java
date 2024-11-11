@@ -19,6 +19,9 @@ public class DBDataSource implements DataSourceMeta {
     // verify sql syntax and test connectivity
     boolean verifySqlSyntaxAndTestCon = true;
 
+    // if userName and password field is encryped
+    boolean encryptionModel = true;
+
     @Override
     public boolean dynamicDataSource() {
         return dynamicDataSource;

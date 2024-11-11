@@ -18,6 +18,7 @@ public class Main {
         String password = "123456";
 
         DBDataSource dbDataSource = new DBDataSource();
+        dbDataSource.setEncryptionModel(false);
         dbDataSource.setSql(sql);
         dbDataSource.setDatabase(database);
         dbDataSource.setDbIp(host);

@@ -65,6 +65,9 @@ public class MPCJobParam {
             }
         }
 
+        //
+        this.mpcContent = this.mpcContent.replace("\r\n", "\n");
+
         this.shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
         this.needRunPsi = MpcUtils.checkNeedRunPsi(jobID, mpcContent);
 
@@ -85,7 +88,7 @@ public class MPCJobParam {
         logger.info(
                 "## check params, selfIndex: {}, selfDataset: {}, shareBytesLength: {}, needRunPsi: {}",
                 selfIndex,
-                selfDataset,
+                selfDataset.getDataset().getDatasetID(),
                 shareBytesLength,
                 needRunPsi);
     }

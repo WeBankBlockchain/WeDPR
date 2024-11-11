@@ -10,6 +10,7 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
+import com.webank.wedpr.components.user.config.UserJwtConfig;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,6 +26,7 @@ public class DataSourceProcessorContext {
     private FileStorageInterface.FilePermissionInfo filePermissionInfo;
     private DatasetTransactionalWrapper datasetTransactionalWrapper;
     private DatasetConfig datasetConfig;
+    private UserJwtConfig userJwtConfig;
     private HiveConfig hiveConfig;
     private UserInfo userInfo;
 

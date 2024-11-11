@@ -5,7 +5,6 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.client.MpcClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
-import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCExecutorConfig;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import org.slf4j.Logger;
@@ -47,8 +46,8 @@ public class MpcWorker extends Worker {
                 workerId,
                 workerArgs);
 
-        String mpcUrl = MPCExecutorConfig.getMpcUrl();
-        String url = entryPoint.getUrl(mpcUrl);
+        //        String mpcUrl = MPCExecutorConfig.getMpcUrl();
+        String url = entryPoint.getUrl(null);
 
         if (logger.isDebugEnabled()) {
             logger.debug("mpc url: {}, jobId: {}", url, jobId);
