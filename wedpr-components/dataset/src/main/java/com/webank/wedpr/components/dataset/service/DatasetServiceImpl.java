@@ -16,6 +16,7 @@ import com.webank.wedpr.components.dataset.message.CreateDatasetResponse;
 import com.webank.wedpr.components.dataset.message.ListDatasetResponse;
 import com.webank.wedpr.components.dataset.message.UpdateDatasetRequest;
 import com.webank.wedpr.components.dataset.permission.DatasetPermissionGenerator;
+import com.webank.wedpr.components.dataset.sqlutils.SQLUtils;
 import com.webank.wedpr.components.dataset.sync.api.DatasetSyncerApi;
 import com.webank.wedpr.components.dataset.utils.ThreadPoolUtils;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
@@ -106,6 +107,8 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         if (dataSourceMeta == null) {
             dataSourceMeta = "";
         }
+
+        dataSourceMeta = SQLUtils.clearDbDataSource(dataSourceMeta);
 
         dataset.setDatasetId(datasetId);
         dataset.setDatasetTitle(createDatasetRequest.getDatasetTitle());

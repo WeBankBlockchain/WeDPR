@@ -104,8 +104,8 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
         Dataset dataset = dataSourceProcessorContext.getDataset();
         String datasetId = dataset.getDatasetId();
 
-        String strDBType = dbDataSource.getDbType();
-        DBType dbType = DBType.fromStrType(strDBType);
+        String strDbType = dbDataSource.getDbType();
+        DBType dbType = DBType.fromStrType(strDbType);
 
         String datasetBaseDir = datasetConfig.getDatasetBaseDir();
         String cvsFilePath = datasetBaseDir + File.separator + datasetId;

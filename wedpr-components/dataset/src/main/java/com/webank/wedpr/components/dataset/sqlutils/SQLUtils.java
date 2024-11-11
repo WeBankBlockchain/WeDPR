@@ -14,6 +14,22 @@ public class SQLUtils {
 
     private SQLUtils() {}
 
+    public static String clearDataSourceField(String fieldName, String dataSourceMeta) {
+        return dataSourceMeta.replaceAll(
+                "\"" + fieldName + "\\s*\":\\s*\"[^\"]*\"", "\"" + fieldName + "\": \"\"");
+    }
+
+    public static String clearDbDataSource(String dataSourceMeta) {
+
+        dataSourceMeta = clearDataSourceField("username", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("password", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("dbIp", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("dbPort", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("database", dataSourceMeta);
+
+        return dataSourceMeta;
+    }
+
     public static void validateDataSourceParameters(DBType dbType, DBDataSource dbDataSource)
             throws DatasetException {
 
