@@ -19,7 +19,8 @@ public class HiveDataSourceProcessor extends DBDataSourceProcessor {
     private static final Logger logger = LoggerFactory.getLogger(HiveDataSourceProcessor.class);
 
     @Override
-    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta) throws DatasetException {
+    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta, DatasetConfig datasetConfig)
+            throws DatasetException {
         long startTimeMillis = System.currentTimeMillis();
 
         HiveDataSource hiveDataSource =
@@ -34,7 +35,7 @@ public class HiveDataSourceProcessor extends DBDataSourceProcessor {
         }
 
         // check if single select
-        SQLUtils.isSingleSelectStatement(sql);
+        SQLUtils.isSingleSelectStatement(sql, datasetConfig.getSqlValidationPattern());
 
         long endTimeMillis = System.currentTimeMillis();
         logger.info(

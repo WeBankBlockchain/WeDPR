@@ -186,7 +186,8 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         boolean dynamicDataSource = false;
 
         // parse datasource meta
-        DataSourceMeta dataSourceMeta = dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta);
+        DataSourceMeta dataSourceMeta =
+                dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta, datasetConfig);
         if (dataSourceMeta != null) {
             dynamicDataSource = dataSourceMeta.dynamicDataSource();
         }

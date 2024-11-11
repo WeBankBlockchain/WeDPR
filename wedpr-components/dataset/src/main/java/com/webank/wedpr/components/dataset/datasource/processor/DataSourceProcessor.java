@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.dataset.datasource.processor;
 
+import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import org.slf4j.Logger;
@@ -10,7 +11,8 @@ public interface DataSourceProcessor {
     Logger logger = LoggerFactory.getLogger(DataSourceProcessor.class);
 
     // parse datasource meta
-    DataSourceMeta parseDataSourceMeta(String strDataSourceMeta) throws DatasetException;
+    DataSourceMeta parseDataSourceMeta(String strDataSourceMeta, DatasetConfig datasetConfig)
+            throws DatasetException;
 
     default void setContext(DataSourceProcessorContext context) {}
 

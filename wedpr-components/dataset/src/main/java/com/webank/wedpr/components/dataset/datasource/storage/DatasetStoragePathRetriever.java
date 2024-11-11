@@ -86,7 +86,8 @@ public class DatasetStoragePathRetriever {
 
         DataSourceProcessor dataSourceProcessor =
                 dataSourceProcessorDispatcher.getDataSourceProcessor(strDataSourceType);
-        DataSourceMeta dataSourceMeta = dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta);
+        DataSourceMeta dataSourceMeta =
+                dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta, datasetConfig);
 
         if ((dataSourceMeta != null) && dataSourceMeta.dynamicDataSource()) {
             // dynamic data source

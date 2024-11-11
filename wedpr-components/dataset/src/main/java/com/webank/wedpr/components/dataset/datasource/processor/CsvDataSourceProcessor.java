@@ -34,7 +34,8 @@ public class CsvDataSourceProcessor implements DataSourceProcessor {
     protected DataSourceProcessorContext dataSourceProcessorContext;
 
     @Override
-    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta) throws DatasetException {
+    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta, DatasetConfig datasetConfig)
+            throws DatasetException {
 
         if (strDataSourceMeta == null || strDataSourceMeta.trim().isEmpty()) {
             return null;

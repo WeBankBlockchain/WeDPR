@@ -30,7 +30,8 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DBDataSourceProcessor.class);
 
     @Override
-    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta) throws DatasetException {
+    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta, DatasetConfig datasetConfig)
+            throws DatasetException {
 
         long startTimeMillis = System.currentTimeMillis();
 
@@ -76,11 +77,10 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
             }
         }
 
-        // check if single select
-        SQLUtils.isSingleSelectStatement(sql);
-
         boolean verifySqlSyntaxAndTestCon = dbDataSource.isVerifySqlSyntaxAndTestCon();
         if (verifySqlSyntaxAndTestCon) {
+            // check if single select
+            SQLUtils.isSingleSelectStatement(sql, datasetConfig.getSqlValidationPattern());
             // validate parameters, test db connectivity, validate SQL syntax
             SQLUtils.validateDataSourceParameters(dbType, dbDataSource);
         }
