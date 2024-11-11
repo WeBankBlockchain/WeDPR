@@ -1,12 +1,12 @@
 package com.webank.wedpr.components.scheduler.dag.worker;
 
 import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.client.PsiClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class PsiWorker extends Worker {
         String workerId = getWorkerId();
         String workerArgs = getArgs();
 
-        EntryPointInfo entryPoint =
+        ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
                         .selectService(LoadBalancer.Policy.ROUND_ROBIN, ServiceName.PSI.getValue());
         if (entryPoint == null) {

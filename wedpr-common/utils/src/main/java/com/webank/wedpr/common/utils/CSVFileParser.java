@@ -15,11 +15,13 @@
 
 package com.webank.wedpr.common.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.opencsv.CSVReaderHeaderAware;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
+import lombok.Data;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,19 +47,8 @@ public class CSVFileParser {
         }
     }
 
-    public static Set<String> getFields(String filePath) throws Exception {
-        return (Set<String>)
-                (loadCSVFile(
-                        filePath,
-                        WeDPRCommonConfig.getReadChunkSize(),
-                        new ParseHandler() {
-                            @Override
-                            public Object call(CSVReaderHeaderAware reader) throws Exception {
-                                return reader.readMap().keySet();
-                            }
-                        }));
-    }
-
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ExtractConfig {
         private String originalFilePath;
         private List<String> extractFields;
@@ -66,61 +57,11 @@ public class CSVFileParser {
         private Integer writeChunkSize = WeDPRCommonConfig.getWriteChunkSize();
         private Integer readChunkSize = WeDPRCommonConfig.getReadChunkSize();
 
-        public ExtractConfig() {}
-
         public ExtractConfig(
                 String originalFilePath, List<String> extractFields, String extractFilePath) {
             this.originalFilePath = originalFilePath;
             this.extractFields = extractFields;
             this.extractFilePath = extractFilePath;
-        }
-
-        public String getOriginalFilePath() {
-            return originalFilePath;
-        }
-
-        public void setOriginalFilePath(String originalFilePath) {
-            this.originalFilePath = originalFilePath;
-        }
-
-        public List<String> getExtractFields() {
-            return extractFields;
-        }
-
-        public void setExtractFields(List<String> extractFields) {
-            this.extractFields = extractFields;
-        }
-
-        public String getExtractFilePath() {
-            return extractFilePath;
-        }
-
-        public void setExtractFilePath(String extractFilePath) {
-            this.extractFilePath = extractFilePath;
-        }
-
-        public String getFieldSplitter() {
-            return fieldSplitter;
-        }
-
-        public void setFieldSplitter(String fieldSplitter) {
-            this.fieldSplitter = fieldSplitter;
-        }
-
-        public Integer getWriteChunkSize() {
-            return writeChunkSize;
-        }
-
-        public void setWriteChunkSize(Integer writeChunkSize) {
-            this.writeChunkSize = writeChunkSize;
-        }
-
-        public Integer getReadChunkSize() {
-            return readChunkSize;
-        }
-
-        public void setReadChunkSize(Integer readChunkSize) {
-            this.readChunkSize = readChunkSize;
         }
 
         @Override
@@ -157,7 +98,7 @@ public class CSVFileParser {
                         Map<String, String> fieldsMapping =
                                 Common.trimAndMapping(headerInfo.keySet());
                         for (String field : extractConfig.getExtractFields()) {
-                            if (!fieldsMapping.keySet().contains(field.trim())) {
+                            if (!fieldsMapping.containsKey(field.trim())) {
                                 String errorMsg =
                                         "extractFields failed for the field "
                                                 + field
@@ -173,6 +114,8 @@ public class CSVFileParser {
                                         new FileWriter(extractConfig.getExtractFilePath()),
                                         extractConfig.getWriteChunkSize())) {
                             // write the data(Note: here no need to write the header)
+                            writer.write(
+                                    Constant.DEFAULT_ID_FIELD + Constant.DEFAULT_LINE_SPLITTER);
                             while ((row = reader.readMap()) != null) {
                                 int column = 0;
                                 for (String field : extractConfig.getExtractFields()) {
@@ -202,36 +145,38 @@ public class CSVFileParser {
                 });
     }
 
-    public static List<List<String>> processCsv2SqlMap(String[] tableFields, String csvFilePath)
+    public interface RowContentHandler {
+        void handle(List<String> rowContent) throws Exception;
+    }
+
+    public static void processCsvContent(
+            String[] tableFields, String csvFilePath, RowContentHandler rowContentHandler)
             throws Exception {
-        return (List<List<String>>)
-                loadCSVFile(
-                        csvFilePath,
-                        WeDPRCommonConfig.getReadChunkSize(),
-                        reader -> {
-                            List<List<String>> resultValue = new ArrayList<>();
-                            Map<String, String> row;
-                            while ((row = reader.readMap()) != null) {
-                                List<String> rowValue = new ArrayList<>();
-                                for (String field : tableFields) {
-                                    Map<String, String> rowFieldsMapping =
-                                            Common.trimAndMapping(row.keySet());
-                                    if (!rowFieldsMapping.keySet().contains(field.trim())) {
-                                        String errorMsg =
-                                                "extractFields failed for the field "
-                                                        + field
-                                                        + " not existed in the file "
-                                                        + ArrayUtils.toString(
-                                                                rowFieldsMapping.keySet());
-                                        logger.warn(errorMsg);
-                                        throw new WeDPRException(-1, errorMsg);
-                                    }
-                                    rowValue.add(row.get(rowFieldsMapping.get(field)));
-                                }
-                                resultValue.add(rowValue);
+        loadCSVFile(
+                csvFilePath,
+                WeDPRCommonConfig.getReadChunkSize(),
+                reader -> {
+                    Map<String, String> row;
+                    while ((row = reader.readMap()) != null) {
+                        List<String> rowValue = new ArrayList<>();
+                        for (String field : tableFields) {
+                            Map<String, String> rowFieldsMapping =
+                                    Common.trimAndMapping(row.keySet());
+                            if (!rowFieldsMapping.containsKey(field.trim())) {
+                                String errorMsg =
+                                        "extractFields failed for the field "
+                                                + field
+                                                + " not existed in the file "
+                                                + ArrayUtils.toString(rowFieldsMapping.keySet());
+                                logger.warn(errorMsg);
+                                throw new WeDPRException(-1, errorMsg);
                             }
-                            return resultValue;
-                        });
+                            rowValue.add(row.get(rowFieldsMapping.get(field)));
+                        }
+                        rowContentHandler.handle(rowValue);
+                    }
+                    return Boolean.TRUE;
+                });
     }
 
     public static boolean writeMapData(

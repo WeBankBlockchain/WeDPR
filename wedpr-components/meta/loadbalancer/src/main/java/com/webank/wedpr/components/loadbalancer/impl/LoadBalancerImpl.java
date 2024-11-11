@@ -16,12 +16,15 @@
 package com.webank.wedpr.components.loadbalancer.impl;
 
 import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
-import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoadBalancerImpl implements LoadBalancer {
+    private static final Logger logger = LoggerFactory.getLogger(LoadBalancerImpl.class);
 
     private final EntryPointFetcher entryPointFetcher;
     private final AtomicInteger lastIdx = new AtomicInteger(0);
@@ -31,13 +34,13 @@ public class LoadBalancerImpl implements LoadBalancer {
     }
 
     @Override
-    public List<EntryPointInfo> selectAllEndPoint(String serviceType) {
+    public List<ServiceMeta.EntryPointMeta> selectAllEndPoint(String serviceType) {
         return entryPointFetcher.getAliveEntryPoints(serviceType);
     }
 
     @Override
-    public EntryPointInfo selectService(Policy policy, String serviceType) {
-        List<EntryPointInfo> entryPointInfoList =
+    public ServiceMeta.EntryPointMeta selectService(Policy policy, String serviceType) {
+        List<ServiceMeta.EntryPointMeta> entryPointInfoList =
                 entryPointFetcher.getAliveEntryPoints(serviceType);
         if (entryPointInfoList == null || entryPointInfoList.isEmpty()) {
             return null;
@@ -50,6 +53,7 @@ public class LoadBalancerImpl implements LoadBalancer {
         int idx = serviceType.hashCode() % entryPointInfoList.size();
         int selectedIdx = Math.max(idx, 0);
         lastIdx.set(selectedIdx);
+        logger.info("selectService: {}", entryPointInfoList.get(selectedIdx).toString());
         return entryPointInfoList.get(selectedIdx);
     }
 }

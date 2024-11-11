@@ -59,8 +59,21 @@ public class MPCExecutorHook implements ExecutorHook {
     }
 
     public MpcRunJobRequest buildJobRequest(
-            String taskID, String inputFilePath, String outputFilePath, MPCJobParam jobParam) {
+            String taskID,
+            String mpcFilePath,
+            String inputFilePath,
+            String outputFilePath,
+            MPCJobParam jobParam) {
+
+        logger.debug(
+                " ## build mpc job request, taskID: {}, mpcFilePath: {}, inputFile: {}, outputFile: {}",
+                taskID,
+                mpcFilePath,
+                inputFilePath,
+                outputFilePath);
+
         Boolean mpcIsMalicious = MPCExecutorConfig.getMpcIsMalicious();
+        String mpcDirectNodeIp = MPCExecutorConfig.getMpcDirectNodeIp();
         int mpcDirectNodePort = MPCExecutorConfig.getMpcDirectNodePort();
 
         MpcRunJobRequest mpcRunJobRequest = new MpcRunJobRequest();
@@ -70,13 +83,13 @@ public class MPCExecutorHook implements ExecutorHook {
         mpcRunJobRequest.setMalicious(mpcIsMalicious);
         mpcRunJobRequest.setMpcNodeDirectPort(mpcDirectNodePort);
         mpcRunJobRequest.setBitLength(jobParam.getShareBytesLength());
+        mpcRunJobRequest.setReceiverNodeIp(mpcDirectNodeIp);
 
-        mpcRunJobRequest.setInputFileName(inputFilePath);
-        mpcRunJobRequest.setOutputFileName(outputFilePath);
+        mpcRunJobRequest.setMpcFilePath(mpcFilePath);
+        mpcRunJobRequest.setInputFilePath(inputFilePath);
+        mpcRunJobRequest.setOutputFilePath(outputFilePath);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("mpc job request: {}", mpcRunJobRequest);
-        }
+        logger.info(" ## mpc job request: {}", mpcRunJobRequest);
 
         return mpcRunJobRequest;
     }
@@ -106,8 +119,8 @@ public class MPCExecutorHook implements ExecutorHook {
                         ExecutorConfig.getMpcPrepareFileName());
 
         try {
-            int shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
-            int datasetColumnCount = MpcUtils.getDatasetColumnCount(mpcContent, shareBytesLength);
+            // int shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
+            int datasetColumnCount = MpcUtils.getDatasetColumnCount(mpcContent, selfIndex);
 
             logger.info(
                     "begin to download dataset file from {} => {}, jobId: {}",
@@ -133,10 +146,12 @@ public class MPCExecutorHook implements ExecutorHook {
                             jobID,
                             ExecutorConfig.getMpcPrepareFileName());
 
+            String absMpcPrepareStoragePath = storage.generateAbsoluteDir(mpcPrepareStoragePath);
+
             FileMeta fileMeta =
                     fileMetaBuilder.build(
                             storage.type(),
-                            storage.generateAbsoluteDir(mpcPrepareStoragePath),
+                            absMpcPrepareStoragePath,
                             owner,
                             WeDPRCommonConfig.getAgency());
             logger.info(
@@ -165,10 +180,12 @@ public class MPCExecutorHook implements ExecutorHook {
                     WeDPRCommonConfig.getUserJobCachePath(
                             owner, JobType.MPC.getType(), jobID, jobID + ".mpc");
 
+            String absMpcFileStoragePath = storage.generateAbsoluteDir(mpcFileStoragePath);
+
             FileMeta mpcFileMeta =
                     fileMetaBuilder.build(
                             storage.type(),
-                            storage.generateAbsoluteDir(mpcFileStoragePath),
+                            absMpcFileStoragePath,
                             owner,
                             WeDPRCommonConfig.getAgency());
 
@@ -188,8 +205,6 @@ public class MPCExecutorHook implements ExecutorHook {
 
             logger.info("upload the mpc content file successfully, jobId: {}", jobID);
 
-            String mpcInputFilePath = mpcPrepareStoragePath;
-
             // upload mpc prepare file
             String mpcOutputFilePath =
                     WeDPRCommonConfig.getUserJobCachePath(
@@ -198,8 +213,17 @@ public class MPCExecutorHook implements ExecutorHook {
                             jobID,
                             ExecutorConfig.getMpcResultFileName());
 
+            String absMpcOutputFilePath = storage.generateAbsoluteDir(mpcOutputFilePath);
+
             return buildJobRequest(
-                    jobDO.getTaskID(), mpcInputFilePath, mpcOutputFilePath, mpcJobParam);
+                    jobDO.getTaskID(),
+                    absMpcFileStoragePath,
+                    absMpcPrepareStoragePath,
+                    absMpcOutputFilePath,
+                    mpcJobParam);
+        } catch (Exception e) {
+            logger.error("e: ", e);
+            throw e;
         } finally {
             Common.deleteFile(new File(datasetFilePath));
             Common.deleteFile(new File(mpcPrepareFilePath));
@@ -211,14 +235,14 @@ public class MPCExecutorHook implements ExecutorHook {
 
         String jobID = jobDO.getId();
         DatasetInfo selfDataset = mpcJobParam.getSelfDataset();
-        // int selfIndex = mpcJobParam.getSelfIndex();
+        int selfIndex = mpcJobParam.getSelfIndex();
 
         String mpcContent = mpcJobParam.getMpcContent();
         FileMeta dataset = selfDataset.getDataset();
         String owner = selfDataset.getDataset().getOwner();
 
         int shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
-        int datasetColumnCount = MpcUtils.getDatasetColumnCount(mpcContent, shareBytesLength);
+        int datasetColumnCount = MpcUtils.getDatasetColumnCount(mpcContent, selfIndex);
 
         String datasetFilePath =
                 Common.joinPath(
@@ -285,10 +309,12 @@ public class MPCExecutorHook implements ExecutorHook {
                             jobID,
                             ExecutorConfig.getMpcPrepareFileName());
 
+            String absMpcPrepareStoragePath = storage.generateAbsoluteDir(mpcPrepareStoragePath);
+
             FileMeta fileMeta =
                     fileMetaBuilder.build(
                             storage.type(),
-                            storage.generateAbsoluteDir(mpcPrepareStoragePath),
+                            absMpcPrepareStoragePath,
                             owner,
                             WeDPRCommonConfig.getAgency());
             logger.info(
@@ -317,10 +343,12 @@ public class MPCExecutorHook implements ExecutorHook {
                     WeDPRCommonConfig.getUserJobCachePath(
                             owner, JobType.MPC.getType(), jobID, jobID + ".mpc");
 
+            String absMpcFileStoragePath = storage.generateAbsoluteDir(mpcFileStoragePath);
+
             FileMeta mpcFileMeta =
                     fileMetaBuilder.build(
                             storage.type(),
-                            storage.generateAbsoluteDir(mpcFileStoragePath),
+                            absMpcFileStoragePath,
                             owner,
                             WeDPRCommonConfig.getAgency());
 
@@ -340,8 +368,6 @@ public class MPCExecutorHook implements ExecutorHook {
 
             logger.info("upload the mpc content file successfully, jobId: {}", jobID);
 
-            String mpcInputFilePath = mpcPrepareStoragePath;
-
             // upload mpc prepare file
             String mpcOutputFilePath =
                     WeDPRCommonConfig.getUserJobCachePath(
@@ -350,8 +376,14 @@ public class MPCExecutorHook implements ExecutorHook {
                             jobID,
                             ExecutorConfig.getMpcResultFileName());
 
+            String absMpcOutputFilePath = storage.generateAbsoluteDir(mpcOutputFilePath);
+
             return buildJobRequest(
-                    jobDO.getTaskID(), mpcInputFilePath, mpcOutputFilePath, mpcJobParam);
+                    jobDO.getTaskID(),
+                    absMpcFileStoragePath,
+                    absMpcPrepareStoragePath,
+                    absMpcOutputFilePath,
+                    mpcJobParam);
         } finally {
             Common.deleteFile(new File(datasetFilePath));
             Common.deleteFile(new File(mpcPrepareFilePath));

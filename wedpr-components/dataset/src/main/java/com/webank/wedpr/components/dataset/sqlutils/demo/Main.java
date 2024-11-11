@@ -1,8 +1,10 @@
 package com.webank.wedpr.components.dataset.sqlutils.demo;
 
+import static com.webank.wedpr.components.dataset.sqlutils.SQLExecutor.generateJdbcUrl;
+
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
-import com.webank.wedpr.components.dataset.sqlutils.SQLExecutor;
+import com.webank.wedpr.components.dataset.utils.CsvUtils;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 
 public class Main {
@@ -16,6 +18,7 @@ public class Main {
         String password = "123456";
 
         DBDataSource dbDataSource = new DBDataSource();
+        dbDataSource.setEncryptionModel(false);
         dbDataSource.setSql(sql);
         dbDataSource.setDatabase(database);
         dbDataSource.setDbIp(host);
@@ -23,13 +26,7 @@ public class Main {
         dbDataSource.setUserName(user);
         dbDataSource.setPassword(password);
 
-        SQLExecutor sqlExecutor = new SQLExecutor();
-        sqlExecutor.executeSQL(
-                DBType.MYSQL,
-                dbDataSource,
-                (fields, rowValues) -> {
-                    System.out.println(fields);
-                    System.out.println(rowValues);
-                });
+        String jdbcUrl = generateJdbcUrl(DBType.MYSQL, host, port, database, null);
+        CsvUtils.convertDBDataToCsv(jdbcUrl, user, password, sql, "./abc_db.csv");
     }
 }

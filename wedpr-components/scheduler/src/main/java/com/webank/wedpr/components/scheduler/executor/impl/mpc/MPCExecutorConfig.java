@@ -19,18 +19,20 @@ import com.webank.wedpr.common.config.WeDPRConfig;
 import org.apache.http.client.config.RequestConfig;
 
 public class MPCExecutorConfig {
-    private static final String MPC_URL = WeDPRConfig.apply("wedpr.executor.mpc.url", null, true);
+    //    private static final String MPC_URL = WeDPRConfig.apply("wedpr.executor.mpc.url", null,
+    // true);
     private static final String MPC_RUN_TASK_METHOD =
             WeDPRConfig.apply("wedpr.executor.mpc.method.runTask", "run");
     private static final String MPC_KILL_TASK_METHOD =
             WeDPRConfig.apply("wedpr.executor.mpc.method.killTask", "kill");
-    private static final String MPC_TOKEN =
-            WeDPRConfig.apply("wedpr.executor.mpc.token", null, true);
+    private static final String MPC_TOKEN = WeDPRConfig.apply("wedpr.executor.mpc.token", "", true);
+    private static final String MPC_DIRECT_NODE_IP =
+            WeDPRConfig.apply("wedpr.executor.mpc.direct.ip", "", true);
     private static final String MPC_DIRECT_NODE_PORT =
-            WeDPRConfig.apply("wedpr.executor.mpc.direct.port", "5899", true);
+            WeDPRConfig.apply("wedpr.executor.mpc.direct.port", "", true);
 
     private static final String MPC_IS_MALICIOUS =
-            WeDPRConfig.apply("wedpr.executor.mpc.is.malicious", "false", true);
+            WeDPRConfig.apply("wedpr.executor.mpc.is.malicious", "false");
 
     private static final Integer CONNECTION_REQUEST_TIME_OUT =
             WeDPRConfig.apply("wedpr.executor.mpc.connect.request.timeout.ms", 10000);
@@ -50,9 +52,9 @@ public class MPCExecutorConfig {
                 .build();
     }
 
-    public static String getMpcUrl() {
-        return MPC_URL;
-    }
+    //    public static String getMpcUrl() {
+    //        return MPC_URL;
+    //    }
 
     public static String getMpcRunTaskMethod() {
         return MPC_RUN_TASK_METHOD;
@@ -68,6 +70,10 @@ public class MPCExecutorConfig {
 
     public static Integer getMaxTotalConnection() {
         return MAX_TOTAL_CONNECTION;
+    }
+
+    public static String getMpcDirectNodeIp() {
+        return MPC_DIRECT_NODE_IP;
     }
 
     public static int getMpcDirectNodePort() {

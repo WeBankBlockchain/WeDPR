@@ -1,8 +1,6 @@
 package com.webank.wedpr.components.dataset.utils;
 
 import com.opencsv.CSVReader;
-import com.webank.wedpr.components.dataset.datasource.DBType;
-import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
 import com.webank.wedpr.components.dataset.sqlutils.SQLExecutor;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import java.io.BufferedReader;
@@ -158,20 +156,30 @@ public class CsvUtils {
     /**
      * load data from database and write to csv file
      *
-     * @param dbType
-     * @param dbDataSource
+     * @param jdbcUrl
+     * @param user
+     * @param passwd
+     * @param sql
+     * @param outputCsvFilePath
      * @throws DatasetException
      */
     public static void convertDBDataToCsv(
-            DBType dbType, DBDataSource dbDataSource, String outputCsvFilePath)
+            String jdbcUrl, String user, String passwd, String sql, String outputCsvFilePath)
             throws DatasetException {
 
         long startTimeMillis = System.currentTimeMillis();
         logger.info(
-                "try to convert db data to csv, dbType: {}, dbDataSource: {}, outputCsvFilePath: {}",
-                dbType,
-                dbDataSource,
+                "try to convert db data to csv, jdbcUrl: {}, user: {}, sql: {}, outputCsvFilePath: {}",
+                jdbcUrl,
+                user,
+                sql,
                 outputCsvFilePath);
+
+        // trim ;
+        sql = sql.trim();
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
 
         final boolean[] bFirst = {true};
 
@@ -180,9 +188,12 @@ public class CsvUtils {
                 PrintWriter csvWriter = new PrintWriter(fileWriter)) {
 
             SQLExecutor sqlExecutor = new SQLExecutor();
+            String finalSql = sql;
             sqlExecutor.executeSQL(
-                    dbType,
-                    dbDataSource,
+                    jdbcUrl,
+                    user,
+                    passwd,
+                    sql,
                     (fields, rowValues) -> {
                         if (bFirst[0]) {
                             bFirst[0] = false;
@@ -211,14 +222,14 @@ public class CsvUtils {
 
                             if (rowValue == null) {
                                 logger.error(
-                                        "table field value is null, dbType: {}, sql: {}",
-                                        dbType,
-                                        dbDataSource.getSql());
+                                        "table field value is null, jdbcUrl: {}, sql: {}",
+                                        jdbcUrl,
+                                        finalSql);
                                 throw new DatasetException(
-                                        "table field value is null, dbType: "
-                                                + dbType
+                                        "table field value is null, jdbcUrl: "
+                                                + jdbcUrl
                                                 + ", sql"
-                                                + dbDataSource.getSql());
+                                                + finalSql);
                             }
 
                             csvWriter.write(rowValue);
@@ -235,9 +246,9 @@ public class CsvUtils {
         } catch (Exception e) {
             long endTimeMillis = System.currentTimeMillis();
             logger.error(
-                    "convert db data to csv exception, dbType: {}, dbDataSource: {}, outputCsvFilePath: {}, cost(ms)： {}, e",
-                    dbType,
-                    dbDataSource,
+                    "convert db data to csv exception, jdbcUrl: {}, sql: {}, outputCsvFilePath: {}, cost(ms)： {}, e",
+                    jdbcUrl,
+                    sql,
                     outputCsvFilePath,
                     endTimeMillis - startTimeMillis,
                     e);
@@ -247,9 +258,9 @@ public class CsvUtils {
         long endTimeMillis = System.currentTimeMillis();
 
         logger.info(
-                "convert db data to csv success, dbType: {}, dbDataSource: {}, outputCsvFilePath: {}, cost(ms)： {}",
-                dbType,
-                dbDataSource,
+                "convert db data to csv success, jdbcUrl: {}, sql: {}, outputCsvFilePath: {}, cost(ms)： {}",
+                jdbcUrl,
+                sql,
                 outputCsvFilePath,
                 (endTimeMillis - startTimeMillis));
     }

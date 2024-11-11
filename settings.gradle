@@ -102,9 +102,6 @@ project(":wedpr-components-hook").projectDir=file("wedpr-components/hook")
 include "wedpr-components-user"
 project(":wedpr-components-user").projectDir=file("wedpr-components/user")
 
-include "wedpr-components-admin"
-project(":wedpr-components-admin").projectDir=file("wedpr-components/admin")
-
 include ":wedpr-components-initializer"
 project(":wedpr-components-initializer").projectDir=file("wedpr-components/initializer")
 
@@ -117,9 +114,6 @@ project(":wedpr-pir").projectDir=file("wedpr-pir")
 include "wedpr-site"
 project(":wedpr-site").projectDir=file("wedpr-site")
 
-include 'wedpr-admin'
-project(":wedpr-admin").projectDir=file("wedpr-admin")
-
 include "wedpr-components-report"
 project(":wedpr-components-report").projectDir=file("wedpr-components/report")
 
@@ -128,3 +122,7 @@ project(":wedpr-components-service-publish").projectDir=file("wedpr-components/s
 
 include ":wedpr-components-service-sdk-pir"
 project(":wedpr-components-service-sdk-pir").projectDir=file("wedpr-components/service-sdk/pir")
+
+include ':wedpr-components-key-generator'
+project(':wedpr-components-key-generator').projectDir=file("wedpr-components/key-generator")
+

@@ -34,6 +34,7 @@ import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.SneakyThrows;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -135,13 +136,22 @@ public class ModelJobParam {
     }
 
     // set the participants information
+    @SneakyThrows(Exception.class)
     public void parseParticipants() {
         // set the active party
         this.modelRequest
                 .getParticipantIDList()
                 .add(this.labelProviderDataset.getDataset().getOwnerAgency());
+        boolean selfParticipant = false;
         // set the passive parties
         for (DatasetInfo datasetInfo : dataSetList) {
+            if (datasetInfo
+                            .getDataset()
+                            .getOwnerAgency()
+                            .compareToIgnoreCase(WeDPRCommonConfig.getAgency())
+                    == 0) {
+                selfParticipant = true;
+            }
             if (datasetInfo
                             .getDataset()
                             .getOwnerAgency()
@@ -151,6 +161,12 @@ public class ModelJobParam {
                 continue;
             }
             this.modelRequest.getParticipantIDList().add(datasetInfo.getDataset().getOwnerAgency());
+        }
+        if (!selfParticipant) {
+            throw new WeDPRException(
+                    "The agency "
+                            + WeDPRCommonConfig.getAgency()
+                            + " must participant the model job!");
         }
     }
 

@@ -14,13 +14,47 @@ public class SQLUtils {
 
     private SQLUtils() {}
 
-    public static void validateDataSourceParameters(DBType dbType, DBDataSource dbDataSource)
-            throws DatasetException {
-        SQLExecutor sqlExecutor = new SQLExecutor();
-        sqlExecutor.explainSQL(dbType, dbDataSource);
+    public static String clearDataSourceField(String fieldName, String dataSourceMeta) {
+        return dataSourceMeta.replaceAll(
+                "\"" + fieldName + "\\s*\":\\s*\"[^\"]*\"", "\"" + fieldName + "\": \"\"");
     }
 
-    public static void isSingleSelectStatement(String sql) throws DatasetException {
+    public static String clearDbDataSource(String dataSourceMeta) {
+
+        dataSourceMeta = clearDataSourceField("username", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("password", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("dbIp", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("dbPort", dataSourceMeta);
+        dataSourceMeta = clearDataSourceField("database", dataSourceMeta);
+
+        return dataSourceMeta;
+    }
+
+    public static void validateDataSourceParameters(DBType dbType, DBDataSource dbDataSource)
+            throws DatasetException {
+
+        String dbIp = dbDataSource.getDbIp();
+        Integer dbPort = dbDataSource.getDbPort();
+        String database = dbDataSource.getDatabase();
+        String user = dbDataSource.getUserName();
+        String password = dbDataSource.getPassword();
+        String sql = dbDataSource.getSql();
+
+        // build jdbc url
+        String jdbcUrl = SQLExecutor.generateJdbcUrl(dbType, dbIp, dbPort, database, null);
+        validateDataSourceParameters(jdbcUrl, user, password, sql);
+    }
+
+    public static void validateDataSourceParameters(
+            String jdbcUrl, String user, String password, String sql) throws DatasetException {
+
+        SQLExecutor sqlExecutor = new SQLExecutor();
+        // explain sql for test db connectivity and check sql syntax
+        sqlExecutor.explainSQL(jdbcUrl, user, password, sql);
+    }
+
+    public static void isSingleSelectStatement(String sql, String sqlValidationPattern)
+            throws DatasetException {
         if (sql == null) {
             return;
         }
@@ -33,15 +67,17 @@ public class SQLUtils {
         }
 
         // regular expression for matching a single SELECT statement.
-        // TODO: make it configurable
+        //        Pattern pattern =
+        //                Pattern.compile(
+        //                        "^(SELECT.*?)(?<!\\G)(;|$)", Pattern.CASE_INSENSITIVE |
+        // Pattern.DOTALL);
         Pattern pattern =
-                Pattern.compile(
-                        "^(SELECT.*?)(?<!\\G)(;|$)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Pattern.compile(sqlValidationPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher matcher = pattern.matcher(sql);
         // check if it contains only one SELECT statement
         boolean onlySelectStmt = matcher.find() && !matcher.find();
         if (!onlySelectStmt) {
-            logger.error("only support single select SQL statement, sql: {}", sql);
+            logger.error("only support single select SQL statement, sqlValidationPattern: {}, sql: {}", sqlValidationPattern, sql);
             throw new DatasetException("only support single select SQL statement, sql: " + sql);
         }
     }

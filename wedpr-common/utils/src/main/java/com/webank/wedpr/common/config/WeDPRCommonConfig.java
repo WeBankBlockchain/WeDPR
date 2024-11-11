@@ -19,11 +19,14 @@ import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.WeDPRException;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // Note: Since the WeDPRCommonConfig module is a reusable, it shouldn't require the config to exist
 // when initializing static configuration variables,
 // which will cause some services that do not need to set these configuration to exception.
 public class WeDPRCommonConfig {
+    private static final Logger logger = LoggerFactory.getLogger(WeDPRCommonConfig.class);
     private static final Integer DEFAULT_READ_TRUNK_SIZE = 1024 * 1024;
     private static final Integer DEFAULT_WRITE_TRUNK_SIZE = 1024 * 1024;
     // the agency id
@@ -67,6 +70,7 @@ public class WeDPRCommonConfig {
             WeDPRConfig.apply("wedpr.worker.api.method.submit", "submit");
 
     private static String SHELL_CODE_CONNECTOR = " && ";
+    private static String SERVER_LISTEN_PORT;
 
     @SneakyThrows
     public static String getAgency() {
@@ -79,7 +83,7 @@ public class WeDPRCommonConfig {
     @SneakyThrows
     public static String getAdminAgency() {
         if (StringUtils.isBlank(ADMIN_AGENCY)) {
-            throw new WeDPRException("Invalid emtpy agency!");
+            throw new WeDPRException("Invalid emtpy admin agency!");
         }
         return ADMIN_AGENCY;
     }
@@ -155,5 +159,14 @@ public class WeDPRCommonConfig {
 
     public static String getWedprWorkerSubmitTaskMethod() {
         return WEDPR_WORKER_SUBMIT_TASK_METHOD;
+    }
+
+    public static String getServerListenPort() {
+        return SERVER_LISTEN_PORT;
+    }
+
+    public static void setServerListenPort(String serverListenPort) {
+        logger.info("setServerListenPort: {}", serverListenPort);
+        SERVER_LISTEN_PORT = serverListenPort;
     }
 }

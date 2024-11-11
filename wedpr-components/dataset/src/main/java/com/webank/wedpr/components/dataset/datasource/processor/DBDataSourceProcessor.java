@@ -2,10 +2,12 @@ package com.webank.wedpr.components.dataset.datasource.processor;
 
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
 import com.webank.wedpr.components.dataset.datasource.DBType;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.category.DBDataSource;
+import com.webank.wedpr.components.dataset.sqlutils.SQLExecutor;
 import com.webank.wedpr.components.dataset.sqlutils.SQLUtils;
 import com.webank.wedpr.components.dataset.utils.CsvUtils;
 import com.webank.wedpr.components.dataset.utils.FileUtils;
@@ -15,6 +17,8 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.exception.DatasetException;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
+import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.user.helper.PasswordHelper;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -26,16 +30,17 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DBDataSourceProcessor.class);
 
     @Override
-    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta) throws DatasetException {
+    public DataSourceMeta parseDataSourceMeta(String strDataSourceMeta, DatasetConfig datasetConfig)
+            throws DatasetException {
 
         long startTimeMillis = System.currentTimeMillis();
 
         DBDataSource dbDataSource =
                 (DBDataSource) JsonUtils.jsonString2Object(strDataSourceMeta, DBDataSource.class);
 
-        String strDBType = dbDataSource.getDbType();
-        Common.requireNonEmpty("dbType", strDBType);
-        DBType dbType = DBType.fromStrType(strDBType);
+        String strDbType = dbDataSource.getDbType();
+        Common.requireNonEmpty("dbType", strDbType);
+        DBType dbType = DBType.fromStrType(strDbType);
         String sql = dbDataSource.getSql();
         Common.requireNonEmpty("sql", sql);
         String dbIp = dbDataSource.getDbIp();
@@ -44,21 +49,38 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
         Common.requireNonNull("dbPort", dbPort);
         String database = dbDataSource.getDatabase();
         Common.requireNonEmpty("database", database);
-        String userName = dbDataSource.getUserName();
-        Common.requireNonEmpty("userName", userName);
-        // TODO: 密码是加密项，解密获取明文
-        String password = dbDataSource.getPassword();
-        Common.requireNonEmpty("password", password);
+        String encUserName = dbDataSource.getUserName();
+        Common.requireNonEmpty("userName", encUserName);
+
+        String encPassword = dbDataSource.getPassword();
+        Common.requireNonEmpty("password", encPassword);
+
         Boolean dynamicDataSource = dbDataSource.getDynamicDataSource();
         if (dynamicDataSource != null && dynamicDataSource) {
             dbDataSource.setDynamicDataSource(true);
         }
 
-        // check if single select
-        SQLUtils.isSingleSelectStatement(sql);
+        if (dbDataSource.isEncryptionModel()) {
+            // decrypt username and password
+            try {
+                UserJwtConfig userJwtConfig = getDataSourceProcessorContext().getUserJwtConfig();
+                String userName =
+                        PasswordHelper.decryptPassword(encUserName, userJwtConfig.getPrivateKey());
+                dbDataSource.setUserName(userName);
+
+                String password =
+                        PasswordHelper.decryptPassword(encPassword, userJwtConfig.getPrivateKey());
+                dbDataSource.setPassword(password);
+            } catch (WeDPRException e) {
+                logger.error("e: ", e);
+                throw new DatasetException(e);
+            }
+        }
 
         boolean verifySqlSyntaxAndTestCon = dbDataSource.isVerifySqlSyntaxAndTestCon();
         if (verifySqlSyntaxAndTestCon) {
+            // check if single select
+            SQLUtils.isSingleSelectStatement(sql, datasetConfig.getSqlValidationPattern());
             // validate parameters, test db connectivity, validate SQL syntax
             SQLUtils.validateDataSourceParameters(dbType, dbDataSource);
         }
@@ -82,13 +104,26 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
         Dataset dataset = dataSourceProcessorContext.getDataset();
         String datasetId = dataset.getDatasetId();
 
-        String strDBType = dbDataSource.getDbType();
-        DBType dbType = DBType.fromStrType(strDBType);
+        String strDbType = dbDataSource.getDbType();
+        DBType dbType = DBType.fromStrType(strDbType);
 
         String datasetBaseDir = datasetConfig.getDatasetBaseDir();
         String cvsFilePath = datasetBaseDir + File.separator + datasetId;
 
-        CsvUtils.convertDBDataToCsv(dbType, dbDataSource, cvsFilePath);
+        String jdbcUrl =
+                SQLExecutor.generateJdbcUrl(
+                        dbType,
+                        dbDataSource.getDbIp(),
+                        dbDataSource.getDbPort(),
+                        dbDataSource.getDatabase(),
+                        null);
+
+        CsvUtils.convertDBDataToCsv(
+                jdbcUrl,
+                dbDataSource.getUserName(),
+                dbDataSource.getPassword(),
+                dbDataSource.getSql(),
+                cvsFilePath);
 
         dataSourceProcessorContext.setCvsFilePath(cvsFilePath);
 

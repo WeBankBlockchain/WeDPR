@@ -24,19 +24,37 @@ import com.webank.wedpr.components.pir.sdk.core.ObfuscateData;
 import com.webank.wedpr.components.pir.sdk.model.PirParamEnum;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 public class NativeSQLMapperWrapper {
-    private static Logger logger = LoggerFactory.getLogger(NativeSQLMapperWrapper.class);
-    private final NativeSQLMapper nativeSQLMapper;
+    private static final Logger logger = LoggerFactory.getLogger(NativeSQLMapperWrapper.class);
+    private final JdbcTemplate jdbcTemplate;
 
-    public NativeSQLMapperWrapper(NativeSQLMapper nativeSQLMapper) {
-        this.nativeSQLMapper = nativeSQLMapper;
+    public NativeSQLMapperWrapper(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public class GeneralRowMapper implements RowMapper<Map<String, String>> {
+        @Override
+        public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Map<String, String> result = new HashMap<>();
+            ResultSetMetaData resultSetMetaData = rs.getMetaData();
+            for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
+                result.put(resultSetMetaData.getColumnName(i), rs.getString(i));
+            }
+            return result;
+        }
     }
 
     public List<PirDataItem> query(
@@ -87,7 +105,7 @@ public class NativeSQLMapperWrapper {
                         tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
-        return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
+        return toPirDataList(serviceSetting, this.jdbcTemplate.query(sql, new GeneralRowMapper()));
     }
 
     public List<PirDataItem> executeFuzzyMatchQuery(
@@ -108,22 +126,22 @@ public class NativeSQLMapperWrapper {
                         tableName,
                         condition);
         logger.debug("executeQuery: {}", sql);
-        return toPirDataList(this.nativeSQLMapper.executeNativeQuerySql(sql));
+        return toPirDataList(serviceSetting, this.jdbcTemplate.query(sql, new GeneralRowMapper()));
     }
 
-    protected static List<PirDataItem> toPirDataList(List<Map<String, Object>> values)
-            throws Exception {
+    protected static List<PirDataItem> toPirDataList(
+            PirServiceSetting serviceSetting, List<Map<String, String>> values) throws Exception {
         if (values == null || values.isEmpty()) {
             return null;
         }
         List<PirDataItem> result = new LinkedList<>();
         int i = 0;
-        for (Map<String, Object> row : values) {
+        for (Map<String, String> row : values) {
             PirDataItem pirTable = new PirDataItem();
             pirTable.setId(i);
             // the key, Note: here must use the idField value since the client use the idField value
             // to calculateZ0
-            pirTable.setPirKey((String) row.get(Constant.PIR_ID_FIELD_NAME));
+            pirTable.setPirKey(row.get(serviceSetting.getIdField()));
             // the values
             pirTable.setPirValue(ObjectMapperFactory.getObjectMapper().writeValueAsString(row));
             logger.trace("toPirDataList result: {}", pirTable.toString());

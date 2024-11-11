@@ -16,10 +16,7 @@
 package com.webank.wedpr.components.task.plugin.pir.service.impl;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
-import com.webank.wedpr.common.utils.Constant;
-import com.webank.wedpr.common.utils.ThreadPoolService;
-import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.common.utils.WeDPRResponse;
+import com.webank.wedpr.common.utils.*;
 import com.webank.wedpr.components.api.credential.core.CredentialVerifier;
 import com.webank.wedpr.components.api.credential.core.impl.CredentialVerifierImpl;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
@@ -36,14 +33,12 @@ import com.webank.wedpr.components.pir.sdk.core.OtResult;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryParam;
 import com.webank.wedpr.components.pir.sdk.model.PirQueryRequest;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
-import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import com.webank.wedpr.components.storage.config.HdfsStorageConfig;
 import com.webank.wedpr.components.storage.config.LocalStorageConfig;
 import com.webank.wedpr.components.task.plugin.pir.core.Obfuscator;
 import com.webank.wedpr.components.task.plugin.pir.core.PirDatasetConstructor;
 import com.webank.wedpr.components.task.plugin.pir.core.impl.ObfuscatorImpl;
 import com.webank.wedpr.components.task.plugin.pir.core.impl.PirDatasetConstructorImpl;
-import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapper;
 import com.webank.wedpr.components.task.plugin.pir.dao.NativeSQLMapperWrapper;
 import com.webank.wedpr.components.task.plugin.pir.handler.PirServiceHook;
 import com.webank.wedpr.components.task.plugin.pir.model.ObfuscationParam;
@@ -51,6 +46,7 @@ import com.webank.wedpr.components.task.plugin.pir.model.PirDataItem;
 import com.webank.wedpr.components.task.plugin.pir.service.PirService;
 import com.webank.wedpr.components.task.plugin.pir.transport.PirTopicSubscriber;
 import com.webank.wedpr.components.task.plugin.pir.transport.impl.PirTopicSubscriberImpl;
+import com.webank.wedpr.sdk.jni.transport.TransportConfig;
 import com.webank.wedpr.sdk.jni.transport.WeDPRTransport;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -58,13 +54,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PirServiceImpl implements PirService {
     private static final Logger logger = LoggerFactory.getLogger(PirServiceImpl.class);
 
-    @Autowired private NativeSQLMapper nativeSQLMapper;
+    @Autowired private JdbcTemplate jdbcTemplate;
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private HdfsStorageConfig hdfsConfig;
     @Autowired private LocalStorageConfig localStorageConfig;
@@ -99,17 +96,22 @@ public class PirServiceImpl implements PirService {
     @PostConstruct
     public void init() throws Exception {
         this.obfuscator = new ObfuscatorImpl();
-        this.nativeSQLMapperWrapper = new NativeSQLMapperWrapper(nativeSQLMapper);
+        this.nativeSQLMapperWrapper = new NativeSQLMapperWrapper(jdbcTemplate);
         this.pirDatasetConstructor =
-                new PirDatasetConstructorImpl(
-                        datasetMapper,
-                        fileStorage,
-                        new StoragePathBuilder(hdfsConfig, localStorageConfig),
-                        nativeSQLMapper);
+                new PirDatasetConstructorImpl(datasetMapper, fileStorage, jdbcTemplate);
         this.pirServiceHook = new PirServiceHook(serviceHook, serviceInvokeMapper);
         this.pirTopicSubscriber =
                 new PirTopicSubscriberImpl(
                         weDPRTransport, new CredentialVerifierImpl(null), pirServiceHook);
+        // get the access entrypoint
+        TransportConfig transportConfig = weDPRTransport.getTransportConfig();
+        String accessEntryPoint =
+                Common.getUrl(
+                        transportConfig.getSelfEndPoint().getHostIP()
+                                + ":"
+                                + WeDPRCommonConfig.getServerListenPort());
+        this.weDPRTransport.registerService(Constant.PIR_SERVICE_TYPE, accessEntryPoint);
+        logger.info("PirServiceImpl, register service, accessEntryPoint: {}", accessEntryPoint);
         registerPublishedServices();
         this.serviceAuthVerifier = new ServiceAuthVerifierImpl(serviceAuthMapper);
     }

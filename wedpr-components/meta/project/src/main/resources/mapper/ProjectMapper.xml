@@ -99,7 +99,7 @@
         </foreach>
     </update>
     <delete id="deleteProjects" parameterType="java.util.List">
-        <foreach collection="projectList" item = "projectID" index = "index" separator=",">
+        <foreach collection="projectList" item = "projectID" index = "index" separator=";">
             delete from `wedpr_project_table`
             where `id` = #{projectID}
             <if test="owner != null and owner !=''">

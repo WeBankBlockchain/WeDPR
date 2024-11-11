@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.webank.wedpr.components.dataset.common.DatasetStatus;
 import com.webank.wedpr.components.dataset.config.DatasetConfig;
+import com.webank.wedpr.components.dataset.config.HiveConfig;
 import com.webank.wedpr.components.dataset.datasource.DataSourceMeta;
 import com.webank.wedpr.components.dataset.datasource.dispatch.DataSourceProcessorDispatcher;
 import com.webank.wedpr.components.dataset.datasource.processor.DataSourceProcessor;
@@ -15,6 +16,7 @@ import com.webank.wedpr.components.dataset.message.CreateDatasetResponse;
 import com.webank.wedpr.components.dataset.message.ListDatasetResponse;
 import com.webank.wedpr.components.dataset.message.UpdateDatasetRequest;
 import com.webank.wedpr.components.dataset.permission.DatasetPermissionGenerator;
+import com.webank.wedpr.components.dataset.sqlutils.SQLUtils;
 import com.webank.wedpr.components.dataset.sync.api.DatasetSyncerApi;
 import com.webank.wedpr.components.dataset.utils.ThreadPoolUtils;
 import com.webank.wedpr.components.db.mapper.dataset.common.DatasetConstant;
@@ -33,6 +35,7 @@ import com.webank.wedpr.components.db.mapper.dataset.permission.DatasetUserPermi
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
+import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,7 +55,9 @@ public class DatasetServiceImpl implements DatasetServiceApi {
 
     private static final Logger logger = LoggerFactory.getLogger(DatasetServiceImpl.class);
 
+    @Autowired private HiveConfig hiveConfig;
     @Autowired private DatasetConfig datasetConfig;
+    @Autowired private UserJwtConfig userJwtConfig;
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private DatasetPermissionMapper datasetPermissionMapper;
     @Autowired private DatasetTransactionalWrapper datasetTransactionalWrapper;
@@ -102,6 +107,8 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         if (dataSourceMeta == null) {
             dataSourceMeta = "";
         }
+
+        dataSourceMeta = SQLUtils.clearDbDataSource(dataSourceMeta);
 
         dataset.setDatasetId(datasetId);
         dataset.setDatasetTitle(createDatasetRequest.getDatasetTitle());
@@ -172,11 +179,15 @@ public class DatasetServiceImpl implements DatasetServiceApi {
         }
 
         dataSourceProcessor.setContext(
-                DataSourceProcessorContext.builder().fileStorage(fileStorage).build());
+                DataSourceProcessorContext.builder()
+                        .fileStorage(fileStorage)
+                        .userJwtConfig(userJwtConfig)
+                        .build());
         boolean dynamicDataSource = false;
 
         // parse datasource meta
-        DataSourceMeta dataSourceMeta = dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta);
+        DataSourceMeta dataSourceMeta =
+                dataSourceProcessor.parseDataSourceMeta(strDataSourceMeta, datasetConfig);
         if (dataSourceMeta != null) {
             dynamicDataSource = dataSourceMeta.dynamicDataSource();
         }
@@ -214,7 +225,9 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                             DataSourceProcessorContext.builder()
                                     .dataset(dataset)
                                     .dataSourceMeta(dataSourceMeta)
+                                    .hiveConfig(hiveConfig)
                                     .datasetConfig(datasetConfig)
+                                    .userJwtConfig(userJwtConfig)
                                     .userInfo(userInfo)
                                     .datasetTransactionalWrapper(datasetTransactionalWrapper)
                                     .chunkUpload(chunkUpload)

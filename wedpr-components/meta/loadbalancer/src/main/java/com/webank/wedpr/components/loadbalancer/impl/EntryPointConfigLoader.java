@@ -20,7 +20,8 @@ import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
-import com.webank.wedpr.components.loadbalancer.EntryPointInfo;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class EntryPointConfigLoader implements EntryPointFetcher {
     private static final Logger logger = LoggerFactory.getLogger(EntryPointConfigLoader.class);
-    private Map<String, List<EntryPointInfo>> alivedEntryPoints = new HashMap<>();
+    private Map<String, List<ServiceMeta.EntryPointMeta>> alivedEntryPoints = new HashMap<>();
 
     @SneakyThrows(Exception.class)
     public EntryPointConfigLoader() {
@@ -52,13 +53,22 @@ public class EntryPointConfigLoader implements EntryPointFetcher {
                     entryPoint.getEntryPoints().size());
             alivedEntryPoints.put(
                     entryPoint.getServiceName().toLowerCase(),
-                    EntryPointInfo.toEntryPointInfo(
+                    EntryPointConfigLoader.toEntryPointMetaList(
                             entryPoint.getServiceName(), entryPoint.getEntryPoints()));
         }
     }
 
+    public static List<ServiceMeta.EntryPointMeta> toEntryPointMetaList(
+            String serviceName, List<String> entryPointsList) {
+        List<ServiceMeta.EntryPointMeta> result = new ArrayList<>();
+        for (String entryPoint : entryPointsList) {
+            result.add(new ServiceMeta.EntryPointMeta(serviceName, entryPoint));
+        }
+        return result;
+    }
+
     @Override
-    public List<EntryPointInfo> getAliveEntryPoints(String serviceName) {
+    public List<ServiceMeta.EntryPointMeta> getAliveEntryPoints(String serviceName) {
         String lowerCaseServiceName = serviceName.toLowerCase();
         if (alivedEntryPoints.containsKey(lowerCaseServiceName)) {
             return alivedEntryPoints.get(lowerCaseServiceName);

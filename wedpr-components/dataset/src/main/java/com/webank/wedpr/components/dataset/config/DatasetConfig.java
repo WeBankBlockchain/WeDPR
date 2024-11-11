@@ -50,6 +50,9 @@ public class DatasetConfig {
     @Value("${wedpr.storage.download.shardSize: 20971520}")
     int shardSize;
 
+    @Value("${wedpr.dataset.sql.validation.pattern: ^(SELECT.*?)(?<!\\G)(;|$)}")
+    String sqlValidationPattern;
+
     // ${largeFileDataDir}/dataset/
     public String getDatasetBaseDir() {
         return String.format("%s/%s", largeFileDataDir, DatasetConstant.DATASET_LABEL);

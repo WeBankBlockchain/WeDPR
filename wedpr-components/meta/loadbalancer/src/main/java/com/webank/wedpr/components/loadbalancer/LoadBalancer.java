@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.loadbalancer;
 
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.List;
 
 public interface LoadBalancer {
@@ -23,7 +24,7 @@ public interface LoadBalancer {
         HASH,
     }
 
-    EntryPointInfo selectService(Policy policy, String serviceType);
+    ServiceMeta.EntryPointMeta selectService(Policy policy, String serviceType);
 
-    List<EntryPointInfo> selectAllEndPoint(String serviceType);
+    List<ServiceMeta.EntryPointMeta> selectAllEndPoint(String serviceType);
 }
