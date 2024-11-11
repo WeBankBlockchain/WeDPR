@@ -54,7 +54,6 @@
 <script>
 import { dataManageServer } from 'Api'
 import dataCard from '@/components/dataCard.vue'
-import wePagination from '@/components/wePagination.vue'
 import { mapGetters } from 'vuex'
 import { handleParamsValid } from 'Utils/index.js'
 export default {
@@ -70,8 +69,7 @@ export default {
     }
   },
   components: {
-    dataCard,
-    wePagination
+    dataCard
   },
   data() {
     return {

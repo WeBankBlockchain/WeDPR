@@ -97,15 +97,11 @@
 </template>
 <script>
 import { accessKeyManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { handleParamsValid, maskString } from 'Utils/index.js'
 export default {
   name: 'accessKeyManage',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {

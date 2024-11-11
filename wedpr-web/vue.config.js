@@ -8,7 +8,7 @@ function resolve(dir) {
 }
 
 module.exports = defineConfig({
-  outputDir: process.env.VUE_APP_MODE === 'agency' ? 'dist' : 'manage',
+  outputDir: 'dist',
   transpileDependencies: true,
   parallel: true,
   publicPath: './',

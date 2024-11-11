@@ -228,7 +228,6 @@
 <script>
 import { toDynamicTableData } from 'Utils/index.js'
 import { downloadLargeFile } from 'Mixin/downloadLargeFile.js'
-import colFilter from '@/components/colFilter.vue'
 import { jobEnum } from 'Utils/constant.js'
 export default {
   name: 'AiResultNew',
@@ -258,9 +257,6 @@ export default {
         return {}
       }
     }
-  },
-  components: {
-    colFilter
   },
   data() {
     return {

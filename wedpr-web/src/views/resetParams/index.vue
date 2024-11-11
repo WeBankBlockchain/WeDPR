@@ -55,13 +55,9 @@
   </div>
 </template>
 <script>
-import formCard from '@/components/formCard.vue'
 import { jobManageServer, settingManageServer, projectManageServer, dataManageServer } from 'Api'
 export default {
   name: 'pirServerCreate',
-  components: {
-    formCard
-  },
   data() {
     return {
       dataForm: {

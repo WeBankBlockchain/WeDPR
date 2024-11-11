@@ -58,7 +58,6 @@
 </template>
 <script>
 import { accountManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import addTenant from './addTenant'
 import adminChange from './adminChange'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
@@ -68,7 +67,6 @@ export default {
   name: 'groupManage',
   mixins: [tableHeightHandle],
   components: {
-    wePagination,
     addTenant,
     adminChange
   },

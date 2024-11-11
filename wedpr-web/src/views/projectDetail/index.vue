@@ -133,13 +133,9 @@
 import { projectManageServer, jobManageServer, settingManageServer } from 'Api'
 import { jobStatusList, jobStatusMap, jobEnum } from 'Utils/constant.js'
 import { mapGetters } from 'vuex'
-import wePagination from '@/components/wePagination.vue'
 import { handleParamsValid } from 'Utils/index.js'
 export default {
   name: 'projectDetail',
-  components: {
-    wePagination
-  },
   data() {
     return {
       searchForm: {
@@ -168,7 +164,6 @@ export default {
       typeList: [],
       jobStatusList,
       jobStatusMap,
-      pageMode: process.env.VUE_APP_MODE,
       jobEnum
     }
   },

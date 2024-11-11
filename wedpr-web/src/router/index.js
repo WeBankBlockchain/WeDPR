@@ -1,48 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-console.log(process.env.VUE_APP_MODE, 'process.env.VUE_APP_MODE')
-console.log(process.env.VUE_APP_MODE === '"manage"')
 Vue.use(VueRouter)
-const loginCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "login" */ '../views/adminLogin/index.vue')
-    : import(/* webpackChunkName: "login" */ '../views/login/index.vue')
-const projectManageCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "projectManage" */ '../views/adminProjectManage/index.vue')
-    : import(/* webpackChunkName: "projectManage" */ '../views/projectManage/index.vue')
-const dataManageCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "dataManage" */ '../views/adminDataManage/index.vue')
-    : import(/* webpackChunkName: "dataManage" */ '../views/dataManage/index.vue')
-const dataDetailCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "dataManage" */ '../views/adminDataDetail/index.vue')
-    : import(/* webpackChunkName: "dataManage" */ '../views/dataDetail/index.vue')
-const projectDetailCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "projectDetail" */ '../views/adminProjectDetail/index.vue')
-    : import(/* webpackChunkName: "projectDetail" */ '../views/projectDetail/index.vue')
-const logCom =
-  process.env.VUE_APP_MODE === 'manage'
-    ? import(/* webpackChunkName: "logManage" */ '../views/adminLogManage/index.vue')
-    : import(/* webpackChunkName: "logManage" */ '../views/logManage/index.vue')
 const routes = [
-  {
-    path: '/feed',
-    name: 'feed',
-    component: () => import(/* webpackChunkName: "feed" */ '../views/feed/index.vue'),
-    meta: {
-      title: '欢迎反馈',
-      requireAuth: false,
-      permissionCheck: false,
-      isParent: true
-    }
-  },
   {
     path: '/login',
     name: 'login',
-    component: () => loginCom,
+    component: () => import(/* webpackChunkName: "login" */ '../views/login/index.vue'),
     meta: {
       title: '用户登录',
       requireAuth: false,
@@ -79,18 +42,6 @@ const routes = [
       requireAuth: false,
       permissionCheck: false,
       isParent: true
-    }
-  },
-  {
-    name: 'screen',
-    path: '/screen',
-    component: () => import(/* webpackChunkName: "layout" */ '@/views/screen/index.vue'),
-    meta: {
-      title: '新增证书',
-      isParent: true,
-      requireAuth: true,
-      permissionCheck: true,
-      permissionNeed: ['screen']
     }
   },
   {
@@ -138,7 +89,7 @@ const routes = [
       {
         name: 'dataManage',
         path: '/dataManage',
-        component: () => dataManageCom,
+        component: () => import(/* webpackChunkName: "dataManage" */ '../views/dataManage/index.vue'),
         meta: {
           title: '数据资源',
           isParent: true,
@@ -186,7 +137,7 @@ const routes = [
       {
         name: 'dataDetail',
         path: '/dataDetail',
-        component: () => dataDetailCom,
+        component: () => import(/* webpackChunkName: "dataManage" */ '../views/dataDetail/index.vue'),
         meta: {
           title: '数据详情',
           isParent: false,
@@ -198,7 +149,7 @@ const routes = [
       {
         name: 'projectManage',
         path: '/projectManage',
-        component: () => projectManageCom,
+        component: () => import(/* webpackChunkName: "projectManage" */ '../views/projectManage/index.vue'),
         meta: {
           title: '项目空间',
           isParent: true,
@@ -234,7 +185,7 @@ const routes = [
       {
         name: 'projectDetail',
         path: '/projectDetail',
-        component: () => projectDetailCom,
+        component: () => import(/* webpackChunkName: "projectDetail" */ '../views/projectDetail/index.vue'),
         meta: {
           title: '项目详情',
           isParent: false,
@@ -294,7 +245,7 @@ const routes = [
       {
         name: 'logManage',
         path: '/logManage',
-        component: () => logCom,
+        component: () => import(/* webpackChunkName: "logManage" */ '../views/logManage/index.vue'),
         meta: {
           title: '日志审计',
           isParent: true,
@@ -385,54 +336,6 @@ const routes = [
           requireAuth: true,
           permissionCheck: true,
           permissionNeed: ['serverManage']
-        }
-      },
-      {
-        name: 'certificateManage',
-        path: '/certificateManage',
-        component: () => import(/* webpackChunkName: "layout" */ '@/views/certificateManage/index.vue'),
-        meta: {
-          title: '证书管理',
-          isParent: true,
-          requireAuth: true,
-          permissionCheck: true,
-          permissionNeed: ['certificateManage']
-        }
-      },
-      {
-        name: 'addCertificate',
-        path: '/addCertificate',
-        component: () => import(/* webpackChunkName: "layout" */ '@/views/addCertificate/index.vue'),
-        meta: {
-          title: '新增证书',
-          isParent: false,
-          requireAuth: true,
-          permissionCheck: true,
-          permissionNeed: ['addCertificate']
-        }
-      },
-      {
-        name: 'agencyManage',
-        path: '/agencyManage',
-        component: () => import(/* webpackChunkName: "layout" */ '@/views/agencyManage/index.vue'),
-        meta: {
-          title: '机构管理',
-          isParent: true,
-          requireAuth: true,
-          permissionCheck: true,
-          permissionNeed: ['agencyManage']
-        }
-      },
-      {
-        name: 'agencyCreate',
-        path: '/agencyCreate',
-        component: () => import(/* webpackChunkName: "layout" */ '@/views/agencyCreate/index.vue'),
-        meta: {
-          title: '新增机构',
-          isParent: false,
-          requireAuth: true,
-          permissionCheck: true,
-          permissionNeed: ['agencyCreate']
         }
       }
     ]

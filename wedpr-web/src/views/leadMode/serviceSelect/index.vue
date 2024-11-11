@@ -25,7 +25,6 @@
   </div>
 </template>
 <script>
-import wePagination from '@/components/wePagination.vue'
 import { mapGetters } from 'vuex'
 import serviceCard from '@/components/serviceCard.vue'
 import { serviceManageServer } from 'Api'
@@ -43,8 +42,7 @@ export default {
     }
   },
   components: {
-    serviceCard,
-    wePagination
+    serviceCard
   },
   data() {
     return {

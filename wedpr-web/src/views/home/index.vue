@@ -162,7 +162,7 @@ import { dataManageServer, accountManageServer, projectManageServer, jobManageSe
 import dayjs from 'dayjs'
 import { jobStatusMap } from 'Utils/constant.js'
 import modifyUser from './modifyUser/index.vue'
-import { spliceLegendHome } from '../screen/chartsSetting.js'
+import { spliceLegendHome } from './chartsSetting.js'
 const channelColors = {
   PSI: '#2F89F3',
   XGB_TRAINING: '#FFA927',

@@ -104,13 +104,9 @@ import { dataManageServer, projectManageServer } from 'Api'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { mapGetters } from 'vuex'
 import { jobStatusMap } from 'Utils/constant.js'
-import wePagination from '@/components/wePagination.vue'
 export default {
   name: 'dataDetail',
   mixins: [tableHeightHandle],
-  components: {
-    wePagination
-  },
   data() {
     return {
       dataInfo: {

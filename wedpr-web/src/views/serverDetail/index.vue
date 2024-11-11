@@ -145,7 +145,6 @@ import { serviceManageServer } from 'Api'
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { jobStatusList, jobStatusMap, searchTypeEnum, serviceTypeEnum, servicePulishStatus } from 'Utils/constant.js'
 import { mapGetters } from 'vuex'
-import wePagination from '@/components/wePagination.vue'
 import serverApply from './serviceApply'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/a11y-light.min.css'
@@ -153,7 +152,6 @@ export default {
   name: 'projectDetail',
   mixins: [tableHeightHandle],
   components: {
-    wePagination,
     serverApply
   },
   data() {
@@ -187,7 +185,6 @@ export default {
       searchTypeEnum,
       serviceTypeEnum,
       servicePulishStatus,
-      pageMode: process.env.VUE_APP_MODE,
       showApplyModal: false,
       serviceId: '',
       serviceConfigList: [],

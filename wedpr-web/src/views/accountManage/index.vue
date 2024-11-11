@@ -55,7 +55,6 @@
 </template>
 <script>
 import { accountManageServer } from 'Api'
-import wePagination from '@/components/wePagination.vue'
 import { SET_USERINFO } from 'Store/mutation-types.js'
 import { mapMutations, mapGetters } from 'vuex'
 import { handleParamsValid } from 'Utils/index.js'
@@ -66,7 +65,6 @@ export default {
   name: 'groupManage',
   mixins: [tableHeightHandle],
   components: {
-    wePagination,
     addUser,
     adminChange
   },

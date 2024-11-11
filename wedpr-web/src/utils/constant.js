@@ -168,63 +168,7 @@ export function mapToList(mapObject) {
   })
   return data
 }
-// const data = {
-//   version: '1.0',
-//   templates: [
-//     { name: 'PSI', title: '数据对齐', participateNumber: '2+', detail: '', version: '1.0' },
-//     { name: 'PIR', title: '匿踪查询', participateNumber: '1', detail: '', version: '1.0' },
-//     { name: 'SQL', title: '连表分析', participateNumber: '3+', detail: '', version: '1.0' },
-//     { name: 'MPC', title: '自定义计算', participateNumber: '3+', detail: '', version: '1.0' },
-//     { name: 'XGB_TRAINING', title: 'SecureLGBM训练', participateNumber: '1+', needTagsProvider: true, detail: '', version: '1.0' },
-//     { name: 'XGB_PREDICTING', title: 'SecureLGBM预测', participateNumber: '2+', detail: '', version: '1.0' },
-//     { name: 'LR_TRAINING', title: 'SecureLR建模', participateNumber: '1+', needTagsProvider: true, detail: '', version: '1.0' },
-//     { name: 'LR_PREDICTING', title: 'SecureLR预测', participateNumber: '2+', value: 'LR_PREDICTING', participateNumber: '2+', detail: '', version: '1.0' }
-//   ]
-// }
-// export const algListFull = [
-//   {
-//     label: '数据对齐',
-//     value: 'PSI',
-//     participateNumber: '2+'
-//   },
-//   {
-//     label: 'SecureLGBM训练',
-//     value: 'XGB_TRAINING',
-//     participateNumber: '1+',
-//     needTagsProvider: true
-//   },
-//   {
-//     label: 'SecureLGBM预测',
-//     value: 'XGB_PREDICTING',
-//     participateNumber: '2+'
-//   },
-//   {
-//     label: '连表SQL分析',
-//     value: 'SQL',
-//     participateNumber: '3+'
-//   },
-//   {
-//     label: '自定义计算',
-//     value: 'MPC',
-//     participateNumber: '3+'
-//   },
-//   {
-//     label: '匿踪查询',
-//     value: 'PIR',
-//     participateNumber: '1'
-//   },
-//   {
-//     label: 'SecureLR训练',
-//     value: 'LR_TRAINING',
-//     participateNumber: '1+',
-//     needTagsProvider: true
-//   },
-//   {
-//     label: 'SecureLR预测',
-//     value: 'LR_PREDICTING',
-//     participateNumber: '2+'
-//   }
-// ]
+
 export const upTypeList = [
   {
     label: 'CSV文件',

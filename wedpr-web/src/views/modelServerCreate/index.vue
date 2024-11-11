@@ -24,7 +24,6 @@
 <script>
 import { tableHeightHandle } from 'Mixin/tableHeightHandle.js'
 import { serviceManageServer } from 'Api'
-import formCard from '@/components/formCard.vue'
 import { mapGetters } from 'vuex'
 import modelSelect from '../leadMode/modelSelect/index.vue'
 import { serviceTypeEnum } from 'Utils/constant.js'
@@ -32,7 +31,6 @@ export default {
   name: 'modelServerCreate',
   mixins: [tableHeightHandle],
   components: {
-    formCard,
     modelSelect
   },
   data() {

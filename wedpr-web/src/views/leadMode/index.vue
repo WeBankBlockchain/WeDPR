@@ -374,8 +374,6 @@
   </div>
 </template>
 <script>
-import formCard from '@/components/formCard.vue'
-// import dataCard from '@/components/dataCard.vue'
 import { settingManageServer, projectManageServer } from 'Api'
 import tagSelect from './tagSelect/index.vue'
 import participateSelect from './participateSelect/index.vue'
@@ -387,7 +385,6 @@ import serviceSelect from './serviceSelect/index.vue'
 export default {
   name: 'leadMode',
   components: {
-    formCard,
     tagSelect,
     participateSelect,
     modelSelect,

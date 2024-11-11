@@ -81,7 +81,6 @@
   </div>
 </template>
 <script>
-import wePagination from '@/components/wePagination.vue'
 import { serviceManageServer } from 'Api'
 import { handleParamsValid } from 'Utils/index.js'
 import { serviceTypeEnum, servicePulishStatusList } from 'Utils/constant.js'
@@ -90,7 +89,6 @@ import serviceCard from '@/components/serviceCard.vue'
 export default {
   name: 'serverManage',
   components: {
-    wePagination,
     serviceCard
   },
   data() {
