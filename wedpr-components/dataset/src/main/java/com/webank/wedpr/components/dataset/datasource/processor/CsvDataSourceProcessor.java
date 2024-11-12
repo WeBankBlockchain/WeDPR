@@ -139,6 +139,10 @@ public class CsvDataSourceProcessor implements DataSourceProcessor {
 
         int columnNum = fieldList.size();
         int rowNum = FileUtils.getFileLinesNumber(cvsFilePath);
+        if (rowNum > 1) {
+            // Note: minus field header
+            rowNum -= 1;
+        }
 
         this.dataSourceProcessorContext.getDataset().setDatasetFields(fieldString);
         this.dataSourceProcessorContext.getDataset().setDatasetColumnCount(columnNum);

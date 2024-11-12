@@ -66,11 +66,16 @@ public class SQLUtils {
             throw new DatasetException("only support single SQL statement, sql: " + sql);
         }
 
+        sqlValidationPattern = sqlValidationPattern.trim();
+        if (sqlValidationPattern.isEmpty()) {
+            return;
+        }
+
         // regular expression for matching a single SELECT statement.
-        //        Pattern pattern =
-        //                Pattern.compile(
-        //                        "^(SELECT.*?)(?<!\\G)(;|$)", Pattern.CASE_INSENSITIVE |
-        // Pattern.DOTALL);
+        //                Pattern pattern =
+        //                        Pattern.compile(
+        //                                "^(SELECT.*?)(?<!\\G)(;|$)", Pattern.CASE_INSENSITIVE |
+        //         Pattern.DOTALL);
         Pattern pattern =
                 Pattern.compile(sqlValidationPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher matcher = pattern.matcher(sql);
@@ -81,7 +86,11 @@ public class SQLUtils {
                     "only support single select SQL statement, sqlValidationPattern: {}, sql: {}",
                     sqlValidationPattern,
                     sql);
-            throw new DatasetException("only support single select SQL statement, sql: " + sql);
+            throw new DatasetException(
+                    "only support single select SQL statement, validationPattern： "
+                            + sqlValidationPattern
+                            + " sql: "
+                            + sql);
         }
     }
 }
