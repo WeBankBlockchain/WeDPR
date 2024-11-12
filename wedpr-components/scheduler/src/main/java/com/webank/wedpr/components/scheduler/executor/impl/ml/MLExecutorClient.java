@@ -32,7 +32,8 @@ public class MLExecutorClient {
                 loadBalancer.selectService(
                         LoadBalancer.Policy.ROUND_ROBIN, ServiceName.MODEL.getValue());
         if (entryPoint == null) {
-            throw new WeDPRException("Cannot find ml client endpoint");
+            throw new WeDPRException(
+                    "Cannot find client entrypoint for service: " + ServiceName.MODEL.getValue());
         }
         String url = entryPoint.getUrl(null);
         HttpClientImpl httpClient =

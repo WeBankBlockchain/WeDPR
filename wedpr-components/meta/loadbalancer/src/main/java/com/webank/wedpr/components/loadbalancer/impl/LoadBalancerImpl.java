@@ -43,6 +43,7 @@ public class LoadBalancerImpl implements LoadBalancer {
         List<ServiceMeta.EntryPointMeta> entryPointInfoList =
                 entryPointFetcher.getAliveEntryPoints(serviceType);
         if (entryPointInfoList == null || entryPointInfoList.isEmpty()) {
+            logger.warn("selectService: can't find entrypoint for service: {}", serviceType);
             return null;
         }
         if (policy == Policy.ROUND_ROBIN) {

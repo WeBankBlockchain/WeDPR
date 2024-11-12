@@ -77,7 +77,10 @@ public class SQLUtils {
         // check if it contains only one SELECT statement
         boolean onlySelectStmt = matcher.find() && !matcher.find();
         if (!onlySelectStmt) {
-            logger.error("only support single select SQL statement, sqlValidationPattern: {}, sql: {}", sqlValidationPattern, sql);
+            logger.error(
+                    "only support single select SQL statement, sqlValidationPattern: {}, sql: {}",
+                    sqlValidationPattern,
+                    sql);
             throw new DatasetException("only support single select SQL statement, sql: " + sql);
         }
     }
