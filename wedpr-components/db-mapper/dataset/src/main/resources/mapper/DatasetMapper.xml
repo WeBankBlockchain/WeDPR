@@ -260,6 +260,17 @@
             dataset_id = #{datasetId}
     </update>
 
+    <update id="updateStatusByUpdateInterval">
+        UPDATE
+            wedpr_dataset
+        SET
+            status = -1
+        WHERE
+            status != -1 AND status != 0 AND TIMESTAMPDIFF(SECOND, update_at, NOW()) > #{updateIntervalSec}
+        ORDER BY create_at DESC
+        LIMIT #{updateLimitCount}
+    </update>
+
     <delete id="deleteDataset" parameterType="String">
         DELETE FROM wedpr_dataset WHERE dataset_id = #{datasetId}
     </delete>
