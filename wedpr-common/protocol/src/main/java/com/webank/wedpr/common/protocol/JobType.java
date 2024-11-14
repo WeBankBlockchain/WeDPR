@@ -21,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 public enum JobType {
     PSI("PSI"),
     MPC("MPC"),
+    SQL("SQL"),
+    MODEL("MODEL"),
     ML_PSI("ML_PSI"),
     MPC_PSI("MPC_PSI"),
     MLPreprocessing("PREPROCESSING"),
@@ -80,7 +82,8 @@ public enum JobType {
     }
 
     public static Boolean isMPCJob(String jobType) {
-        return jobType.compareToIgnoreCase(MPC.getType()) == 0;
+        return jobType.compareToIgnoreCase(MPC.getType()) == 0
+                || jobType.compareToIgnoreCase(SQL.getType()) == 0;
     }
 
     public static Boolean isPirJob(String jobType) {
@@ -128,7 +131,7 @@ public enum JobType {
             return WorkerNodeType.MODEL;
         }
 
-        if (ordinal() == JobType.MPC.ordinal()) {
+        if (ordinal() == JobType.MPC.ordinal() || ordinal() == JobType.SQL.ordinal()) {
             return WorkerNodeType.MPC;
         }
 
