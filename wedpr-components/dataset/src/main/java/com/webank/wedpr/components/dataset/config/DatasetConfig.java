@@ -50,6 +50,15 @@ public class DatasetConfig {
     @Value("${wedpr.storage.download.shardSize: 20971520}")
     int shardSize;
 
+    @Value("${wedpr.dataset.status.update.timer.period:3600}")
+    int datasetStatusUpdateTimerPeriodSec;
+
+    @Value("${wedpr.dataset.status.update.interval.sec:3600}")
+    int datasetStatusUpdateIntervalSec;
+
+    @Value("${wedpr.dataset.status.update.limit.count:100}")
+    int datasetStatusUpdateLimitCount;
+
     @Value("${wedpr.dataset.sql.validation.pattern: ^(SELECT.*?)(?<!\\G)(;|$)}")
     String sqlValidationPattern;
 

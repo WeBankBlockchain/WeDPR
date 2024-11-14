@@ -46,6 +46,11 @@ public interface DatasetMapper extends BaseMapper<Dataset> {
             @Param("endTime") String endTime,
             @Param("status") Integer status);
 
+    /** update dataset by update interval sec */
+    int updateStatusByUpdateInterval(
+            @Param("updateIntervalSec") Integer updateIntervalSec,
+            @Param("updateLimitCount") Integer updateLimitCount);
+
     /**
      * insert dataset
      *

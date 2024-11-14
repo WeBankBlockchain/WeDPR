@@ -157,6 +157,10 @@ public class DBDataSourceProcessor extends CsvDataSourceProcessor {
 
         int columnNum = fieldList.size();
         int rowNum = FileUtils.getFileLinesNumber(cvsFilePath);
+        if (rowNum > 1) {
+            // Note: minus field header
+            rowNum -= 1;
+        }
         String md5Hash = FileUtils.calculateFileHash(cvsFilePath, "MD5");
         long fileSize = FileUtils.getFileSize(cvsFilePath);
 
