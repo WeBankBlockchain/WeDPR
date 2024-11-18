@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.scheduler.dag.worker;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.common.protocol.WorkerNodeType;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
@@ -32,7 +33,7 @@ public class WorkerFactory {
                     jobWorkerMapper);
         }
 
-        if (JobType.isMLJob(workerType)) {
+        if (WorkerNodeType.isMLJob(workerType)) {
             return new ModelWorker(
                     jobWorker,
                     workerRetryTimes,
