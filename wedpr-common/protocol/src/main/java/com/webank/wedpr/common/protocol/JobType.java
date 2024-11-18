@@ -22,7 +22,6 @@ public enum JobType {
     PSI("PSI"),
     MPC("MPC"),
     SQL("SQL"),
-    MODEL("MODEL"),
     ML_PSI("ML_PSI"),
     MPC_PSI("MPC_PSI"),
     MLPreprocessing("PREPROCESSING"),
