@@ -21,8 +21,9 @@ import com.webank.wedpr.common.utils.ThreadPoolService;
 public class PirSDKConfig {
     private static String PIR_TOPIC_PREFIX = "PIR_TOPIC_";
     private static String PIR_COMPONENT_PREFIX = "PIR_COMPONENT_";
+    // at most wait for 10min
     private static Integer PIR_QUERY_TIMEOUT_MS =
-            WeDPRConfig.apply("wedpr.service.pir.timeout_ms", 30000);
+            WeDPRConfig.apply("wedpr.service.pir.timeout_ms", 600 * 1000);
 
     private static String PIR_CACHE_DIR = WeDPRConfig.apply("wedpr.pir.cache.dir", ".cache");
     private static Integer PIR_THREAD_POOL_QUEUE_SIZE_LIMIT =

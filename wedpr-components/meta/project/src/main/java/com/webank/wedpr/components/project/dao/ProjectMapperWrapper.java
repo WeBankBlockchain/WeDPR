@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.project.dao;
 
 import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.protocol.ReportStatusEnum;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRResponse;
@@ -71,9 +72,13 @@ public class ProjectMapperWrapper {
         return new HashSet<>(jobList);
     }
 
-    public Set<JobDO> queryJobMetasByStatus(String user, String agency, String status) {
+    public Set<JobDO> queryJobMetasByStatus(
+            String user, String agency, String status, JobType jobType) {
         JobDO condition = new JobDO(true);
         condition.setStatus(status);
+        if (jobType != null) {
+            condition.setJobType(jobType.getType());
+        }
         return queryJobsByCondition(true, user, agency, condition);
     }
 

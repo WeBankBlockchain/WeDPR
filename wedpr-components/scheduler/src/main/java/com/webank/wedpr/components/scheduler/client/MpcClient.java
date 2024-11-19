@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.client;
 
+import static com.webank.wedpr.components.scheduler.client.common.ClientCommon.DEFAULT_HTTP_POLL_TASK_INTERVAL_MILLI;
 import static com.webank.wedpr.components.scheduler.client.common.ClientCommon.DEFAULT_HTTP_REQUEST_MAX_RETRY_TIMES;
 import static com.webank.wedpr.components.scheduler.client.common.ClientCommon.DEFAULT_HTTP_REQUEST_RETRY_DELAY_MILLI;
 
@@ -10,6 +11,7 @@ import com.webank.wedpr.components.http.client.model.JsonRpcResponse;
 import com.webank.wedpr.components.scheduler.dag.utils.WorkerUtils;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.MPCExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.request.MpcKillJobRequest;
+import com.webank.wedpr.components.scheduler.executor.impl.mpc.request.MpcQueryJobRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.request.MpcRunJobRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +20,15 @@ public class MpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MpcClient.class);
 
-    // private final int pollIntervalMilli = DEFAULT_HTTP_POLL_TASK_INTERVAL_MILLI;
+    private final int pollIntervalMilli = DEFAULT_HTTP_POLL_TASK_INTERVAL_MILLI;
     private final int httpRetryTimes = DEFAULT_HTTP_REQUEST_MAX_RETRY_TIMES;
     private final int httpRetryDelayMilli = DEFAULT_HTTP_REQUEST_RETRY_DELAY_MILLI;
+
+    private static final String RUN_FINISHED_STATUS = "COMPLETED";
+
+    private final Integer MpcSuccessStatus = 0;
+    private final Integer MpcDuplicatedTaskStatus = 1;
+    private final Integer MpcFailedStatus = -1;
 
     private final JsonRpcClient jsonRpcClient;
 
@@ -50,6 +58,14 @@ public class MpcClient {
             return jobId;
         }
 
+        if (response.getResult().getCode().equals(MpcDuplicatedTaskStatus)) {
+            logger.info(
+                    "MPC job has already been submitted, taskId: {}, jobRequest: {}",
+                    jobId,
+                    params);
+            return jobId;
+        }
+
         logger.error(
                 "submit MPC job failed, jobId: {}, jobRequest: {}, response: {}",
                 jobId,
@@ -58,6 +74,38 @@ public class MpcClient {
 
         throw new WeDPRException(
                 "submit MPC job " + jobId + " failed for " + response.getResult().getMessage());
+    }
+
+    public void pollTask(String taskId) throws WeDPRException {
+        String mpcRunTaskMethod = MPCExecutorConfig.getMpcRunTaskMethod();
+        String mpcToken = MPCExecutorConfig.getMpcToken();
+        MpcQueryJobRequest mpcQueryJobRequest = new MpcQueryJobRequest();
+        mpcQueryJobRequest.setJobId(taskId);
+
+        while (true) {
+            JsonRpcResponse response =
+                    sendRequestWithRetry(taskId, mpcRunTaskMethod, mpcToken, mpcQueryJobRequest);
+
+            // response error
+            if (!response.statusOk()) {
+                logger.warn("query MPC status error, taskId: {}, response: {}", taskId, response);
+                throw new WeDPRException(
+                        "query MPC task status error, taskId: "
+                                + taskId
+                                + " ,response: "
+                                + response);
+            }
+
+            if (response.getResult().getStatus().compareToIgnoreCase(RUN_FINISHED_STATUS) == 0) {
+                logger.info(
+                        "MPC task execute successfully, taskId: {}, response: {}",
+                        taskId,
+                        response);
+                return;
+            }
+
+            WorkerUtils.sleep(pollIntervalMilli);
+        }
     }
 
     public void killTask(String jobId) throws WeDPRException {

@@ -280,8 +280,7 @@ public class HDFSStorage implements FileStorageInterface {
 
         FileStatus metaInfo = getMetaInfo(filePath);
 
-        logger.error(
-                "get hdfs storage meta, filePath: {}, length: {}", filePath, metaInfo.getLen());
+        logger.info("get hdfs storage meta, filePath: {}, length: {}", filePath, metaInfo.getLen());
 
         StorageMeta storageMeta = new StorageMeta();
         storageMeta.setLength(metaInfo.getLen());

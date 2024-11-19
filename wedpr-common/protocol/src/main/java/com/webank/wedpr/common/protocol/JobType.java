@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum JobType {
     PSI("PSI"),
     MPC("MPC"),
-    MODEL("MODEL"),
+    SQL("SQL"),
     ML_PSI("ML_PSI"),
     MPC_PSI("MPC_PSI"),
     MLPreprocessing("PREPROCESSING"),
@@ -81,11 +81,8 @@ public enum JobType {
     }
 
     public static Boolean isMPCJob(String jobType) {
-        return jobType.compareToIgnoreCase(MPC.getType()) == 0;
-    }
-
-    public static Boolean isMLJob(String jobType) {
-        return jobType.compareToIgnoreCase(MODEL.getType()) == 0;
+        return jobType.compareToIgnoreCase(MPC.getType()) == 0
+                || jobType.compareToIgnoreCase(SQL.getType()) == 0;
     }
 
     public static Boolean isPirJob(String jobType) {
@@ -103,6 +100,21 @@ public enum JobType {
         return ExecutorType.DAG;
     }
 
+    public ServiceName getServiceName() {
+        if (this.ordinal() == PSI.ordinal()
+                || this.ordinal() == ML_PSI.ordinal()
+                || this.ordinal() == MPC_PSI.ordinal()) {
+            return ServiceName.PSI;
+        }
+        if (this.ordinal() == MPC.ordinal()) {
+            return ServiceName.MPC;
+        }
+        if (this.ordinal() == PIR.ordinal()) {
+            return ServiceName.PIR;
+        }
+        return ServiceName.MODEL;
+    }
+
     public WorkerNodeType getWorkerNodeType() throws Exception {
         if (ordinal() == JobType.PSI.ordinal()
                 || ordinal() == JobType.ML_PSI.ordinal()
@@ -118,7 +130,7 @@ public enum JobType {
             return WorkerNodeType.MODEL;
         }
 
-        if (ordinal() == JobType.MPC.ordinal()) {
+        if (ordinal() == JobType.MPC.ordinal() || ordinal() == JobType.SQL.ordinal()) {
             return WorkerNodeType.MPC;
         }
 

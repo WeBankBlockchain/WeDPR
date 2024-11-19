@@ -1,8 +1,8 @@
 package com.webank.wedpr.components.scheduler.client.data;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import lombok.Data;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 @Data
 public class JobData {

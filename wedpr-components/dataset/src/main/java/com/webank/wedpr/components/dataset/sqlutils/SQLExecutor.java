@@ -101,11 +101,13 @@ public class SQLExecutor {
         try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password);
                 PreparedStatement preparedStatement = connection.prepareStatement(explainSql)) {
 
+            /*
+            preparedStatement.execute();
+
             ResultSetMetaData metaData = preparedStatement.getMetaData();
+            ResultSet resultSet = preparedStatement.getResultSet();
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // query fields list
+             query fields list
             int columnCount = metaData.getColumnCount();
 
             while (resultSet.next()) {
@@ -125,12 +127,13 @@ public class SQLExecutor {
 
                 logger.info("---------------------------------");
             }
+            */
 
             logger.info(
-                    "execute explain sql success, url: {}, sql: {}, columnCount: {}",
+                    "execute explain sql success, url: {}, sql: {}, preparedStatement: {}",
                     jdbcUrl,
                     sql,
-                    columnCount);
+                    preparedStatement);
 
         } catch (SQLSyntaxErrorException sqlSyntaxErrorException) {
             logger.error(
@@ -150,6 +153,7 @@ public class SQLExecutor {
             logger.error(
                     "execute explain sql SQLException, url: {}, sql: {}, e: ",
                     jdbcUrl,
+                    sql,
                     sqlException);
             throw new DatasetException(
                     "execute explain sql SQLException, e: " + sqlException.getMessage());

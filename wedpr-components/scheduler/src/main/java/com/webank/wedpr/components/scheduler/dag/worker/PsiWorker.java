@@ -1,10 +1,10 @@
 package com.webank.wedpr.components.scheduler.dag.worker;
 
+import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.client.PsiClient;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
-import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import org.slf4j.Logger;
@@ -30,9 +30,11 @@ public class PsiWorker extends Worker {
         String workerId = getWorkerId();
         String workerArgs = getArgs();
 
+        // // use hash policy to ensure the tasks belong to the same dag execute on the same worker,
+        // and can make full use of the cache
         ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
-                        .selectService(LoadBalancer.Policy.ROUND_ROBIN, ServiceName.PSI.getValue());
+                        .selectService(LoadBalancer.Policy.HASH, ServiceName.PSI.getValue(), jobId);
         if (entryPoint == null) {
             logger.error("Unable to find psi service endpoint, jobId: {}", jobId);
             throw new WeDPRException("Unable to find psi service endpoint, jobId: " + jobId);

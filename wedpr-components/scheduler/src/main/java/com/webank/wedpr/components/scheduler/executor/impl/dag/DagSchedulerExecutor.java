@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.dag;
 
 import com.webank.wedpr.common.protocol.ExecutorType;
+import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.BaseResponse;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.common.utils.WeDPRException;
@@ -11,7 +12,6 @@ import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.api.WorkFlowOrchestratorApi;
 import com.webank.wedpr.components.scheduler.dag.DagWorkFlowSchedulerImpl;
 import com.webank.wedpr.components.scheduler.dag.api.WorkFlowScheduler;
-import com.webank.wedpr.components.scheduler.dag.utils.ServiceName;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
 import com.webank.wedpr.components.scheduler.executor.Executor;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;

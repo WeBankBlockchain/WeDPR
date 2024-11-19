@@ -18,13 +18,17 @@ package com.webank.wedpr.components.scheduler.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.JobStatus;
+import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.Constant;
+import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.project.model.BatchJobList;
 import com.webank.wedpr.components.scheduler.api.SchedulerApi;
 import com.webank.wedpr.components.scheduler.config.SchedulerTaskConfig;
 import com.webank.wedpr.components.sync.ResourceSyncer;
+import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -41,13 +45,15 @@ public class SchedulerTaskImpl {
     private final ProjectMapperWrapper projectMapperWrapper;
     private final SchedulerApi scheduler;
     private final JobSyncer jobSyncer;
+    private final LoadBalancer loadBalancer;
 
     private final ScheduledExecutorService workerTimer = new ScheduledThreadPoolExecutor(1);
 
     public SchedulerTaskImpl(
             ProjectMapperWrapper projectMapperWrapper,
             ResourceSyncer resourceSyncer,
-            SchedulerApi scheduler) {
+            SchedulerApi scheduler,
+            LoadBalancer loadBalancer) {
         this.jobSyncer =
                 new JobSyncer(
                         WeDPRCommonConfig.getAgency(),
@@ -57,6 +63,7 @@ public class SchedulerTaskImpl {
                         projectMapperWrapper);
         this.projectMapperWrapper = projectMapperWrapper;
         this.scheduler = scheduler;
+        this.loadBalancer = loadBalancer;
     }
 
     public void start() {
@@ -66,7 +73,7 @@ public class SchedulerTaskImpl {
                     @Override
                     public void run() {
                         try {
-                            schedule(SchedulerTaskConfig.getJobConcurrency());
+                            schedule();
                         } catch (Exception e) {
                             logger.warn("SchedulerTask: scheduler error: ", e);
                         }
@@ -82,12 +89,12 @@ public class SchedulerTaskImpl {
         return this.scheduler;
     }
 
-    protected void schedule(int concurrency) {
+    protected void schedule() {
         try {
             killTasks();
-            scheduleTasksToRun(concurrency);
+            schedulerAllTypeTasks();
         } catch (Exception e) {
-            logger.warn("schedule exception, concurrency: {}, error: ", concurrency, e);
+            logger.warn("schedule exception, error: ", e);
         }
     }
 
@@ -96,7 +103,7 @@ public class SchedulerTaskImpl {
         condition.setStatus(JobStatus.WaitToKill.getStatus());
         Set<JobDO> waitToKillJobs =
                 this.projectMapperWrapper.queryJobMetasByStatus(
-                        null, null, JobStatus.WaitToKill.getStatus());
+                        null, null, JobStatus.WaitToKill.getStatus(), null);
         if (waitToKillJobs == null || waitToKillJobs.isEmpty()) {
             return;
         }
@@ -113,12 +120,27 @@ public class SchedulerTaskImpl {
         this.jobSyncer.sync(Constant.SYS_USER, JobSyncer.JobAction.KillAction, jobs.serialize());
     }
 
-    protected void scheduleTasksToRun(int concurrency) throws Exception {
-        logger.info("###### scheduleTasksToRun: {}", concurrency);
+    protected void schedulerAllTypeTasks() throws Exception {
+        for (JobType jobType : JobType.values()) {
+            ServiceName serviceType = jobType.getServiceName();
+            List<ServiceMeta.EntryPointMeta> serviceInfos =
+                    loadBalancer.selectAllEndPoint(serviceType.getValue());
+            int concurrency = 0;
+            if (serviceInfos != null) {
+                concurrency = serviceInfos.size() * SchedulerTaskConfig.getJobConcurrency();
+            }
+            scheduleTasksToRun(concurrency, jobType);
+        }
+    }
+
+    protected void scheduleTasksToRun(int concurrency, JobType jobType) throws Exception {
         // get the running task number
         Set<JobDO> runningJobs =
                 this.projectMapperWrapper.queryJobMetasByStatus(
-                        null, WeDPRCommonConfig.getAgency(), JobStatus.Running.getStatus());
+                        null,
+                        WeDPRCommonConfig.getAgency(),
+                        JobStatus.Running.getStatus(),
+                        jobType);
         Integer runningJobSize = runningJobs == null ? 0 : runningJobs.size();
         if (runningJobs != null && runningJobs.size() >= concurrency) {
             logger.info(
@@ -127,10 +149,23 @@ public class SchedulerTaskImpl {
                     concurrency);
             return;
         }
+        if (runningJobSize > 0 && concurrency == 0) {
+            logger.warn(
+                    "All executors that can execute type {} tasks are abnormal! runningJobSize: {}",
+                    jobType.getType(),
+                    runningJobSize);
+            return;
+        }
+        if (concurrency > 0 && concurrency <= runningJobSize) {
+            return;
+        }
+        // at least fetch one job even if concurrency is 0
+        int fetchedJobs = concurrency > runningJobSize ? (concurrency - runningJobSize) : 1;
         // query the submitted tasks
         JobDO condition = new JobDO(true);
         condition.setStatus(JobStatus.Submitted.getStatus());
-        condition.setLimitItems(concurrency - runningJobSize);
+        condition.setJobType(jobType.getType());
+        condition.setLimitItems(fetchedJobs);
         Set<JobDO> jobsToRun =
                 this.projectMapperWrapper.queryJobsByCondition(false, null, null, condition);
         if (jobsToRun == null || jobsToRun.isEmpty()) {
@@ -148,6 +183,11 @@ public class SchedulerTaskImpl {
         if (jobsToRun == null || jobsToRun.isEmpty()) {
             return;
         }
+        if (concurrency == 0 && jobsToRun.size() > 0) {
+            logger.warn(
+                    "All executors that can execute type {} tasks are abnormal", jobType.getType());
+            return;
+        }
         // in case of been scheduled more than once
         List<JobDO> jobsToSync = new ArrayList<>();
         List<JobDO> jobsToExecute = new ArrayList<>();
@@ -159,11 +199,12 @@ public class SchedulerTaskImpl {
             }
         }
         logger.info(
-                "scheduleTasksToRun, syncJobs: {}, jobsToRun: {}, jobsToSync: {}, jobsToExecute: {}",
+                "scheduleTasksToRun, syncJobs: {}, jobsToRun: {}, jobsToSync: {}, jobsToExecute: {}, jobType: {}",
                 runningJobSize,
                 jobsToRun.size(),
                 jobsToSync.size(),
-                jobsToExecute.size());
+                jobsToExecute.size(),
+                jobType.getType());
         syncJobs(jobsToSync);
         executeJobs(jobsToExecute);
     }

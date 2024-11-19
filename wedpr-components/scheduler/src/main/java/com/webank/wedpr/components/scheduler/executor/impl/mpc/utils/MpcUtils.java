@@ -8,7 +8,6 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
-import com.webank.wedpr.components.scheduler.python.PythonScriptExecutor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -16,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,27 +34,6 @@ public class MpcUtils {
     public static final String MPC_FIELD_NORMALIZED_NAMES = "field%d";
     public static final String MPC_SOURCE_RECORD_COUNT_LABEL = "$(source%d_record_count)";
     public static final String MPC_SHARE_BYTES_LENGTH_PATTERN = "BIT_LENGTH = (\\d+)";
-
-    public static String transSql2MpcCode(String sql)
-            throws WeDPRException, IOException, InterruptedException {
-
-        String pythonScript = ExecutorConfig.getMpcCodeGeneratorScriptPath();
-        String mpcCodeGeneratorEnvPath = ExecutorConfig.getMpcCodeGeneratorEnvPath();
-
-        return transSql2MpcCode(pythonScript, mpcCodeGeneratorEnvPath, sql);
-    }
-
-    public static String transSql2MpcCode(String pythonScript, String env, String sql)
-            throws WeDPRException, IOException, InterruptedException {
-
-        PythonScriptExecutor pythonScriptExecutor = new PythonScriptExecutor();
-
-        if (env != null && !env.isEmpty()) {
-            pythonScriptExecutor.addEnvironmentVariable("PYTHONPATH", env);
-        }
-
-        return pythonScriptExecutor.executeScript(pythonScript, Collections.singletonList(sql));
-    }
 
     public static int getShareBytesLength(String mpcContent) {
 

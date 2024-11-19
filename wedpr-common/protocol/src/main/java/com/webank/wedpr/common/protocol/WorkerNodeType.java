@@ -28,4 +28,8 @@ public enum WorkerNodeType {
     WorkerNodeType(String type) {
         this.type = type;
     }
+
+    public static Boolean isMLJob(String jobType) {
+        return jobType.compareToIgnoreCase(MODEL.getType()) == 0;
+    }
 }

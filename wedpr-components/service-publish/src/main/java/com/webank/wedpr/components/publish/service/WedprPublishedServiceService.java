@@ -4,7 +4,6 @@ import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceInfo;
 import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
-import com.webank.wedpr.components.publish.sync.PublishSyncAction;
 
 /**
  * 服务类
@@ -20,8 +19,6 @@ public interface WedprPublishedServiceService {
             throws Exception;
 
     WeDPRResponse revokePublishService(String username, String serviceId) throws Exception;
-
-    void syncPublishService(PublishSyncAction action, PublishedServiceInfo publishedServiceInfo);
 
     WeDPRResponse listPublishService(String user, String agency, PublishSearchRequest request);
 }

@@ -46,14 +46,6 @@ public class ExecutorConfig {
     private static String MPC_PSI_OPTION_REGEX =
             WeDPRConfig.apply("wedpr.executor.mpc.psi.option.regex", "PSI_OPTION\\s*=\\s*True");
 
-    private static String MPC_CODE_GENERATOR_SCRIPT_PATH =
-            WeDPRConfig.apply(
-                    "wedpr.executor.mpc.code.generator.script.path",
-                    "./mpc_generator/mpc_generator_main.py");
-
-    private static String MPC_CODE_GENERATOR_ENV_PATH =
-            WeDPRConfig.apply("wedpr.executor.mpc.code.generator.python.env", "");
-
     private static String PIR_RESULT_FILE_NAME =
             WeDPRConfig.apply("wedpr.executor.pir.result.file.name", "pir_result");
 
@@ -63,14 +55,6 @@ public class ExecutorConfig {
 
     public static String getMpcPsiOptionRegex() {
         return MPC_PSI_OPTION_REGEX;
-    }
-
-    public static String getMpcCodeGeneratorEnvPath() {
-        return MPC_CODE_GENERATOR_ENV_PATH;
-    }
-
-    public static String getMpcCodeGeneratorScriptPath() {
-        return MPC_CODE_GENERATOR_SCRIPT_PATH;
     }
 
     public static String getJobCacheDir(String jobID) {
