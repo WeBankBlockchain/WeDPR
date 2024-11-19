@@ -22,7 +22,7 @@ public class MPCExecutorConfig {
     //    private static final String MPC_URL = WeDPRConfig.apply("wedpr.executor.mpc.url", null,
     // true);
     private static final String MPC_RUN_TASK_METHOD =
-            WeDPRConfig.apply("wedpr.executor.mpc.method.runTask", "run");
+            WeDPRConfig.apply("wedpr.executor.mpc.method.runTask", "asyncRun");
     private static final String MPC_KILL_TASK_METHOD =
             WeDPRConfig.apply("wedpr.executor.mpc.method.killTask", "kill");
     private static final String MPC_TOKEN = WeDPRConfig.apply("wedpr.executor.mpc.token", "", true);

@@ -68,6 +68,10 @@ public class JobWorkFlowBuilderManager {
                 JobType.MPC.getType(),
                 new JobWorkFlowBuilderImpl(new MPCExecutorHook(storage, fileMetaBuilder), this));
 
+        registerJobWorkFlowBuilder(
+                JobType.SQL.getType(),
+                new JobWorkFlowBuilderImpl(new MPCExecutorHook(storage, fileMetaBuilder), this));
+
         logger.info("register ML workflow builder success");
         registerJobWorkFlowBuilder(
                 JobType.MLPreprocessing.getType(),

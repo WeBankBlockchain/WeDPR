@@ -56,9 +56,10 @@ public class MpcWorker extends Worker {
         }
 
         try {
-            MpcClient psiClient = new MpcClient(url);
+            MpcClient mpcClient = new MpcClient(url);
             // submit task, sync call
-            psiClient.submitTask(workerArgs);
+            String taskId = mpcClient.submitTask(workerArgs);
+            mpcClient.pollTask(taskId);
         } finally {
             long endTimeMillis = System.currentTimeMillis();
             logger.info(

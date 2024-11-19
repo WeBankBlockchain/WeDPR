@@ -11,6 +11,7 @@ import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.executor.impl.mpc.utils.MpcUtils;
 import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam;
+import com.webank.wedpr.components.scheduler.python.MpcCodeTranslator;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -54,7 +55,7 @@ public class MPCJobParam {
         }
 
         if (!Common.isEmptyStr(sql)) {
-            this.mpcContent = MpcUtils.transSql2MpcCode(sql);
+            this.mpcContent = MpcCodeTranslator.translateSqlToMpcCode(sql);
 
             if (logger.isDebugEnabled()) {
                 logger.debug(
@@ -65,7 +66,6 @@ public class MPCJobParam {
             }
         }
 
-        //
         this.mpcContent = this.mpcContent.replace("\r\n", "\n");
 
         this.shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
