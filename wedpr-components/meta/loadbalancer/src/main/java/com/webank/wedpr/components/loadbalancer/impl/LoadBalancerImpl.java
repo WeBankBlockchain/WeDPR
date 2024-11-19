@@ -39,11 +39,15 @@ public class LoadBalancerImpl implements LoadBalancer {
     }
 
     @Override
-    public ServiceMeta.EntryPointMeta selectService(Policy policy, String serviceType) {
+    public ServiceMeta.EntryPointMeta selectService(
+            Policy policy, String serviceType, String targetId) {
         List<ServiceMeta.EntryPointMeta> entryPointInfoList =
                 entryPointFetcher.getAliveEntryPoints(serviceType);
         if (entryPointInfoList == null || entryPointInfoList.isEmpty()) {
-            logger.warn("selectService: can't find entrypoint for service: {}", serviceType);
+            logger.warn(
+                    "selectService: can't find entrypoint for service: {}, targetId: {}",
+                    serviceType,
+                    targetId);
             return null;
         }
         if (policy == Policy.ROUND_ROBIN) {
@@ -51,7 +55,7 @@ public class LoadBalancerImpl implements LoadBalancer {
             return entryPointInfoList.get(idx);
         }
         // select by hash
-        int idx = serviceType.hashCode() % entryPointInfoList.size();
+        int idx = targetId.hashCode() % entryPointInfoList.size();
         int selectedIdx = Math.max(idx, 0);
         lastIdx.set(selectedIdx);
         logger.info("selectService: {}", entryPointInfoList.get(selectedIdx).toString());

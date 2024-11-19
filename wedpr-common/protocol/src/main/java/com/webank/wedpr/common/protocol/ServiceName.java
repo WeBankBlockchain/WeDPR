@@ -1,9 +1,10 @@
-package com.webank.wedpr.components.scheduler.dag.utils;
+package com.webank.wedpr.common.protocol;
 
 public enum ServiceName {
     PSI("psi"),
     MODEL("model"),
-    MPC("mpc");
+    MPC("mpc"),
+    PIR("pir");
 
     private String value;
 

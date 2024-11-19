@@ -65,7 +65,8 @@ public class SchedulerBuilder {
                             schedulerWorker);
 
             SchedulerTaskImpl schedulerTask =
-                    new SchedulerTaskImpl(projectMapperWrapper, resourceSyncer, scheduler);
+                    new SchedulerTaskImpl(
+                            projectMapperWrapper, resourceSyncer, scheduler, loadBalancer);
             logger.info("create SchedulerTask success");
             return schedulerTask;
         } catch (Exception e) {
