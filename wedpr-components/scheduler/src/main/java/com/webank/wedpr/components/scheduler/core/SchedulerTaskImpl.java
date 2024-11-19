@@ -203,7 +203,8 @@ public class SchedulerTaskImpl {
                 runningJobSize,
                 jobsToRun.size(),
                 jobsToSync.size(),
-                jobsToExecute.size(), jobType.getType());
+                jobsToExecute.size(),
+                jobType.getType());
         syncJobs(jobsToSync);
         executeJobs(jobsToExecute);
     }

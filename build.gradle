@@ -17,7 +17,7 @@ ext {
         ossrhPassword="xxx"
     }
 
-    jacksonVersion = "2.12.7.1"
+    jacksonVersion = "2.18.1"
     apacheCommonLangVersion = "3.17.0"
     lombokVersion = "1.18.32"
     junitVersion = "4.13.2"
@@ -37,7 +37,7 @@ ext {
     springVersion = "5.2.22.RELEASE"
     springSecurityVersion="5.7.12"
     springSecurityWebVersion="5.7.13"
-    springWebVersion="5.3.9"
+    springWebVersion="5.3.39"
     springWebmvcVersion="5.3.39"
 
     // the spring-boot related version
@@ -54,7 +54,7 @@ ext {
     opencsvVersion = "5.9"
     poiVersion = "5.3.0"
     hiveVersion = "2.3.10"
-    httpClientVersion = "4.5.13"
+    httpClientVersion = "4.5.14"
     yitterIdGeneratorVersion = "1.0.6"
     bcosSDKVersion = "3.7.0"
     jwtVersion = "3.5.0"
@@ -66,6 +66,7 @@ ext {
     googleAutoServiceVersion = "1.1.1"
     wedprGatewaySDKVersion = "1.0.0-SNAPSHOT"
     gsonVersion = "2.10.1"
+    servletApiVersion="4.0.1"
 
     libraries = [
             spring: [
