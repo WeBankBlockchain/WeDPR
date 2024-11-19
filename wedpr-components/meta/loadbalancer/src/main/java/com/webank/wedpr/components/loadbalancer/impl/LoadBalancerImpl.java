@@ -55,10 +55,17 @@ public class LoadBalancerImpl implements LoadBalancer {
             return entryPointInfoList.get(idx);
         }
         // select by hash
-        int idx = targetId.hashCode() % entryPointInfoList.size();
+        int hashValue = targetId.hashCode();
+        int idx = hashValue % entryPointInfoList.size();
         int selectedIdx = Math.max(idx, 0);
         lastIdx.set(selectedIdx);
-        logger.info("selectService: {}", entryPointInfoList.get(selectedIdx).toString());
-        return entryPointInfoList.get(selectedIdx);
+        ServiceMeta.EntryPointMeta selectedService = entryPointInfoList.get(selectedIdx);
+        logger.info(
+                "selectService: {}, hashCode: {}, alive-entrypoints: {}, targetId: {}",
+                selectedService.toString(),
+                hashValue,
+                entryPointInfoList.size(),
+                targetId);
+        return selectedService;
     }
 }
