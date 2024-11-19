@@ -17,5 +17,5 @@ public interface WedprGroupDetailService extends IService<WedprGroupDetail> {
     IPage<WedprUserResponse> selectGroupUserPage(
             Page<WedprUserResponse> page, String groupId, String username);
 
-    Integer selectUserCount(List<String> adminGroupIds);
+    Long selectUserCount(List<String> adminGroupIds);
 }

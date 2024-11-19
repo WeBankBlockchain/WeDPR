@@ -410,7 +410,7 @@ public class WedprGroupController {
             List<WedprGroup> wedprGroupList = page.getRecords();
             List<WedprGroupDTO> wedprGroupDTOList = new ArrayList<>(wedprGroupList.size());
             for (WedprGroup wedprGroup : wedprGroupList) {
-                int userCount =
+                Long userCount =
                         wedprGroupDetailService.count(
                                 new LambdaQueryWrapper<WedprGroupDetail>()
                                         .eq(WedprGroupDetail::getGroupId, wedprGroup.getGroupId()));
@@ -482,7 +482,7 @@ public class WedprGroupController {
         try {
             UserToken userToken = TokenUtils.getLoginUser(request);
             String roleName = userToken.getRoleName();
-            int groupCount = 0;
+            long groupCount = 0;
             if (userToken.isAdmin()) {
                 groupCount = wedprGroupService.count();
             } else {

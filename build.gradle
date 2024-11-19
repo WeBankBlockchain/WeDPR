@@ -17,35 +17,50 @@ ext {
         ossrhPassword="xxx"
     }
 
-    jacksonVersion = "2.17.1"
-    apacheCommonLangVersion = "3.14.0"
+    jacksonVersion = "2.12.7.1"
+    apacheCommonLangVersion = "3.17.0"
     lombokVersion = "1.18.32"
     junitVersion = "4.13.2"
-    hadoopVersion = "2.7.5"
+    hadoopVersion = "3.4.0"
     mysqlConnectorVersion = "8.0.29"
     // Note: pageHelper depends on jsqlParser,
     // it's jsqlParser version should be equal to jsqlParser version of mybatis-plus
     pageHelperVersion = "5.3.1"
     //mybatisPlusVersion = "3.5.7"
-    mybatisPlusVersion = "3.4.1"
+    mybatisPlusVersion = "3.5.3.1"
     druidVersion = "1.2.23"
     //springVersion = "5.3.34"
     //springBootVersion = "2.7.12"
+
+
+    // the spring related version
     springVersion = "5.2.22.RELEASE"
-    springBootVersion = "2.3.12.RELEASE"
+    springSecurityVersion="5.7.12"
+    springSecurityWebVersion="5.7.13"
+    springWebVersion="5.3.9"
+    springWebmvcVersion="5.3.39"
+
+    // the spring-boot related version
+    springBootVersion = "2.5.12"
+    springBootStarterWebVersion="2.5.12"
+    springBootAutoConfigureVersion="2.5.15"
+    springBootActuatorVersion="2.7.18"
+    springfoxVersion = "3.0.0"
+    snakeyamlVersion="2.0"
+
+
     log4jVersion = "2.23.0"
     commonsCollectionsVersion = "3.2.2"
     opencsvVersion = "5.9"
     poiVersion = "5.3.0"
     hiveVersion = "2.3.10"
-
-    httpClientVersion = "4.5.14"
+    httpClientVersion = "4.5.13"
     yitterIdGeneratorVersion = "1.0.6"
     bcosSDKVersion = "3.7.0"
     jwtVersion = "3.5.0"
     mybatisPlusGeneratorVersion = "3.4.1"
     velocityVersion = "2.3"
-    springfoxVersion = "3.0.0"
+
     guavaVersion = "32.0.1-jre"
     bcprovVersion = "1.78.1"
     googleAutoServiceVersion = "1.1.1"
@@ -57,19 +72,23 @@ ext {
                     "org.springframework:spring-core:${springVersion}",
                     "org.springframework:spring-beans:${springVersion}",
                     "org.springframework:spring-context:${springVersion}",
-                    "org.springframework:spring-web:${springVersion}",
+                    "org.springframework:spring-web:${springWebVersion}",
                     "org.springframework:spring-jdbc:${springVersion}",
                     "org.springframework:spring-tx:${springVersion}",
-                    "org.springframework:spring-webmvc:${springVersion}",
+                    "org.springframework:spring-webmvc:${springWebmvcVersion}",
                     "org.springframework:spring-jcl:${springVersion}",
                     "org.springframework:spring-aop:${springVersion}",
             ],
             spring_boot: [
-                    "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+                    "org.springframework.boot:spring-boot-starter-web:${springBootStarterWebVersion}",
                     "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}",
                     "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}",
                     "org.springframework.boot:spring-boot-actuator:${springBootVersion}",
+                    "org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigureVersion}",
                     "io.springfox:springfox-boot-starter:${springfoxVersion}",
+                    "org.springframework.boot:spring-boot-actuator:${springBootActuatorVersion}",
+                    "org.yaml:snakeyaml:${snakeyamlVersion}",
+
             ]
     ]
 }

@@ -31,7 +31,7 @@ public class WedprGroupDetailImplService
         return wedprGroupDetailMapper.selectGroupUserPage(page, groupId, username);
     }
 
-    public Integer selectUserCount(List<String> adminGroupIds) {
+    public Long selectUserCount(List<String> adminGroupIds) {
         QueryWrapper<WedprGroupDetail> queryWrapper = new QueryWrapper<>();
         LambdaQueryWrapper<WedprGroupDetail> lambdaQueryWrapper =
                 queryWrapper

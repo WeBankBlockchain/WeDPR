@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GetUserCountResponse {
-    private Integer userCount;
+    private Long userCount;
 }
