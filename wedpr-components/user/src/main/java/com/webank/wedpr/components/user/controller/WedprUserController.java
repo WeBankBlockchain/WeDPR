@@ -183,7 +183,7 @@ public class WedprUserController {
         try {
             UserToken userToken = TokenUtils.getLoginUser(request);
             String roleName = userToken.getRoleName();
-            int userCount = 0;
+            long userCount = 0;
             if (UserRoleEnum.ADMIN_ROLE.getRoleName().equals(roleName)) {
                 userCount = wedprUserService.count();
             } else {

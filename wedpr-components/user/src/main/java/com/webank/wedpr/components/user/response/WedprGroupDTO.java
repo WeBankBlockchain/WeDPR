@@ -24,5 +24,5 @@ public class WedprGroupDTO {
 
     private Integer status;
 
-    private Integer userCount;
+    private Long userCount;
 }

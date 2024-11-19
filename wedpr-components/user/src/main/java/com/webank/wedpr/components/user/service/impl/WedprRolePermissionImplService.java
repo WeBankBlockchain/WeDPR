@@ -52,7 +52,7 @@ public class WedprRolePermissionImplService
         LambdaQueryWrapper<WedprRolePermission> wrapper =
                 new LambdaQueryWrapper<WedprRolePermission>()
                         .eq(WedprRolePermission::getPermissionId, permissionId);
-        int queriedWedprPermissionCount = this.count(wrapper);
+        long queriedWedprPermissionCount = this.count(wrapper);
         return queriedWedprPermissionCount > 0;
     }
 
@@ -145,7 +145,7 @@ public class WedprRolePermissionImplService
         LambdaQueryWrapper<WedprRolePermission> lambdaRoleIdQueryWrapper =
                 new LambdaQueryWrapper<WedprRolePermission>()
                         .eq(WedprRolePermission::getRoleId, roleId);
-        int queriedWedprRolePermissionCount = this.count(lambdaRoleIdQueryWrapper);
+        long queriedWedprRolePermissionCount = this.count(lambdaRoleIdQueryWrapper);
         return queriedWedprRolePermissionCount > 0;
     }
 

@@ -27,7 +27,7 @@ public class WedprUserRoleImplService extends ServiceImpl<WedprUserRoleMapper, W
     public Boolean isRoleAssignToUserService(String roleId) {
         LambdaQueryWrapper<WedprUserRole> wrapperCount =
                 new LambdaQueryWrapper<WedprUserRole>().eq(WedprUserRole::getRoleId, roleId);
-        int queriedWedprUserRoleCount = this.count(wrapperCount);
+        long queriedWedprUserRoleCount = this.count(wrapperCount);
         return queriedWedprUserRoleCount > 0;
     }
 }
