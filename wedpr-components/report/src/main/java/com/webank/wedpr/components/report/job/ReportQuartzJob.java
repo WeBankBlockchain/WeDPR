@@ -36,7 +36,7 @@ public class ReportQuartzJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) {
-        log.info("ReportQuartzJob run at:{}", LocalDateTime.now());
+        log.trace("ReportQuartzJob run at:{}", LocalDateTime.now());
         try {
             doReport();
         } catch (Throwable e) {

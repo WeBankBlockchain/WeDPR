@@ -7,5 +7,5 @@ import com.webank.wedpr.common.utils.WeDPRException;
  * @date 2024/8/28
  */
 public interface PublishActionHandler {
-    void handle(String content, PublishActionContext context) throws WeDPRException;
+    void handle(String content, PublishSyncerImpl publishSyncer) throws WeDPRException;
 }

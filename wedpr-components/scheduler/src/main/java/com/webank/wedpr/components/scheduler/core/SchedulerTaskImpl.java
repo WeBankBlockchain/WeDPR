@@ -134,7 +134,6 @@ public class SchedulerTaskImpl {
     }
 
     protected void scheduleTasksToRun(int concurrency, JobType jobType) throws Exception {
-        logger.info("scheduleTasksToRun: {}", concurrency);
         // get the running task number
         Set<JobDO> runningJobs =
                 this.projectMapperWrapper.queryJobMetasByStatus(
@@ -200,11 +199,11 @@ public class SchedulerTaskImpl {
             }
         }
         logger.info(
-                "scheduleTasksToRun, syncJobs: {}, jobsToRun: {}, jobsToSync: {}, jobsToExecute: {}",
+                "scheduleTasksToRun, syncJobs: {}, jobsToRun: {}, jobsToSync: {}, jobsToExecute: {}, jobType: {}",
                 runningJobSize,
                 jobsToRun.size(),
                 jobsToSync.size(),
-                jobsToExecute.size());
+                jobsToExecute.size(), jobType.getType());
         syncJobs(jobsToSync);
         executeJobs(jobsToExecute);
     }

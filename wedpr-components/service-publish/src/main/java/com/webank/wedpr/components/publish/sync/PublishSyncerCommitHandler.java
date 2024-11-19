@@ -2,9 +2,9 @@ package com.webank.wedpr.components.publish.sync;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.WeDPRException;
-import com.webank.wedpr.components.publish.service.WedprPublishedServiceService;
-import com.webank.wedpr.components.publish.sync.handler.PublishActionContext;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
 import com.webank.wedpr.components.publish.sync.handler.PublishActionHandler;
+import com.webank.wedpr.components.publish.sync.handler.PublishSyncerImpl;
 import com.webank.wedpr.components.publish.sync.handler.RevokePublishActionHandler;
 import com.webank.wedpr.components.publish.sync.handler.SyncPublishActionHandler;
 import com.webank.wedpr.components.sync.ResourceSyncer;
@@ -24,11 +24,13 @@ import org.springframework.stereotype.Component;
 public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler {
     private static final Logger logger = LoggerFactory.getLogger(PublishSyncerCommitHandler.class);
 
-    @Autowired private WedprPublishedServiceService wedprPublishedService;
+    @Autowired private PublishedServiceMapper publishedServiceMapper;
 
+    private final PublishSyncerImpl syncer;
     private final Map<String, PublishActionHandler> actionHandlerMap = new HashMap<>();
 
     public PublishSyncerCommitHandler() {
+        this.syncer = new PublishSyncerImpl(publishedServiceMapper);
         actionHandlerMap.put(PublishSyncAction.SYNC.getAction(), new SyncPublishActionHandler());
         actionHandlerMap.put(
                 PublishSyncAction.REVOKE.getAction(), new RevokePublishActionHandler());
@@ -60,10 +62,6 @@ public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler 
                     resourceActionRecord);
             return;
         }
-
-        PublishActionContext context =
-                PublishActionContext.builder().wedprPublishedService(wedprPublishedService).build();
-
         PublishActionHandler publishActionHandler = getActionHandler(action);
         if (publishActionHandler == null) {
             logger.error(
@@ -75,7 +73,7 @@ public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler 
         }
 
         try {
-            publishActionHandler.handle(content, context);
+            publishActionHandler.handle(content, syncer);
         } catch (Exception e) {
             logger.error(
                     "handle dataset sync message exception, id: {}, action: {}, content: {}, e: {}",

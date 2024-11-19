@@ -19,7 +19,6 @@ import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishCreateResponse;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishSearchResponse;
 import com.webank.wedpr.components.publish.service.WedprPublishedServiceService;
-import com.webank.wedpr.components.publish.sync.PublishSyncAction;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
 import java.util.Arrays;
 import java.util.List;
@@ -149,27 +148,6 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
         } catch (Exception e) {
             logger.warn("listPublishService exception, request: {}, e: ", request.toString(), e);
             return new WeDPRResponse(Constant.WEDPR_FAILED, e.getMessage());
-        }
-    }
-
-    @Override
-    public void syncPublishService(
-            PublishSyncAction action, PublishedServiceInfo publishedServiceInfo) {
-        List<PublishedServiceInfo> existServiceList =
-                this.publishedServiceMapper.queryPublishedService(publishedServiceInfo, null);
-        if (action == PublishSyncAction.SYNC) {
-            if (existServiceList == null || existServiceList.isEmpty()) {
-                this.publishedServiceMapper.insertServiceInfo(publishedServiceInfo);
-            } else {
-                this.publishedServiceMapper.updateServiceInfo(publishedServiceInfo);
-            }
-        }
-
-        if (action == PublishSyncAction.REVOKE) {
-            this.publishedServiceMapper.deleteServiceInfo(
-                    publishedServiceInfo.getServiceId(),
-                    publishedServiceInfo.getOwner(),
-                    publishedServiceInfo.getAgency());
         }
     }
 }

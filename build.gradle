@@ -88,7 +88,6 @@ ext {
                     "io.springfox:springfox-boot-starter:${springfoxVersion}",
                     "org.springframework.boot:spring-boot-actuator:${springBootActuatorVersion}",
                     "org.yaml:snakeyaml:${snakeyamlVersion}",
-
             ]
     ]
 }
