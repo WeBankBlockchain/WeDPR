@@ -9,7 +9,7 @@
     <span v-if="serviceInfo.isOnwer" class="auth" :style="{ backgroundColor: colorMap[serviceInfo.status] }">{{ servicePulishStatus[serviceInfo.status] }}</span>
     <span class="auth" v-if="!serviceInfo.isOnwer && serviceInfo.serviceAuthStatus === serviceAuthStatus.Authorized">已授权</span>
     <dl @click="getDetail(serviceInfo)">
-      <dt>
+      <dt class="ell" :title="serviceInfo.serviceName">
         {{ serviceInfo.serviceName }}
       </dt>
       <dd>
