@@ -123,28 +123,38 @@ public class AuthChain {
     }
 
     @SneakyThrows(WeDPRException.class)
-    public AuthNode progressToNextNode(AuthNode currentNode) {
+    public AuthNode progressToNextNode(String authID, AuthNode currentNode) {
         if (chain == null || chain.isEmpty()) {
-            throw new WeDPRException("progressToNextNode error for the authChain not set!");
+            throw new WeDPRException(
+                    "progressToNextNode error for the authChain not set! authID: " + authID);
         }
         int pos = chain.indexOf(currentNode);
         if (pos == -1) {
             logger.warn(
-                    "progressToNextNode, the currentNode not exist in the auth-chain, currentNode: {}",
+                    "progressToNextNode, auth: {}, the currentNode not exist in the auth-chain, currentNode: {}",
+                    authID,
                     currentNode.toString());
             return chain.get(0);
         }
-        if (chain.size() > (pos + 1)) {
-            AuthNode nextNode = chain.get(pos + 1);
+        // remove duplicated, find the first node that not the currentNode
+        for (int i = pos; i < chain.size(); i++) {
+            if (chain.get(i).equals(currentNode)) {
+                pos++;
+            }
+        }
+        if (chain.size() > pos) {
+            AuthNode nextNode = chain.get(pos);
             logger.info(
-                    "progressToNextNode, currentNode pos: {}, chainSize: {}, nextNode: {}",
+                    "progressToNextNode, auth:{} currentNode pos: {}, chainSize: {}, nextNode: {}",
+                    authID,
                     pos,
                     chain.size(),
                     nextNode.toString());
             return nextNode;
         }
         logger.info(
-                "progressToNextNode, currentNode is the last authNode, chainSize: {}, currentNode: {}",
+                "progressToNextNode, currentNode is the last authNode, auth: {}, chainSize: {}, currentNode: {}",
+                authID,
                 chain.size(),
                 currentNode.toString());
         return null;
