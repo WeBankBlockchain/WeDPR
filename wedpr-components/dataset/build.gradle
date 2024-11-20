@@ -24,6 +24,7 @@ dependencies {
         exclude group: 'org.apache.hadoop', module: 'hadoop-hdfs'
         exclude group: 'org.apache.hadoop', module: 'hadoop-distcp'
         exclude group: 'org.eclipse.jetty', module: 'jetty-runner'
+        exclude group: 'org.apache.logging.log4j'
     }
     compile "org.apache.hadoop:hadoop-distcp:${hadoopVersion}"
     compile "org.apache.hadoop:hadoop-hdfs:${hadoopVersion}"
