@@ -114,8 +114,6 @@ project(":wedpr-pir").projectDir=file("wedpr-pir")
 include "wedpr-site"
 project(":wedpr-site").projectDir=file("wedpr-site")
 
-include "wedpr-components-report"
-project(":wedpr-components-report").projectDir=file("wedpr-components/report")
 
 include ":wedpr-components-service-publish"
 project(":wedpr-components-service-publish").projectDir=file("wedpr-components/service-publish")
