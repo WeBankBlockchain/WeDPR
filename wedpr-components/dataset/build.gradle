@@ -20,8 +20,8 @@ dependencies {
     compile("org.apache.hive:hive-jdbc:${hiveVersion}") {
         exclude group: "org.apache.zookeeper", module: "zookeeper4"
         exclude group: "org.eclipse.jetty.aggregate", module: "jetty-all"
+        exclude group: 'javax.servlet', module: 'servlet-api'
     }
-
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-excelant:${poiVersion}"
     compile "com.opencsv:opencsv:${opencsvVersion}"

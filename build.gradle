@@ -78,7 +78,7 @@ ext {
                     "org.springframework:spring-tx:${springVersion}",
                     "org.springframework:spring-webmvc:${springWebmvcVersion}",
                     "org.springframework:spring-jcl:${springVersion}",
-                    "org.springframework:spring-aop:${springVersion}",
+                    "org.springframework:spring-aop:${springVersion}"
             ],
             spring_boot: [
                     "org.springframework.boot:spring-boot-starter-web:${springBootStarterWebVersion}",
