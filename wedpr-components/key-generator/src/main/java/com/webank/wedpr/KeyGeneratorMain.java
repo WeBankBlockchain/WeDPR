@@ -7,7 +7,7 @@ import org.fisco.bcos.sdk.v3.model.CryptoType;
 
 public class KeyGeneratorMain {
     public static void main(String[] args) {
-        generateECDSAKey();
+        // generateECDSAKey();
         generateSM2Key();
         generateSymmetricKey();
     }
@@ -19,7 +19,7 @@ public class KeyGeneratorMain {
         String ecdsaHexPublicKey = ecdsaCryptoKeyPair.getHexPublicKey();
         System.out.println("ECDSA account is randomly generated as below:");
         System.out.println("ecdsa_private_key:" + ecdsaHexPrivateKey);
-        System.out.println("ecdsa_public_key:" + ecdsaHexPublicKey);
+        System.out.println("ecdsa_public_key: 04" + ecdsaHexPublicKey);
     }
 
     private static void generateSM2Key() {
@@ -30,7 +30,7 @@ public class KeyGeneratorMain {
         System.out.println();
         System.out.println("SM2 account is randomly generated as below:");
         System.out.println("sm2_private_key:" + sm2HexPrivateKey);
-        System.out.println("sm2_public_key:" + sm2HexPublicKey);
+        System.out.println("sm2_public_key: 04" + sm2HexPublicKey);
     }
 
     private static void generateSymmetricKey() {

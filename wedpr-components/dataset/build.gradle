@@ -21,7 +21,12 @@ dependencies {
         exclude group: "org.apache.zookeeper", module: "zookeeper4"
         exclude group: "org.eclipse.jetty.aggregate", module: "jetty-all"
         exclude group: 'javax.servlet', module: 'servlet-api'
+        exclude group: 'org.apache.hadoop', module: 'hadoop-hdfs'
+        exclude group: 'org.apache.hadoop', module: 'hadoop-distcp'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-runner'
     }
+    compile "org.apache.hadoop:hadoop-distcp:${hadoopVersion}"
+    compile "org.apache.hadoop:hadoop-hdfs:${hadoopVersion}"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-excelant:${poiVersion}"
     compile "com.opencsv:opencsv:${opencsvVersion}"
