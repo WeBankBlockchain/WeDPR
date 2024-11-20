@@ -287,13 +287,14 @@ public class AuthorizationDO extends TimeRange {
 
     public void progressToNextAuthNode() {
         logger.info(
-                "progressToNextAuthNode, currentNode: {}, currentNodeAgency: {}",
+                "progressToNextAuthNode, autoID: {}, currentNode: {}, currentNodeAgency: {}",
+                id,
                 currentApplyNode,
                 currentApplyNodeAgency);
         AuthChain.AuthNode currentNode = new AuthChain.AuthNode();
         currentNode.setName(currentApplyNode);
         currentNode.setAgency(currentApplyNodeAgency);
-        AuthChain.AuthNode authNode = this.getAuthChain().progressToNextNode(currentNode);
+        AuthChain.AuthNode authNode = this.getAuthChain().progressToNextNode(id, currentNode);
         if (authNode == null) {
             logger.info(
                     "progressToNextAuthNode, find the last authNode, setStatus to ApproveSuccess, auth: {}",
@@ -302,9 +303,10 @@ public class AuthorizationDO extends TimeRange {
             return;
         }
         logger.info(
-                "progressToNextAuthNode, find the next authNode: {}, currentAuthNode: {}",
+                "progressToNextAuthNode, find the next authNode: {}, currentAuthNode: {}, authID: {}",
                 authNode.toString(),
-                currentApplyNode);
+                currentApplyNode,
+                id);
         setCurrentApplyNode(authNode.getName());
         setCurrentApplyNodeAgency(authNode.getAgency());
     }
