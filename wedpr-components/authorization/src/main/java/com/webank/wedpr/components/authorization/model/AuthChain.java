@@ -140,12 +140,14 @@ public class AuthChain {
         for (int i = pos; i < chain.size(); i++) {
             if (chain.get(i).equals(currentNode)) {
                 pos++;
+                continue;
             }
+            break;
         }
         if (chain.size() > pos) {
             AuthNode nextNode = chain.get(pos);
             logger.info(
-                    "progressToNextNode, auth:{} currentNode pos: {}, chainSize: {}, nextNode: {}",
+                    "progressToNextNode, auth:{} nextNode pos: {}, chainSize: {}, nextNode: {}",
                     authID,
                     pos,
                     chain.size(),
