@@ -15,10 +15,10 @@ STATUS_STOPPED="Stopped"
 start_success_log="start.*success"
 ENABLE_DOCKER_MODE="false"
 
-if [ "${JAVA_HOME}" = "" ];then
-    JAVA_HOME=/nemo/jdk8u382-b05
-    echo "JAVA_HOME has not been configured, set  to default: ${JAVA_HOME}"
-fi
+#if [ "${JAVA_HOME}" = "" ];then
+#    JAVA_HOME=/nemo/jdk8u382-b05
+#    echo "JAVA_HOME has not been configured, set  to default: ${JAVA_HOME}"
+#fi
 
 JAVA_CMD=$JAVA_HOME/bin/java
 if [ ! -f "${JAVA_HOME}" ];then
@@ -45,7 +45,7 @@ JAVA_OPTS=" -Dfile.encoding=UTF-8"
 JAVA_OPTS+=" -Djava.security.egd=file:/dev/./urandom"
 JAVA_OPTS+=" -Xmx256m -Xms256m -Xmn128m -Xss512k -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m"
 JAVA_OPTS+=" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${SHELL_FOLDER}/heap_error.log"
-JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+PrintGCDateStamps"
+#JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+PrintGCDateStamps"
 JAVA_OPTS+=" -DserviceName=${SERVER_NAME}"
 run_app()
 {

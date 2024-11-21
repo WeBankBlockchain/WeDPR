@@ -142,7 +142,7 @@ public class SchedulerTaskImpl {
                         JobStatus.Running.getStatus(),
                         jobType);
         Integer runningJobSize = runningJobs == null ? 0 : runningJobs.size();
-        if (runningJobs != null && runningJobs.size() >= concurrency) {
+        if (runningJobs.size() > 0 && runningJobs.size() >= concurrency) {
             logger.info(
                     "scheduleTasksToRun: schedule nothing for the running tasks over than concurrency, runningJobs: {}, concurrency: {}",
                     runningJobs.size(),

@@ -1,8 +1,6 @@
 #!/bin/bash
 SHELL_FOLDER=$(cd $(dirname $0);pwd)
 cd ${SHELL_FOLDER}
-
-# JAVA_HOME="/nemo/jdk8"
 APP_MAIN=com.webank.wedpr.site.main.SiteServiceApplication
 LOG_DIR=.
 SERVER_NAME="WEDPR-SITE"
@@ -15,10 +13,11 @@ STATUS_STOPPED="Stopped"
 start_success_log="start.*success"
 
 
-if [ "${JAVA_HOME}" = "" ];then
-    JAVA_HOME=/nemo/jdk8u382-b05
-    echo "JAVA_HOME has not been configured, set  to default: ${JAVA_HOME}"
+JAVA_CMD=$JAVA_HOME/bin/java
+if [ ! -f "${JAVA_HOME}" ];then
+  JAVA_CMD=java
 fi
+
 
 LOG_INFO()
 {
@@ -40,11 +39,11 @@ JAVA_OPTS=" -Dfile.encoding=UTF-8"
 JAVA_OPTS+=" -Djava.security.egd=file:/dev/./urandom"
 JAVA_OPTS+=" -Xmx256m -Xms256m -Xmn128m -Xss512k -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m"
 JAVA_OPTS+=" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${SHELL_FOLDER}/heap_error.log"
-JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+PrintGCDateStamps"
+#JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+PrintGCDateStamps"
 JAVA_OPTS+=" -DserviceName=${SERVER_NAME}"
 run_app()
 {
-    nohup $JAVA_HOME/bin/java $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1 &
+    nohup ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1 &
 }
 
 app_status()

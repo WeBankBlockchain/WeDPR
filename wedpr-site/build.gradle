@@ -16,6 +16,5 @@ dependencies {
     compile project(":wedpr-components-dataset")
     compile project(":wedpr-components-agency")
     compile project(":wedpr-components-security")
-    compile project(":wedpr-components-report")
     compile project(":wedpr-components-jupyter-intergration")
 }
