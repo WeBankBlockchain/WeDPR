@@ -148,6 +148,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public WeDPRResponse updateAuthResult(String authorizer, AuthResultRequest authResultRequest) {
         try {
+            logger.info(
+                    "updateAuthResult, authorizer: {}, request: {}",
+                    authorizer,
+                    authResultRequest.toString());
             AuthorizationDO result =
                     this.paramChecker.checkAuthResultRequest(authorizer, authResultRequest);
             AuthorizationDO updatedAuth =

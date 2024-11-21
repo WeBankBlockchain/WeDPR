@@ -67,6 +67,7 @@ ext {
     wedprGatewaySDKVersion = "1.0.0-SNAPSHOT"
     gsonVersion = "2.10.1"
     servletApiVersion="4.0.1"
+    javaeeApiVersion="8.0.1"
 
     libraries = [
             spring: [
@@ -89,6 +90,7 @@ ext {
                     "io.springfox:springfox-boot-starter:${springfoxVersion}",
                     "org.springframework.boot:spring-boot-actuator:${springBootActuatorVersion}",
                     "org.yaml:snakeyaml:${snakeyamlVersion}",
+                    "javax:javaee-api:${javaeeApiVersion}",
             ]
     ]
 }
