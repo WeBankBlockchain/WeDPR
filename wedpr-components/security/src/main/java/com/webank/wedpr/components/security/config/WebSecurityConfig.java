@@ -7,7 +7,7 @@ import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.security.filter.APISignatureAuthFilter;
 import com.webank.wedpr.components.security.filter.JwtAuthenticationFilter;
 import com.webank.wedpr.components.security.filter.JwtLoginFilter;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
 import com.webank.wedpr.components.user.service.WedprUserService;
@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Lazy @Resource private AuthenticationManager authenticationManager;
 
-    @Autowired private UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
 
     @Autowired private WedprGroupDetailService wedprGroupDetailService;
 

@@ -47,12 +47,8 @@ public class JupyterConfig {
                     "wedpr.jupyter.param.key.jupyter_project_path", "jupyter_project_path");
     private static String PARAM_KEY_JUPYTER_BINARY =
             WeDPRConfig.apply("wedpr.jupyter.param.key.jupyter_binary", "jupyter_binary");
-    private static String PARAM_KEY_JUPYTER_AUTH_SECRET_FILE_PATH =
-            WeDPRConfig.apply(
-                    "wedpr.jupyter.param.key.auth_secret_file_path", "auth_secret_file_path");
-    private static String JUPYTER_AUTH_SECRET_FILE_PATH =
-            WeDPRConfig.apply(
-                    "wedpr.jupyter.auth_secret_file_path", "/home/share/jupyter_secret_file");
+    private static String PARAM_KEY_JUPYTER_AUTH_SECRET =
+            WeDPRConfig.apply("wedpr.jupyter.param.key.auth_secret", "auth_secret");
     ///// the parameter map key configuration for jupyter
 
     //// the key to store the jupyter code template
@@ -149,11 +145,7 @@ public class JupyterConfig {
         return MAX_TOTAL_CONNECTION;
     }
 
-    public static String getParamKeyJupyterAuthSecretFilePath() {
-        return PARAM_KEY_JUPYTER_AUTH_SECRET_FILE_PATH;
-    }
-
-    public static String getJupyterAuthSecretFilePath() {
-        return JUPYTER_AUTH_SECRET_FILE_PATH;
+    public static String getParamKeyJupyterAuthSecret() {
+        return PARAM_KEY_JUPYTER_AUTH_SECRET;
     }
 }

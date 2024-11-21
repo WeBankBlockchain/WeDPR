@@ -2,7 +2,7 @@ package com.webank.wedpr.components.user.controller;
 
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRResponse;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.user.helper.TokenImageHelper;
 import com.webank.wedpr.components.user.requests.UserRegisterRequest;
 import com.webank.wedpr.components.user.response.WedprImageCodeResponse;
@@ -43,7 +43,7 @@ public class WedprUserRegisterController {
 
     @Autowired private WedprGroupDetailService wedprGroupDetailService;
 
-    @Autowired private UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
 
     /**
      * 用户注册

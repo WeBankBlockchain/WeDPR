@@ -31,7 +31,6 @@ public class WeDPRCommonConfig {
     private static final Integer DEFAULT_WRITE_TRUNK_SIZE = 1024 * 1024;
     // the agency id
     private static final String AGENCY = WeDPRConfig.apply("wedpr.agency", null);
-    private static final String ADMIN_AGENCY = WeDPRConfig.apply("wedpr.admin_agency", null);
     private static final String FIELD_SPLITTER = WeDPRConfig.apply("wedpr.field.splitter", ",");
 
     private static final Integer READ_CHUNK_SIZE =
@@ -60,6 +59,9 @@ public class WeDPRCommonConfig {
     //// the key to store the jupyter code template
     private static String CODE_TEMPLATE_KEY_CREATE_USER =
             WeDPRConfig.apply("wedpr.code.template.key.create_user", "wedpr_create_user");
+    private static String CODE_TEMPLATE_KEY_SET_USER_PERMISSION =
+            WeDPRConfig.apply(
+                    "wedpr.code.template.key.set_user_permission", "wedpr_set_permission");
     private static String CODE_TEMPLATE_KEY_DELETE_USER =
             WeDPRConfig.apply("wedpr.code.template.key.delete", "wedpr_delete_user");
     //// the key to store the jupyter code template
@@ -78,14 +80,6 @@ public class WeDPRCommonConfig {
             throw new WeDPRException("Invalid emtpy agency!");
         }
         return AGENCY;
-    }
-
-    @SneakyThrows
-    public static String getAdminAgency() {
-        if (StringUtils.isBlank(ADMIN_AGENCY)) {
-            throw new WeDPRException("Invalid emtpy admin agency!");
-        }
-        return ADMIN_AGENCY;
     }
 
     public static String getFieldSplitter() {
@@ -168,5 +162,9 @@ public class WeDPRCommonConfig {
     public static void setServerListenPort(String serverListenPort) {
         logger.info("setServerListenPort: {}", serverListenPort);
         SERVER_LISTEN_PORT = serverListenPort;
+    }
+
+    public static String getCodeTemplateKeySetUserPermission() {
+        return CODE_TEMPLATE_KEY_SET_USER_PERMISSION;
     }
 }

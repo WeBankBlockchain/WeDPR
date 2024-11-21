@@ -35,7 +35,7 @@ import com.webank.wedpr.components.db.mapper.dataset.permission.DatasetUserPermi
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,7 +57,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
 
     @Autowired private HiveConfig hiveConfig;
     @Autowired private DatasetConfig datasetConfig;
-    @Autowired private UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
     @Autowired private DatasetMapper datasetMapper;
     @Autowired private DatasetPermissionMapper datasetPermissionMapper;
     @Autowired private DatasetTransactionalWrapper datasetTransactionalWrapper;

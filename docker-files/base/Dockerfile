@@ -10,3 +10,6 @@ RUN apt-get update && apt-get install -y tzdata language-pack-zh* \
     && ln -s /usr/bin/pip3 /usr/bin/pip
 # upgrade the pip
 RUN python -m pip install --upgrade pip
+# reinstall wheel after upgrade pip
+RUN pip uninstall wheel
+RUN pip install wheel -i https://mirrors.aliyun.com/pypi/simple

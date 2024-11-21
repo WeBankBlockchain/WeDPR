@@ -1,1 +1,6 @@
 jupyterlab==4.2.5
+wedpr-ml-toolkit
+matplotlib
+scikit-learn
+numpy
+pandas
