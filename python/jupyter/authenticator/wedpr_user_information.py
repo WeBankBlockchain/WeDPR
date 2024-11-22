@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-from dataclasses import dataclass
-import dataclasses
-from dataclass_wizard import JSONWizard
-import inspect
+import json
+from typing import Any
 
 
-@dataclass
-class WeDPRGroupInfo(JSONWizard):
-    groupId: str
-    groupName: str
-    groupAdminName: str
+class BaseObject:
+    def set_params(self, **params: Any):
+        for key, value in params.items():
+            setattr(self, key, value)
+            if hasattr(self, f"{key}"):
+                setattr(self, f"{key}", value)
+        return self
 
 
-@dataclass
-class WeDPRUserInformation:
-    username: str
-    roleName: str
-    permissions: list
+class WeDPRUserInformation(BaseObject):
+    def __init__(self, user_name=None, role_name=None, **params):
+        self.username = user_name
+        self.roleName = role_name
+        self.set_params(**params)
 
-    def __init__(self, **kwargs):
-        names = set([f.name for f in dataclasses.fields(self)])
-        for k, v in kwargs.items():
-            if k in names:
-                setattr(self, k, v)
+    @staticmethod
+    def decode(json_str):
+        if json_str is None or len(json_str) == 0:
+            return None
+        user_info_dict = json.loads(json_str)
+        return WeDPRUserInformation(**user_info_dict)
