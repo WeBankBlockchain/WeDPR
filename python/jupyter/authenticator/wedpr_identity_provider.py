@@ -7,6 +7,7 @@ import jwt
 from .wedpr_token_content import WeDPRTokenContent
 from tornado import web
 from traitlets import Unicode, default
+import psutil
 import os
 
 
@@ -17,6 +18,8 @@ class WeDPRIdentityProvider(IdentityProvider):
 
     auth_secret = Unicode("<generated>",
                           help="auth_secret").tag(config=True)
+
+    CURRENT_USER = psutil.Process().username()
 
     @default("auth_secret")
     def _auth_secret_default(self):
@@ -37,7 +40,6 @@ class WeDPRIdentityProvider(IdentityProvider):
         try:
             token = handler.get_secure_cookie(
                 WeDPRIdentityProvider.AUTH_TOKEN_FIELD)
-            self.log.info(f"#### _get_token_from_cookie: {token}")
         except KeyError as e:
             token = None
         return token
@@ -98,6 +100,10 @@ class WeDPRIdentityProvider(IdentityProvider):
         if user_info is None:
             return None
         user_name = user_info.get_user_information().username
+        if user_name != WeDPRIdentityProvider.CURRENT_USER:
+            self.log.warning(
+                f"WeDPR auth failed for invalid user, admitted-user: {WeDPRIdentityProvider.CURRENT_USER}, tried user: {user_name}")
+            return None
         self.log.info(f"WeDPR auth success, username: {user_name}")
         user = User(username=user_name)
         self.set_user_cookie(handler, token)
