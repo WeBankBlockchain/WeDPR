@@ -17,24 +17,11 @@ class WeDPRIdentityProvider(IdentityProvider):
 
     auth_secret = Unicode("<generated>",
                           help="auth_secret").tag(config=True)
-    auth_secret_file = Unicode(
-        'jupyterlab_authorization_secret', help="""File in which to store the authorization secret."""
-    ).tag(config=True)
-
-    @default("auth_secret_file")
-    def _auth_secret_file_default(self):
-        if os.getenv("JUPYTER_AUTH_SECRET"):
-            return os.getenv("JUPYTER_AUTH_SECRET")
-        return "jupyter_lab_secret"
 
     @default("auth_secret")
     def _auth_secret_default(self):
-        secret_file = self.auth_secret_file
-        if os.path.exists(secret_file):
-            self.log.info(f"init auth secret, load from: {secret_file}")
-            with open(secret_file) as f:
-                return f.read().strip()
-        self.log.warn(f"init auth secret failed, the securet file not defined")
+        if os.getenv("JUPYTER_AUTH_SECRET"):
+            return os.getenv("JUPYTER_AUTH_SECRET")
         return None
 
     def _get_token_from_header(self, handler: web.RequestHandler):

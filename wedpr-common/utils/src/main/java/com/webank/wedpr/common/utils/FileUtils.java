@@ -29,6 +29,13 @@ public class FileUtils {
         Files.setPosixFilePermissions(path, EXECUTABLE_PERMISSION);
     }
 
+    public static void removeFile(Path path) throws Exception {
+        if (!Files.exists(path)) {
+            return;
+        }
+        Files.delete(path);
+    }
+
     public static void createParentDirectory(Path path) throws Exception {
         if (path == null) {
             throw new WeDPRException("Must define the path!");

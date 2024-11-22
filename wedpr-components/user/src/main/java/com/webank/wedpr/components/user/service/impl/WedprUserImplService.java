@@ -7,12 +7,12 @@ import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.FormatCheckUtils;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.common.utils.WeDPRResponse;
+import com.webank.wedpr.components.crypto.PasswordHelper;
 import com.webank.wedpr.components.hook.UserHook;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.user.entity.WedprGroupDetail;
 import com.webank.wedpr.components.user.entity.WedprUser;
 import com.webank.wedpr.components.user.entity.WedprUserRole;
-import com.webank.wedpr.components.user.helper.PasswordHelper;
 import com.webank.wedpr.components.user.helper.TokenImageHelper;
 import com.webank.wedpr.components.user.mapper.WedprGroupDetailMapper;
 import com.webank.wedpr.components.user.mapper.WedprUserMapper;
@@ -44,7 +44,7 @@ public class WedprUserImplService extends ServiceImpl<WedprUserMapper, WedprUser
     @Autowired WedprUserRoleMapper wedprUserRoleMapper;
     @Autowired WedprGroupDetailMapper wedprGroupDetailMapper;
     @Autowired WedprUserMapper wedprUserMapper;
-    @Autowired UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
     @Autowired UserHook userHook;
 
     @Override

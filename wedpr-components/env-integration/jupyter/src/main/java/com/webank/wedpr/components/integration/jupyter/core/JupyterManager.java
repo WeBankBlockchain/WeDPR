@@ -112,7 +112,8 @@ public class JupyterManager {
         JupyterInfoDO result = checkJupyterExistence(user, jupyterID);
         // the jupyter is already in running status
         if (result.getJupyterStatus() != null && result.getJupyterStatus().isRunning()) {
-            logger.info("the jupyter is already running, id: {}", jupyterID);
+            logger.info("the jupyter is already running, id: {}, try to start", jupyterID);
+            this.jupyterClient.start(result);
             return result;
         }
         this.jupyterClient.start(result);

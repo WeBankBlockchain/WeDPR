@@ -2,7 +2,7 @@ package com.webank.wedpr.components.user.helper;
 
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.crypto.AESHelper;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

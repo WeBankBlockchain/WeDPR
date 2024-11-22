@@ -2,8 +2,8 @@ package com.webank.wedpr.components.security.config;
 
 import com.webank.wedpr.components.security.cache.UserCache;
 import com.webank.wedpr.components.security.cache.impl.MemoryUserCache;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.user.config.UserInfoUpdateEvent;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprGroupService;
 import com.webank.wedpr.components.user.service.WedprUserRoleService;
@@ -26,7 +26,7 @@ public class UserInfoCacheConfig {
     @Autowired private WedprGroupDetailService wedprGroupDetailService;
     @Autowired private WedprGroupService wedprGroupService;
     @Autowired private WedprUserService wedprUserService;
-    @Autowired private UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
 
     @Bean(name = "userCache")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)

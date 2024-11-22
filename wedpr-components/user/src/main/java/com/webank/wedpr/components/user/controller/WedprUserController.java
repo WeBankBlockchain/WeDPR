@@ -6,13 +6,13 @@ import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.UserRoleEnum;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRResponse;
+import com.webank.wedpr.components.crypto.PasswordHelper;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import com.webank.wedpr.components.token.auth.model.GroupInfo;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.token.auth.model.UserToken;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
 import com.webank.wedpr.components.user.entity.WedprUser;
 import com.webank.wedpr.components.user.entity.WedprUserRole;
-import com.webank.wedpr.components.user.helper.PasswordHelper;
 import com.webank.wedpr.components.user.requests.GetUserListRequest;
 import com.webank.wedpr.components.user.requests.UpdatePasswordRequest;
 import com.webank.wedpr.components.user.requests.UpdateUserInfoRequest;
@@ -54,7 +54,7 @@ public class WedprUserController {
     @Autowired private WedprUserService wedprUserService;
     @Autowired private WedprUserRoleService wedprUserRoleService;
     @Autowired private WedprGroupDetailService wedprGroupDetailService;
-    @Autowired private UserJwtConfig userJwtConfig;
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
 
     /**
      * 查询本机构用户列表

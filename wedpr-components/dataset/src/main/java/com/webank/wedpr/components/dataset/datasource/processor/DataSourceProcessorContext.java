@@ -10,7 +10,7 @@ import com.webank.wedpr.components.db.mapper.dataset.dao.UserInfo;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.wapper.DatasetTransactionalWrapper;
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 import com.webank.wedpr.components.storage.api.StoragePath;
-import com.webank.wedpr.components.user.config.UserJwtConfig;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import lombok.Builder;
 import lombok.Data;
 

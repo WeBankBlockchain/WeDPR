@@ -8,8 +8,9 @@ insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_alg
 -- the  jupyter related code template
 -- command to create user
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_create_user", 'useradd -m ${user_name}');
+insert into `wedpr_config_table`(`config_key`, `config_value`) values('wedpr_set_permission', 'chmod -R 700 /home/${user_name}');
 -- command to start jupyter
-insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_start_jupyter", 'su - ${user_name} -c \'export JUPYTER_AUTH_SECRET=${auth_secret_file_path} && mkdir -p  ${jupyter_project_path} && nohup ${jupyter_binary} --config=${jupyter_config_path} --ip ${listen_ip} --port ${listen_port} --notebook-dir ${jupyter_project_path} >> ${user_name}.jupyter.out 2>&1 &\'');
+insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_start_jupyter", 'su - ${user_name} -c \'export JUPYTER_AUTH_SECRET=${auth_secret} && mkdir -p  ${jupyter_project_path} && nohup ${jupyter_binary} --config=${jupyter_config_path} --ip ${listen_ip} --port ${listen_port} --notebook-dir ${jupyter_project_path} >> ${user_name}.jupyter.out 2>&1 & \'');
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_get_jupyter_pid", 'ps aux | grep -i ${jupyter_binary} | grep -i ${jupyter_project_path} | grep -v grep | awk -F\' \' \'{print $2}\'');
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_delete_user", 'userdel -r ${user_name}');
 

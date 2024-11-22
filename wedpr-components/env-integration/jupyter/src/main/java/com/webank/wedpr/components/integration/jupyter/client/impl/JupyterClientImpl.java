@@ -27,6 +27,7 @@ import com.webank.wedpr.components.integration.jupyter.dao.JupyterInfoDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigDO;
 import com.webank.wedpr.components.meta.sys.config.dao.SysConfigMapper;
 import com.webank.wedpr.components.task.plugin.api.model.CommandTaskExecutionContext;
+import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.uuid.generator.WeDPRUuidGenerator;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class JupyterClientImpl implements JupyterClient {
     private static final Logger logger = LoggerFactory.getLogger(JupyterClientImpl.class);
     private final SysConfigMapper sysConfigMapper;
     private final BaseResponseFactory responseFactory = new WeDPRResponseFactory();
+    private final UserJwtConfig userJwtConfig = new UserJwtConfig();
 
     public JupyterClientImpl(SysConfigMapper sysConfigMapper) {
         this.sysConfigMapper = sysConfigMapper;
@@ -78,7 +80,8 @@ public class JupyterClientImpl implements JupyterClient {
         taskRequest.setTaskType(TaskType.SHELL.getType());
         ShellParameters shellParameters = new ShellParameters(code);
         taskRequest.setTaskParameters(shellParameters.serialize());
-        taskRequest.setParameterMap(JupyterClient.generateParamMap(jupyterInfoDO));
+        taskRequest.setParameterMap(
+                JupyterClient.generateParamMap(jupyterInfoDO, userJwtConfig.getSecret()));
         WeDPRResponse response = (WeDPRResponse) httpClient.executePost(taskRequest);
         if (response != null && response.statusOk()) {
             // Note: here can't convert Object to TaskResponse directly
@@ -120,6 +123,9 @@ public class JupyterClientImpl implements JupyterClient {
         String code =
                 getCodeTemplate(WeDPRCommonConfig.getCodeTemplateKeyCreateUser(), true)
                         + WeDPRCommonConfig.getShellCodeConnector()
+                        + getCodeTemplate(
+                                WeDPRCommonConfig.getCodeTemplateKeySetUserPermission(), true)
+                        + WeDPRCommonConfig.getShellCodeConnector()
                         + getCodeTemplate(JupyterConfig.getCodeTemplateKeyStartJupyter(), true);
         logger.info("create jupyter, info: {}, code: {}", jupyterInfo.toString(), code);
         return submitTask("createJupyter", jupyterInfo, code);
@@ -142,6 +148,8 @@ public class JupyterClientImpl implements JupyterClient {
         commands.add("sleep 1.5");
         commands.add(String.format("echo $(%s)", getJupyterPidCode));
         commands.add("fi");
+        // clear the env
+        commands.add("export JUPYTER_AUTH_SECRET=");
         String code = commands.stream().collect(Collectors.joining(System.lineSeparator()));
         logger.info("start jupyter, info: {}, code: {}", jupyterInfo.toString(), code);
         return submitTask("startJupyter", jupyterInfo, code);

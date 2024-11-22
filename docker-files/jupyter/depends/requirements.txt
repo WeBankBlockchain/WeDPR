@@ -1,1 +1,13 @@
 jupyterlab==4.2.5
+matplotlib
+scikit-learn
+numpy
+pandas
+setuptools>=40.0.0
+hdfs>=2.7.2
+requests~=2.31.0
+requests_toolbelt==0.9.1
+traitlets>=4.3.2
+jupyter_server>=2.2
+pyjwt>=2
+tornado

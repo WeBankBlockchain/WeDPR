@@ -29,7 +29,7 @@ public interface JupyterClient {
 
     WeDPRResponse stop(JupyterInfoDO jupyterInfo) throws Exception;
 
-    static Map<String, String> generateParamMap(JupyterInfoDO jupyterInfoDO) {
+    static Map<String, String> generateParamMap(JupyterInfoDO jupyterInfoDO, String authSecret) {
         Map<String, String> paramMap = new HashMap<>();
         // the username
         paramMap.put(WeDPRCommonConfig.getParamKeyUserName(), jupyterInfoDO.getOwner());
@@ -54,9 +54,7 @@ public interface JupyterClient {
                 JupyterConfig.getParamKeyJupyterProjectPath(),
                 jupyterInfoDO.getJupyterSetting().getNoteBookPath());
         // the secret information
-        paramMap.put(
-                JupyterConfig.getParamKeyJupyterAuthSecretFilePath(),
-                JupyterConfig.getJupyterAuthSecretFilePath());
+        paramMap.put(JupyterConfig.getParamKeyJupyterAuthSecret(), authSecret);
         return paramMap;
     }
 }

@@ -82,6 +82,15 @@ public abstract class BaseShellBuilderImpl<
         return (T) this;
     }
 
+    protected void finalize() {
+        try {
+            logger.info("finalize remove generated shell: {}", getShellScriptPath());
+            FileUtils.removeFile(getShellScriptPath());
+        } catch (Exception e) {
+            logger.warn("finalize exception, e:", e);
+        }
+    }
+
     protected List<String> generateLaunchCommand() {
         List<String> commands = new ArrayList<>();
         if (this.context.getRunningInBackground()) {
@@ -123,10 +132,7 @@ public abstract class BaseShellBuilderImpl<
         // generate and write the shell-script content
         FileUtils.createExecutableFile(getShellScriptPath());
         Files.write(getShellScriptPath(), scriptData.getBytes(), StandardOpenOption.APPEND);
-        logger.info(
-                "generateShellScript success, file: {}, content: {}",
-                getShellScriptPath().toString(),
-                scriptData);
+        logger.info("generateShellScript success, file: {}", getShellScriptPath().toString());
     }
 
     private List<String> generateLaunchCommandInNormalMode() {

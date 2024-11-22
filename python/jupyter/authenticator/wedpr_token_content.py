@@ -25,7 +25,7 @@ class WeDPRTokenContent:
             WeDPRTokenContent.USER_TOKEN_CLAIM)
         if user_info is None:
             return None
-        return WeDPRUserInformation(**json.loads(user_info))
+        return WeDPRUserInformation.decode(user_info)
 
     @staticmethod
     def deserialize(token_payload):
