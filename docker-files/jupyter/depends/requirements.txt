@@ -3,7 +3,7 @@ matplotlib
 scikit-learn
 numpy
 pandas
-setuptools>=40.0.0
+setuptools>=70.0.0
 hdfs>=2.7.2
 requests~=2.31.0
 requests_toolbelt==0.9.1
