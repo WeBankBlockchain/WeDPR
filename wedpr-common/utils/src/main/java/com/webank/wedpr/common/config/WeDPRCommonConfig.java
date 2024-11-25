@@ -33,6 +33,7 @@ public class WeDPRCommonConfig {
     private static final String AGENCY = WeDPRConfig.apply("wedpr.agency", null);
     private static final String FIELD_SPLITTER = WeDPRConfig.apply("wedpr.field.splitter", ",");
 
+    private static final String WEDPR_ZONE = WeDPRConfig.apply("wedpr.zone", "");
     private static final Integer READ_CHUNK_SIZE =
             WeDPRConfig.apply("wedpr.file.read.lines", DEFAULT_READ_TRUNK_SIZE);
     private static final Integer WRITE_CHUNK_SIZE =
@@ -166,5 +167,13 @@ public class WeDPRCommonConfig {
 
     public static String getCodeTemplateKeySetUserPermission() {
         return CODE_TEMPLATE_KEY_SET_USER_PERMISSION;
+    }
+
+    @SneakyThrows(Exception.class)
+    public static String getWedprZone() {
+        if (StringUtils.isBlank(WEDPR_ZONE)) {
+            throw new WeDPRException("Must define wedpr.zone");
+        }
+        return WEDPR_ZONE;
     }
 }

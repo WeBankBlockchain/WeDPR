@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.publish.hook;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.BaseResponse;
 import com.webank.wedpr.common.utils.BaseResponseFactory;
@@ -75,7 +76,10 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
         PublishCreateRequest publishedServiceInfo = (PublishCreateRequest) serviceInfo;
         ServiceMeta.EntryPointMeta selectedEntryPoint =
                 loadBalancer.selectService(
-                        LoadBalancer.Policy.ROUND_ROBIN, ServiceName.PIR.getValue(), null);
+                        LoadBalancer.Policy.ROUND_ROBIN,
+                        ServiceName.PIR.getValue(),
+                        WeDPRCommonConfig.getWedprZone(),
+                        null);
         if (selectedEntryPoint == null) {
             throw new WeDPRException(
                     "Publish service "

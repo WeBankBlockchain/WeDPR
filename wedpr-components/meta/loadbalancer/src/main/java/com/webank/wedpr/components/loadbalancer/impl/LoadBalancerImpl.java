@@ -18,8 +18,10 @@ package com.webank.wedpr.components.loadbalancer.impl;
 import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +40,33 @@ public class LoadBalancerImpl implements LoadBalancer {
         return entryPointFetcher.getAliveEntryPoints(serviceType);
     }
 
-    @Override
-    public ServiceMeta.EntryPointMeta selectService(
-            Policy policy, String serviceType, String targetId) {
+    public List<ServiceMeta.EntryPointMeta> getAliveEndPoints(
+            String serviceType, String component) {
         List<ServiceMeta.EntryPointMeta> entryPointInfoList =
                 entryPointFetcher.getAliveEntryPoints(serviceType);
+        if (StringUtils.isBlank(component)) {
+            return entryPointInfoList;
+        }
+        List<ServiceMeta.EntryPointMeta> result = new ArrayList<>();
+        for (ServiceMeta.EntryPointMeta entryPointMeta : entryPointInfoList) {
+            if (entryPointMeta.getComponents().contains(component)) {
+                result.add(entryPointMeta);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceMeta.EntryPointMeta selectService(
+            Policy policy, String serviceType, String component, String targetId) {
+        List<ServiceMeta.EntryPointMeta> entryPointInfoList =
+                getAliveEndPoints(serviceType, component);
+        // get the nodeInfo with
         if (entryPointInfoList == null || entryPointInfoList.isEmpty()) {
             logger.warn(
-                    "selectService: can't find entrypoint for service: {}, targetId: {}",
+                    "selectService: can't find entrypoint for service: {}, component: {}, targetId: {}",
                     serviceType,
+                    component,
                     targetId);
             return null;
         }

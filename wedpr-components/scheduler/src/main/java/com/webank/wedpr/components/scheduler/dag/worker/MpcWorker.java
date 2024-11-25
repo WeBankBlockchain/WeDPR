@@ -34,7 +34,8 @@ public class MpcWorker extends Worker {
         // and can make full use of the cache
         ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
-                        .selectService(LoadBalancer.Policy.HASH, ServiceName.MPC.getValue(), jobId);
+                        .selectService(
+                                LoadBalancer.Policy.HASH, ServiceName.MPC.getValue(), null, jobId);
         if (entryPoint == null) {
             logger.error("Unable to find mpc service endpoint, jobId: {}", jobId);
             throw new WeDPRException("Unable to find mpc service endpoint, jobId: " + jobId);

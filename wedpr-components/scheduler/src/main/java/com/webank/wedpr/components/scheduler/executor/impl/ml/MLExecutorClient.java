@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.ml;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRException;
@@ -30,10 +31,16 @@ public class MLExecutorClient {
 
         ServiceMeta.EntryPointMeta entryPoint =
                 loadBalancer.selectService(
-                        LoadBalancer.Policy.ROUND_ROBIN, ServiceName.MODEL.getValue(), null);
+                        LoadBalancer.Policy.ROUND_ROBIN,
+                        ServiceName.MODEL.getValue(),
+                        WeDPRCommonConfig.getWedprZone(),
+                        null);
         if (entryPoint == null) {
             throw new WeDPRException(
-                    "Cannot find client entrypoint for service: " + ServiceName.MODEL.getValue());
+                    "Cannot find client entrypoint for service: "
+                            + ServiceName.MODEL.getValue()
+                            + ", zone: "
+                            + WeDPRCommonConfig.getWedprZone());
         }
         String url = entryPoint.getUrl(null);
         HttpClientImpl httpClient =

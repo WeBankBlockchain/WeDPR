@@ -24,7 +24,8 @@ public interface LoadBalancer {
         HASH,
     }
 
-    ServiceMeta.EntryPointMeta selectService(Policy policy, String serviceType, String targetId);
+    ServiceMeta.EntryPointMeta selectService(
+            Policy policy, String serviceType, String component, String targetId);
 
     List<ServiceMeta.EntryPointMeta> selectAllEndPoint(String serviceType);
 }

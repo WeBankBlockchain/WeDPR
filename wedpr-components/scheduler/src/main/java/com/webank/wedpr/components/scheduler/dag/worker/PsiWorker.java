@@ -34,7 +34,8 @@ public class PsiWorker extends Worker {
         // and can make full use of the cache
         ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
-                        .selectService(LoadBalancer.Policy.HASH, ServiceName.PSI.getValue(), jobId);
+                        .selectService(
+                                LoadBalancer.Policy.HASH, ServiceName.PSI.getValue(), null, jobId);
         if (entryPoint == null) {
             logger.error("Unable to find psi service endpoint, jobId: {}", jobId);
             throw new WeDPRException("Unable to find psi service endpoint, jobId: " + jobId);
