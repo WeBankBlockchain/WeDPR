@@ -20,8 +20,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.List;
+import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class PSIRequest {
     public static enum AlgorithmType {
         CM_PSI_2PC(0),
@@ -42,53 +44,10 @@ public class PSIRequest {
     // the algorithm
     private Integer algorithm;
     private Boolean syncResult;
+    private Boolean enableOutputExists = Boolean.TRUE;
     private Boolean lowBandwidth = Boolean.FALSE;
     private List<PartyInfo> parties;
     private List<String> receiverList;
-
-    public String getTaskID() {
-        return taskID;
-    }
-
-    public void setTaskID(String taskID) {
-        this.taskID = taskID;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getAlgorithm() {
-        return algorithm;
-    }
-
-    public void setAlgorithm(Integer algorithm) {
-        this.algorithm = algorithm;
-    }
-
-    public Boolean getSyncResult() {
-        return syncResult;
-    }
-
-    public void setSyncResult(Boolean syncResult) {
-        this.syncResult = syncResult;
-    }
-
-    public Boolean getLowBandwidth() {
-        return lowBandwidth;
-    }
-
-    public void setLowBandwidth(Boolean lowBandwidth) {
-        this.lowBandwidth = lowBandwidth;
-    }
-
-    public List<PartyInfo> getParties() {
-        return parties;
-    }
 
     public void setParties(List<PartyInfo> parties) throws Exception {
 
@@ -103,12 +62,11 @@ public class PSIRequest {
         }
     }
 
-    public List<String> getReceiverList() {
-        return receiverList;
-    }
-
-    public void setReceiverList(List<String> receiverList) {
-        this.receiverList = receiverList;
+    public void setEnableOutputExists(Boolean enableOutputExists) {
+        if (enableOutputExists == null) {
+            return;
+        }
+        this.enableOutputExists = enableOutputExists;
     }
 
     public String serialize() throws JsonProcessingException {
