@@ -1,0 +1,1 @@
+docker build -f Dockerfile-wedpr-mpc-base -t wedpr-mpc-base:3.0.0 .

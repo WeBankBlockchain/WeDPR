@@ -1,0 +1,19 @@
+FROM centos:7
+
+# ENV LANG zh_CN.UTF-8
+# ENV LANGUAGE zh_CN.UTF-8
+# ENV LC_ALL zh_CN.UTF-8
+ENV LD_LIBRARY_PATH /usr/local/lib/
+
+COPY ./libs/libsodium-1.0.18.tar.gz /data/app/scripts/
+COPY ./libs/gmp-6.1.2.tar.lz /data/app/scripts/
+COPY ./libs/ntl-10.5.0.tar.gz /data/app/scripts/
+COPY ./libs/boost_1_65_1.tar.gz /data/app/scripts/
+COPY ./libs/cmake-3.21.4-linux-x86_64.tar.gz /usr/local/lib/
+COPY ./libs/mpir-3.0.0.zip /data/app/scripts/
+COPY ./libs/libstdc.so_.6.0.26.zip /data/app/scripts/
+COPY ./scripts/build-mpc-base-deps.sh /data/app/scripts/
+COPY ./scripts/CentOS-Base.repo /data/app/scripts/
+
+RUN cd /data/app/scripts/ && \
+    bash build-mpc-base-deps.sh
