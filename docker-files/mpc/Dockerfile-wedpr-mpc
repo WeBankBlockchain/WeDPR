@@ -7,8 +7,10 @@ COPY ./libs/MP-SPDZ-x86.tar.gz /data/app/wedpr/scripts/
 COPY ./libs/MP-SPDZ-x86-no-gateway.tar.gz /data/app/wedpr/scripts/
 
 COPY ./libs/wedpr-mpc-node.tar.gz /data/app/wedpr/
-COPY ./libs/mpc-cem-node-conf.tar.gz /data/app/wedpr/scripts/
+COPY ./libs/mpc-node-conf.tar.gz /data/app/wedpr/scripts/
+COPY ./libs/ssl_cert.tar.gz /data/app/wedpr/scripts/
 COPY ./scripts/build-mpc-node.sh /data/app/wedpr/scripts/
+COPY ./scripts/wedpr-mpc.sh /data/app/wedpr/scripts/
 COPY ./libs/Python-3.8.3.tgz /usr/local/lib/
 
 WORKDIR /data/app/wedpr

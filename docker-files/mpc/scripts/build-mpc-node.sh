@@ -26,11 +26,11 @@ install_python3() {
 	sed -i 's|#! /usr/bin/python|#!/usr/bin/python2.7|g' /usr/libexec/urlgrabber-ext-down
 }
 
-cp_wedpr_node_script() {  
+cp_wedpr_node_script() {
     dos2unix /data/app/wedpr/scripts/*.sh
-    dos2unix /data/app/wedpr/scripts/wedpr-node
-    chmod +x /data/app/wedpr/scripts/wedpr-node
-    cp /data/app/wedpr/scripts/wedpr-node /etc/init.d/
+    dos2unix /data/app/wedpr/scripts/wedpr-mpc.sh
+    chmod +x /data/app/wedpr/scripts/wedpr-mpc.sh
+    cp /data/app/wedpr/scripts/wedpr-mpc.sh /etc/init.d/
 }
 
 install_wedpr_mpc_node() {
