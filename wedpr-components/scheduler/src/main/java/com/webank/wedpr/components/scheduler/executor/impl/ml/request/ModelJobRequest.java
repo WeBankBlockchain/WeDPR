@@ -68,9 +68,13 @@ public class ModelJobRequest implements BaseRequest {
     @JsonProperty("model_predict_algorithm")
     protected String modelPredictAlgorithm;
 
+    // the user information
+    protected String user;
+
     public ModelJobRequest() {}
 
     public ModelJobRequest(ModelJobRequest modelJobRequest) {
+        this.setUser(modelJobRequest.getUser());
         this.setIdFilePath(modelJobRequest.getIdFilePath());
         this.setJobID(modelJobRequest.getJobID());
         this.setAlgorithmType(modelJobRequest.getAlgorithmType());

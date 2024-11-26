@@ -124,7 +124,7 @@ public class ModelJobParam {
         }
         // obtain the selfDataset information
         this.selfDataset.getDataset().obtainDatasetInfo(datasetMapper);
-
+        this.modelRequest.setUser(this.selfDataset.getDataset().getOwner());
         this.modelRequest.setDatasetPath(this.selfDataset.getDataset().getPath());
         if (this.labelProviderDataset == null) {
             throw new WeDPRException("Invalid model job param, Must define the labelProvider");

@@ -66,14 +66,11 @@ public class PSIJobParam {
             this.output = output;
         }
 
-        public void checkAndResetPath(
-                DatasetMapper datasetMapper, FileMetaBuilder fileMetaBuilder, String jobID)
+        public void checkAndResetPath(FileMetaBuilder fileMetaBuilder, String jobID)
                 throws Exception {
             if (dataset == null) {
                 throw new WeDPRException("Invalid PSI Request, must define the input dataset!");
             }
-            // obtain information for the input dataset
-            dataset.obtainDatasetInfo(datasetMapper);
             dataset.check(this.datasetIDList);
             if (idFields == null || idFields.isEmpty()) {
                 throw new WeDPRException("Must define the field list to run PSI!");
@@ -95,6 +92,8 @@ public class PSIJobParam {
 
     private String jobID;
     private String taskID;
+
+    private String user;
 
     @JsonProperty("dataSetList")
     private List<PartyResourceInfo> partyResourceInfoList;
@@ -141,7 +140,15 @@ public class PSIJobParam {
         }
         for (PartyResourceInfo partyResourceInfo : partyResourceInfoList) {
             partyResourceInfo.setDatasetIDList(datasetIDList);
-            partyResourceInfo.checkAndResetPath(datasetMapper, fileMetaBuilder, jobID);
+            partyResourceInfo.checkAndResetPath(fileMetaBuilder, jobID);
+            if (partyResourceInfo
+                    .getDataset()
+                    .getOwnerAgency()
+                    .equalsIgnoreCase(WeDPRCommonConfig.getAgency())) {
+                // obtain information for the input dataset
+                partyResourceInfo.getDataset().obtainDatasetInfo(datasetMapper);
+                setUser(partyResourceInfo.getDataset().getOwner());
+            }
         }
     }
 
@@ -149,6 +156,7 @@ public class PSIJobParam {
         PSIRequest psiRequest = new PSIRequest();
         psiRequest.setTaskID(this.taskID);
         psiRequest.setParties(toPSIParam(ownerAgency));
+        psiRequest.setUser(getUser());
         resetPartyIndex(psiRequest.getParties());
         List<String> receivers = new ArrayList<>();
         boolean syncResult = false;

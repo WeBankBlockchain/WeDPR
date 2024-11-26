@@ -126,9 +126,7 @@ public class FileMeta {
 
     @SneakyThrows(Exception.class)
     public void check(List<String> datasetIDList) {
-        Common.requireNonEmpty(owner, "owner");
         Common.requireNonEmpty(ownerAgency, "ownerAgency");
-
         // check datasetID valid
         if (this.datasetID != null && !this.datasetID.isEmpty()) {
             if ((datasetIDList != null)
@@ -138,11 +136,6 @@ public class FileMeta {
                         "Invalid datasetID, datasetID must in datasetIDList set, datasetID: "
                                 + datasetID);
             }
-        } else {
-            if (this.storageType == null) {
-                throw new WeDPRException("Not supported storageType: " + storageTypeStr);
-            }
-            Common.requireNonEmpty(path, "filePath");
         }
     }
 
