@@ -240,6 +240,8 @@ public class ChunkUploadController {
                     "DataSourceProcessor.processData",
                     datasetId,
                     () -> {
+                        FileStorageInterface.FilePermissionInfo filePermissionInfo =
+                                new FileStorageInterface.FilePermissionInfo(userInfo.getUser());
                         DataSourceProcessorContext context =
                                 DataSourceProcessorContext.builder()
                                         .dataset(dataset)
@@ -249,6 +251,7 @@ public class ChunkUploadController {
                                         .datasetTransactionalWrapper(datasetTransactionalWrapper)
                                         .chunkUpload(chunkUpload)
                                         .fileStorage(fileStorage)
+                                        .filePermissionInfo(filePermissionInfo)
                                         .build();
 
                         try {

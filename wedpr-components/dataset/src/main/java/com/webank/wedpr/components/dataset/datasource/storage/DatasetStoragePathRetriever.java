@@ -117,7 +117,8 @@ public class DatasetStoragePathRetriever {
         String ownerAgencyName = dataset.getOwnerAgencyName();
 
         UserInfo userInfo = UserInfo.builder().user(ownerUserName).agency(ownerAgencyName).build();
-
+        FileStorageInterface.FilePermissionInfo filePermissionInfo =
+                new FileStorageInterface.FilePermissionInfo(ownerUserName);
         DataSourceProcessorContext context =
                 DataSourceProcessorContext.builder()
                         .dataset(dataset)
@@ -126,6 +127,7 @@ public class DatasetStoragePathRetriever {
                         .userInfo(userInfo)
                         .datasetTransactionalWrapper(datasetTransactionalWrapper)
                         .fileStorage(fileStorage)
+                        .filePermissionInfo(filePermissionInfo)
                         .build();
 
         try {

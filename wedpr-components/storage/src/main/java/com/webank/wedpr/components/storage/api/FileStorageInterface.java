@@ -30,6 +30,10 @@ public interface FileStorageInterface {
         private String owner;
         private String group;
 
+        public FilePermissionInfo(String owner) {
+            this.owner = owner;
+        }
+
         public FilePermissionInfo(String owner, String group) {
             this.owner = owner;
             this.group = group;

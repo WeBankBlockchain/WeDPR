@@ -177,7 +177,6 @@ public class DatasetServiceImpl implements DatasetServiceApi {
             throw new DatasetException(
                     "Unsupported data source type, dataSourceType: " + strDataSourceType);
         }
-
         dataSourceProcessor.setContext(
                 DataSourceProcessorContext.builder()
                         .fileStorage(fileStorage)
@@ -219,8 +218,7 @@ public class DatasetServiceImpl implements DatasetServiceApi {
                 datasetId,
                 () -> {
                     FileStorageInterface.FilePermissionInfo filePermissionInfo =
-                            new FileStorageInterface.FilePermissionInfo();
-                    filePermissionInfo.setOwner(userInfo.getUser());
+                            new FileStorageInterface.FilePermissionInfo(userInfo.getUser());
                     DataSourceProcessorContext context =
                             DataSourceProcessorContext.builder()
                                     .dataset(dataset)
