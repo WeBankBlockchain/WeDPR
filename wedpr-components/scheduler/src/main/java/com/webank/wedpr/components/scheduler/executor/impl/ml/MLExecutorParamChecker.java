@@ -38,7 +38,9 @@ public class MLExecutorParamChecker implements ExecutorParamChecker {
                         JobType.XGB_PREDICT,
                         JobType.XGB_TRAIN,
                         JobType.LR_TRAIN,
-                        JobType.LR_PREDICT));
+                        JobType.LR_PREDICT,
+                        JobType.MLPreprocessing,
+                        JobType.FeatureEngineer));
     }
 
     @Override

@@ -98,6 +98,11 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.ML_PSI.getType(),
                 (jobDO, workflow, upstream) -> {
+                    // in case of loop dependencies
+                    if (jobDO.getOriginalJobType() != null
+                            && jobDO.getOriginalJobType() == JobType.ML_PSI) {
+                        return;
+                    }
                     // the next work is preprocessing
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
                     PreprocessingRequest preprocessingRequest =
@@ -113,6 +118,11 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.MPC_PSI.getType(),
                 (jobDO, workflow, upstream) -> {
+                    // in case of loop dependencies
+                    if (jobDO.getOriginalJobType() != null
+                            && jobDO.getOriginalJobType() == JobType.MPC_PSI) {
+                        return;
+                    }
                     jobDO.setJobType(JobType.MPC.getType());
 
                     JobWorkFlowBuilderImpl jobWorkFlowBuilder =
@@ -126,6 +136,10 @@ public class JobWorkFlowBuilderManager {
                     if (jobDO.getOriginalJobType() == null) {
                         return;
                     }
+                    // in case of loop dependencies
+                    if (jobDO.getOriginalJobType() == JobType.MLPreprocessing) {
+                        return;
+                    }
                     // the next work is feature-engineer or multi-party-ml-job
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
                     jobDO.setJobType(JobType.FeatureEngineer.getType());
@@ -133,7 +147,6 @@ public class JobWorkFlowBuilderManager {
                     if (executeFeatureEngineerJob(jobDO, modelJobParam, workflow, upstream)) {
                         return;
                     }
-
                     // execute xgb request
                     jobDO.setType(jobDO.getOriginalJobType());
                     if (executeMultiPartyMlJob(jobDO, modelJobParam, workflow, upstream)) {
@@ -144,6 +157,11 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowDependencyHandler(
                 JobType.FeatureEngineer.getType(),
                 (jobDO, workflow, upstream) -> {
+                    // in case of loop dependencies
+                    if (jobDO.getOriginalJobType() != null
+                            && jobDO.getOriginalJobType() == JobType.FeatureEngineer) {
+                        return;
+                    }
                     jobDO.setType(jobDO.getOriginalJobType());
                     ModelJobParam modelJobParam = (ModelJobParam) jobDO.getJobParam();
                     // the next work is multi-party-ml-job

@@ -176,7 +176,7 @@ public class ModelJobParam {
         if (this.jobType.predictJob()) {
             return new PreprocessingRequest(modelRequest, AlgorithmType.WEDPR_PREDICT);
         }
-        if (this.jobType.trainJob()) {
+        if (this.jobType.mlJob()) {
             return new PreprocessingRequest(modelRequest, AlgorithmType.WEDPR_TRAIN);
         }
         throw new WeDPRException(
