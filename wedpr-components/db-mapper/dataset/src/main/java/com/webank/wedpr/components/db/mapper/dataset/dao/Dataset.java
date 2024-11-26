@@ -3,17 +3,33 @@ package com.webank.wedpr.components.db.mapper.dataset.dao;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.webank.wedpr.common.utils.Json2StringDeserializer;
+import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Dataset */
 @TableName("wedpr_dataset")
 @ApiModel(value = "WedprDataset对象", description = "数据集记录表")
 @Data
 public class Dataset {
+    private static final Logger logger = LoggerFactory.getLogger(Dataset.class);
+
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class StoragePathMeta {
+        private String storageType;
+        private String filePath;
+    }
 
     @TableId("dataset_id")
     private String datasetId;
@@ -40,6 +56,7 @@ public class Dataset {
     private String datasetStorageType;
 
     private String datasetStoragePath;
+    @JsonProperty private StoragePathMeta storagePathMeta;
 
     // the data source type
     private String dataSourceType;
@@ -86,5 +103,23 @@ public class Dataset {
         // dataSourceType = "";
         dataSourceMeta = "";
         permissions = null;
+    }
+
+    @SneakyThrows(Exception.class)
+    public void setDatasetStoragePath(String datasetStoragePath) {
+        this.datasetStoragePath = datasetStoragePath;
+        if (StringUtils.isBlank(datasetStoragePath)) {
+            return;
+        }
+        try {
+            this.storagePathMeta =
+                    ObjectMapperFactory.getObjectMapper()
+                            .readValue(datasetStoragePath, StoragePathMeta.class);
+        } catch (Exception e) {
+            logger.warn(
+                    "deserialize datasetStoragePath exception, path: {}, e: ",
+                    this.datasetStoragePath,
+                    e);
+        }
     }
 }

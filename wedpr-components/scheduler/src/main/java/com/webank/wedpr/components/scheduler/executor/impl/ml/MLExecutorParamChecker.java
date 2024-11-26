@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.ml;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobParam;
@@ -25,10 +26,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MLExecutorParamChecker implements ExecutorParamChecker {
-    private FileMetaBuilder fileMetaBuilder;
+    private final FileMetaBuilder fileMetaBuilder;
+    private final DatasetMapper datasetMapper;
 
-    public MLExecutorParamChecker(FileMetaBuilder fileMetaBuilder) {
+    public MLExecutorParamChecker(FileMetaBuilder fileMetaBuilder, DatasetMapper datasetMapper) {
         this.fileMetaBuilder = fileMetaBuilder;
+        this.datasetMapper = datasetMapper;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class MLExecutorParamChecker implements ExecutorParamChecker {
         modelJobParam.setJobType(jobDO.getType());
         modelJobParam.setDatasetIDList(jobDO.getDatasetList());
         // check the param
-        modelJobParam.check();
+        modelJobParam.check(this.datasetMapper);
         return modelJobParam;
     }
 }

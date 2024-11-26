@@ -21,6 +21,7 @@ import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.meta.setting.template.dao.SettingTemplateDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.ModelJobRequest;
@@ -57,7 +58,7 @@ public class ModelJobParam {
 
     public ModelJobParam() {}
 
-    public void check() throws Exception {
+    public void check(DatasetMapper datasetMapper) throws Exception {
         if (dataSetList == null || dataSetList.isEmpty()) {
             throw new WeDPRException(
                     "Invalid model job param, must define the dataSet information!");
@@ -75,7 +76,7 @@ public class ModelJobParam {
                         .add(datasetInfo.getDataset().getOwnerAgency());
             }
         }
-        parseLabelProviderInfo();
+        parseLabelProviderInfo(datasetMapper);
         parseParticipants();
         // set the model params for all the jobs
         if (modelSetting == null) {
@@ -97,7 +98,7 @@ public class ModelJobParam {
         }
     }
 
-    public void parseLabelProviderInfo() throws Exception {
+    public void parseLabelProviderInfo(DatasetMapper datasetMapper) throws Exception {
 
         String selfAgency = WeDPRCommonConfig.getAgency();
 
@@ -121,6 +122,8 @@ public class ModelJobParam {
                             + WeDPRCommonConfig.getAgency()
                             + " not set!");
         }
+        // obtain the selfDataset information
+        this.selfDataset.getDataset().obtainDatasetInfo(datasetMapper);
 
         this.modelRequest.setDatasetPath(this.selfDataset.getDataset().getPath());
         if (this.labelProviderDataset == null) {

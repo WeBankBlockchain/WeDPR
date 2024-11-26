@@ -16,14 +16,20 @@
 package com.webank.wedpr.components.scheduler.executor.impl.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class DatasetInfo {
     protected FileMeta dataset;
     protected FileMeta output;
@@ -33,34 +39,6 @@ public class DatasetInfo {
     protected List<String> idFields = new ArrayList<>(Arrays.asList(Constant.DEFAULT_ID_FIELD));
 
     @JsonIgnore protected List<String> datasetIDList;
-
-    public List<String> getDatasetIDList() {
-        return datasetIDList;
-    }
-
-    public void setDatasetIDList(List<String> datasetIDList) {
-        this.datasetIDList = datasetIDList;
-    }
-
-    public FileMeta getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(FileMeta dataset) {
-        this.dataset = dataset;
-    }
-
-    public Boolean getLabelProvider() {
-        return labelProvider;
-    }
-
-    public void setLabelProvider(Boolean labelProvider) {
-        this.labelProvider = labelProvider;
-    }
-
-    public String getLabelField() {
-        return labelField;
-    }
 
     public void setLabelField(String labelField) {
         if (StringUtils.isBlank(labelField)) {
@@ -75,14 +53,6 @@ public class DatasetInfo {
             throw new WeDPRException("Invalid ML job param for no dataset defined!");
         }
         dataset.check(datasetIDList);
-    }
-
-    public List<String> getIdFields() {
-        return idFields;
-    }
-
-    public Boolean getReceiveResult() {
-        return receiveResult;
     }
 
     public void setReceiveResult(Boolean receiveResult) {

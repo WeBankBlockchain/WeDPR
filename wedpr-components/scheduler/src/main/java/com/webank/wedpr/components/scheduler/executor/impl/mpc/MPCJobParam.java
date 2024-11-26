@@ -7,6 +7,7 @@ import com.webank.wedpr.common.protocol.StorageType;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -40,7 +41,7 @@ public class MPCJobParam {
     @JsonIgnore private int selfIndex = -1;
     @JsonIgnore private transient List<String> datasetIDList;
 
-    public void check() throws Exception {
+    public void check(DatasetMapper datasetMapper) throws Exception {
 
         String agency = WeDPRCommonConfig.getAgency();
 
@@ -87,7 +88,10 @@ public class MPCJobParam {
 
             index++;
         }
-
+        if (this.selfDataset == null) {
+            throw new WeDPRException("Must define the selfDataset!");
+        }
+        this.selfDataset.getDataset().obtainDatasetInfo(datasetMapper);
         logger.info(
                 "## check params, selfIndex: {}, selfDataset: {}, shareBytesLength: {}, needRunPsi: {}, receiveResult: {}",
                 selfIndex,

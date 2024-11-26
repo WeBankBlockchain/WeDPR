@@ -36,7 +36,6 @@ public class MPCExecutorHook implements ExecutorHook {
 
         // get the jobParam
         MPCJobParam jobParam = (MPCJobParam) jobDO.getJobParam();
-        jobParam.check();
 
         String agency = WeDPRCommonConfig.getAgency();
         DatasetInfo selfDataset = jobParam.getSelfDataset();

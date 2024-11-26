@@ -23,6 +23,7 @@ import com.webank.wedpr.common.utils.CSVFileParser;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
@@ -65,11 +66,14 @@ public class PSIJobParam {
             this.output = output;
         }
 
-        public void checkAndResetPath(FileMetaBuilder fileMetaBuilder, String jobID)
+        public void checkAndResetPath(
+                DatasetMapper datasetMapper, FileMetaBuilder fileMetaBuilder, String jobID)
                 throws Exception {
             if (dataset == null) {
                 throw new WeDPRException("Invalid PSI Request, must define the input dataset!");
             }
+            // obtain information for the input dataset
+            dataset.obtainDatasetInfo(datasetMapper);
             dataset.check(this.datasetIDList);
             if (idFields == null || idFields.isEmpty()) {
                 throw new WeDPRException("Must define the field list to run PSI!");
@@ -129,14 +133,15 @@ public class PSIJobParam {
         return null;
     }
 
-    public void check(FileMetaBuilder fileMetaBuilder) throws Exception {
+    public void check(DatasetMapper datasetMapper, FileMetaBuilder fileMetaBuilder)
+            throws Exception {
         Common.requireNonEmpty(jobID, "jobID");
         if (partyResourceInfoList == null || partyResourceInfoList.size() < 2) {
             throw new WeDPRException("Invalid PSIJobParam, must define at least 2-parties!");
         }
         for (PartyResourceInfo partyResourceInfo : partyResourceInfoList) {
             partyResourceInfo.setDatasetIDList(datasetIDList);
-            partyResourceInfo.checkAndResetPath(fileMetaBuilder, jobID);
+            partyResourceInfo.checkAndResetPath(datasetMapper, fileMetaBuilder, jobID);
         }
     }
 

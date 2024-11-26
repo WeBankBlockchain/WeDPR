@@ -16,15 +16,22 @@
 package com.webank.wedpr.components.scheduler.executor.impl.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.protocol.StorageType;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.dao.Dataset;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.storage.api.StoragePath;
 import com.webank.wedpr.components.storage.builder.StoragePathBuilder;
 import java.util.List;
+import lombok.Data;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FileMeta {
     public enum FileStorageType {
         HDFS(2),
@@ -42,7 +49,9 @@ public class FileMeta {
     }
 
     private String datasetID;
+    @JsonIgnore protected Dataset dataset;
     protected Integer type;
+
     protected String storageTypeStr;
     @JsonIgnore protected transient StorageType storageType;
 
@@ -50,71 +59,48 @@ public class FileMeta {
     protected String path;
     protected String owner;
     protected String ownerAgency;
-    protected long datasetRecordCount;
+    protected long datasetRecordCount = 0;
 
     public FileMeta() {}
 
     public FileMeta(StorageType storageType, String path, String owner, String ownerAgency) {
         setStorageType(storageType);
-        this.path = path;
-        this.owner = owner;
-        this.ownerAgency = ownerAgency;
-        this.datasetRecordCount = 0;
+        setPath(path);
+        setOwner(owner);
+        setOwnerAgency(ownerAgency);
     }
 
-    public String serialize() throws Exception {
+    public void obtainDatasetInfo(DatasetMapper datasetMapper) throws Exception {
+        if (StringUtils.isBlank(datasetID)) {
+            throw new WeDPRException("Invalid fileMeta, must define the datasetID");
+        }
+        this.dataset = datasetMapper.getDatasetByDatasetId(this.datasetID, false);
+        // set the information
+        setStorageTypeStr(this.dataset.getDatasetStorageType());
+        setPath(this.dataset.getStoragePathMeta().getFilePath());
+        setOwner(this.dataset.getOwnerUserName());
+        setOwnerAgency(this.dataset.getOwnerAgencyName());
+        setDatasetRecordCount(this.dataset.getDatasetRecordCount());
+    }
+
+    @SneakyThrows(Exception.class)
+    public String serialize() {
         return ObjectMapperFactory.getObjectMapper().writeValueAsString(this);
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getOwnerAgency() {
-        return ownerAgency;
-    }
-
-    public void setOwnerAgency(String ownerAgency) {
-        this.ownerAgency = ownerAgency;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String filePath) {
-        this.path = filePath;
     }
 
     @SneakyThrows(Exception.class)
     public StoragePath getStoragePath() {
+        if (this.dataset != null) {
+            return StoragePathBuilder.getInstance(
+                    this.dataset.getDatasetStorageType(), this.dataset.getDatasetStoragePath());
+        }
         return StoragePathBuilder.getInstanceByFilePath(storageTypeStr, path);
-    }
-
-    public String getStorageTypeStr() {
-        return storageTypeStr;
     }
 
     public void setStorageTypeStr(String storageTypeStr) {
         this.storageTypeStr = storageTypeStr;
         this.storageType = StorageType.deserialize(storageTypeStr);
         resetType();
-    }
-
-    public StorageType getStorageType() {
-        return storageType;
     }
 
     public void setStorageType(StorageType storageType) {
@@ -158,22 +144,6 @@ public class FileMeta {
             }
             Common.requireNonEmpty(path, "filePath");
         }
-    }
-
-    public long getDatasetRecordCount() {
-        return datasetRecordCount;
-    }
-
-    public void setDatasetRecordCount(long datasetRecordCount) {
-        this.datasetRecordCount = datasetRecordCount;
-    }
-
-    public String getDatasetID() {
-        return datasetID;
-    }
-
-    public void setDatasetID(String datasetID) {
-        this.datasetID = datasetID;
     }
 
     @Override

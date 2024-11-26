@@ -1,12 +1,18 @@
 package com.webank.wedpr.components.scheduler.executor.impl.mpc;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
 import java.util.Arrays;
 import java.util.List;
 
 public class MPCExecutorParamChecker implements ExecutorParamChecker {
+    private final DatasetMapper datasetMapper;
+
+    public MPCExecutorParamChecker(DatasetMapper datasetMapper) {
+        this.datasetMapper = datasetMapper;
+    }
 
     @Override
     public List<JobType> getJobTypeList() {
@@ -20,7 +26,7 @@ public class MPCExecutorParamChecker implements ExecutorParamChecker {
         modelJobParam.setJobType(jobDO.getType());
         modelJobParam.setDatasetIDList(jobDO.getDatasetList());
         // check the param
-        modelJobParam.check();
+        modelJobParam.check(datasetMapper);
 
         return modelJobParam;
     }

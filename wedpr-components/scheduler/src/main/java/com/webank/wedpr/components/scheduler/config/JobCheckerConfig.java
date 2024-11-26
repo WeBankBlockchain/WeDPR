@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.config;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
@@ -41,6 +42,7 @@ import org.springframework.context.annotation.Scope;
 public class JobCheckerConfig {
     private static final Logger logger = LoggerFactory.getLogger(JobCheckerConfig.class);
     @Autowired private FileMetaBuilder fileMetaBuilder;
+    @Autowired private DatasetMapper datasetMapper;
 
     @Bean(name = "jobChecker")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -48,10 +50,10 @@ public class JobCheckerConfig {
     public JobChecker jobChecker() throws Exception {
         JobChecker jobChecker = new JobChecker();
         // register PSI job param checker
-        registerJobChecker(jobChecker, new PSIExecutorParamChecker(fileMetaBuilder));
+        registerJobChecker(jobChecker, new PSIExecutorParamChecker(fileMetaBuilder, datasetMapper));
         logger.info("registerPSIJobChecker success");
         // register ML job param checker
-        registerJobChecker(jobChecker, new MLExecutorParamChecker(fileMetaBuilder));
+        registerJobChecker(jobChecker, new MLExecutorParamChecker(fileMetaBuilder, datasetMapper));
         logger.info("registerMLJobChecker success");
 
         registerJobChecker(jobChecker, new PirExecutorParamChecker());
@@ -80,7 +82,8 @@ public class JobCheckerConfig {
     }
 
     public void registerMPCJobChecker(JobChecker jobChecker, FileMetaBuilder fileMetaBuilder) {
-        MPCExecutorParamChecker mpcExecutorParamChecker = new MPCExecutorParamChecker();
+        MPCExecutorParamChecker mpcExecutorParamChecker =
+                new MPCExecutorParamChecker(datasetMapper);
         for (JobType jobType : mpcExecutorParamChecker.getJobTypeList()) {
             jobChecker.registerJobCheckHandler(
                     jobType,

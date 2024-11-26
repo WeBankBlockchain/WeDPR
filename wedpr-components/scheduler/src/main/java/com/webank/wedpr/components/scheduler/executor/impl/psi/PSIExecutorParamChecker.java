@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.psi;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.ExecutorParamChecker;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -27,9 +28,11 @@ import java.util.List;
 public class PSIExecutorParamChecker implements ExecutorParamChecker {
 
     private final FileMetaBuilder fileMetaBuilder;
+    private final DatasetMapper datasetMapper;
 
-    public PSIExecutorParamChecker(FileMetaBuilder fileMetaBuilder) {
+    public PSIExecutorParamChecker(FileMetaBuilder fileMetaBuilder, DatasetMapper datasetMapper) {
         this.fileMetaBuilder = fileMetaBuilder;
+        this.datasetMapper = datasetMapper;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class PSIExecutorParamChecker implements ExecutorParamChecker {
         psiJobParam.setJobID(jobDO.getId());
         psiJobParam.setDatasetIDList(jobDO.getDatasetList());
         // check the jobParam
-        psiJobParam.check(this.fileMetaBuilder);
+        psiJobParam.check(this.datasetMapper, this.fileMetaBuilder);
         return psiJobParam;
     }
 }

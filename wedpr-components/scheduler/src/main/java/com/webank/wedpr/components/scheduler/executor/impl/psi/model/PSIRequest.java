@@ -48,6 +48,8 @@ public class PSIRequest {
     private Boolean lowBandwidth = Boolean.FALSE;
     private List<PartyInfo> parties;
     private List<String> receiverList;
+    // the user information
+    private String user;
 
     public void setParties(List<PartyInfo> parties) throws Exception {
 
