@@ -94,7 +94,10 @@ public class FileMeta {
             return StoragePathBuilder.getInstance(
                     this.dataset.getDatasetStorageType(), this.dataset.getDatasetStoragePath());
         }
-        return StoragePathBuilder.getInstanceByFilePath(storageTypeStr, path);
+        if (StringUtils.isNotBlank(storageTypeStr)) {
+            return StoragePathBuilder.getInstanceByFilePath(storageTypeStr, path);
+        }
+        return null;
     }
 
     public void setStorageTypeStr(String storageTypeStr) {

@@ -18,6 +18,7 @@ package com.webank.wedpr.components.scheduler.impl;
 import com.webank.wedpr.common.protocol.JobStatus;
 import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
@@ -42,6 +43,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerServiceImpl.class);
     @Autowired private ProjectMapperWrapper projectMapperWrapper;
     @Autowired private FileMetaBuilder fileMetaBuilder;
+    @Autowired private DatasetMapper datasetMapper;
 
     @Autowired
     @Qualifier("loadBalancer")
@@ -86,7 +88,8 @@ public class SchedulerServiceImpl implements SchedulerService {
         // the psi job, parse the output
         if (JobType.isPSIJob(jobDO.getJobType())) {
             PSIJobParam psiJobParam = PSIJobParam.deserialize(jobDO.getParam());
-            response.setResultFileInfo(psiJobParam.getResultPath(fileMetaBuilder, jobID));
+            response.setResultFileInfo(
+                    psiJobParam.getResultPath(datasetMapper, fileMetaBuilder, jobID));
         }
         // the pir job, get result files
         if (JobType.isPirJob(jobDO.getJobType())) {

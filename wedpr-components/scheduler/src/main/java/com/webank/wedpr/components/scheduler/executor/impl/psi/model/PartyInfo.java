@@ -15,8 +15,14 @@
 
 package com.webank.wedpr.components.scheduler.executor.impl.psi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PartyInfo {
     public static enum PartyType {
         CLIENT(0),
@@ -49,40 +55,17 @@ public class PartyInfo {
         }
     }
 
+    @Data
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PartyData {
         private String id;
         private FileMeta input;
         private FileMeta output;
 
-        public PartyData() {}
-
         public PartyData(String id, FileMeta input, FileMeta output) {
             this.id = id;
             this.input = input;
-            this.output = output;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public FileMeta getInput() {
-            return input;
-        }
-
-        public void setInput(FileMeta input) {
-            this.input = input;
-        }
-
-        public FileMeta getOutput() {
-            return output;
-        }
-
-        public void setOutput(FileMeta output) {
             this.output = output;
         }
 
@@ -104,34 +87,8 @@ public class PartyInfo {
     private Integer partyIndex;
     private PartyData data;
 
-    public PartyInfo() {}
-
     public PartyInfo(String id) {
         this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Integer getPartyIndex() {
-        return partyIndex;
-    }
-
-    public void setPartyIndex(Integer partyIndex) {
-        this.partyIndex = partyIndex;
-    }
-
-    public PartyData getData() {
-        return data;
-    }
-
-    public void setData(PartyData data) {
-        this.data = data;
     }
 
     @Override

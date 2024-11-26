@@ -100,7 +100,9 @@ public class WeDPRCommonConfig {
     }
 
     public static String getUserJobCacheDir(String userName, String jobType, String jobID) {
-        return Common.joinPath(getUserShareDir(userName), jobType.toLowerCase() + "-" + jobID);
+        return Common.joinPath(
+                Common.joinPath(getUserShareDir(userName), jobType.toLowerCase()),
+                jobType.toLowerCase() + "-" + jobID);
     }
 
     public static String getUserJobCachePath(

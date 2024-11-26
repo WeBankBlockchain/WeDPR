@@ -5,6 +5,7 @@ import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.BaseResponse;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.common.utils.WeDPRException;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
@@ -51,7 +52,8 @@ public class DagSchedulerExecutor implements Executor {
             FileMetaBuilder fileMetaBuilder,
             ExecutorManager executorManager,
             ExecutiveContextBuilder executiveContextBuilder,
-            ThreadPoolService threadPoolService) {
+            ThreadPoolService threadPoolService,
+            DatasetMapper datasetMapper) {
         this.loadBalancer = loadBalancer;
         this.executiveContextBuilder = executiveContextBuilder;
         this.threadPoolService = threadPoolService;
@@ -61,7 +63,8 @@ public class DagSchedulerExecutor implements Executor {
                 new DagWorkFlowSchedulerImpl(loadBalancer, jobWorkerMapper, fileStorageInterface);
 
         JobWorkFlowBuilderManager jobWorkflowBuilderManager =
-                new JobWorkFlowBuilderManager(fileMetaBuilder, fileStorageInterface, jobChecker);
+                new JobWorkFlowBuilderManager(
+                        datasetMapper, fileMetaBuilder, fileStorageInterface, jobChecker);
 
         this.workflowOrchestrator =
                 new WorkFlowOrchestrator(jobWorkflowBuilderManager, fileMetaBuilder, jobChecker);

@@ -1,6 +1,7 @@
 package com.webank.wedpr.components.scheduler.workflow.builder;
 
 import com.webank.wedpr.common.protocol.JobType;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.hook.*;
@@ -28,6 +29,7 @@ public class JobWorkFlowBuilderManager {
     private final FileMetaBuilder fileMetaBuilder;
     private final FileStorageInterface storage;
     private final JobChecker jobChecker;
+    private final DatasetMapper datasetMapper;
 
     protected Map<String, JobWorkFlowBuilderApi> jobWorkFlowBuilderMap = new ConcurrentHashMap<>();
 
@@ -35,7 +37,11 @@ public class JobWorkFlowBuilderManager {
             new ConcurrentHashMap<>();
 
     public JobWorkFlowBuilderManager(
-            FileMetaBuilder fileMetaBuilder, FileStorageInterface storage, JobChecker jobChecker) {
+            DatasetMapper datasetMapper,
+            FileMetaBuilder fileMetaBuilder,
+            FileStorageInterface storage,
+            JobChecker jobChecker) {
+        this.datasetMapper = datasetMapper;
         this.fileMetaBuilder = fileMetaBuilder;
         this.storage = storage;
         this.jobChecker = jobChecker;
@@ -56,7 +62,8 @@ public class JobWorkFlowBuilderManager {
         logger.info("register ML PSI workflow builder success");
         registerJobWorkFlowBuilder(
                 JobType.ML_PSI.getType(),
-                new JobWorkFlowBuilderImpl(new MLPSIExecutorHook(storage, fileMetaBuilder), this));
+                new JobWorkFlowBuilderImpl(
+                        new MLPSIExecutorHook(datasetMapper, storage, fileMetaBuilder), this));
 
         logger.info("register MPC PSI workflow builder success");
         registerJobWorkFlowBuilder(
@@ -66,11 +73,13 @@ public class JobWorkFlowBuilderManager {
         logger.info("register MPC workflow builder success");
         registerJobWorkFlowBuilder(
                 JobType.MPC.getType(),
-                new JobWorkFlowBuilderImpl(new MPCExecutorHook(storage, fileMetaBuilder), this));
+                new JobWorkFlowBuilderImpl(
+                        new MPCExecutorHook(this.datasetMapper, storage, fileMetaBuilder), this));
 
         registerJobWorkFlowBuilder(
                 JobType.SQL.getType(),
-                new JobWorkFlowBuilderImpl(new MPCExecutorHook(storage, fileMetaBuilder), this));
+                new JobWorkFlowBuilderImpl(
+                        new MPCExecutorHook(this.datasetMapper, storage, fileMetaBuilder), this));
 
         logger.info("register ML workflow builder success");
         registerJobWorkFlowBuilder(

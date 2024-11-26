@@ -2,6 +2,7 @@ package com.webank.wedpr.components.scheduler.executor.hook;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
@@ -25,8 +26,13 @@ public class MPCExecutorHook implements ExecutorHook {
 
     private final FileStorageInterface storage;
     private final FileMetaBuilder fileMetaBuilder;
+    private final DatasetMapper datasetMapper;
 
-    public MPCExecutorHook(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
+    public MPCExecutorHook(
+            DatasetMapper datasetMapper,
+            FileStorageInterface storage,
+            FileMetaBuilder fileMetaBuilder) {
+        this.datasetMapper = datasetMapper;
         this.storage = storage;
         this.fileMetaBuilder = fileMetaBuilder;
     }
@@ -50,7 +56,7 @@ public class MPCExecutorHook implements ExecutorHook {
         }
 
         if (jobParam.isNeedRunPsi()) {
-            return prepareWithPsi(jobDO, jobParam);
+            return prepareWithPsi(datasetMapper, jobDO, jobParam);
         } else {
             return prepareWithoutPsi(jobDO, jobParam);
         }
@@ -209,7 +215,8 @@ public class MPCExecutorHook implements ExecutorHook {
         }
     }
 
-    public MpcRunJobRequest prepareWithPsi(JobDO jobDO, MPCJobParam mpcJobParam) throws Exception {
+    public MpcRunJobRequest prepareWithPsi(
+            DatasetMapper datasetMapper, JobDO jobDO, MPCJobParam mpcJobParam) throws Exception {
 
         String jobID = jobDO.getId();
         DatasetInfo selfDataset = mpcJobParam.getSelfDataset();
@@ -241,7 +248,8 @@ public class MPCExecutorHook implements ExecutorHook {
                         ExecutorConfig.getMpcPrepareFileName());
 
         PSIJobParam psiJobParam = mpcJobParam.toPSIJobParam(fileMetaBuilder);
-        FileMeta psiResultStoragePath = psiJobParam.getResultPath(fileMetaBuilder, jobID);
+        FileMeta psiResultStoragePath =
+                psiJobParam.getResultPath(datasetMapper, fileMetaBuilder, jobID);
 
         if (logger.isDebugEnabled()) {
             logger.debug("psi result storage path: {}", psiResultStoragePath.getStoragePath());

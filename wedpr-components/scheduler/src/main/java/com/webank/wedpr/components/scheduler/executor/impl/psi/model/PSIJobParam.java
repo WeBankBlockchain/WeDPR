@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.scheduler.executor.impl.psi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.JobType;
@@ -66,7 +67,12 @@ public class PSIJobParam {
             this.output = output;
         }
 
-        public void checkAndResetPath(FileMetaBuilder fileMetaBuilder, String jobID)
+        public PartyResourceInfo(FileMeta input) {
+            this.dataset = input;
+        }
+
+        public void checkAndResetPath(
+                FileMetaBuilder fileMetaBuilder, String jobID, boolean generateOutput)
                 throws Exception {
             if (dataset == null) {
                 throw new WeDPRException("Invalid PSI Request, must define the input dataset!");
@@ -76,7 +82,7 @@ public class PSIJobParam {
                 throw new WeDPRException("Must define the field list to run PSI!");
             }
             // set the default output
-            if (output == null) {
+            if (generateOutput && output == null) {
                 this.output = PSIJobParam.getDefaultPSIOutputPath(fileMetaBuilder, dataset, jobID);
             }
         }
@@ -98,6 +104,8 @@ public class PSIJobParam {
     @JsonProperty("dataSetList")
     private List<PartyResourceInfo> partyResourceInfoList;
 
+    @JsonIgnoreProperties private PartyResourceInfo selfDatasetInfo;
+
     @JsonIgnore private List<String> datasetIDList;
 
     public static PSIJobParam deserialize(String data) throws Exception {
@@ -107,7 +115,9 @@ public class PSIJobParam {
         return ObjectMapperFactory.getObjectMapper().readValue(data, PSIJobParam.class);
     }
 
-    public FileMeta getResultPath(FileMetaBuilder fileMetaBuilder, String jobID) {
+    @SneakyThrows(Exception.class)
+    public FileMeta getResultPath(
+            DatasetMapper datasetMapper, FileMetaBuilder fileMetaBuilder, String jobID) {
         if (this.partyResourceInfoList == null) {
             return null;
         }
@@ -122,6 +132,7 @@ public class PSIJobParam {
                     == 0) {
                 FileMeta output = partyResourceInfo.getOutput();
                 if (output == null) {
+                    partyResourceInfo.getDataset().obtainDatasetInfo(datasetMapper);
                     output =
                             PSIJobParam.getDefaultPSIOutputPath(
                                     fileMetaBuilder, partyResourceInfo.getDataset(), jobID);
@@ -140,15 +151,18 @@ public class PSIJobParam {
         }
         for (PartyResourceInfo partyResourceInfo : partyResourceInfoList) {
             partyResourceInfo.setDatasetIDList(datasetIDList);
-            partyResourceInfo.checkAndResetPath(fileMetaBuilder, jobID);
+            boolean generateOutput = false;
             if (partyResourceInfo
                     .getDataset()
                     .getOwnerAgency()
                     .equalsIgnoreCase(WeDPRCommonConfig.getAgency())) {
                 // obtain information for the input dataset
                 partyResourceInfo.getDataset().obtainDatasetInfo(datasetMapper);
-                setUser(partyResourceInfo.getDataset().getOwner());
+                this.selfDatasetInfo = partyResourceInfo;
+                setUser(selfDatasetInfo.getDataset().getOwner());
+                generateOutput = true;
             }
+            partyResourceInfo.checkAndResetPath(fileMetaBuilder, jobID, generateOutput);
         }
     }
 
@@ -216,16 +230,7 @@ public class PSIJobParam {
     // download and extract the psi file
     public void prepare(FileMetaBuilder fileMetaBuilder, FileStorageInterface storage)
             throws Exception {
-        for (PartyResourceInfo partyResourceInfo : partyResourceInfoList) {
-            if (partyResourceInfo
-                            .getDataset()
-                            .getOwnerAgency()
-                            .compareToIgnoreCase(WeDPRCommonConfig.getAgency())
-                    == 0) {
-                prepare(partyResourceInfo, fileMetaBuilder, storage);
-                break;
-            }
-        }
+        prepare(selfDatasetInfo, fileMetaBuilder, storage);
     }
 
     public void prepare(

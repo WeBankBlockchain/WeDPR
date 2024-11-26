@@ -213,11 +213,18 @@ public class ModelJobParam {
         psiJobParam.setJobID(jobID);
         List<PSIJobParam.PartyResourceInfo> partyResourceInfos = new ArrayList<>();
         for (DatasetInfo datasetInfo : dataSetList) {
-            FileMeta output =
-                    PSIJobParam.getDefaultPSIOutputPath(
-                            fileMetaBuilder, datasetInfo.getDataset(), jobID);
             PSIJobParam.PartyResourceInfo partyResourceInfo =
-                    new PSIJobParam.PartyResourceInfo(datasetInfo.getDataset(), output);
+                    new PSIJobParam.PartyResourceInfo(datasetInfo.getDataset());
+            if (datasetInfo
+                    .getDataset()
+                    .getOwnerAgency()
+                    .equalsIgnoreCase(WeDPRCommonConfig.getAgency())) {
+                FileMeta output =
+                        PSIJobParam.getDefaultPSIOutputPath(
+                                fileMetaBuilder, selfDataset.getDataset(), jobID);
+                partyResourceInfo.setOutput(output);
+                psiJobParam.setSelfDatasetInfo(partyResourceInfo);
+            }
             partyResourceInfo.setIdFields(datasetInfo.getIdFields());
             partyResourceInfo.setReceiveResult(datasetInfo.getReceiveResult());
             partyResourceInfos.add(partyResourceInfo);

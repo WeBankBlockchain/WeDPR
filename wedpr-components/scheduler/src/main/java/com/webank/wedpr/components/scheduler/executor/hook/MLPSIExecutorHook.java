@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.scheduler.executor.hook;
 
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobParam;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -22,9 +23,15 @@ import com.webank.wedpr.components.scheduler.executor.impl.psi.model.PSIJobParam
 import com.webank.wedpr.components.storage.api.FileStorageInterface;
 
 public class MLPSIExecutorHook extends PSIExecutorHook {
-    public MLPSIExecutorHook(FileStorageInterface storage, FileMetaBuilder fileMetaBuilder) {
+    private final DatasetMapper datasetMapper;
+
+    public MLPSIExecutorHook(
+            DatasetMapper datasetMapper,
+            FileStorageInterface storage,
+            FileMetaBuilder fileMetaBuilder) {
         // no need to check here since MLJobParam has been checked in JobOrchestrate
         super(storage, fileMetaBuilder, null);
+        this.datasetMapper = datasetMapper;
     }
 
     @Override

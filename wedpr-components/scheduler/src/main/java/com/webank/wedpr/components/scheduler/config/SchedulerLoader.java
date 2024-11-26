@@ -22,6 +22,7 @@ import com.webank.wedpr.common.protocol.JobStatus;
 import com.webank.wedpr.common.utils.ThreadPoolService;
 import com.webank.wedpr.components.api.credential.dao.ApiCredentialMapper;
 import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
+import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
@@ -82,6 +83,7 @@ public class SchedulerLoader {
 
     @Autowired private ServiceAuthMapper serviceAuthMapper;
     @Autowired private ApiCredentialMapper apiCredentialMapper;
+    @Autowired private DatasetMapper datasetMapper;
 
     @Bean(name = "schedulerTaskImpl")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -131,7 +133,8 @@ public class SchedulerLoader {
                         fileMetaBuilder,
                         executorManager,
                         new ExecutiveContextBuilder(projectMapperWrapper),
-                        threadPoolService);
+                        threadPoolService,
+                        datasetMapper);
         executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
         // default
         TaskFinishedHandler taskFinishedHandler =
