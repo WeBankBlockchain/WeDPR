@@ -59,7 +59,7 @@ public class FileMeta {
     protected String path;
     protected String owner;
     protected String ownerAgency;
-    protected long datasetRecordCount = 0;
+    protected Integer datasetRecordCount = 0;
 
     public FileMeta() {}
 
@@ -75,6 +75,9 @@ public class FileMeta {
             throw new WeDPRException("Invalid fileMeta, must define the datasetID");
         }
         this.dataset = datasetMapper.getDatasetByDatasetId(this.datasetID, false);
+        if (this.dataset == null) {
+            throw new WeDPRException("No dataset " + this.datasetID + " found!");
+        }
         // set the information
         setStorageTypeStr(this.dataset.getDatasetStorageType());
         setPath(this.dataset.getStoragePathMeta().getFilePath());

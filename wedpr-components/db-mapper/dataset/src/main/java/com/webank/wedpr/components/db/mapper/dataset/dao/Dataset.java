@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 @Data
 public class Dataset {
     private static final Logger logger = LoggerFactory.getLogger(Dataset.class);
+    // Note: should chang with the DatasetMapper at the same time
     public static final Integer INVALID_DATASET_STATUS = -100000;
 
     @Data
