@@ -2,6 +2,7 @@ package com.webank.wedpr.components.publish.config;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.WeDPRResponseFactory;
+import com.webank.wedpr.components.db.mapper.service.publish.dao.PublishedServiceMapper;
 import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapper;
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
@@ -33,10 +34,6 @@ public class ServicePublisherLoader {
     private ResourceSyncer resourceSyncer;
 
     @Autowired
-    @Qualifier("publishSyncerCommitHandler")
-    PublishSyncerCommitHandler publishSyncerCommitHandler;
-
-    @Autowired
     @Qualifier("loadBalancer")
     private LoadBalancer loadBalancer;
 
@@ -45,6 +42,7 @@ public class ServicePublisherLoader {
     private ServiceHook serviceHook;
 
     @Autowired private ServiceAuthMapper serviceAuthMapper;
+    @Autowired private PublishedServiceMapper publishedServiceMapper;
 
     @PostConstruct
     public void init() {
@@ -68,6 +66,9 @@ public class ServicePublisherLoader {
                 new ResourceActionRecorderBuilder(agency, resourceType);
         publishSyncer.setResourceSyncer(resourceSyncer);
         publishSyncer.setResourceBuilder(resourceBuilder);
+
+        PublishSyncerCommitHandler publishSyncerCommitHandler =
+                new PublishSyncerCommitHandler(publishedServiceMapper);
         resourceSyncer.registerCommitHandler(resourceType, publishSyncerCommitHandler);
         return publishSyncer;
     }

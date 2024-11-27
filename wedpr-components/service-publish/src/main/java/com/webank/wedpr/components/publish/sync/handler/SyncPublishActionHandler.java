@@ -19,7 +19,7 @@ public class SyncPublishActionHandler implements PublishActionHandler {
             PublishedServiceInfo publishedServiceInfo = PublishedServiceInfo.deserialize(content);
             syncer.syncPublishService(PublishSyncAction.SYNC, publishedServiceInfo);
         } catch (Exception e) {
-            logger.error("sync publish service failed: " + content);
+            logger.error("sync publish service failed, content: {}, error: ", content, e);
             throw new WeDPRException(e);
         }
     }

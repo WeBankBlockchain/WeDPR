@@ -301,13 +301,22 @@
             <if test="dataset.datasetStoragePath != null and dataset.datasetStoragePath !=''">
                 dataset_storage_path = #{dataset.datasetStoragePath},
             </if>
+            <if test="dataset.status != null and dataset.status !=''">
+                status = #{dataset.status},
+            </if>
+            <if test="dataset.statusDesc != null and dataset.statusDesc !=''">
+                status_desc = #{dataset.statusDesc},
+            </if>
+            <if test="dataset.datasetVersionHash != null and dataset.datasetVersionHash !=''">
+                dataset_version_hash = #{dataset.datasetVersionHash},
+            </if>
         </set>
         WHERE dataset_id = #{dataset.datasetId}
         <if test="dataset.ownerAgencyName != null and dataset.ownerAgencyName !=''">
-            owner_agency_name = #{dataset.ownerAgencyName},
+            and owner_agency_name = #{dataset.ownerAgencyName}
         </if>
         <if test="dataset.ownerUserName != null and dataset.ownerUserName !=''">
-            owner_user_name = #{dataset.ownerUserName},
+            and owner_user_name = #{dataset.ownerUserName}
         </if>
     </update>
 </mapper>

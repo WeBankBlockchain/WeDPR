@@ -13,23 +13,21 @@ import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author zachma
  * @date 2024/8/28
  */
-@Component("publishSyncerCommitHandler")
 public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler {
     private static final Logger logger = LoggerFactory.getLogger(PublishSyncerCommitHandler.class);
 
-    @Autowired private PublishedServiceMapper publishedServiceMapper;
+    private PublishedServiceMapper publishedServiceMapper;
 
     private final PublishSyncerImpl syncer;
     private final Map<String, PublishActionHandler> actionHandlerMap = new HashMap<>();
 
-    public PublishSyncerCommitHandler() {
+    public PublishSyncerCommitHandler(PublishedServiceMapper publishedServiceMapper) {
+        this.publishedServiceMapper = publishedServiceMapper;
         this.syncer = new PublishSyncerImpl(publishedServiceMapper);
         actionHandlerMap.put(PublishSyncAction.SYNC.getAction(), new SyncPublishActionHandler());
         actionHandlerMap.put(
@@ -46,15 +44,7 @@ public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler 
         String agency = resourceActionRecord.getAgency();
         String action = resourceActionRecord.getResourceAction();
         String content = resourceActionRecord.getResourceContent();
-        String myAgency = WeDPRCommonConfig.getAgency();
-
-        logger.info(
-                "ignore self agency sync message, id: {}, action: {}, content: {}",
-                resourceActionRecord.getResourceID(),
-                action,
-                resourceActionRecord);
-
-        if (agency.equals(myAgency)) {
+        if (agency.equalsIgnoreCase(WeDPRCommonConfig.getAgency())) {
             logger.info(
                     "ignore self agency sync message, id: {}, action: {}, content: {}",
                     resourceActionRecord.getResourceID(),
@@ -76,7 +66,7 @@ public class PublishSyncerCommitHandler implements ResourceSyncer.CommitHandler 
             publishActionHandler.handle(content, syncer);
         } catch (Exception e) {
             logger.error(
-                    "handle dataset sync message exception, id: {}, action: {}, content: {}, e: {}",
+                    "handle service publish sync message exception, id: {}, action: {}, content: {}, e: ",
                     resourceActionRecord.getResourceID(),
                     action,
                     resourceActionRecord,
