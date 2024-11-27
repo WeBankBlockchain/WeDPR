@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 @Data
 public class Dataset {
     private static final Logger logger = LoggerFactory.getLogger(Dataset.class);
+    public static final Integer INVALID_DATASET_STATUS = -100000;
 
     @Data
     @NoArgsConstructor
@@ -75,7 +76,7 @@ public class Dataset {
     private String approvalChain;
 
     // status, 0：valid
-    private int status;
+    private Integer status = INVALID_DATASET_STATUS;
 
     private String statusDesc;
 
@@ -103,6 +104,13 @@ public class Dataset {
         // dataSourceType = "";
         dataSourceMeta = "";
         permissions = null;
+    }
+
+    public void setStatus(Integer status) {
+        if (status == null) {
+            return;
+        }
+        this.status = status;
     }
 
     @SneakyThrows(Exception.class)

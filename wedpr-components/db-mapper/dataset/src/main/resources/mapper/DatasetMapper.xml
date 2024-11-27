@@ -301,7 +301,7 @@
             <if test="dataset.datasetStoragePath != null and dataset.datasetStoragePath !=''">
                 dataset_storage_path = #{dataset.datasetStoragePath},
             </if>
-            <if test="dataset.status != null and dataset.status !=''">
+            <if test="dataset.status != null and dataset.status != -100000">
                 status = #{dataset.status},
             </if>
             <if test="dataset.statusDesc != null and dataset.statusDesc !=''">
