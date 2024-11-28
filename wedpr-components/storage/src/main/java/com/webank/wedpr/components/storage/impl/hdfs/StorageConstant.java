@@ -16,4 +16,7 @@ package com.webank.wedpr.components.storage.impl.hdfs;
 
 public class StorageConstant {
     public static final String FS_URI_CONFIG_KEY = "fs.defaultFS";
+    public static final String FS_AUTH_CONFIG_KEY = "hadoop.security.authentication";
+    public static final String FS_Krb5_AUTH = "Kerberos";
+    public static final String Krb5_CONFIG_KEY = "java.security.krb5.conf";
 }

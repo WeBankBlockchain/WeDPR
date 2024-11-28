@@ -55,20 +55,34 @@ public class HDFSStorage implements FileStorageInterface {
         @SneakyThrows
         public FsHandlerArgs(HdfsStorageConfig hdfsConfig) {
             try {
+                hdfsConfig.check();
                 Configuration hadoopConf = new Configuration();
                 hadoopConf.set(StorageConstant.FS_URI_CONFIG_KEY, hdfsConfig.getUrl());
-                UserGroupInformation userGroupInformation =
-                        UserGroupInformation.createRemoteUser(hdfsConfig.getUser());
-                this.fileSystem =
-                        userGroupInformation.doAs(
-                                new PrivilegedAction<FileSystem>() {
+                // enable the kerberos auth
+                if (hdfsConfig.getEnableKrb5Auth()) {
+                    hadoopConf.set(
+                            StorageConstant.FS_AUTH_CONFIG_KEY, StorageConstant.FS_Krb5_AUTH);
+                    // specify the jaas configuration
+                    hadoopConf.set(StorageConstant.Krb5_CONFIG_KEY, hdfsConfig.getKrb5ConfigPath());
+                    // specify the user-group-information
+                    UserGroupInformation.setConfiguration(hadoopConf);
+                    UserGroupInformation.loginUserFromKeytab(
+                            hdfsConfig.getKrb5Principal(), hdfsConfig.getKrb5KeytabPath());
+                    this.fileSystem = FileSystem.get(hadoopConf);
+                } else {
+                    UserGroupInformation userGroupInformation =
+                            UserGroupInformation.createRemoteUser(hdfsConfig.getUser());
+                    this.fileSystem =
+                            userGroupInformation.doAs(
+                                    new PrivilegedAction<FileSystem>() {
 
-                                    @SneakyThrows(Exception.class)
-                                    @Override
-                                    public FileSystem run() {
-                                        return FileSystem.get(hadoopConf);
-                                    }
-                                });
+                                        @SneakyThrows(Exception.class)
+                                        @Override
+                                        public FileSystem run() {
+                                            return FileSystem.get(hadoopConf);
+                                        }
+                                    });
+                }
                 this.hdfsConfig = hdfsConfig;
                 logger.info("connect to hdfs success, hdfsConfig: {}", hdfsConfig);
             } catch (Exception e) {
