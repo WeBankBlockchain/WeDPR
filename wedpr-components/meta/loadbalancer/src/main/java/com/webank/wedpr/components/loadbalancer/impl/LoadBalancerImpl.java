@@ -70,7 +70,7 @@ public class LoadBalancerImpl implements LoadBalancer {
                     targetId);
             return null;
         }
-        if (policy == Policy.ROUND_ROBIN) {
+        if (targetId == null || policy == Policy.ROUND_ROBIN) {
             int idx = lastIdx.addAndGet(1) % entryPointInfoList.size();
             return entryPointInfoList.get(idx);
         }

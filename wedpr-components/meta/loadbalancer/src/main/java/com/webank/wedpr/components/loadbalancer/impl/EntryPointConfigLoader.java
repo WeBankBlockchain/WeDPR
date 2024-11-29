@@ -16,6 +16,7 @@
 package com.webank.wedpr.components.loadbalancer.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.config.WeDPRConfig;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import com.webank.wedpr.common.utils.WeDPRException;
@@ -62,7 +63,10 @@ public class EntryPointConfigLoader implements EntryPointFetcher {
             String serviceName, List<String> entryPointsList) {
         List<ServiceMeta.EntryPointMeta> result = new ArrayList<>();
         for (String entryPoint : entryPointsList) {
-            result.add(new ServiceMeta.EntryPointMeta(serviceName, entryPoint));
+            ServiceMeta.EntryPointMeta entryPointMeta =
+                    new ServiceMeta.EntryPointMeta(serviceName, entryPoint);
+            entryPointMeta.getComponents().add(WeDPRCommonConfig.getWedprZone());
+            result.add(entryPointMeta);
         }
         return result;
     }
