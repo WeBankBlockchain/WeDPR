@@ -60,10 +60,13 @@ public class HDFSStorage implements FileStorageInterface {
                 hadoopConf.set(StorageConstant.FS_URI_CONFIG_KEY, hdfsConfig.getUrl());
                 // enable the kerberos auth
                 if (hdfsConfig.getEnableKrb5Auth()) {
+
                     hadoopConf.set(
                             StorageConstant.FS_AUTH_CONFIG_KEY, StorageConstant.FS_Krb5_AUTH);
                     // specify the jaas configuration
                     hadoopConf.set(StorageConstant.Krb5_CONFIG_KEY, hdfsConfig.getKrb5ConfigPath());
+                    System.setProperty(
+                            StorageConstant.Krb5_CONFIG_KEY, hdfsConfig.getKrb5ConfigPath());
                     // specify the user-group-information
                     UserGroupInformation.setConfiguration(hadoopConf);
                     UserGroupInformation.loginUserFromKeytab(

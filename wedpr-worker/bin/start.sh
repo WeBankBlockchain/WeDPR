@@ -7,7 +7,7 @@ APP_MAIN=com.webank.wedpr.worker.main.WorkerApplication
 LOG_DIR=.
 SERVER_NAME="WEDPR-WORKER"
 CLASSPATH='conf/:apps/*:lib/*'
-
+CONFIG_PATH=${SHELL_FOLDER}/conf
 
 STATUS_STARTING="Starting"
 STATUS_RUNNING="Running"
@@ -47,6 +47,7 @@ JAVA_OPTS+=" -Xmx256m -Xms256m -Xmn128m -Xss512k -XX:MetaspaceSize=128m -XX:MaxM
 JAVA_OPTS+=" -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${SHELL_FOLDER}/heap_error.log"
 #JAVA_OPTS+=" -XX:+UseG1GC -Xloggc:${LOG_DIR}/logs/${SERVER_NAME}-gc.log -XX:+PrintGCDateStamps"
 JAVA_OPTS+=" -DserviceName=${SERVER_NAME}"
+JAVA_OPTS+=" -DserviceConfigPath=${CONFIG_PATH}"
 run_app()
 {
     if [ "$ENABLE_DOCKER_MODE" = "true" ]; then
