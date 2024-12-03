@@ -15,10 +15,13 @@
 
 package com.webank.wedpr.components.project.model;
 
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.meta.resource.follower.dao.FollowerDO;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.project.dao.ProjectDO;
+import com.webank.wedpr.components.project.dao.ProjectMapper;
 import java.util.List;
 import lombok.SneakyThrows;
 
@@ -31,6 +34,23 @@ public class JobRequest extends PageRequest {
 
     public JobDO getJob() {
         return job;
+    }
+
+    public void check(ProjectMapper projectMapper, String owner, String ownerAgency)
+            throws Exception {
+        if (job == null) {
+            throw new WeDPRException("Must set the job information!");
+        }
+        Common.requireNonEmpty("projectId", job.getProjectId());
+        ProjectDO condition = new ProjectDO(true);
+        condition.setId(job.getProjectId());
+        condition.setOwnerAgency(ownerAgency);
+        condition.setOwner(owner);
+        List<ProjectDO> result = projectMapper.queryProject(true, condition);
+        if (result == null || result.isEmpty()) {
+            throw new WeDPRException(
+                    "Invalid job request, " + owner + " not own project " + job.getProjectId());
+        }
     }
 
     public void setJob(JobDO job) {

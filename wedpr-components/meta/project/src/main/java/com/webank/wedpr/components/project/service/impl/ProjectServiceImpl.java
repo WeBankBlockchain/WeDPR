@@ -269,12 +269,11 @@ public class ProjectServiceImpl implements ProjectService {
     public WeDPRResponse submitJob(String user, JobRequest request) {
         WeDPRResponse response =
                 new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
-
-        // String userName = user;
         String agency = WeDPRCommonConfig.getAgency();
-
-        List<String> datasetList = request.getDatasetList();
         try {
+            request.check(
+                    projectMapperWrapper.getProjectMapper(), user, WeDPRCommonConfig.getAgency());
+            List<String> datasetList = request.getDatasetList();
             request.getJob().setOwner(user);
             request.getJob().setOwnerAgency(agency);
             request.getJob().setTaskParties(request.getTaskParties());
