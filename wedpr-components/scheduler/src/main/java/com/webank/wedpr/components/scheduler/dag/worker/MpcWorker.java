@@ -1,5 +1,6 @@
 package com.webank.wedpr.components.scheduler.dag.worker;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.ServiceName;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.ObjectMapperFactory;
@@ -93,7 +94,11 @@ public class MpcWorker extends Worker {
         ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
                         .selectService(
-                                LoadBalancer.Policy.HASH, ServiceName.MPC.getValue(), null, jobId);
+                                LoadBalancer.Policy.HASH,
+                                Common.getServiceName(
+                                        WeDPRCommonConfig.getAgency(), ServiceName.MPC.getValue()),
+                                null,
+                                jobId);
         if (entryPoint == null) {
             logger.error("Unable to find mpc service endpoint, jobId: {}", jobId);
             throw new WeDPRException("Unable to find mpc service endpoint, jobId: " + jobId);

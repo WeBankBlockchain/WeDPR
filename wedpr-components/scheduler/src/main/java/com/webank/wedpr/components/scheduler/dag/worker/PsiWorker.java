@@ -1,6 +1,8 @@
 package com.webank.wedpr.components.scheduler.dag.worker;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.protocol.ServiceName;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
@@ -52,7 +54,11 @@ public class PsiWorker extends Worker {
         ServiceMeta.EntryPointMeta entryPoint =
                 getLoadBalancer()
                         .selectService(
-                                LoadBalancer.Policy.HASH, ServiceName.PSI.getValue(), null, jobId);
+                                LoadBalancer.Policy.HASH,
+                                Common.getServiceName(
+                                        WeDPRCommonConfig.getAgency(), ServiceName.PSI.getValue()),
+                                null,
+                                jobId);
         if (entryPoint == null) {
             logger.error("Unable to find psi service endpoint, jobId: {}", jobId);
             throw new WeDPRException("Unable to find psi service endpoint, jobId: " + jobId);

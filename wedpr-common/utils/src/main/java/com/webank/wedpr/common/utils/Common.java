@@ -231,4 +231,8 @@ public class Common {
         }
         return mapping;
     }
+
+    public static String getServiceName(String agencyName, String serviceName) {
+        return agencyName + "_" + serviceName;
+    }
 }

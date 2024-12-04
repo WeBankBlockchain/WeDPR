@@ -9,6 +9,10 @@ class PeerInfo:
         self.agency = agency
         self.endpoints = endpoints
 
+    def __repr__(self):
+        return f"**PeerInfo: agency: {self.agency}, " \
+               f"endpoints: {self.endpoints}**\n"
+
 
 class EnvConfig:
     def __init__(self, config, section_name):
@@ -18,6 +22,29 @@ class EnvConfig:
             self.config, self.section_name, "binary_path", None, True)
         self.deploy_dir = utilities.get_value(
             self.config, self.section_name, "deploy_dir", None, True)
+        # zone
+        self.zone = utilities.get_value(
+            self.config, self.section_name, "zone", None, True)
+
+    def __repr__(self):
+        return f"**EnvConfig: binary_path: {self.binary_path}, " \
+               f"deploy_dir: {self.deploy_dir}, zone: {self.zone}**\n"
+
+
+class BlockchainConfig:
+    def __int__(self, config, section_name):
+        self.config = config
+        self.blockchain_group = utilities.get_value(
+            self.config, section_name, "blockchain_group", None, True)
+        self.blockchain_peers = utilities.get_value(
+            self.config, section_name, "blockchain_peers", None, True)
+        self.blockchain_cert_path = utilities.get_value(
+            self.config, section_name, "blockchain_cert_path", None, True)
+
+    def __repr__(self):
+        return f"**BlockchainConfig: blockchain_group: {self.blockchain_group}, " \
+               f"blockchain_peers: {self.blockchain_peers}, " \
+               f"blockchain_cert_path: {self.blockchain_cert_path}**\n"
 
 
 class GatewayConfig:
@@ -61,6 +88,12 @@ class GatewayConfig:
         self.grpc_listen_port = utilities.get_item_value(
             self.config, "grpc_listen_port", None, must_exist, config_section)
 
+    def __repr__(self):
+        return f"**GatewayConfig: deploy_ip: {self.deploy_ip}, " \
+               f"listen_ip: {self.listen_ip}, listen_port: {self.listen_port}, " \
+               f"grpc_listen_ip: {self.grpc_listen_ip}, " \
+               f"grpc_listen_port: {self.grpc_listen_port}\n**"
+
 
 class RpcConfig:
     """
@@ -76,6 +109,10 @@ class RpcConfig:
             self.config, "listen_port", None, must_exist, config_section)
         self.thread_count = utilities.get_item_value(
             self.config, "thread_count", 4, False, config_section)
+
+    def __repr__(self):
+        return f"**RpcConfig: listen_ip: {self.listen_ip}," \
+               f"listen_port: {self.listen_port} \n**"
 
 
 class StorageConfig:
@@ -98,6 +135,10 @@ class StorageConfig:
         self.database = utilities.get_item_value(
             self.config, "database", None, must_exist, config_section)
 
+    def __repr__(self):
+        return f"**StorageConfig: host: {self.host}, port: {self.port}, " \
+               f"user: {self.user}, database: {self.database}\n**"
+
 
 class HDFSStorageConfig:
     """
@@ -110,6 +151,8 @@ class HDFSStorageConfig:
         # the hdfs configuration
         self.user = utilities.get_item_value(
             self.config, "user", None, must_exist, config_section)
+        self.home = utilities.get_item_value(
+            self.config, "home", None, must_exist, config_section)
         self.name_node = utilities.get_item_value(
             self.config, "name_node", None, must_exist, config_section)
         self.name_node_port = utilities.get_item_value(
@@ -138,6 +181,15 @@ class HDFSStorageConfig:
         self.krb5_conf_path = utilities.get_item_value(
             self.config, "krb5_conf_path",
             "conf/krb5.conf", enable_krb5_auth, config_section)
+
+    def __repr__(self):
+        return f"**HDFSStorageConfig: user: {self.user}, " \
+               f"home: {self.home}, name_node: {self.name_node}, " \
+               f"name_node_port: {self.name_node_port}, " \
+               f"enable_krb5_auth: {self.enable_krb5_auth_str}, " \
+               f"auth_principal: {self.auth_principal}, " \
+               f"ccache_path: {self.ccache_path}, " \
+               f"krb5_conf_path: {self.krb5_conf_path}**\n"
 
 
 class RA2018PSIConfig:
@@ -342,6 +394,8 @@ class WeDPRDeployConfig:
             self.config, crypto_section, "sm_crypto", False, False)
         utilities.log_debug("load the crypto config success")
         self.env_config = EnvConfig(self.config, "env")
+        # the blockchain config
+        self.blockchain_config = BlockchainConfig(self.config, "blockchain")
         # load the agency config
         # TODO: check duplicated case
         utilities.log_debug("load the agency config")

@@ -111,7 +111,9 @@ public class PirServiceImpl implements PirService {
                                 + ":"
                                 + WeDPRCommonConfig.getServerListenPort());
         this.weDPRTransport.registerComponent(WeDPRCommonConfig.getWedprZone());
-        this.weDPRTransport.registerService(Constant.PIR_SERVICE_TYPE, accessEntryPoint);
+        this.weDPRTransport.registerService(
+                Common.getServiceName(WeDPRCommonConfig.getAgency(), Constant.PIR_SERVICE_TYPE),
+                accessEntryPoint);
         logger.info(
                 "PirServiceImpl, register service, accessEntryPoint: {}, wedprZone: {}",
                 accessEntryPoint,
