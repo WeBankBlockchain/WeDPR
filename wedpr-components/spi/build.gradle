@@ -3,7 +3,7 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-common-utils")
-    compile("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
+    api project(":wedpr-common-utils")
+    api("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
     annotationProcessor("com.google.auto.service:auto-service:${googleAutoServiceVersion}")
 }

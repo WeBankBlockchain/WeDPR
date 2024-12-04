@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-quartz:${springBootVersion}")
-    compile libraries.spring, libraries.spring_boot
+    api("org.springframework.boot:spring-boot-starter-quartz:${springBootVersion}")
+    api libraries.spring, libraries.spring_boot
 }

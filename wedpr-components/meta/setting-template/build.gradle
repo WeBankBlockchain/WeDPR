@@ -3,7 +3,7 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-components-mybatis")
-    compile project(":wedpr-common-protocol")
-    compile project(":wedpr-components-uuid")
+    api project(":wedpr-components-mybatis")
+    api project(":wedpr-common-protocol")
+    api project(":wedpr-components-uuid")
 }

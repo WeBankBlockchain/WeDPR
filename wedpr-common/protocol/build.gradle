@@ -3,5 +3,5 @@ plugins {
     id 'java'
 }
 dependencies {
-    compile project(':wedpr-common-utils')
+    api project(':wedpr-common-utils')
 }

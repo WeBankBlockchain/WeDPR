@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile project(":wedpr-components-sys-config")
-    compile project(":wedpr-components-uuid")
+    api project(":wedpr-components-sys-config")
+    api project(":wedpr-components-uuid")
 }

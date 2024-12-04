@@ -3,6 +3,6 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-common-protocol")
-    compile project(":wedpr-components-task-plugin-api")
+    api project(":wedpr-common-protocol")
+    api project(":wedpr-components-task-plugin-api")
 }

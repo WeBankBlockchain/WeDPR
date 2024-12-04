@@ -4,17 +4,17 @@ plugins {
 }
 
 dependencies {
-    compile libraries.spring, libraries.spring_boot
+    api libraries.spring, libraries.spring_boot
 
-    compile project(":wedpr-common-protocol")
-    compile project(":wedpr-common-utils")
-    compile project(":wedpr-components-uuid")
-    compile("com.google.code.gson:gson:${gsonVersion}")
+    api project(":wedpr-common-protocol")
+    api project(":wedpr-common-utils")
+    api project(":wedpr-components-uuid")
+    api("com.google.code.gson:gson:${gsonVersion}")
 
-    compile("org.apache.hadoop:hadoop-common:${hadoopVersion}"){
+    api("org.apache.hadoop:hadoop-common:${hadoopVersion}"){
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
-    compile("org.apache.hadoop:hadoop-client:${hadoopVersion}"){
+    api("org.apache.hadoop:hadoop-client:${hadoopVersion}"){
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
 }

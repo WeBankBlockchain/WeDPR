@@ -4,13 +4,13 @@ plugins {
 
 
 dependencies {
-    compile libraries.spring, libraries.spring_boot
-    compile project(":wedpr-common-utils")
-    compile ("com.alibaba:druid:${druidVersion}")
-    compile ("mysql:mysql-connector-java:${mysqlConnectorVersion}")
-    compile ("com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}")
-    compile("commons-collections:commons-collections:${commonsCollectionsVersion}")
-    compile("com.github.pagehelper:pagehelper:${pageHelperVersion}")
-    compile("com.baomidou:mybatis-plus-generator:${mybatisPlusGeneratorVersion}")
-    compile("org.apache.velocity:velocity-engine-core:${velocityVersion}")
+    api libraries.spring, libraries.spring_boot
+    api project(":wedpr-common-utils")
+    api ("com.alibaba:druid:${druidVersion}")
+    api ("mysql:mysql-connector-java:${mysqlConnectorVersion}")
+    api ("com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}")
+    api("commons-collections:commons-collections:${commonsCollectionsVersion}")
+    api("com.github.pagehelper:pagehelper:${pageHelperVersion}")
+    api("com.baomidou:mybatis-plus-generator:${mybatisPlusGeneratorVersion}")
+    api("org.apache.velocity:velocity-engine-core:${velocityVersion}")
 }

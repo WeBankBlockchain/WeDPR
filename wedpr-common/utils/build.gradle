@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile ("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    compile ("com.opencsv:opencsv:${opencsvVersion}")
+    api ("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    api ("com.opencsv:opencsv:${opencsvVersion}")
 }
 

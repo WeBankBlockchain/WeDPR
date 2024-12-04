@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile ("org.apache.httpcomponents:httpclient:${httpClientVersion}")
-    compile project(":wedpr-common-utils")
+    api ("org.apache.httpcomponents:httpclient:${httpClientVersion}")
+    api project(":wedpr-common-utils")
 }

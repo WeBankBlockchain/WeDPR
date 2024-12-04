@@ -306,8 +306,7 @@ public class WedprGroupController {
         List<WedprGroupDetail> wedprGroupDetailList =
                 wedprGroupDetailService.list(lambdaQueryWrapper);
         List<String> usernameList =
-                wedprGroupDetailList
-                        .stream()
+                wedprGroupDetailList.stream()
                         .map(wedprGroupDetail1 -> wedprGroupDetail1.getUsername())
                         .collect(Collectors.toList());
         applicationEventPublisher.publishEvent(new UserInfoUpdateEvent<>(usernameList));
@@ -391,8 +390,7 @@ public class WedprGroupController {
                 // 是普通用户，查询自己所在群组的列表
                 List<GroupInfo> groupInfos = userToken.getGroupInfos();
                 List<String> groupIds =
-                        groupInfos
-                                .stream()
+                        groupInfos.stream()
                                 .map(groupInfo -> groupInfo.getGroupId())
                                 .collect(Collectors.toList());
                 lambdaQueryWrapper.in(groupInfos.size() > 0, WedprGroup::getGroupId, groupIds);

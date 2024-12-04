@@ -11,14 +11,14 @@ ext {
 }
 
 dependencies {
-    compile project(":wedpr-components-token-auth")
-    compile project(":wedpr-components-crypto")
-    compile project(":wedpr-components-db-mapper-dataset")
-    compile project(":wedpr-components-storage")
-    compile project(":wedpr-components-authorization")
+    api project(":wedpr-components-token-auth")
+    api project(":wedpr-components-crypto")
+    api project(":wedpr-components-db-mapper-dataset")
+    api project(":wedpr-components-storage")
+    api project(":wedpr-components-authorization")
 
     // hive
-    compile("org.apache.hive:hive-jdbc:${hiveVersion}") {
+    api("org.apache.hive:hive-jdbc:${hiveVersion}") {
         exclude group: "org.apache.zookeeper", module: "zookeeper4"
         exclude group: "org.eclipse.jetty.aggregate", module: "jetty-all"
         exclude group: 'javax.servlet', module: 'servlet-api'
@@ -27,25 +27,25 @@ dependencies {
         exclude group: 'org.eclipse.jetty', module: 'jetty-runner'
         exclude group: 'org.apache.logging.log4j'
     }
-    compile "org.apache.hadoop:hadoop-distcp:${hadoopVersion}"
-    compile "org.apache.hadoop:hadoop-hdfs:${hadoopVersion}"
-    compile "org.apache.poi:poi:${poiVersion}"
-    compile "org.apache.poi:poi-excelant:${poiVersion}"
-    compile "com.opencsv:opencsv:${opencsvVersion}"
+    api "org.apache.hadoop:hadoop-distcp:${hadoopVersion}"
+    api "org.apache.hadoop:hadoop-hdfs:${hadoopVersion}"
+    api "org.apache.poi:poi:${poiVersion}"
+    api "org.apache.poi:poi-excelant:${poiVersion}"
+    api "com.opencsv:opencsv:${opencsvVersion}"
 
     // da meng
-    compile "com.dameng:DmJdbcDriver18:${dmVersion}"
+    api "com.dameng:DmJdbcDriver18:${dmVersion}"
 //    compile "com.dameng:DmDialect-for-hibernate5.0:${dmVersion}"
 //    compile 'org.hibernate:hibernate-core:5.3.20.Final'
 
     // gauss
-    compile "org.postgresql:postgresql:${postgresqlVersion}"
+    api "org.postgresql:postgresql:${postgresqlVersion}"
 
     // king
-    compile "cn.com.kingbase:kingbase8:${kingVersion}"
+    api "cn.com.kingbase:kingbase8:${kingVersion}"
 //    compile files('libs/hibernate-4.dialect.jar')
 
     // shen tong
-    compile files('libs/oscarJDBC8.jar')
+    api files('libs/oscarJDBC8.jar')
 //    compile files('libs/oscarHibernate54.jar')
 }

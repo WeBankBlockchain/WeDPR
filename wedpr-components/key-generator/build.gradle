@@ -4,5 +4,5 @@ plugins {
 }
 
 dependencies {
-    implementation project(":wedpr-components-blockchain")
+    api project(":wedpr-components-blockchain")
 }

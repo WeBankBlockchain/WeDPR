@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    compile project(":wedpr-components-crypto")
-    compile project(":wedpr-components-token-auth")
-    compile project(":wedpr-common-utils")
-    compile project(":wedpr-common-protocol")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-mybatis")
-    compile project(":wedpr-components-hook")
-    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+    api project(":wedpr-components-crypto")
+    api project(":wedpr-components-token-auth")
+    api project(":wedpr-common-utils")
+    api project(":wedpr-common-protocol")
+    api project(":wedpr-components-uuid")
+    api project(":wedpr-components-mybatis")
+    api project(":wedpr-components-hook")
+    api("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
 }

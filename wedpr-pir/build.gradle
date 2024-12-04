@@ -3,6 +3,6 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-components-initializer")
-    compile project(":wedpr-components-task-plugin-pir")
+    api project(":wedpr-components-initializer")
+    api project(":wedpr-components-task-plugin-pir")
 }

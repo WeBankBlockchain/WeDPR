@@ -3,8 +3,8 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-common-protocol")
-    compile project(":wedpr-common-utils")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-spi")
+    api project(":wedpr-common-protocol")
+    api project(":wedpr-common-utils")
+    api project(":wedpr-components-uuid")
+    api project(":wedpr-components-spi")
 }

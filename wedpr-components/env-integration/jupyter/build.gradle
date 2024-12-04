@@ -3,11 +3,11 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-components-token-auth")
-    compile project(":wedpr-components-mybatis")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-sys-config")
-    compile project(":wedpr-components-http-client")
-    compile project(":wedpr-components-hook")
-    compile project(":wedpr-components-task-plugin-api")
+    api project(":wedpr-components-token-auth")
+    api project(":wedpr-components-mybatis")
+    api project(":wedpr-components-uuid")
+    api project(":wedpr-components-sys-config")
+    api project(":wedpr-components-http-client")
+    api project(":wedpr-components-hook")
+    api project(":wedpr-components-task-plugin-api")
 }

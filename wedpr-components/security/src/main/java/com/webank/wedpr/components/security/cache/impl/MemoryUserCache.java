@@ -137,8 +137,7 @@ public class MemoryUserCache implements UserCache {
         List<GrantedAuthority> authorities = new ArrayList<>();
         getAuthorities(username, authorities);
         String roleName =
-                authorities
-                        .stream()
+                authorities.stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.joining(userJwtConfig.getDelimiter()));
         LambdaQueryWrapper<WedprGroupDetail> lambdaQueryWrapper = new LambdaQueryWrapper<>();

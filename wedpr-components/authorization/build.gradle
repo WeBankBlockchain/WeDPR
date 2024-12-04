@@ -3,8 +3,8 @@ plugins {
     id 'java'
 }
 dependencies{
-    compile project(":wedpr-components-mybatis")
-    compile project(":wedpr-components-uuid")
-    compile project(":wedpr-components-sync")
-    compile project(":wedpr-components-resource-follower")
+    api project(":wedpr-components-mybatis")
+    api project(":wedpr-components-uuid")
+    api project(":wedpr-components-sync")
+    api project(":wedpr-components-resource-follower")
 }

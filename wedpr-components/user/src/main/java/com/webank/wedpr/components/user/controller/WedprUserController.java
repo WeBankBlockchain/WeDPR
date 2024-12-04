@@ -225,8 +225,7 @@ public class WedprUserController {
             lambdaQueryWrapper.eq(WedprUserRole::getRoleId, UserRoleEnum.ADMIN_ROLE.getRoleId());
             List<WedprUserRole> wedprUserRoleList = wedprUserRoleService.list(lambdaQueryWrapper);
             String agencyAdminName =
-                    wedprUserRoleList
-                            .stream()
+                    wedprUserRoleList.stream()
                             .map(WedprUserRole::getUsername)
                             .collect(Collectors.joining(Constant.STR_SEPARATOR));
             getUserAgencyResponse.setAgencyAdminName(agencyAdminName);

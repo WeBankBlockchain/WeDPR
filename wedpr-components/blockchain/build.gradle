@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    compile project(":wedpr-common-utils")
-    compile ("org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:${bcosSDKVersion}"){
+    api project(":wedpr-common-utils")
+    api ("org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:${bcosSDKVersion}"){
         exclude group: "org.slf4j"
     }
 }

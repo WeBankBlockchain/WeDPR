@@ -207,8 +207,7 @@ public abstract class BaseShellBuilderImpl<
         if (systemEnvFiles.isEmpty()) {
             return Collections.emptyList();
         }
-        return systemEnvFiles
-                .stream()
+        return systemEnvFiles.stream()
                 .map(systemEnvFile -> "source " + systemEnvFile)
                 .collect(Collectors.toList());
     }
