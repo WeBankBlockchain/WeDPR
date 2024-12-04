@@ -86,16 +86,17 @@ public class ProjectMapperWrapper {
         batchUpdateJobStatus(user, agency, new ArrayList<>(Arrays.asList(jobDO)), status);
     }
 
-    public List<JobDO> queryJobDetail(String jobID, String user, String agency) {
+    public List<JobDO> queryJobDetail(String jobID, Boolean onlyMeta, String user, String agency) {
         JobDO condition = new JobDO(jobID);
-        List<JobDO> jobDOList = this.queryJobByCondition(false, user, agency, condition);
+        List<JobDO> jobDOList = this.queryJobByCondition(onlyMeta, user, agency, condition);
         // try to query the follower information
         if (jobDOList == null || jobDOList.isEmpty()) {
             // reset the condition
             condition.setOwner(null);
             condition.setOwnerAgency(null);
             jobDOList =
-                    this.projectMapper.queryFollowerJobByCondition(false, user, agency, condition);
+                    this.projectMapper.queryFollowerJobByCondition(
+                            onlyMeta, user, agency, condition);
         }
         return jobDOList;
     }

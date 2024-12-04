@@ -33,7 +33,7 @@ public class JobRequest extends PageRequest {
     private JobDO job = new JobDO(true);
     private List<FollowerDO> taskParties;
     private List<String> datasetList;
-    private Boolean onlyMeta = Boolean.FALSE;
+    private Boolean onlyMeta = Boolean.TRUE;
 
     public JobRequest() {}
 

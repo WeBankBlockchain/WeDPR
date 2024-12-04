@@ -24,8 +24,12 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobResult;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.GetTaskResultRequest;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MLExecutorClient {
+    private static final Logger logger = LoggerFactory.getLogger(MLExecutorClient.class);
+
     public static Object getJobResult(LoadBalancer loadBalancer, GetTaskResultRequest request)
             throws Exception {
 
@@ -55,9 +59,6 @@ public class MLExecutorClient {
             return null;
         }
         if (modelJobResult.getData() == null) {
-            return null;
-        }
-        if (modelJobResult.getData().getJobPlanetResult() == null) {
             return null;
         }
         return modelJobResult.getData();

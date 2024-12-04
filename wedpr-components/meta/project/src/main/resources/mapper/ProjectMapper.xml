@@ -198,7 +198,7 @@
         select
         <choose>
             <when test="onlyMeta == true">
-                `id`, `owner`, `owner_agency`, `job_type`, `parties`, `create_time`, `last_update_time`
+                `id`, `owner`, `owner_agency`, `job_type`, `parties`, `create_time`, `last_update_time`, `status`
             </when>
             <otherwise>
                 *
@@ -297,7 +297,8 @@
         select
         <choose>
             <when test="onlyMeta == true">
-                job_table.id, job_table.owner, job_table.owner_agency, job_table.job_type
+                job_table.id, job_table.owner, job_table.owner_agency,
+                job_table.job_type, job_table.create_time, job_table.last_update_time, job_table.status
             </when>
             <otherwise>
                 job_table.*
@@ -308,11 +309,14 @@
         where `user_name` = #{followerUser} and `agency` = #{followerAgency})as follower_table
             left join
         (select
-            <when test="onlyMeta == true">
-             `id`, `owner`, `owner_agency`, `job_type`
-            <otherwise>
-            *
-            </otherwise>
+             <choose>
+                <when test="onlyMeta == true">
+                 `id`, `owner`, `owner_agency`, `job_type`, `last_update_time`, `create_time`, `status`
+                </when>
+                <otherwise>
+                *
+                </otherwise>
+             </choose>
             from `wedpr_job_table` where 1 = 1
         <choose>
             <when test="condition != null and condition != ''">

@@ -28,7 +28,8 @@ public class GetTaskResultRequest implements BaseRequest {
     String jobID;
     String user;
     String jobType;
-    Boolean onlyFetchLog;
+    Boolean fetchLog = Boolean.FALSE;
+    Boolean fetchJobResult = Boolean.FALSE;
 
     public GetTaskResultRequest() {}
 

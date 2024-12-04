@@ -50,46 +50,71 @@ public class SchedulerServiceImpl implements SchedulerService {
     private LoadBalancer loadBalancer;
 
     @Override
-    public Object queryJobDetail(String user, String agency, String jobID) throws Exception {
-        List<JobDO> jobDOList = this.projectMapperWrapper.queryJobDetail(jobID, user, agency);
-        if (jobDOList == null || jobDOList.isEmpty()) {
-            throw new WeDPRException("queryJobDetail failed for the job " + jobID + " not exist!");
-        }
+    public Object queryJobDetail(String user, String agency, JobDetailRequest jobDetailRequest)
+            throws Exception {
+        Boolean onlyMeta = Boolean.TRUE;
         // query the jobDetail
+        if (jobDetailRequest.getFetchJobDetail()) {
+            onlyMeta = Boolean.FALSE;
+        }
+        List<JobDO> jobDOList =
+                this.projectMapperWrapper.queryJobDetail(
+                        jobDetailRequest.getJobID(), onlyMeta, user, agency);
+        if (jobDOList == null || jobDOList.isEmpty()) {
+            throw new WeDPRException(
+                    "queryJobDetail failed for the job "
+                            + jobDetailRequest.getJobID()
+                            + " not exist!");
+        }
         JobDO jobDO = jobDOList.get(0);
+        JobDetailResponse response = new JobDetailResponse(jobDO);
         // run failed, no need to fetch the result, only fetch the log
-        if (jobDO.getType().mlJob() && !JobStatus.success(jobDO.getStatus())) {
+        if (jobDetailRequest.getFetchLog()
+                && jobDO.getType().mlJob()
+                && !JobStatus.success(jobDO.getStatus())) {
             Object logDetail = null;
             if (jobDO.getJobStatus().finished()) {
                 GetTaskResultRequest getTaskResultRequest =
                         new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
-                getTaskResultRequest.setOnlyFetchLog(Boolean.TRUE);
+                getTaskResultRequest.setFetchLog(Boolean.TRUE);
+                getTaskResultRequest.setFetchJobResult(Boolean.FALSE);
                 ModelJobResult.ModelJobData modelJobData =
                         (ModelJobResult.ModelJobData)
                                 MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
                 logDetail = modelJobData.getLogDetail();
             }
-            return new JobDetailResponse(jobDO, null, null, logDetail);
+            response.setLog(logDetail);
+            return response;
         }
         // the ml job
         if (jobDO.getType().mlJob()) {
+            // no need to fetch log and fetch job result
+            if (!jobDetailRequest.getFetchLog() && !jobDetailRequest.getFetchJobResult()) {
+                return response;
+            }
+
             GetTaskResultRequest getTaskResultRequest =
                     new GetTaskResultRequest(user, jobDO.getId(), jobDO.getJobType());
+            getTaskResultRequest.setFetchJobResult(jobDetailRequest.getFetchJobResult());
+            getTaskResultRequest.setFetchLog(jobDetailRequest.getFetchLog());
             ModelJobResult.ModelJobData modelJobData =
                     (ModelJobResult.ModelJobData)
                             MLExecutorClient.getJobResult(loadBalancer, getTaskResultRequest);
+            if (modelJobData == null) {
+                return new JobDetailResponse(jobDO, null, null, null);
+            }
             return new JobDetailResponse(
                     jobDO,
                     modelJobData.getJobPlanetResult(),
                     modelJobData.getModelData(),
                     modelJobData.getLogDetail());
         }
-        JobDetailResponse response = new JobDetailResponse(jobDO);
         // the psi job, parse the output
         if (JobType.isPSIJob(jobDO.getJobType())) {
             PSIJobParam psiJobParam = PSIJobParam.deserialize(jobDO.getParam());
             response.setResultFileInfo(
-                    psiJobParam.getResultPath(datasetMapper, fileMetaBuilder, jobID));
+                    psiJobParam.getResultPath(
+                            datasetMapper, fileMetaBuilder, jobDetailRequest.getJobID()));
         }
         // the pir job, get result files
         if (JobType.isPirJob(jobDO.getJobType())) {
@@ -107,7 +132,9 @@ public class SchedulerServiceImpl implements SchedulerService {
             mpcJobParam.check(datasetMapper);
             response.setResultFileInfo(
                     mpcJobParam.getMpcPath(
-                            fileMetaBuilder, jobID, ExecutorConfig.getMpcResultFileName()));
+                            fileMetaBuilder,
+                            jobDetailRequest.getJobID(),
+                            ExecutorConfig.getMpcResultFileName()));
         }
 
         return response;

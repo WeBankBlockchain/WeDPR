@@ -13,32 +13,39 @@
  *
  */
 
-package com.webank.wedpr.components.scheduler.executor.impl.ml.model;
+package com.webank.wedpr.components.scheduler.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.webank.wedpr.common.utils.ObjectMapperFactory;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ModelJobResult {
-    @Data
-    @NoArgsConstructor
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ModelJobData {
-        private Object jobPlanetResult;
-        private String modelData;
-        private Object logDetail;
+@NoArgsConstructor
+public class JobDetailRequest {
+    private String jobID;
+    private Boolean fetchJobDetail = Boolean.TRUE;
+    private Boolean fetchJobResult = Boolean.FALSE;
+    private Boolean fetchLog = Boolean.FALSE;
+
+    public void setFetchJobDetail(Boolean fetchJobDetail) {
+        if (fetchJobDetail == null) {
+            return;
+        }
+        this.fetchJobDetail = fetchJobDetail;
     }
 
-    private Integer errorCode;
-    private String message;
-    private ModelJobData data;
+    public void setFetchJobResult(Boolean fetchJobResult) {
+        if (fetchJobResult == null) {
+            return;
+        }
+        this.fetchJobResult = fetchJobResult;
+    }
 
-    public static ModelJobResult deserialize(String data) throws JsonProcessingException {
-        return ObjectMapperFactory.getObjectMapper().readValue(data, ModelJobResult.class);
+    public void setFetchLog(Boolean fetchLog) {
+        if (fetchLog == null) {
+            return;
+        }
+        this.fetchLog = fetchLog;
     }
 }

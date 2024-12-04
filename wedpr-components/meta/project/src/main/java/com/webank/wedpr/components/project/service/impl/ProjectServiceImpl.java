@@ -434,7 +434,10 @@ public class ProjectServiceImpl implements ProjectService {
                     this.projectMapperWrapper
                             .getProjectMapper()
                             .queryFollowerJobByCondition(
-                                    false, user, WeDPRCommonConfig.getAgency(), request.getJob());
+                                    request.getOnlyMeta(),
+                                    user,
+                                    WeDPRCommonConfig.getAgency(),
+                                    request.getJob());
             if (jobDOList == null) {
                 return response;
             }

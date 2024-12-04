@@ -19,15 +19,13 @@ import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRResponse;
 import com.webank.wedpr.components.scheduler.SchedulerService;
+import com.webank.wedpr.components.scheduler.impl.JobDetailRequest;
 import com.webank.wedpr.components.token.auth.TokenUtils;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(
@@ -39,8 +37,9 @@ public class SchedulerController {
     @Autowired private SchedulerService schedulerService;
 
     // create the authorization request
-    @GetMapping("/queryJobDetail")
-    public WeDPRResponse queryJobDetail(@RequestParam String jobID, HttpServletRequest request) {
+    @PostMapping("/queryJobDetail")
+    public WeDPRResponse queryJobDetail(
+            @RequestBody JobDetailRequest jobDetailRequest, HttpServletRequest request) {
         try {
             WeDPRResponse response =
                     new WeDPRResponse(Constant.WEDPR_SUCCESS, Constant.WEDPR_SUCCESS_MSG);
@@ -49,13 +48,17 @@ public class SchedulerController {
                     this.schedulerService.queryJobDetail(
                             TokenUtils.getLoginUser(request).getUsername(),
                             WeDPRCommonConfig.getAgency(),
-                            jobID));
+                            jobDetailRequest));
             return response;
         } catch (Exception e) {
-            logger.warn("queryJobDetail exception, job: {}, error: ", jobID, e);
+            logger.warn(
+                    "queryJobDetail exception, job: {}, error: ", jobDetailRequest.getJobID(), e);
             return new WeDPRResponse(
                     Constant.WEDPR_FAILED,
-                    "queryJobDetail for job " + jobID + " failed for " + e.getMessage());
+                    "queryJobDetail for job "
+                            + jobDetailRequest.getJobID()
+                            + " failed for "
+                            + e.getMessage());
         }
     }
 }

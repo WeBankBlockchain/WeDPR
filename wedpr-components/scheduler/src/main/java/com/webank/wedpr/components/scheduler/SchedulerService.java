@@ -15,8 +15,10 @@
 
 package com.webank.wedpr.components.scheduler;
 
+import com.webank.wedpr.components.scheduler.impl.JobDetailRequest;
+
 public interface SchedulerService {
     // query the job detail
-    public abstract Object queryJobDetail(String user, String agency, String jobID)
-            throws Exception;
+    public abstract Object queryJobDetail(
+            String user, String agency, JobDetailRequest jobDetailRequest) throws Exception;
 }
