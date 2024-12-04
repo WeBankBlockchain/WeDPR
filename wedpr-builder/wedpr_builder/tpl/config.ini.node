@@ -1,0 +1,123 @@
+[agency]
+    ; the agency-id of self-party
+    id = agency0
+    ; the private key path for the psi-server
+    private_key_path = conf/node.pem
+    ; disable the ra2018 or not, default enable ra2018
+    disable_ra2018 = true
+    ; the path that allows programs to access
+    ; data_location = data
+    ; task_timeout_minutes = 180
+    ; thread_count = 8
+    ; GB, reject task if available memory is less than min_needed_memory
+    ; min_needed_memory = 1
+
+[crypto]
+    sm_crypto = false
+
+[rpc]
+    listen_ip=0.0.0.0
+    listen_port=10200
+    token = ppcs_psi_apikey
+    thread_count=4
+    ; ssl or sm ssl
+    sm_ssl=false
+    ; ssl connection switch, if disable the ssl connection, default: true
+    disable_ssl = true
+    ; disable_db = true
+
+[cert]
+    ; directory the certificates located in
+    cert_path=./conf
+
+[transport]
+   ; the endpoint information
+   listen_ip = 0.0.0.0
+   listen_port = 18000
+   host_ip = 
+   ; the threadPoolSize
+   thread_count = 4
+   ; the gatewayService endpoint information
+   gateway_target =  
+   ; the components
+   components =
+   nodeid=
+
+[storage]
+    host = 127.0.0.1
+    ; the mysqlx_port
+    port = 3306
+    user = app
+    password =
+    database =
+
+[hdfs_storage]
+    ; the hdfs configuration
+    user = root
+    name_node = 127.0.0.1
+    name_node_port = 9000
+    token =
+    ; enable replace-datanode-on-failure or not
+    replace-datanode-on-failure = false
+    ; the connection-timeout, in ms, default is 1000ms
+    connection-timeout = 1000
+    ; enable auth or not, default is false
+    ; enable_krb5_auth = false
+    ; the hdfs kerberos auth principal, used when enable_krb5_auth
+    ; auth_principal = root@NODE.DC1.CONSUL
+    ; the hdfs kerberos auth password, used when enable_krb5_auth
+    ; auth_password =
+    ; the ccache path, used when enable_krb5_auth
+    ; ccache_path = /tmp/krb5cc_ppc_node
+    ; the krb5.conf path
+    ; krb5_conf_path  = conf/krb5.conf
+
+[ra2018psi]
+    ; The database used to store cuckoo-filter
+    database=ra2018_0
+    ; The capacity of the cuckoo filter in MB, the default is 256MB
+    cuckoofilter_capacity = 1
+    ; The length of each element of the cuckoo filter (bits), default 64bits
+    cuckoofilter_tagBits = 64
+    ; The number of buckets for the cuckoo filter, the default is 4
+    cuckoofilter_buckets_num = 4
+    ; When the cuckoo filter replaces an element, the maximum number of element replacements allowed
+    cuckoofilter_max_kick_out_count = 20
+    ; The trash-bucket-size for the cuckoo-filter
+    trash_bucket_size = 10000
+    ; The cuckoo filter capacity that can be cached in memory in MB
+    cuckoofilter_cache_size = 256
+    ; Cache size in MB
+    psi_cache_size = 1024
+    ; When reading large files, the line size loaded into memory each time, default is 100w, -1 means load the max-size-of data
+    ; data_batch_size = 1000000
+    ; use hdfs to store the cuckoo-filter or not
+    use_hdfs = false
+
+[ecdh-psi]
+    ; When reading large files, the line size loaded into memory each time, default is 100w, -1 means load the max-size-of data
+    ; data_batch_size = 1000000
+
+[cm2020-psi]
+    ; Number of tasks that can be executed concurrently
+    parallelism = 3
+
+[log]
+    enable=true
+    log_path=./log
+    ; info debug trace
+    level=debug
+    ; MB
+    max_log_file_size=200
+    ; LineID, TimeStamp, ProcessID, ThreadName, ThreadID and Message
+    ;format=%Severity%|wedpr|system-id|%TimeStamp%|%ThreadName%-%ThreadID%|%Message%
+    format=%Severity%|%TimeStamp%|%Message%
+    enable_rotate_by_hour=true
+    ; Y,m,d,H,M,S are supported, N is the sequence number log_%Y%m%d.%H%M%S.%N.log
+    rotate_name_pattern=log_%Y%m%d.%H%M.log
+    ; if archive_path is empty, the archive function will be disabled
+    ; archive_path=./log/
+    compress_archive_file=true
+    ; 0: no limit, in MB
+    ; max_archive_files=10
+    ; min_free_space=0

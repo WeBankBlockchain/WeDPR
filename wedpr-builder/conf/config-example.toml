@@ -1,0 +1,205 @@
+[env]
+binary_path = "bin/"
+deploy_dir = "wedpr-example"
+
+[crypto]
+# the gateway-service enable ssl or not, default enable ssl
+gateway_disable_ssl = false
+# the gateway-service enable sm-ssl or not, default disable sm-ssl
+gateway_sm_ssl = false
+# the rpc use sm-ssl or not
+rpc_sm_ssl = false
+# the rpc disable ssl or not
+rpc_disable_ssl = true
+# use sm-crypto or not
+sm_crypto = false
+
+[[agency]]
+name = "agency0"
+#the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
+holding_msg_minutes = 30
+
+    [agency.gateway]
+    deploy_ip=["127.0.0.1:2"]
+    # gateway listen ip
+    listen_ip="0.0.0.0"
+    # gateway listen start port
+    listen_port=40300
+    # the thread count
+    thread_count = 4
+    # the grpc config
+    # gateway grpc server listen ip
+    grpc_listen_ip="0.0.0.0"
+    # gateway grpc server listen start port
+    grpc_listen_port=40600
+    # gateway connected peers, should be all of the gateway peers info
+    [[agency.gateway.peers]]
+        agency = "agency0"
+        endpoints = ["127.0.0.1:40300", "127.0.0.1:40301"]
+    [[agency.gateway.peers]]
+        agency = "agency1"
+        endpoints = ["127.0.0.1:40320", "127.0.0.1:40321"]
+
+    # configuration for the wedpr nodes
+    [[agency.node]]
+        # disable the ra2018 psi or not, default enable ra2018
+        disable_ra2018 = true
+        deploy_ip=["127.0.0.1:2"]
+        # node name, Notice: node_name in the same agency and group must be unique
+        node_name = "node0"
+        # node grpc server listen ip
+        grpc_listen_ip="0.0.0.0"
+        # node grpc server listen port
+        grpc_listen_port=40402
+        # the components
+        components = "node"
+        # the rpc config for the node
+        [agency.node.rpc]
+            listen_ip = "0.0.0.0"
+            listen_port = 10200
+            thread_count = 4 
+        # the ra2018 config for the node
+        [agency.node.ra2018psi]
+            # The database used to store cuckoo-filter
+            database = "ra2018_0"
+            # The capacity of the cuckoo filter in MB, the default is 1MB
+            cuckoofilter_capacity = 1
+            # The length of each element of the cuckoo filter (bits), default 64bits
+            cuckoofilter_tagBits = 64
+            # The number of buckets for the cuckoo filter, the default is 4
+            cuckoofilter_buckets_num = 4
+            # When the cuckoo filter replaces an element, the maximum number of element replacements allowed
+            cuckoofilter_max_kick_out_count = 20
+            # The trash-bucket-size for the cuckoo-filter
+            trash_bucket_size = 10000
+            # The cuckoo filter capacity that can be cached in memory in MB
+            cuckoofilter_cache_size = 256
+            # Cache size in MB
+            psi_cache_size = 1024
+            # When reading large files, the line size loaded into memory each time, default is 100w, -1 means load the max-size-of data
+            data_batch_size = 1000000
+            # use hdfs to store the cuckoo-filter or not
+            use_hdfs = false
+        # the storage config
+        [agency.node.storage]
+            host = "127.0.0.1"
+            # the mysqlx_port
+            port = 33060
+            user = "wedpr"
+            password = ""
+            database = ""
+        # the hdfs storage config
+        [agency.node.hdfs_storage]
+            user = "root"
+            name_node = "127.0.0.1"
+            name_node_port = 9000
+            token = ""
+            # enable auth or not, default is false
+            enable_krb5_auth = false
+            # the hdfs kerberos auth principal, used when enable_krb5_auth
+            auth_principal = "root@NODE.DC1.CONSUL"
+            # the hdfs kerberos auth password, used when enable_krb5_auth
+            auth_password = ""
+            # the ccache path, used when enable_krb5_auth
+            ccache_path = "/tmp/krb5cc_ppc_node"
+            # the krb5 conf path
+            krb5_conf_path = "conf/krb5.conf"
+        # the gateway config
+        [agency.node.gateway]
+            gateway_grpc_target = ["127.0.0.1:40600", "127.0.0.1:40601"]
+
+
+[[agency]]
+name = "agency1"
+#the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
+holding_msg_minutes = 30
+
+    [agency.gateway]
+    deploy_ip=["127.0.0.1:2"]
+    # gateway listen ip
+    listen_ip="0.0.0.0"
+    # gateway listen start port
+    listen_port=40320
+    # the thread count
+    thread_count = 4
+    # the grpc config
+    # gateway grpc server listen ip
+    grpc_listen_ip="0.0.0.0"
+    # gateway grpc server listen start port
+    grpc_listen_port=40620
+    # gateway connected peers, should be all of the gateway peers info
+    [[agency.gateway.peers]]
+        agency = "agency0"
+        endpoints = ["127.0.0.1:40300", "127.0.0.1:40301"]
+    [[agency.gateway.peers]]
+        agency = "agency1"
+        endpoints = ["127.0.0.1:40320", "127.0.0.1:40321"]
+
+    # configuration for the wedpr nodes
+    [[agency.node]]
+        # disable the ra2018 psi or not, default enable ra2018
+        disable_ra2018 = true
+        deploy_ip=["127.0.0.1:2"]
+        # node name, Notice: node_name in the same agency and group must be unique
+        node_name = "node0"
+        # node grpc server listen ip
+        grpc_listen_ip="0.0.0.0"
+        # node grpc server listen port
+        grpc_listen_port=40422
+        # the componet
+        components = "node"
+        # the rpc config for the node
+        [agency.node.rpc]
+            listen_ip = "0.0.0.0"
+            listen_port = 10220
+            thread_count = 4 
+        # the ra2018 config for the node
+        [agency.node.ra2018psi]
+            # The database used to store cuckoo-filter
+            database = "ra2018_1"
+            # The capacity of the cuckoo filter in MB, the default is 1MB
+            cuckoofilter_capacity = 1
+            # The length of each element of the cuckoo filter (bits), default 64bits
+            cuckoofilter_tagBits = 64
+            # The number of buckets for the cuckoo filter, the default is 4
+            cuckoofilter_buckets_num = 4
+            # When the cuckoo filter replaces an element, the maximum number of element replacements allowed
+            cuckoofilter_max_kick_out_count = 20
+            # The trash-bucket-size for the cuckoo-filter
+            trash_bucket_size = 10000
+            # The cuckoo filter capacity that can be cached in memory in MB
+            cuckoofilter_cache_size = 256
+            # Cache size in MB
+            psi_cache_size = 1024
+            # When reading large files, the line size loaded into memory each time, default is 100w, -1 means load the max-size-of data
+            data_batch_size = 1000000
+            # use hdfs to store the cuckoo-filter or not
+            use_hdfs = false
+        # the storage config
+        [agency.node.storage]
+            host = "127.0.0.1"
+            # the mysqlx_port
+            port = 33060
+            user = "wedpr"
+            password = ""
+            database = ""
+        # the hdfs storage config
+        [agency.node.hdfs_storage]
+            user = "root"
+            name_node = "127.0.0.1"
+            name_node_port = 9000
+            token = ""
+            # enable auth or not, default is false
+            enable_krb5_auth = false
+            # the hdfs kerberos auth principal, used when enable_krb5_auth
+            auth_principal = "root@NODE.DC1.CONSUL"
+            # the hdfs kerberos auth password, used when enable_krb5_auth
+            auth_password = ""
+            # the ccache path, used when enable_krb5_auth
+            ccache_path = "/tmp/krb5cc_ppc_node"
+            # the krb5 conf path
+            krb5_conf_path = "conf/krb5.conf"
+
+        # the gateway config
+        [agency.node.gateway]
+            gateway_grpc_target = ["127.0.0.1:40620", "127.0.0.1:40621"]

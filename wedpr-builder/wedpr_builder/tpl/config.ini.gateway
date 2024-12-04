@@ -1,0 +1,53 @@
+[agency]
+    ; the agency-id of self-party
+    id = agency0
+
+[cert]
+    ; directory the certificates located in
+    cert_path=./conf
+    
+[gateway]
+    listen_ip=0.0.0.0
+    listen_port=40300
+    ;the dir that contains the connected endpoint information, e.g.nodes.json 
+    ;nodes_path="./"
+    ; the file that configure the connected endpoint information
+    ; nodes_file=nodes.json
+    ; thread_count = 4
+    ; ssl or sm ssl
+    sm_ssl=false
+    ; the max allowed message size in MBytes, default is 100MBytes
+    max_allow_msg_size = 100
+    ;ssl connection switch, if disable the ssl connection, default: false
+    ;disable_ssl = true
+    ;the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
+    holding_msg_minutes = 30
+    ;reconnect_time = 10000
+    ; the unreachable distance
+    ;unreachable_distance=10
+
+[transport]
+   ; the endpoint information
+   listen_ip = 0.0.0.0
+   listen_port = 19000
+
+[log]
+    enable=true
+    log_path=./log
+    ; info debug trace
+    level=debug
+    ; MB
+    max_log_file_size=200
+    ; LineID, TimeStamp, ProcessID, ThreadName, ThreadID and Message
+    ;format=%Severity%|ppcs-gateway|system-id|%TimeStamp%|%ThreadName%-%ThreadID%|%Message%
+    format=%Severity%|%TimeStamp%|%Message%
+    enable_rotate_by_hour=true
+    log_name_pattern=ppcs-gateway.log
+    ; Y,m,d,H,M,S are supported, N is the sequence number log_%Y%m%d.%H%M%S.%N.log
+    rotate_name_pattern=log_%Y%m%d.%H%M.log
+    ; if archive_path is empty, the archive function will be disabled
+    ; archive_path=./log/
+    compress_archive_file=true
+    ; ; 0: no limit, in MB
+    ; max_archive_size=0
+    ; min_free_space=0
