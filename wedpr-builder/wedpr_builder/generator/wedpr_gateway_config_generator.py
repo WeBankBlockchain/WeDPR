@@ -3,9 +3,10 @@
 import os
 import json
 from wedpr_builder.common import utilities
-from wedpr_builder.config.binary_generator import BinaryGenerator
-from wedpr_builder.config.cert_generator import CertGenerator
-from wedpr_builder.config.shell_script_generator import ShellScriptGenerator
+from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
+from wedpr_builder.generator.binary_generator import BinaryGenerator
+from wedpr_builder.generator.cert_generator import CertGenerator
+from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
 
 
 class WeDPRGatewayConfigGenerator:
@@ -13,7 +14,7 @@ class WeDPRGatewayConfigGenerator:
     the ppc-gateway-config-generator
     """
 
-    def __init__(self, config, output_dir):
+    def __init__(self, config: WeDPRDeployConfig, output_dir: str):
         self.config = config
         self.output_dir = output_dir
         self.binary_name = utilities.ConfigInfo.ppc_gateway_binary_name

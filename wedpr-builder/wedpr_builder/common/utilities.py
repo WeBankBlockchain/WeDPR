@@ -15,34 +15,39 @@ class ServiceInfo:
     sm_ssl_file_list = ["sm_ca.crt", "sm_ssl.key",
                         "sm_ssl.crt", "sm_enssl.key", "sm_enssl.crt"]
     cert_generation_script_path = "wedpr_builder/scripts/gen_cert.sh"
-    node_service_type = "node"
-    gateway_service_type = "gateway"
+    node_service_type = "wedpr-node"
+    gateway_service_type = "wedpr-gateway"
+    wedpr_site_service = "wedpr-site"
+    wedpr_pir_service = "wedpr-pir"
+    wedpr_jupyter_worker_service = "wedpr-jupyter-worker"
     supported_service_type = [node_service_type, gateway_service_type]
 
 
 class ConfigInfo:
     config_ini_file = "config.ini"
     tpl_abs_path = "wedpr_builder/tpl/"
-    pwd_path = os.getcwd()
-    node_config_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "config.ini.node")
-    gateway_config_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "config.ini.gateway")
-    krb5_config_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "krb5.conf")
-
     ppc_gateway_binary_name = "ppc-gateway-service"
     ppc_node_binary_name = "ppc-pro-node"
 
-    start_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "start.sh")
-    stop_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "stop.sh")
+    @staticmethod
+    def get_abs_path(file_path):
+        pwd_path = os.getcwd()
+        return os.path.join(pwd_path, ConfigInfo.tpl_abs_path, file_path)
 
-    start_all_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "start_all.sh")
-    stop_all_tpl_path = os.path.join(
-        pwd_path, tpl_abs_path, "stop_all.sh")
+    node_config_tpl_path = get_abs_path("config.ini.node")
+    gateway_config_tpl_path = get_abs_path("config.ini.gateway")
+    krb5_config_tpl_path = get_abs_path("krb5.conf")
+
+    start_tpl_path = get_abs_path("start.sh")
+    stop_tpl_path = get_abs_path("stop.sh")
+
+    start_all_tpl_path = get_abs_path("start_all.sh")
+    stop_all_tpl_path = get_abs_path("stop_all.sh")
+
+    # the site config path
+    wedpr_site_config_path = get_abs_path("site/conf")
+    wedpr_pir_config_path = get_abs_path("pir/conf")
+    wedpr_worker_config_path = get_abs_path("worker/conf")
 
 
 class CommandInfo:

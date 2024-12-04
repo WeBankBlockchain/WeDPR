@@ -3,9 +3,10 @@
 import os
 import sys
 from wedpr_builder.common import utilities
-from wedpr_builder.config.binary_generator import BinaryGenerator
-from wedpr_builder.config.cert_generator import CertGenerator
-from wedpr_builder.config.shell_script_generator import ShellScriptGenerator
+from wedpr_builder.generator.binary_generator import BinaryGenerator
+from wedpr_builder.generator.cert_generator import CertGenerator
+from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
+from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 
 
 class WeDPRNodeConfigGenerator:
@@ -13,7 +14,7 @@ class WeDPRNodeConfigGenerator:
     the ppc-node-config-generator
     """
 
-    def __init__(self, config, output_dir):
+    def __init__(self, config: WeDPRDeployConfig, output_dir: str):
         self.config = config
         self.output_dir = output_dir
         self.binary_name = utilities.ConfigInfo.ppc_node_binary_name

@@ -4,8 +4,21 @@
 from wedpr_builder.common import utilities
 
 
+class ComponentSwitch:
+    def __init__(self, node_must_exists: bool = False,
+                 gateway_must_exists: bool = False,
+                 site_must_exists: bool = False,
+                 pir_must_exists: bool = False,
+                 jupyter_must_exists: bool = False):
+        self.node_must_exists = node_must_exists
+        self.gateway_must_exists = gateway_must_exists
+        self.site_must_exists = site_must_exists
+        self.pir_must_exists = pir_must_exists
+        self.jupyter_must_exists = jupyter_must_exists
+
+
 class PeerInfo:
-    def __init__(self, agency, endpoints):
+    def __init__(self, agency: str, endpoints: []):
         self.agency = agency
         self.endpoints = endpoints
 
@@ -15,7 +28,7 @@ class PeerInfo:
 
 
 class EnvConfig:
-    def __init__(self, config, section_name):
+    def __init__(self, config, section_name: str):
         self.config = config
         self.section_name = section_name
         self.binary_path = utilities.get_value(
@@ -32,7 +45,7 @@ class EnvConfig:
 
 
 class BlockchainConfig:
-    def __int__(self, config, section_name):
+    def __init__(self, config, section_name: str):
         self.config = config
         self.blockchain_group = utilities.get_value(
             self.config, section_name, "blockchain_group", None, True)
@@ -52,7 +65,8 @@ class GatewayConfig:
     the gateway config
     """
 
-    def __init__(self, agency_name, holding_msg_minutes, config, config_section, must_exist):
+    def __init__(self, agency_name: str, holding_msg_minutes: int,
+                 config, config_section: str, must_exist: bool):
         self.config = config
         self.config_section = config_section
         self.holding_msg_minutes = holding_msg_minutes
@@ -100,7 +114,7 @@ class RpcConfig:
     the rpc config
     """
 
-    def __init__(self, config, config_section, must_exist):
+    def __init__(self, config, config_section: str, must_exist: bool):
         self.config = config
         self.config_section = config_section
         self.listen_ip = utilities.get_item_value(
@@ -120,7 +134,7 @@ class StorageConfig:
     the sql storage config
     """
 
-    def __init__(self, config, config_section, must_exist):
+    def __init__(self, config, config_section: str, must_exist: bool):
         self.config = config
         self.config_section = config_section
         # the mysql configuration
@@ -140,12 +154,26 @@ class StorageConfig:
                f"user: {self.user}, database: {self.database}\n**"
 
 
+class ServiceConfig:
+    def __init__(self, config, config_section: str, must_exist: bool):
+        self.config = config
+        self.deploy_ip = utilities.get_item_value(
+            self.config, "deploy_ip", [], must_exist, config_section)
+        self.server_start_port = int(utilities.get_item_value(
+            self.config, "server_start_port",
+            0, must_exist, config_section))
+
+    def __repr__(self):
+        return f"**ServiceConfig: deploy_ip: {self.deploy_ip}, " \
+               f"server_start_port: {self.server_start_port} \n**"
+
+
 class HDFSStorageConfig:
     """
     the hdfs storage config
     """
 
-    def __init__(self, config, config_section, must_exist):
+    def __init__(self, config, config_section: str, must_exist: bool):
         self.config = config
         self.config_section = config_section
         # the hdfs configuration
@@ -197,7 +225,7 @@ class RA2018PSIConfig:
     the ra2018-psi config
     """
 
-    def __init__(self, config, config_section, must_exist):
+    def __init__(self, config, config_section: str, must_exist: bool):
         self.config = config
         self.config_section = config_section
         self.database = utilities.get_item_value(
@@ -221,13 +249,18 @@ class RA2018PSIConfig:
         self.use_hdfs = utilities.get_item_value(
             self.config, "use_hdfs", False, False, config_section)
 
+    def __repr__(self):
+        return f"**RA2018PSIConfig: database: {self.database}, " \
+               f"use_hdfs: {self.use_hdfs}, " \
+               f"data_batch_size: {self.data_batch_size} **\n"
+
 
 class NodeGatewayConfig:
     """
     the gateway config for the node
     """
 
-    def __init__(self, agency_name, config, node_must_exists):
+    def __init__(self, agency_name: str, config, node_must_exists: bool):
         self.config = config
         self.agency_name = agency_name
         self.desc = "[agency.node]"
@@ -237,16 +270,24 @@ class NodeGatewayConfig:
         self.gateway_grpc_target += ','.join(
             map(str, self.gateway_grpc_target_array))
 
+    def __repr__(self):
+        return f"** NodeGatewayConfig: agency: {self.agency_name}, " \
+               f"desc: {self.desc}, " \
+               f"gateway_grpc_target: {self.gateway_grpc_target}**\n"
+
 
 class NodeConfig:
     """
     the ppc-node config
     """
 
-    def __init__(self, agency_name, holding_msg_minutes, config, must_exist):
+    def __init__(self, agency_name: str, holding_msg_minutes: int,
+                 hdfs_storage_config: HDFSStorageConfig, config, must_exist: bool):
         self.config = config
         self.section_name = "[[agency.node]]."
         self.holding_msg_minutes = holding_msg_minutes
+        # the hdfs config
+        self.hdfs_storage_config = hdfs_storage_config
         # set the agency_name
         self.agency_name = agency_name
         # disable ra2018 or not, default enable the ra2018
@@ -300,19 +341,6 @@ class NodeConfig:
             self.storage_config = StorageConfig(
                 storage_config_object, storage_config_section, must_exist)
         utilities.log_debug("load the sql storage success")
-        # parse the hdfs storage config
-        hdfs_storage_must_configured = False
-        if self.ra2018psi_config is not None:
-            hdfs_storage_must_configured = self.ra2018psi_config.use_hdfs
-        utilities.log_debug("load the hdfs storage config")
-        storage_config_section = "[[agency.node.hdfs_storage]]"
-        hdfs_storage_config_object = utilities.get_item_value(
-            self.config, "hdfs_storage", None, hdfs_storage_must_configured, storage_config_section)
-        self.hdfs_storage_config = None
-        if hdfs_storage_config_object is not None:
-            self.hdfs_storage_config = HDFSStorageConfig(
-                hdfs_storage_config_object, storage_config_section, hdfs_storage_must_configured)
-        utilities.log_debug("load the hdfs storage success")
         # parse the gateway-inforamtion
         utilities.log_debug("load the gateway config")
         gateway_config_section = "[[agency.node.gateway]]"
@@ -324,14 +352,20 @@ class NodeConfig:
                 self.agency_name, gateway_config_object, must_exist)
         utilities.log_debug("load the gateway success")
 
+    def __repr__(self):
+        return f"**NodeConfig: agency: {self.agency_name}, " \
+               f"disable_ra2018: {self.disable_ra2018}, " \
+               f"node_name: {self.node_name}, grpc_listen_ip: {self.grpc_listen_ip}"
+
 
 class AgencyConfig:
     """
     the agency config
     """
 
-    def __init__(self, config, gateway_must_exists, node_must_exists):
+    def __init__(self, config, component_switch: ComponentSwitch):
         self.config = config
+        self.component_switch = component_switch
         self.section_name = "[[agency]]"
         # the agency-name
         self.agency_name = utilities.get_item_value(
@@ -343,13 +377,29 @@ class AgencyConfig:
         utilities.log_debug("load the gateway config")
         gateway_config_section_name = "[agency.gateway]"
         gateway_config_object = utilities.get_item_value(
-            self.config, "gateway", None, gateway_must_exists, gateway_config_section_name)
+            self.config, "gateway", None,
+            self.component_switch.gateway_must_exists,
+            gateway_config_section_name)
         self.gateway_config = None
         if gateway_config_object is not None:
-            self.gateway_config = GatewayConfig(self.agency_name, self.holding_msg_minutes, gateway_config_object,
-                                                gateway_config_section_name, gateway_must_exists)
+            self.gateway_config = GatewayConfig(
+                self.agency_name, self.holding_msg_minutes, gateway_config_object,
+                gateway_config_section_name, self.component_switch.gateway_must_exists)
         utilities.log_debug("load the gateway config success")
-
+        # parse the hdfs config
+        self.hdfs_storage_config = self.__load_hdfs_config__()
+        # load the sql storage config
+        self.sql_storage_config = self.__load_sql_storage_config__()
+        # load the site config
+        self.site_config = self.__load_service_config__(
+            "[agency.site]", "site", self.component_switch.site_must_exists)
+        # load the pir config
+        self.pir_config = self.__load_service_config__(
+            "[agency.pir]", "pir", self.component_switch.pir_must_exists)
+        # load the jupyter_worker config
+        self.jupyter_worker_config = self.__load_service_config__(
+            "[agency.jupyter_worker]", "jupyter_worker",
+            self.component_switch.jupyter_must_exists)
         # parse the node config
         utilities.log_debug("load the node config")
         node_config_section_name = "[[agency.node]]"
@@ -363,11 +413,42 @@ class AgencyConfig:
         # TODO: check the node-name
         for node_object in node_config_list:
             node_config = NodeConfig(
-                self.agency_name, self.holding_msg_minutes, node_object, node_must_exists)
+                self.agency_name, self.holding_msg_minutes,
+                self.hdfs_storage_config,
+                node_object, self.component_switch.node_must_exists)
             self.node_list[node_config.node_name] = node_config
             utilities.log_debug(
                 "load node config for %s success" % node_config.node_name)
         utilities.log_debug("load the node config success")
+
+    def __load_hdfs_config__(self):
+        # parse the hdfs storage config
+        utilities.log_debug("load the hdfs storage config")
+        storage_config_section = "[agency.hdfs]"
+        hdfs_storage_config_object = utilities.get_item_value(
+            self.config, "hdfs", None, True, storage_config_section)
+        utilities.log_debug("load the hdfs storage success")
+        return HDFSStorageConfig(hdfs_storage_config_object, storage_config_section, True)
+
+    def __load_sql_storage_config__(self):
+        utilities.log_debug("load the mysql storage config")
+        section = "[agency.mysql]"
+        sql_storage_config_dict = utilities.get_item_value(
+            self.config, "mysql", None, True, section)
+        utilities.log_debug("load the sql storage config success")
+        return StorageConfig(sql_storage_config_dict, section, True)
+
+    def __load_service_config__(self, config_section, sub_config_key, must_exists):
+        utilities.log_debug(f"load service config for {config_section}")
+        config_dict = utilities.get_item_value(
+            self.config, sub_config_key, None, must_exists, config_section)
+        utilities.log_debug(
+            f"load service config for {config_section} success")
+        return ServiceConfig(config_dict, config_section, must_exists)
+
+    def __repr__(self):
+        return f"agency: {self.agency_name}, gateway_config: {self.gateway_config}, " \
+               f"node_config: {self.node_list}, hdfs_config: {self.hdfs_storage_config}"
 
 
 class WeDPRDeployConfig:
@@ -375,11 +456,12 @@ class WeDPRDeployConfig:
     load all config from config.toml
     """
 
-    def __init__(self, config, gateway_must_exists, node_must_exists):
+    def __init__(self, config, component_switch: ComponentSwitch):
         self.config = config
         # load the crypto config
         utilities.log_debug("load the crypto config")
         crypto_section = "crypto"
+        self.component_switch = component_switch
         self.gateway_disable_ssl = utilities.get_value(
             self.config, crypto_section, "gateway_disable_ssl", False, False)
         self.gateway_sm_ssl = utilities.get_value(
@@ -404,7 +486,7 @@ class WeDPRDeployConfig:
             self.config, "agency", None, False, "[[agency]]")
         for agency_object in agency_list_object:
             agency_config = AgencyConfig(
-                agency_object, gateway_must_exists, node_must_exists)
+                agency_object, self.component_switch)
             self.agency_list[agency_config.agency_name] = agency_config
             utilities.log_debug(
                 "load the agency config for %s success" % agency_config.agency_name)

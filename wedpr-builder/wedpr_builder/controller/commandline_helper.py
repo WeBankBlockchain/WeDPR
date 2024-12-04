@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from wedpr_builder.common import utilities
-from wedpr_builder.config.wedpr_gateway_config_generator import WeDPRGatewayConfigGenerator
-from wedpr_builder.config.wedpr_node_config_generator import WeDPRNodeConfigGenerator
+from wedpr_builder.generator.wedpr_gateway_config_generator import WeDPRGatewayConfigGenerator
+from wedpr_builder.generator.wedpr_node_config_generator import WeDPRNodeConfigGenerator
 from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
+from wedpr_builder.config.wedpr_deploy_config import ComponentSwitch
 from argparse import RawTextHelpFormatter
 import sys
 import toml
@@ -53,14 +54,16 @@ def generate_node_config(args, toml_config):
         sys.exit(-1)
     if service_type == utilities.ServiceInfo.node_service_type:
         utilities.log_debug("generate config for the ppc-node")
-        config = WeDPRDeployConfig(toml_config, False, True)
+        component_switch = ComponentSwitch(node_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
         node_generator = WeDPRNodeConfigGenerator(config, args.output)
         ret = node_generator.generate_node_config()
         if ret is False:
             sys.exit(-1)
     if service_type == utilities.ServiceInfo.gateway_service_type:
         utilities.log_debug("generate config for the ppc-success")
-        config = WeDPRDeployConfig(toml_config, True, False)
+        component_switch = ComponentSwitch(gateway_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
         gateway_generator = WeDPRGatewayConfigGenerator(config, args.output)
         ret = gateway_generator.generate_gateway_config()
         if ret is False:

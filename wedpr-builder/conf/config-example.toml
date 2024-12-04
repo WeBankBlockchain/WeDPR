@@ -69,33 +69,34 @@ holding_msg_minutes = 30
         # the krb5 conf path
         krb5_conf_path = "conf/krb5.conf"
 
-        # the agency mysql configuration
-        [[agency.mysql]]
-            mysql_host = "127.0.0.1"
-            mysql_port = "3306"
-            mysql_user = "root"
-            mysql_password = "Admin123!"
-            db_name = "agency0"
+    # the agency mysql configuration
+    [agency.mysql]
+        host = "127.0.0.1"
+        port = "3306"
+        user = "root"
+        password = "Admin123!"
+        database = "agency0"
 
-        #configuration for wedpr site
-        [[agency.site]]
-            # the site deploy ip
-            deploy_ip=["127.0.0.1:2"]
-            # the server port
-            server_start_port = "16000"
+    #configuration for wedpr site
+    [agency.site]
+        # the site deploy ip
+        deploy_ip=["127.0.0.1:2"]
+        # the server port
+        server_start_port = "16000"
 
-        # configuration for wedpr pir
-        [[agency.pir]]
-            # the pir deploy ip
-            deploy_ip=["127.0.0.1:2"]
-            # the server start port
-            server_start_port = "27000"
+    # configuration for wedpr pir
+    [agency.pir]
+        # the pir deploy ip
+        deploy_ip=["127.0.0.1:2"]
+        # the server start port
+        server_start_port = "27000"
 
-        # configuration for wedpr worker
-        [[agency.jupyter_worker]]
-            deploy_ip = ["127.0.0.1:2"]
-            # the server start port
-            server_start_port = "28000"
+    # configuration for wedpr worker
+    [agency.jupyter_worker]
+        deploy_ip = ["127.0.0.1:2"]
+        # the server start port
+        server_start_port = "28000"
+
     # configuration for the wedpr nodes
     [[agency.node]]
         # disable the ra2018 psi or not, default enable ra2018
@@ -193,29 +194,29 @@ holding_msg_minutes = 30
         # the krb5 conf path
         krb5_conf_path = "conf/krb5.conf"
     # the agency mysql configuration
-    [[agency.mysql]]
-        mysql_host = "127.0.0.1"
-        mysql_port = "3306"
-        mysql_user = "root"
-        mysql_password = "Admin123!"
-        db_name = "agency1"
+    [agency.mysql]
+        host = "127.0.0.1"
+        port = "3306"
+        user = "root"
+        password = "Admin123!"
+        database = "agency1"
 
     #configuration for wedpr site
-    [[agency.site]]
+    [agency.site]
         # the site deploy ip
         deploy_ip=["127.0.0.1:2"]
         # the server port
         server_start_port = "16000"
 
     # configuration for wedpr pir
-    [[agency.pir]]
+    [agency.pir]
         # the pir deploy ip
         deploy_ip=["127.0.0.1:2"]
         # the server start port
         server_start_port = "27100"
 
     # configuration for wedpr worker
-    [[agency.jupyter_worker]]
+    [agency.jupyter_worker]
         deploy_ip = ["127.0.0.1:2"]
         # the server start port
         server_start_port = "28100"

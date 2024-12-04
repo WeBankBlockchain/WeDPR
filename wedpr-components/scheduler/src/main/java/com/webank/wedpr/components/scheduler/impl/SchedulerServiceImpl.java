@@ -52,11 +52,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public Object queryJobDetail(String user, String agency, JobDetailRequest jobDetailRequest)
             throws Exception {
-        Boolean onlyMeta = Boolean.TRUE;
-        // query the jobDetail
-        if (jobDetailRequest.getFetchJobDetail()) {
-            onlyMeta = Boolean.FALSE;
-        }
+        Boolean onlyMeta = Boolean.FALSE;
         List<JobDO> jobDOList =
                 this.projectMapperWrapper.queryJobDetail(
                         jobDetailRequest.getJobID(), onlyMeta, user, agency);
