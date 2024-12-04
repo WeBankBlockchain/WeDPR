@@ -327,7 +327,10 @@ public class ProjectServiceImpl implements ProjectService {
             // query with using owner identity
             List<JobDO> jobDOList =
                     this.projectMapperWrapper.queryJobByCondition(
-                            false, user, WeDPRCommonConfig.getAgency(), request.getJob());
+                            request.getOnlyMeta(),
+                            user,
+                            WeDPRCommonConfig.getAgency(),
+                            request.getJob());
             response.setData(
                     new BatchJobList(new PageInfo<JobDO>(jobDOList).getTotal(), jobDOList));
             return response;

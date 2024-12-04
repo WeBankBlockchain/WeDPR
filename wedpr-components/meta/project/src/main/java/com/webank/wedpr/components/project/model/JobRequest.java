@@ -15,6 +15,7 @@
 
 package com.webank.wedpr.components.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.common.utils.PageRequest;
 import com.webank.wedpr.common.utils.WeDPRException;
@@ -23,12 +24,16 @@ import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectDO;
 import com.webank.wedpr.components.project.dao.ProjectMapper;
 import java.util.List;
+import lombok.Data;
 import lombok.SneakyThrows;
 
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class JobRequest extends PageRequest {
     private JobDO job = new JobDO(true);
     private List<FollowerDO> taskParties;
     private List<String> datasetList;
+    private Boolean onlyMeta = Boolean.FALSE;
 
     public JobRequest() {}
 
@@ -60,10 +65,6 @@ public class JobRequest extends PageRequest {
         this.job = job;
     }
 
-    public List<FollowerDO> getTaskParties() {
-        return taskParties;
-    }
-
     public void setTaskParties(List<FollowerDO> taskParties) {
         this.taskParties = taskParties;
         checkAndConfigTaskParities(taskParties);
@@ -90,6 +91,13 @@ public class JobRequest extends PageRequest {
 
     public void setDatasetList(List<String> datasetList) {
         this.datasetList = datasetList;
+    }
+
+    public void setOnlyMeta(Boolean onlyMeta) {
+        if (onlyMeta == null) {
+            return;
+        }
+        this.onlyMeta = onlyMeta;
     }
 
     @Override

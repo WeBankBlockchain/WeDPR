@@ -198,7 +198,7 @@
         select
         <choose>
             <when test="onlyMeta == true">
-                `id`, `owner`, `owner_agency`, `job_type`, `parties`
+                `id`, `owner`, `owner_agency`, `job_type`, `parties`, `create_time`, `last_update_time`
             </when>
             <otherwise>
                 *
@@ -307,7 +307,13 @@
         (select `user_name`, `agency`, `resource_id` from `wedpr_follower_table`
         where `user_name` = #{followerUser} and `agency` = #{followerAgency})as follower_table
             left join
-        (select * from `wedpr_job_table` where 1 = 1
+        (select
+            <when test="onlyMeta == true">
+             `id`, `owner`, `owner_agency`, `job_type`
+            <otherwise>
+            *
+            </otherwise>
+            from `wedpr_job_table` where 1 = 1
         <choose>
             <when test="condition != null and condition != ''">
                 <if test="condition.name != null and condition.name !=''">
@@ -351,7 +357,7 @@
         (select `user_name`, `agency`, `resource_id` from `wedpr_follower_table`
         where `user_name` = #{followerUser} and `agency` = #{followerAgency})
         as follower_table left join
-        (select * from `wedpr_job_table` where 1 = 1
+        (select `id`, `owner` from `wedpr_job_table` where 1 = 1
         <choose>
             <when test="condition != null and condition != ''">
                 <if test="condition.name != null and condition.name !=''">
