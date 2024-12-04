@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-12]
+        os: [ubuntu-20.04, macos-13]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -32,15 +32,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-12]
+        os: [ubuntu-20.04, macos-13]
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: 'true'
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '14.17.0'
       - name: build web
         run: |
+          git lfs pull
           cd wedpr-web && npm install && npm run build:pro
 
   upload-web:
@@ -48,7 +51,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-12]
+        os: [macos-13]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js

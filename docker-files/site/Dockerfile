@@ -34,4 +34,5 @@ LABEL maintainer service@webank.com
 
 RUN mkdir -p /data/app/
 COPY --from=builder /WeDPR/wedpr-site/dist/ /data/app/wedpr-site
+# TODO: fetch the web package from github tag
 ENTRYPOINT ["/bin/bash"]
