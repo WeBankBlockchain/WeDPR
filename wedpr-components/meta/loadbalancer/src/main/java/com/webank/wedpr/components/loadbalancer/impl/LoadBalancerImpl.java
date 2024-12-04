@@ -15,6 +15,8 @@
 
 package com.webank.wedpr.components.loadbalancer.impl;
 
+import com.webank.wedpr.common.config.WeDPRCommonConfig;
+import com.webank.wedpr.common.utils.Common;
 import com.webank.wedpr.components.loadbalancer.EntryPointFetcher;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
@@ -37,7 +39,13 @@ public class LoadBalancerImpl implements LoadBalancer {
 
     @Override
     public List<ServiceMeta.EntryPointMeta> selectAllEndPoint(String serviceType) {
-        return entryPointFetcher.getAliveEntryPoints(serviceType);
+        List<ServiceMeta.EntryPointMeta> result =
+                entryPointFetcher.getAliveEntryPoints(
+                        Common.getServiceName(WeDPRCommonConfig.getAgency(), serviceType));
+        if (result == null || result.isEmpty()) {
+            return entryPointFetcher.getAliveEntryPoints(serviceType);
+        }
+        return result;
     }
 
     public List<ServiceMeta.EntryPointMeta> getAliveEndPoints(
