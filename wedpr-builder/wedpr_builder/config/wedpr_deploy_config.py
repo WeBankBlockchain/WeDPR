@@ -2,6 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 from wedpr_builder.common import utilities
+from wedpr_builder.common import constant
+from wedpr_builder.config.wedpr_user_config import UserJWTConfig
 
 
 class ComponentSwitch:
@@ -43,6 +45,10 @@ class EnvConfig:
         return f"**EnvConfig: binary_path: {self.binary_path}, " \
                f"deploy_dir: {self.deploy_dir}, zone: {self.zone}**\n"
 
+    def to_properties(self) -> {}:
+        props = {}
+        props.update({constant.ConfigProperities.WEDPR_ZONE: self.zone})
+
 
 class BlockchainConfig:
     def __init__(self, config, section_name: str):
@@ -53,11 +59,35 @@ class BlockchainConfig:
             self.config, section_name, "blockchain_peers", None, True)
         self.blockchain_cert_path = utilities.get_value(
             self.config, section_name, "blockchain_cert_path", None, True)
+        self.recorder_factory_contract_address = utilities.get_item_value(
+            self.config, section_name, "recorder_factory_contract_address", None, True)
+        self.sequencer_contract_address = utilities.get_item_value(
+            self.config, section_name, "sequencer_contract_address", None, True)
 
     def __repr__(self):
         return f"**BlockchainConfig: blockchain_group: {self.blockchain_group}, " \
                f"blockchain_peers: {self.blockchain_peers}, " \
                f"blockchain_cert_path: {self.blockchain_cert_path}**\n"
+
+    def to_properties(self) -> {}:
+        properties = {}
+        # the group id
+        properties.update({
+            constant.ConfigProperities.BLOCKCHAIN_GROUP_ID:
+            self.blockchain_group})
+        # the recorder factory contract address
+        properties.update({
+            constant.ConfigProperities.WEDPR_RECORDER_CONTRACT_ADDRESS:
+            self.recorder_factory_contract_address})
+        # the sequencer contract address
+        properties.update({
+            constant.ConfigProperities.WEDPR_SEQUENCER_CONTRACT_ADDRESS:
+            self.sequencer_contract_address})
+        # the blockchain peers
+        blockchain_peers_info = ','.join(self.blockchain_peers)
+        properties.update({constant.ConfigProperities.BLOCKCHAIN_PEERS,
+                           f"[{blockchain_peers_info}]"})
+        return properties
 
 
 class GatewayConfig:
@@ -101,6 +131,19 @@ class GatewayConfig:
         # the grpc_listen_port
         self.grpc_listen_port = utilities.get_item_value(
             self.config, "grpc_listen_port", None, must_exist, config_section)
+        # get the gateway target
+        gateway_grpc_targets_array = []
+        for ip_str in self.deploy_ip:
+            ip_array = ip_str.spit(":")
+            ip = ip_array[0]
+            count = int(ip_array[1])
+            for i in range(count):
+                port = self.grpc_listen_port + i
+                gateway_grpc_targets_array.append(f"{ip}:${port}")
+        gateway_targets_str = ','.join(map(str, gateway_grpc_targets_array))
+        self.gateway_targets = f"ipv4:{gateway_targets_str}"
+        utilities.log_info(
+            f"* load gateway configuration, gateway targets: {self.gateway_targets}")
 
     def __repr__(self):
         return f"**GatewayConfig: deploy_ip: {self.deploy_ip}, " \
@@ -153,19 +196,71 @@ class StorageConfig:
         return f"**StorageConfig: host: {self.host}, port: {self.port}, " \
                f"user: {self.user}, database: {self.database}\n**"
 
+    def to_properties(self) -> {}:
+        """
+        convert to dict properties
+        :return: the converted properties
+        """
+        properties = {}
+        mysql_url = f"jdbc:mysql://${self.host}:${self.port}/${self.database}?characterEncoding=UTF-8&allowMultiQueries=true"
+        properties.update({constant.ConfigProperities.MYSQL_URL: mysql_url})
+        properties.update({constant.ConfigProperities.MYSQL_USER: self.user})
+        properties.update(
+            {constant.ConfigProperities.MYSQL_PASSWORD: self.password})
+        return properties
+
 
 class ServiceConfig:
-    def __init__(self, config, config_section: str, must_exist: bool):
+    def __init__(self, config, env_config: EnvConfig,
+                 gateway_targets: str,
+                 config_section: str,
+                 must_exist: bool,
+                 service_type: str,
+                 tpl_config_file_path: str,
+                 config_file_list: [],
+                 agency: str):
         self.config = config
-        self.deploy_ip = utilities.get_item_value(
+        self.env_config = env_config
+        self.gateway_targets = gateway_targets
+        self.service_type = service_type
+        self.agency = agency
+        self.tpl_config_file_path = tpl_config_file_path
+        self.config_file_list = config_file_list
+        self.deploy_ip_list = utilities.get_item_value(
             self.config, "deploy_ip", [], must_exist, config_section)
         self.server_start_port = int(utilities.get_item_value(
             self.config, "server_start_port",
             0, must_exist, config_section))
 
     def __repr__(self):
-        return f"**ServiceConfig: deploy_ip: {self.deploy_ip}, " \
-               f"server_start_port: {self.server_start_port} \n**"
+        return f"**ServiceConfig: deploy_ip: {self.deploy_ip_list}, " \
+               f"agency: {self.agency}" \
+               f"server_start_port: {self.server_start_port}," \
+               f"service_type: {self.service_type} \n**"
+
+    def to_properties(self, node_index: int) -> {}:
+        props = {}
+        start_port = self.server_start_port + 2 * node_index
+        # nodeid
+        node_id = f"{self.service_type}_${self.env_config.zone}_node{node_index}"
+        props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
+        # gateway target
+        props.update(
+            {constant.ConfigProperities.GATEWAY_TARGET: self.gateway_targets})
+        # host_ip
+        if self.deploy_ip is None:
+            raise Exception(
+                f"Invalid ServiceConfig, must define the deploy ip")
+        host_ip = self.deploy_ip.split(":")[0]
+        props.update(
+            {constant.ConfigProperities.WEDPR_TRANSPORT_HOST_IP: host_ip})
+        # the server listen port
+        props.update(
+            {constant.ConfigProperities.WEDPR_SERVER_LISTEN_PORT: start_port})
+        # transport listen_port
+        props.update(
+            {constant.ConfigProperities.WEDPR_TRANSPORT_LISTEN_PORT: start_port + 1})
+        return props
 
 
 class HDFSStorageConfig:
@@ -209,6 +304,8 @@ class HDFSStorageConfig:
         self.krb5_conf_path = utilities.get_item_value(
             self.config, "krb5_conf_path",
             "conf/krb5.conf", enable_krb5_auth, config_section)
+        self.krb5_keytab_path = utilities.get_item_value(
+            self.config, "krb5_keytab_path", None, enable_krb5_auth, config_section)
 
     def __repr__(self):
         return f"**HDFSStorageConfig: user: {self.user}, " \
@@ -218,6 +315,18 @@ class HDFSStorageConfig:
                f"auth_principal: {self.auth_principal}, " \
                f"ccache_path: {self.ccache_path}, " \
                f"krb5_conf_path: {self.krb5_conf_path}**\n"
+
+    def to_properties(self) -> {}:
+        props = {}
+        props.update({constant.ConfigProperities.HDFS_USER: self.user})
+        props.update({constant.ConfigProperities.HDFS_HOME: self.home})
+        hdfs_url = f"hdfs://${self.name_node}:${self.name_node_port}"
+        props.update({constant.ConfigProperities.HDFS_ENTRYPOINT: hdfs_url})
+        props.update(
+            {constant.ConfigProperities.HDFS_ENABLE_AUTH: self.enable_krb5_auth_str})
+        props.update(
+            {constant.ConfigProperities.HDFS_AUTH_PRINCIPAL: self.auth_principal})
+        return props
 
 
 class RA2018PSIConfig:
@@ -260,20 +369,14 @@ class NodeGatewayConfig:
     the gateway config for the node
     """
 
-    def __init__(self, agency_name: str, config, node_must_exists: bool):
-        self.config = config
+    def __init__(self, agency_name: str,
+                 gateway_targets: str):
         self.agency_name = agency_name
-        self.desc = "[agency.node]"
-        self.gateway_grpc_target_array = utilities.get_item_value(
-            self.config, "gateway_grpc_target", None, node_must_exists, self.desc)
-        self.gateway_grpc_target = "ipv4:"
-        self.gateway_grpc_target += ','.join(
-            map(str, self.gateway_grpc_target_array))
+        self.gateway_targets = gateway_targets
 
     def __repr__(self):
         return f"** NodeGatewayConfig: agency: {self.agency_name}, " \
-               f"desc: {self.desc}, " \
-               f"gateway_grpc_target: {self.gateway_grpc_target}**\n"
+               f"gateway_targets: {self.gateway_targets}**\n"
 
 
 class NodeConfig:
@@ -281,7 +384,7 @@ class NodeConfig:
     the ppc-node config
     """
 
-    def __init__(self, agency_name: str, holding_msg_minutes: int,
+    def __init__(self, agency_name: str, holding_msg_minutes: int, gateway_targets,
                  hdfs_storage_config: HDFSStorageConfig, config, must_exist: bool):
         self.config = config
         self.section_name = "[[agency.node]]."
@@ -343,13 +446,9 @@ class NodeConfig:
         utilities.log_debug("load the sql storage success")
         # parse the gateway-inforamtion
         utilities.log_debug("load the gateway config")
-        gateway_config_section = "[[agency.node.gateway]]"
-        gateway_config_object = utilities.get_item_value(
-            self.config, "gateway", None, must_exist, gateway_config_section)
-        self.gateway_config = None
-        if gateway_config_object is not None:
-            self.gateway_config = NodeGatewayConfig(
-                self.agency_name, gateway_config_object, must_exist)
+        self.gateway_config = NodeGatewayConfig(
+            agency_name=self.agency_name,
+            gateway_targets=gateway_targets)
         utilities.log_debug("load the gateway success")
 
     def __repr__(self):
@@ -363,8 +462,12 @@ class AgencyConfig:
     the agency config
     """
 
-    def __init__(self, config, component_switch: ComponentSwitch):
+    def __init__(self, config, env_config: EnvConfig,
+                 blockchain_config: BlockchainConfig,
+                 component_switch: ComponentSwitch):
         self.config = config
+        self.env_config = env_config
+        self.blockchain_config = blockchain_config
         self.component_switch = component_switch
         self.section_name = "[[agency]]"
         # the agency-name
@@ -386,20 +489,38 @@ class AgencyConfig:
                 self.agency_name, self.holding_msg_minutes, gateway_config_object,
                 gateway_config_section_name, self.component_switch.gateway_must_exists)
         utilities.log_debug("load the gateway config success")
+
         # parse the hdfs config
         self.hdfs_storage_config = self.__load_hdfs_config__()
+
         # load the sql storage config
         self.sql_storage_config = self.__load_sql_storage_config__()
+
         # load the site config
         self.site_config = self.__load_service_config__(
-            "[agency.site]", "site", self.component_switch.site_must_exists)
+            "[agency.site]", "site", self.component_switch.site_must_exists,
+            constant.ServiceInfo.wedpr_site_service,
+            constant.ConfigInfo.wedpr_site_config_path,
+            constant.ConfigInfo.site_config_list)
+
         # load the pir config
         self.pir_config = self.__load_service_config__(
-            "[agency.pir]", "pir", self.component_switch.pir_must_exists)
+            "[agency.pir]", "pir", self.component_switch.pir_must_exists,
+            constant.ServiceInfo.wedpr_site_service,
+            constant.ConfigInfo.wedpr_pir_config_path,
+            constant.ConfigInfo.pir_config_list)
+
         # load the jupyter_worker config
         self.jupyter_worker_config = self.__load_service_config__(
             "[agency.jupyter_worker]", "jupyter_worker",
-            self.component_switch.jupyter_must_exists)
+            self.component_switch.jupyter_must_exists,
+            constant.ServiceInfo.wedpr_jupyter_worker_service,
+            constant.ConfigInfo.wedpr_jupyter_worker_config_path,
+            constant.ConfigInfo.jupyter_config_list)
+
+        # load the jwt user config
+        self.user_jwt_config = UserJWTConfig()
+
         # parse the node config
         utilities.log_debug("load the node config")
         node_config_section_name = "[[agency.node]]"
@@ -413,9 +534,12 @@ class AgencyConfig:
         # TODO: check the node-name
         for node_object in node_config_list:
             node_config = NodeConfig(
-                self.agency_name, self.holding_msg_minutes,
-                self.hdfs_storage_config,
-                node_object, self.component_switch.node_must_exists)
+                agency_name=self.agency_name,
+                holding_msg_minutes=self.holding_msg_minutes,
+                hdfs_storage_config=self.hdfs_storage_config,
+                config=node_object,
+                must_exist=self.component_switch.node_must_exists,
+                gateway_targets=self.gateway_config.gateway_targets)
             self.node_list[node_config.node_name] = node_config
             utilities.log_debug(
                 "load node config for %s success" % node_config.node_name)
@@ -438,13 +562,77 @@ class AgencyConfig:
         utilities.log_debug("load the sql storage config success")
         return StorageConfig(sql_storage_config_dict, section, True)
 
-    def __load_service_config__(self, config_section, sub_config_key, must_exists):
+    def __load_service_config__(self, config_section,
+                                sub_config_key,
+                                service_must_exists,
+                                service_type,
+                                tpl_config_file_path,
+                                config_file_list):
         utilities.log_debug(f"load service config for {config_section}")
         config_dict = utilities.get_item_value(
-            self.config, sub_config_key, None, must_exists, config_section)
+            self.config, sub_config_key, None, service_must_exists, config_section)
         utilities.log_debug(
             f"load service config for {config_section} success")
-        return ServiceConfig(config_dict, config_section, must_exists)
+        return ServiceConfig(config=config_dict,
+                             env_config=self.env_config,
+                             gateway_targets=self.gateway_config.gateway_targets,
+                             must_exist=service_must_exists,
+                             config_section=config_section,
+                             service_type=service_type,
+                             tpl_config_file_path=tpl_config_file_path,
+                             config_file_list=config_file_list,
+                             agency=self.agency_name)
+
+    def get_wedpr_site_properties(self, node_index: int) -> {}:
+        """
+        get the site config properties
+        :param node_index: the node index of the same ip
+        :return: the properties
+        """
+        props = {}
+        # the zone config
+        props.update(self.env_config.to_properties())
+        # the user config
+        props.update(self.user_jwt_config.to_properties())
+        # the sql config
+        props.update(self.sql_storage_config.to_properties())
+        # the blockchain config
+        props.update(self.blockchain_config.to_properties())
+        # the service config
+        props.update(self.site_config.to_properties(node_index))
+        # the hdfs config
+        props.update(self.hdfs_storage_config.to_properties())
+        return props
+
+    def get_jupyter_worker_properties(self, node_index: int) -> {}:
+        """
+        get the jupyter worker properties according to the config
+        :param node_index: the node index of the same ip
+        :return: the properties
+        """
+        props = {}
+        # the zone config
+        props.update(self.env_config.to_properties())
+        # the service config
+        props.update(self.jupyter_worker_config.to_properties(node_index))
+        return props
+
+    def get_pir_properties(self, node_index: int):
+        """
+        get the pir worker properties according to the config
+        :param node_index: the node index of the same ip
+        :return: the properties
+        """
+        props = {}
+        # the zone config
+        props.update(self.env_config.to_properties())
+        # the sql config
+        props.update(self.sql_storage_config.to_properties())
+        # the service config
+        props.update(self.pir_config.to_properties(node_index))
+        # the hdfs config
+        props.update(self.hdfs_storage_config.to_properties())
+        return props
 
     def __repr__(self):
         return f"agency: {self.agency_name}, gateway_config: {self.gateway_config}, " \
@@ -486,7 +674,9 @@ class WeDPRDeployConfig:
             self.config, "agency", None, False, "[[agency]]")
         for agency_object in agency_list_object:
             agency_config = AgencyConfig(
-                agency_object, self.component_switch)
+                config=agency_object, env_config=self.env_config,
+                blockchain_config=self.blockchain_config,
+                component_switch=self.component_switch)
             self.agency_list[agency_config.agency_name] = agency_config
             utilities.log_debug(
                 "load the agency config for %s success" % agency_config.agency_name)

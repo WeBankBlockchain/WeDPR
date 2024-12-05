@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from wedpr_builder.common import utilities
+from wedpr_builder.common import constant
 
 
 class CertGenerator:
@@ -15,7 +16,7 @@ class CertGenerator:
         if sm_mode is True:
             use_sm = "true"
         command = "bash %s generate_ca_cert %s %s" % (
-            utilities.ServiceInfo.cert_generation_script_path, use_sm, ca_cert_path)
+            constant.ServiceInfo.cert_generation_script_path, use_sm, ca_cert_path)
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
             utilities.log_error(
@@ -33,7 +34,7 @@ class CertGenerator:
         if sm_mode is True:
             use_sm = "true"
         command = "bash %s generate_node_cert %s %s %s" % (
-            utilities.ServiceInfo.cert_generation_script_path, use_sm, ca_cert_path, node_cert_path)
+            constant.ServiceInfo.cert_generation_script_path, use_sm, ca_cert_path, node_cert_path)
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
             utilities.log_error("* generate node cert error, sm_mode: %d, ca cert path: %s, node cert path: %s" %
@@ -45,7 +46,7 @@ class CertGenerator:
 
     def generate_private_key(output_path):
         command = "bash %s generate_private_key_for_psi_server %s" % (
-            utilities.ServiceInfo.cert_generation_script_path, output_path)
+            constant.ServiceInfo.cert_generation_script_path, output_path)
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
             utilities.log_error(

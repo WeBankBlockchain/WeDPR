@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from wedpr_builder.common import utilities
+from wedpr_builder.common import constant
 import os
 
 
@@ -17,7 +18,7 @@ class ShellScriptGenerator:
                 "* generate shell script, dst: %s" % start_all_path)
             # start_all.sh
             command = "cp %s %s" % (
-                utilities.ConfigInfo.start_all_tpl_path, start_all_path)
+                constant.ConfigInfo.start_all_tpl_path, start_all_path)
             (result, output) = utilities.execute_command_and_getoutput(command)
             if result is False:
                 utilities.log_error(
@@ -28,7 +29,7 @@ class ShellScriptGenerator:
         if os.path.exists(stop_all_path) is False:
             # tars stop_all.sh
             command = "cp %s %s" % (
-                utilities.ConfigInfo.stop_all_tpl_path, stop_all_path)
+                constant.ConfigInfo.stop_all_tpl_path, stop_all_path)
             (result, output) = utilities.execute_command_and_getoutput(command)
             if result is False:
                 utilities.log_error(
@@ -59,7 +60,7 @@ class ShellScriptGenerator:
         # the start.sh
         output_path = os.path.join(script_output_dir, "start.sh")
         ret = ShellScriptGenerator.__update_binary__(
-            utilities.ConfigInfo.start_tpl_path, output_path, binary_name)
+            constant.ConfigInfo.start_tpl_path, output_path, binary_name)
         if ret is False:
             utilities.log_error(
                 "generate_node_shell_scripts %s error" % output_path)
@@ -67,7 +68,7 @@ class ShellScriptGenerator:
         # the stop.sh
         output_path = os.path.join(script_output_dir, "stop.sh")
         ret = ShellScriptGenerator.__update_binary__(
-            utilities.ConfigInfo.stop_tpl_path, output_path, binary_name)
+            constant.ConfigInfo.stop_tpl_path, output_path, binary_name)
         if ret is False:
             utilities.log_error(
                 "generate_node_shell_scripts %s error" % output_path)

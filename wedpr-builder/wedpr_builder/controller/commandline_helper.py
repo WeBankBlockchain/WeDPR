@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from wedpr_builder.common import utilities
+from wedpr_builder.common import constant
 from wedpr_builder.generator.wedpr_gateway_config_generator import WeDPRGatewayConfigGenerator
 from wedpr_builder.generator.wedpr_node_config_generator import WeDPRNodeConfigGenerator
 from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 from wedpr_builder.config.wedpr_deploy_config import ComponentSwitch
+from wedpr_builder.generator.wedpr_service_generator import WedprSiteServiceGenerator
+from wedpr_builder.generator.wedpr_service_generator import WedprPirServiceGenerator
+from wedpr_builder.generator.wedpr_service_generator import WedprJupyterWorkerServiceGenerator
 from argparse import RawTextHelpFormatter
 import sys
 import toml
@@ -13,15 +17,22 @@ import argparse
 
 
 def parse_command():
-    help_info = "examples:\n * generate node config:\t python3 build_wedpr.py -t node\n * generate gateway config:\t python3 build_wedpr.py -t gateway\n * generate gateway config:\t python3 build_wedpr.py -o genconfig -c config.toml -t gateway -d wedpr-generated\n * generate node config:\t python3 build_wedpr.py -o genconfig -c config.toml -t node -d ppc-generated"
+    help_info = "examples:\n * generate node config:\t " \
+                "python3 build_wedpr.py -t wedpr-node\n " \
+                "* generate gateway config:\t python3 build_wedpr.py -t wedpr-gateway\n " \
+                "* generate wedpr-site config:\t python3 build_wedpr.py -t wedpr-site\n " \
+                "* generate wedpr-pir config:\t python3 build_wedpr.py -t wedpr-pir\n " \
+                "* generate wedpr-jupyter-worker config:\t python3 build_wedpr.py -t wedpr-jupyter-worker\n " \
+                "* generate gateway config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-gateway -d wedpr-generated\n " \
+                "* generate node config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-node -d wedpr-generated"
     parser = argparse.ArgumentParser(
         prog=sys.argv[0], description=help_info, formatter_class=RawTextHelpFormatter, add_help=True)
 
     # the command option, now support genconfig/extend
     help_info = "[Optional] specify the command: \n* supported command list: %s\n" % (
-        ''.join(utilities.CommandInfo.supported_command_list))
+        ''.join(constant.CommandInfo.supported_command_list))
     parser.add_argument("-o", '--operation', help=help_info,
-                        required=False, default=utilities.CommandInfo.generate_config)
+                        required=False, default=constant.CommandInfo.generate_config)
 
     # config option
     help_info = "[Optional] the config file, default is config.toml\n"
@@ -34,7 +45,7 @@ def parse_command():
 
     # the type option
     supported_service_type_str = ', '.join(
-        utilities.ServiceInfo.supported_service_type)
+        constant.ServiceInfo.supported_service_type)
     help_info = "[Required] the service type:\n* now support: %s \n" % (
         supported_service_type_str)
     parser.add_argument("-t", "--type", help=help_info, default="")
@@ -47,27 +58,48 @@ def generate_node_config(args, toml_config):
     generate the node config
     """
     service_type = args.type
+    utilities.log_debug(f"generate config for the wedpr {service_type}")
     # check the type
-    if service_type not in utilities.ServiceInfo.supported_service_type:
+    if service_type not in constant.ServiceInfo.supported_service_type:
         utilities.log_error("The service type must be " +
-                            ', '.join(utilities.ServiceInfo.supported_service_type))
+                            ', '.join(constant.ServiceInfo.supported_service_type))
         sys.exit(-1)
-    if service_type == utilities.ServiceInfo.node_service_type:
-        utilities.log_debug("generate config for the ppc-node")
+    # the node config generator
+    if service_type == constant.ServiceInfo.node_service_type:
+        utilities.log_debug(f"generate config for the wedpr {service_type}")
         component_switch = ComponentSwitch(node_must_exists=True)
         config = WeDPRDeployConfig(toml_config, component_switch)
         node_generator = WeDPRNodeConfigGenerator(config, args.output)
         ret = node_generator.generate_node_config()
         if ret is False:
             sys.exit(-1)
-    if service_type == utilities.ServiceInfo.gateway_service_type:
-        utilities.log_debug("generate config for the ppc-success")
+    # the gateway config generator
+    if service_type == constant.ServiceInfo.gateway_service_type:
         component_switch = ComponentSwitch(gateway_must_exists=True)
         config = WeDPRDeployConfig(toml_config, component_switch)
         gateway_generator = WeDPRGatewayConfigGenerator(config, args.output)
         ret = gateway_generator.generate_gateway_config()
         if ret is False:
             sys.exit(-1)
+    # the site config generator
+    if service_type == constant.ServiceInfo.wedpr_site_service:
+        component_switch = ComponentSwitch(site_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
+        site_generator = WedprSiteServiceGenerator(config, args.output)
+        site_generator.generate_config()
+    # the pir service generator
+    if service_type == constant.ServiceInfo.wedpr_pir_service:
+        component_switch = ComponentSwitch(pir_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
+        pir_generator = WedprPirServiceGenerator(config, args.output)
+        pir_generator.generate_config()
+    # the jupyter worker config generator
+    if service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
+        component_switch = ComponentSwitch(jupyter_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
+        jupyter_generator = WedprJupyterWorkerServiceGenerator(
+            config, args.output)
+        jupyter_generator.generate_config()
 
 
 def execute_command(args):
@@ -79,13 +111,13 @@ def execute_command(args):
     toml_config = toml.load(args.config)
     # check the command
     command = args.operation
-    if command not in utilities.CommandInfo.supported_command_list:
+    if command not in constant.CommandInfo.supported_command_list:
         utilities.log_error("The command must be " +
-                            ', '.join(utilities.CommandInfo.supported_command_list))
+                            ', '.join(constant.CommandInfo.supported_command_list))
         sys.exit(-1)
-    if command == utilities.CommandInfo.generate_config:
+    if command == constant.CommandInfo.generate_config:
         generate_node_config(args, toml_config)
         return
     # TODO: implement expand
-    if command == utilities.CommandInfo.extend:
+    if command == constant.CommandInfo.extend:
         utilities.log_error("unimplemented command %s" % command)

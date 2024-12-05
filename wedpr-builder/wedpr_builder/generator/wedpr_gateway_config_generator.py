@@ -3,6 +3,7 @@
 import os
 import json
 from wedpr_builder.common import utilities
+from wedpr_builder.common import constant
 from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 from wedpr_builder.generator.binary_generator import BinaryGenerator
 from wedpr_builder.generator.cert_generator import CertGenerator
@@ -17,8 +18,8 @@ class WeDPRGatewayConfigGenerator:
     def __init__(self, config: WeDPRDeployConfig, output_dir: str):
         self.config = config
         self.output_dir = output_dir
-        self.binary_name = utilities.ConfigInfo.ppc_gateway_binary_name
-        self.service_type = utilities.ServiceInfo.gateway_service_type
+        self.binary_name = constant.ConfigInfo.ppc_gateway_binary_name
+        self.service_type = constant.ServiceInfo.gateway_service_type
 
     def generate_gateway_config(self):
         utilities.print_badge("* generate gateway config, deploy_dir: %s" %
@@ -66,7 +67,7 @@ class WeDPRGatewayConfigGenerator:
                 utilities.print_badge(
                     "* generate config for ppc-gateway %s.%s, deploy_ip: %s" % (gateway_config.agency_name, node_name, ip))
                 config_content = utilities.load_config(
-                    utilities.ConfigInfo.gateway_config_tpl_path)
+                    constant.ConfigInfo.gateway_config_tpl_path)
                 # load the common config
                 self.__generate_common_config__(gateway_config, config_content)
                 # load the gateway config
@@ -88,7 +89,7 @@ class WeDPRGatewayConfigGenerator:
                     return False
                 # generate the ini config
                 ini_config_output_path = os.path.join(
-                    self.__generate_node_path__(gateway_config.agency_name, ip, node_name), utilities.ConfigInfo.config_ini_file)
+                    self.__generate_node_path__(gateway_config.agency_name, ip, node_name), constant.ConfigInfo.config_ini_file)
                 ret = utilities.store_config(
                     config_content, "ini", ini_config_output_path, "config.ini")
                 if ret is False:

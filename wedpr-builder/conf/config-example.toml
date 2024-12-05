@@ -12,6 +12,10 @@ blockchain_group = "group0"
 blockchain_peers = []
 # Required, the blockchain cert path
 blockchain_cert_path = ""
+# Required, the contract address for recorder factory contract
+recorder_factory_contract_address = ""
+# Required, the contract address for sequencer contract
+sequencer_contract_address = ""
 
 [crypto]
 # the gateway-service enable ssl or not, default enable ssl
@@ -68,6 +72,8 @@ holding_msg_minutes = 30
         ccache_path = "/tmp/krb5cc_ppc_node"
         # the krb5 conf path
         krb5_conf_path = "conf/krb5.conf"
+        # keytab path
+        krb5_keytab_path = ""
 
     # the agency mysql configuration
     [agency.mysql]
@@ -145,10 +151,6 @@ holding_msg_minutes = 30
             user = "wedpr"
             password = ""
             database = ""
-        # the gateway config
-        [agency.node.gateway]
-            gateway_grpc_target = ["127.0.0.1:40600", "127.0.0.1:40601"]
-
 
 [[agency]]
 name = "agency1"
@@ -286,7 +288,3 @@ holding_msg_minutes = 30
             ccache_path = "/tmp/krb5cc_ppc_node"
             # the krb5 conf path
             krb5_conf_path = "conf/krb5.conf"
-
-        # the gateway config
-        [agency.node.gateway]
-            gateway_grpc_target = ["127.0.0.1:40620", "127.0.0.1:40621"]
