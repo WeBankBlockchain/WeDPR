@@ -8,6 +8,7 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.client.PsiClient;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
@@ -29,7 +30,8 @@ public class PsiWorker extends Worker {
             JobWorkerMapper jobWorkerMapper,
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            FileMetaBuilder fileMetaBuilder) {
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections) {
         super(
                 jobDO,
                 jobWorker,
@@ -39,7 +41,8 @@ public class PsiWorker extends Worker {
                 jobWorkerMapper,
                 datasetMapper,
                 fileStorageInterface,
-                fileMetaBuilder);
+                fileMetaBuilder,
+                spdzConnections);
     }
 
     @Override

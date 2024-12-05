@@ -9,6 +9,7 @@ import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.client.MpcClient;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.MpcResultFileResolver;
 import com.webank.wedpr.components.scheduler.executor.hook.MPCExecutorHook;
@@ -38,7 +39,8 @@ public class MpcWorker extends Worker {
             JobWorkerMapper jobWorkerMapper,
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            FileMetaBuilder fileMetaBuilder) {
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections) {
         super(
                 jobDO,
                 jobWorker,
@@ -48,7 +50,8 @@ public class MpcWorker extends Worker {
                 jobWorkerMapper,
                 datasetMapper,
                 fileStorageInterface,
-                fileMetaBuilder);
+                fileMetaBuilder,
+                spdzConnections);
     }
 
     @SneakyThrows
@@ -67,7 +70,10 @@ public class MpcWorker extends Worker {
 
         MPCExecutorHook mpcExecutorHook =
                 new MPCExecutorHook(
-                        getDatasetMapper(), getFileStorageInterface(), getFileMetaBuilder());
+                        getDatasetMapper(),
+                        getFileStorageInterface(),
+                        getFileMetaBuilder(),
+                        getSpdzConnections());
         boolean needRunPsi = mpcJobParam.isNeedRunPsi();
         if (needRunPsi) {
             mpcExecutorHook.prepareWithPsi(getDatasetMapper(), jobDO, mpcJobParam);

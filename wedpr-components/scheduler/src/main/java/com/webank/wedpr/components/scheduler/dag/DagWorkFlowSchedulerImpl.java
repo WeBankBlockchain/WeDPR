@@ -6,6 +6,7 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.api.WorkFlowScheduler;
 import com.webank.wedpr.components.scheduler.dag.base.DAG;
 import com.webank.wedpr.components.scheduler.dag.base.DAGNode;
@@ -34,6 +35,7 @@ public class DagWorkFlowSchedulerImpl implements WorkFlowScheduler {
     private DatasetMapper datasetMapper;
     private FileStorageInterface fileStorageInterface;
     private FileMetaBuilder fileMetaBuilder;
+    private SpdzConnections spdzConnections;
 
     private final Integer workerRetryTimes = -1;
     private final Integer workerRetryDelayMillis = -1;
@@ -43,12 +45,14 @@ public class DagWorkFlowSchedulerImpl implements WorkFlowScheduler {
             JobWorkerMapper jobWorkerMapper,
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            FileMetaBuilder fileMetaBuilder) {
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections) {
         this.loadBalancer = loadBalancer;
         this.jobWorkerMapper = jobWorkerMapper;
         this.datasetMapper = datasetMapper;
         this.fileStorageInterface = fileStorageInterface;
         this.fileMetaBuilder = fileMetaBuilder;
+        this.spdzConnections = spdzConnections;
     }
 
     public LoadBalancer getLoadBalancer() {
@@ -128,7 +132,8 @@ public class DagWorkFlowSchedulerImpl implements WorkFlowScheduler {
                             jobWorkerMapper,
                             datasetMapper,
                             fileStorageInterface,
-                            fileMetaBuilder);
+                            fileMetaBuilder,
+                            spdzConnections);
             workerList.add(worker);
         }
 

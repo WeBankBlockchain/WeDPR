@@ -85,4 +85,5 @@ public class Constant {
 
     //// the serviceType
     public static final String PIR_SERVICE_TYPE = "PIR";
+    public static final String SPDZ_SERVICE_TYPE = "SPDZ";
 }

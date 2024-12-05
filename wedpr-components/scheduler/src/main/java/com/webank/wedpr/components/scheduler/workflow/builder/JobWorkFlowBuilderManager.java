@@ -4,6 +4,7 @@ import com.webank.wedpr.common.protocol.JobType;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.executor.hook.*;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.model.ModelJobParam;
 import com.webank.wedpr.components.scheduler.executor.impl.ml.request.FeatureEngineeringRequest;
@@ -30,6 +31,7 @@ public class JobWorkFlowBuilderManager {
     private final FileStorageInterface storage;
     private final JobChecker jobChecker;
     private final DatasetMapper datasetMapper;
+    private final SpdzConnections spdzConnections;
 
     protected Map<String, JobWorkFlowBuilderApi> jobWorkFlowBuilderMap = new ConcurrentHashMap<>();
 
@@ -40,11 +42,13 @@ public class JobWorkFlowBuilderManager {
             DatasetMapper datasetMapper,
             FileMetaBuilder fileMetaBuilder,
             FileStorageInterface storage,
-            JobChecker jobChecker) {
+            JobChecker jobChecker,
+            SpdzConnections spdzConnections) {
         this.datasetMapper = datasetMapper;
         this.fileMetaBuilder = fileMetaBuilder;
         this.storage = storage;
         this.jobChecker = jobChecker;
+        this.spdzConnections = spdzConnections;
     }
 
     public void initialize() {
@@ -74,12 +78,16 @@ public class JobWorkFlowBuilderManager {
         registerJobWorkFlowBuilder(
                 JobType.MPC.getType(),
                 new JobWorkFlowBuilderImpl(
-                        new MPCExecutorHook(this.datasetMapper, storage, fileMetaBuilder), this));
+                        new MPCExecutorHook(
+                                this.datasetMapper, storage, fileMetaBuilder, spdzConnections),
+                        this));
 
         registerJobWorkFlowBuilder(
                 JobType.SQL.getType(),
                 new JobWorkFlowBuilderImpl(
-                        new MPCExecutorHook(this.datasetMapper, storage, fileMetaBuilder), this));
+                        new MPCExecutorHook(
+                                this.datasetMapper, storage, fileMetaBuilder, spdzConnections),
+                        this));
 
         logger.info("register ML workflow builder success");
         registerJobWorkFlowBuilder(

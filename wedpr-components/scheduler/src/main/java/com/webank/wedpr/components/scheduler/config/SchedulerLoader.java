@@ -30,6 +30,7 @@ import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.project.dao.ProjectMapperWrapper;
 import com.webank.wedpr.components.scheduler.SchedulerBuilder;
 import com.webank.wedpr.components.scheduler.core.SchedulerTaskImpl;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
 import com.webank.wedpr.components.scheduler.executor.callback.TaskFinishedHandler;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutiveContextBuilder;
@@ -80,6 +81,10 @@ public class SchedulerLoader {
     @Qualifier("weDPRTransport")
     @Autowired
     private WeDPRTransport weDPRTransport;
+
+    @Qualifier("spdzConnections")
+    @Autowired
+    private SpdzConnections spdzConnections;
 
     @Autowired private ServiceAuthMapper serviceAuthMapper;
     @Autowired private ApiCredentialMapper apiCredentialMapper;
@@ -134,7 +139,8 @@ public class SchedulerLoader {
                         executorManager,
                         new ExecutiveContextBuilder(projectMapperWrapper),
                         threadPoolService,
-                        datasetMapper);
+                        datasetMapper,
+                        spdzConnections);
         executorManager.registerExecutor(ExecutorType.DAG.getType(), dagSchedulerExecutor);
         // default
         TaskFinishedHandler taskFinishedHandler =

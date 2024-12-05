@@ -2,8 +2,10 @@ package com.webank.wedpr.components.scheduler.executor.hook;
 
 import com.webank.wedpr.common.config.WeDPRCommonConfig;
 import com.webank.wedpr.common.utils.Common;
+import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.executor.impl.ExecutorConfig;
 import com.webank.wedpr.components.scheduler.executor.impl.model.DatasetInfo;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMeta;
@@ -27,14 +29,17 @@ public class MPCExecutorHook implements ExecutorHook {
     private final FileStorageInterface storage;
     private final FileMetaBuilder fileMetaBuilder;
     private final DatasetMapper datasetMapper;
+    private final SpdzConnections spdzConnections;
 
     public MPCExecutorHook(
             DatasetMapper datasetMapper,
             FileStorageInterface storage,
-            FileMetaBuilder fileMetaBuilder) {
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections) {
         this.datasetMapper = datasetMapper;
         this.storage = storage;
         this.fileMetaBuilder = fileMetaBuilder;
+        this.spdzConnections = spdzConnections;
     }
 
     @Override
@@ -65,7 +70,8 @@ public class MPCExecutorHook implements ExecutorHook {
             String inputFilePath,
             String outputFilePath,
             String resultFilePath,
-            MPCJobParam jobParam) {
+            MPCJobParam jobParam)
+            throws WeDPRException {
 
         logger.debug(
                 " ## build mpc job request, taskID: {}, mpcFilePath: {}, inputFile: {}, outputFile: {}",
@@ -75,17 +81,21 @@ public class MPCExecutorHook implements ExecutorHook {
                 outputFilePath);
 
         Boolean mpcIsMalicious = MPCExecutorConfig.getMpcIsMalicious();
-        String mpcDirectNodeIp = MPCExecutorConfig.getMpcDirectNodeIp();
-        int mpcDirectNodePort = MPCExecutorConfig.getMpcDirectNodePort();
+
+        SpdzConnections.Connection connection =
+                spdzConnections.getConnection(jobParam.getSubmitJobAgency());
+
+        String mpcDirectNodeIp = connection.getIp();
+        int mpcDirectNodePort = connection.getPort();
 
         MpcRunJobRequest mpcRunJobRequest = new MpcRunJobRequest();
         mpcRunJobRequest.setJobId(taskID);
         mpcRunJobRequest.setParticipantCount(jobParam.getDataSetList().size());
         mpcRunJobRequest.setSelfIndex(jobParam.getSelfIndex());
         mpcRunJobRequest.setMalicious(mpcIsMalicious);
+        mpcRunJobRequest.setReceiverNodeIp(mpcDirectNodeIp);
         mpcRunJobRequest.setMpcNodeDirectPort(mpcDirectNodePort);
         mpcRunJobRequest.setBitLength(jobParam.getShareBytesLength());
-        mpcRunJobRequest.setReceiverNodeIp(mpcDirectNodeIp);
         mpcRunJobRequest.setReceiveResult(jobParam.isReceiveResult());
 
         mpcRunJobRequest.setMpcFilePath(mpcFilePath);
@@ -99,7 +109,7 @@ public class MPCExecutorHook implements ExecutorHook {
         return mpcRunJobRequest;
     }
 
-    public MpcRunJobRequest prepare(JobDO jobDO, MPCJobParam mpcJobParam) {
+    public MpcRunJobRequest prepare(JobDO jobDO, MPCJobParam mpcJobParam) throws WeDPRException {
 
         String jobId = jobDO.getId();
 

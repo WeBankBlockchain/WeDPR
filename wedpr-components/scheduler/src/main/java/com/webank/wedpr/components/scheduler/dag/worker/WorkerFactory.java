@@ -6,6 +6,7 @@ import com.webank.wedpr.common.utils.WeDPRException;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
 import com.webank.wedpr.components.scheduler.mapper.JobWorkerMapper;
@@ -26,7 +27,8 @@ public class WorkerFactory {
             JobWorkerMapper jobWorkerMapper,
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            FileMetaBuilder fileMetaBuilder)
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections)
             throws WeDPRException {
 
         String jobId = jobWorker.getJobId();
@@ -42,7 +44,8 @@ public class WorkerFactory {
                     jobWorkerMapper,
                     datasetMapper,
                     fileStorageInterface,
-                    fileMetaBuilder);
+                    fileMetaBuilder,
+                    spdzConnections);
         }
 
         if (WorkerNodeType.isMLJob(workerType)) {
@@ -55,7 +58,8 @@ public class WorkerFactory {
                     jobWorkerMapper,
                     datasetMapper,
                     fileStorageInterface,
-                    fileMetaBuilder);
+                    fileMetaBuilder,
+                    spdzConnections);
         }
 
         if (JobType.isMPCJob(workerType)) {
@@ -68,7 +72,8 @@ public class WorkerFactory {
                     jobWorkerMapper,
                     datasetMapper,
                     fileStorageInterface,
-                    fileMetaBuilder);
+                    fileMetaBuilder,
+                    spdzConnections);
         }
 
         logger.error("Unsupported worker type, jobId: {}, workType: {}", jobId, workerType);

@@ -3,6 +3,7 @@ package com.webank.wedpr.components.scheduler.dag.worker;
 import com.webank.wedpr.components.db.mapper.dataset.mapper.DatasetMapper;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.dao.JobDO;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.entity.JobWorker;
 import com.webank.wedpr.components.scheduler.dag.utils.WorkerUtils;
 import com.webank.wedpr.components.scheduler.executor.impl.model.FileMetaBuilder;
@@ -22,6 +23,7 @@ public abstract class Worker {
     private final LoadBalancer loadBalancer;
     private final FileStorageInterface fileStorageInterface;
     private final FileMetaBuilder fileMetaBuilder;
+    private final SpdzConnections spdzConnections;
 
     private final String jobId;
     private final String workerId;
@@ -43,7 +45,8 @@ public abstract class Worker {
             JobWorkerMapper jobWorkerMapper,
             DatasetMapper datasetMapper,
             FileStorageInterface fileStorageInterface,
-            FileMetaBuilder fileMetaBuilder) {
+            FileMetaBuilder fileMetaBuilder,
+            SpdzConnections spdzConnections) {
         this.jobDO = jobDO;
         this.jobWorker = jobWorker;
         this.jobId = jobWorker.getJobId();
@@ -60,6 +63,7 @@ public abstract class Worker {
         this.datasetMapper = datasetMapper;
         this.fileStorageInterface = fileStorageInterface;
         this.fileMetaBuilder = fileMetaBuilder;
+        this.spdzConnections = spdzConnections;
     }
 
     public void logWorker() {

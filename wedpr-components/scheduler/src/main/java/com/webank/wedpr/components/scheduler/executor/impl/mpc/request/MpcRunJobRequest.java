@@ -19,4 +19,5 @@ public class MpcRunJobRequest {
 
     private String owner;
     private boolean receiveResult;
+    private String submitAgency;
 }

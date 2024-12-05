@@ -11,6 +11,7 @@ import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.project.JobChecker;
 import com.webank.wedpr.components.project.dao.JobDO;
 import com.webank.wedpr.components.scheduler.api.WorkFlowOrchestratorApi;
+import com.webank.wedpr.components.scheduler.core.SpdzConnections;
 import com.webank.wedpr.components.scheduler.dag.DagWorkFlowSchedulerImpl;
 import com.webank.wedpr.components.scheduler.dag.api.WorkFlowScheduler;
 import com.webank.wedpr.components.scheduler.executor.ExecuteResult;
@@ -43,6 +44,7 @@ public class DagSchedulerExecutor implements Executor {
 
     private final ThreadPoolService threadPoolService;
     private final LoadBalancer loadBalancer;
+    private final SpdzConnections spdzConnections;
 
     public DagSchedulerExecutor(
             LoadBalancer loadBalancer,
@@ -53,11 +55,13 @@ public class DagSchedulerExecutor implements Executor {
             ExecutorManager executorManager,
             ExecutiveContextBuilder executiveContextBuilder,
             ThreadPoolService threadPoolService,
-            DatasetMapper datasetMapper) {
+            DatasetMapper datasetMapper,
+            SpdzConnections spdzConnections) {
         this.loadBalancer = loadBalancer;
         this.executiveContextBuilder = executiveContextBuilder;
         this.threadPoolService = threadPoolService;
         this.executorManager = executorManager;
+        this.spdzConnections = spdzConnections;
 
         this.workFlowScheduler =
                 new DagWorkFlowSchedulerImpl(
@@ -65,11 +69,16 @@ public class DagSchedulerExecutor implements Executor {
                         jobWorkerMapper,
                         datasetMapper,
                         fileStorageInterface,
-                        fileMetaBuilder);
+                        fileMetaBuilder,
+                        spdzConnections);
 
         JobWorkFlowBuilderManager jobWorkflowBuilderManager =
                 new JobWorkFlowBuilderManager(
-                        datasetMapper, fileMetaBuilder, fileStorageInterface, jobChecker);
+                        datasetMapper,
+                        fileMetaBuilder,
+                        fileStorageInterface,
+                        jobChecker,
+                        spdzConnections);
 
         this.workflowOrchestrator =
                 new WorkFlowOrchestrator(jobWorkflowBuilderManager, fileMetaBuilder, jobChecker);

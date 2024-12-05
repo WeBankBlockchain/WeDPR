@@ -78,14 +78,6 @@ public class MPCExecutorConfig {
         return MAX_TOTAL_CONNECTION;
     }
 
-    public static String getMpcDirectNodeIp() {
-        return MPC_DIRECT_NODE_IP;
-    }
-
-    public static int getMpcDirectNodePort() {
-        return Integer.parseInt(MPC_DIRECT_NODE_PORT);
-    }
-
     public static Boolean getMpcIsMalicious() {
         return Boolean.valueOf(MPC_IS_MALICIOUS);
     }
