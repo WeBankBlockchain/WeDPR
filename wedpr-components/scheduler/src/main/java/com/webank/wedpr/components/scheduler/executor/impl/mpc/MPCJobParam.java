@@ -75,6 +75,7 @@ public class MPCJobParam {
 
         this.shareBytesLength = MpcUtils.getShareBytesLength(mpcContent);
         this.needRunPsi = MpcUtils.checkNeedRunPsi(jobID, mpcContent);
+        this.receiveResult = false;
 
         int index = 0;
         for (DatasetInfo datasetInfo : dataSetList) {
@@ -86,6 +87,7 @@ public class MPCJobParam {
             if (index == 0) {
                 // String owner = datasetInfo.getDataset().getOwner();
                 this.submitJobAgency = datasetInfo.getDataset().getOwnerAgency();
+                this.receiveResult = true;
                 logger.info("submit mpc job agency, jobId: {}, agency: {}", jobID, agency);
             }
 
@@ -93,7 +95,10 @@ public class MPCJobParam {
             if (agency.equals(ownerAgency)) {
                 selfDataset = datasetInfo;
                 selfIndex = index;
-                receiveResult = datasetInfo.getReceiveResult();
+
+                if (selfIndex == 0) {
+                    this.receiveResult = true;
+                }
             }
 
             index++;
