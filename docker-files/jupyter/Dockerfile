@@ -1,4 +1,4 @@
-FROM wedpr-image:latest
+FROM wedpr-image:latest as  wedpr-jupyter-image
 
 ENV LANG zh_CN.UTF-8
 ENV LANGUAGE zh_CN.UTF-8
