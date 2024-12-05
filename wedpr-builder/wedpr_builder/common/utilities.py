@@ -150,6 +150,7 @@ def substitute_configurations(config_properities: {}, config_file: str):
         value = config_value
         if type(config_value) is str:
             value = config_value.replace("/", "\/")
+            value = value.replace("&", '\&')
         config_key_var = '${%s}' % config_key
         command = "sed -i %s 's/%s/%s/g' %s" % \
                   (option, config_key_var,

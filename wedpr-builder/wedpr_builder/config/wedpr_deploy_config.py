@@ -510,7 +510,7 @@ class AgencyConfig:
         # load the pir config
         self.pir_config = self.__load_service_config__(
             "[agency.pir]", "pir", self.component_switch.pir_must_exists,
-            constant.ServiceInfo.wedpr_site_service,
+            constant.ServiceInfo.wedpr_pir_service,
             constant.ConfigInfo.wedpr_pir_config_path,
             constant.ConfigInfo.pir_config_list)
 
