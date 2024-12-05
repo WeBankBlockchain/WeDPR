@@ -1,5 +1,12 @@
 [env]
+# the binary path for ppc-pro-node and ppc-gateway-service
 binary_path = "bin/"
+# the dist path for wedpr-site
+wedpr_site_dist_path = "wedpr-site/dist/"
+# the dist path for wedpr-dir
+wedpr_pir_dist_path = "wedpr-pir/dist/"
+# use docker mode or not
+docker_mode = true
 deploy_dir = "wedpr-example"
 # the wedpr zone(used to distinguish different privacy computing environments)
 zone = "wedpr.zone.example"

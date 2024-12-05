@@ -40,6 +40,27 @@ class EnvConfig:
         # zone
         self.zone = utilities.get_value(
             self.config, self.section_name, "zone", None, True)
+        # wedpr_site_dist_path
+        self.wedpr_site_dist_path = utilities.get_value(
+            self.config, self.section_name,
+            "wedpr_site_dist_path", None, True)
+        # wedpr_pir_dist_path
+        self.wedpr_pir_dist_path = utilities.get_value(
+            self.config, self.section_name,
+            "wedpr_pir_dist_path", None, True)
+        # docker_mode
+        self.docker_mode = utilities.get_value(
+            self.config,
+            self.section_name,
+            "docker_mode", True, True)
+
+    # Note: jupyter only use docker mode
+    def get_dist_path_by_service_type(self, service_type: str) -> str:
+        if service_type == constant.ServiceInfo.wedpr_site_service:
+            return self.wedpr_site_dist_path
+        if service_type == constant.ServiceInfo.wedpr_pir_service:
+            return self.wedpr_pir_dist_path
+        return None
 
     def __repr__(self):
         return f"**EnvConfig: binary_path: {self.binary_path}, " \
