@@ -10,7 +10,7 @@ import string
 
 
 logging.basicConfig(format='%(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 
 def log_error(error_msg):
@@ -134,13 +134,26 @@ def load_config(file_path):
 def generate_random_str(size: int = 8):
     return ''.join(random.sample(string.ascii_letters + string.digits, size))
 
-# substitute configurations
-# TODO: support macos
+
+def is_macos():
+    return sys.platform.startswith("darwin")
 
 
 def substitute_configurations(config_properities: {}, config_file: str):
+    option = ""
+    if is_macos() is True:
+        option = ".bkp"
     for config_key in config_properities.keys():
-        command = f"sed -i \'s/${{config_key}}/{config_properities.get(config_key)}\/g' {config_file}"
+        config_value = config_properities.get(config_key)
+        if config_value is None:
+            continue
+        value = config_value
+        if type(config_value) is str:
+            value = config_value.replace("/", "\/")
+        config_key_var = '${%s}' % config_key
+        command = "sed -i %s 's/%s/%s/g' %s" % \
+                  (option, config_key_var,
+                   value, config_file)
         log_debug(f"* to execute command: {command}")
         (ret, output) = execute_command_and_getoutput(command)
         if ret is False:

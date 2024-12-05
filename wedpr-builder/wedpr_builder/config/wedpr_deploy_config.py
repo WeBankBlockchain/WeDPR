@@ -48,6 +48,7 @@ class EnvConfig:
     def to_properties(self) -> {}:
         props = {}
         props.update({constant.ConfigProperities.WEDPR_ZONE: self.zone})
+        return props
 
 
 class BlockchainConfig:
@@ -59,14 +60,14 @@ class BlockchainConfig:
             self.config, section_name, "blockchain_peers", None, True)
         self.blockchain_cert_path = utilities.get_value(
             self.config, section_name, "blockchain_cert_path", None, True)
-        self.recorder_factory_contract_address = utilities.get_item_value(
+        self.recorder_factory_contract_address = utilities.get_value(
             self.config, section_name, "recorder_factory_contract_address", None, True)
-        self.sequencer_contract_address = utilities.get_item_value(
+        self.sequencer_contract_address = utilities.get_value(
             self.config, section_name, "sequencer_contract_address", None, True)
 
     def __repr__(self):
         return f"**BlockchainConfig: blockchain_group: {self.blockchain_group}, " \
-               f"blockchain_peers: {self.blockchain_peers}, " \
+               f"blockchain_peers: [{','.join(self.blockchain_peers)}], " \
                f"blockchain_cert_path: {self.blockchain_cert_path}**\n"
 
     def to_properties(self) -> {}:
@@ -84,8 +85,8 @@ class BlockchainConfig:
             constant.ConfigProperities.WEDPR_SEQUENCER_CONTRACT_ADDRESS:
             self.sequencer_contract_address})
         # the blockchain peers
-        blockchain_peers_info = ','.join(self.blockchain_peers)
-        properties.update({constant.ConfigProperities.BLOCKCHAIN_PEERS,
+        blockchain_peers_info = ','.join(map(str, self.blockchain_peers))
+        properties.update({constant.ConfigProperities.BLOCKCHAIN_PEERS:
                            f"[{blockchain_peers_info}]"})
         return properties
 
@@ -134,12 +135,12 @@ class GatewayConfig:
         # get the gateway target
         gateway_grpc_targets_array = []
         for ip_str in self.deploy_ip:
-            ip_array = ip_str.spit(":")
+            ip_array = ip_str.split(":")
             ip = ip_array[0]
             count = int(ip_array[1])
             for i in range(count):
                 port = self.grpc_listen_port + i
-                gateway_grpc_targets_array.append(f"{ip}:${port}")
+                gateway_grpc_targets_array.append(f"{ip}:{port}")
         gateway_targets_str = ','.join(map(str, gateway_grpc_targets_array))
         self.gateway_targets = f"ipv4:{gateway_targets_str}"
         utilities.log_info(
@@ -202,7 +203,7 @@ class StorageConfig:
         :return: the converted properties
         """
         properties = {}
-        mysql_url = f"jdbc:mysql://${self.host}:${self.port}/${self.database}?characterEncoding=UTF-8&allowMultiQueries=true"
+        mysql_url = f"jdbc:mysql://{self.host}:{self.port}/{self.database}?characterEncoding=UTF-8&allowMultiQueries=true"
         properties.update({constant.ConfigProperities.MYSQL_URL: mysql_url})
         properties.update({constant.ConfigProperities.MYSQL_USER: self.user})
         properties.update(
@@ -238,20 +239,20 @@ class ServiceConfig:
                f"server_start_port: {self.server_start_port}," \
                f"service_type: {self.service_type} \n**"
 
-    def to_properties(self, node_index: int) -> {}:
+    def to_properties(self, deploy_ip, node_index: int) -> {}:
         props = {}
         start_port = self.server_start_port + 2 * node_index
         # nodeid
-        node_id = f"{self.service_type}_${self.env_config.zone}_node{node_index}"
+        node_id = f"{self.service_type}_{self.env_config.zone}_node{node_index}"
         props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
         # gateway target
         props.update(
             {constant.ConfigProperities.GATEWAY_TARGET: self.gateway_targets})
         # host_ip
-        if self.deploy_ip is None:
+        if deploy_ip is None or len(deploy_ip) == 0:
             raise Exception(
                 f"Invalid ServiceConfig, must define the deploy ip")
-        host_ip = self.deploy_ip.split(":")[0]
+        host_ip = deploy_ip.split(":")[0]
         props.update(
             {constant.ConfigProperities.WEDPR_TRANSPORT_HOST_IP: host_ip})
         # the server listen port
@@ -320,7 +321,7 @@ class HDFSStorageConfig:
         props = {}
         props.update({constant.ConfigProperities.HDFS_USER: self.user})
         props.update({constant.ConfigProperities.HDFS_HOME: self.home})
-        hdfs_url = f"hdfs://${self.name_node}:${self.name_node_port}"
+        hdfs_url = f"hdfs://{self.name_node}:{self.name_node_port}"
         props.update({constant.ConfigProperities.HDFS_ENTRYPOINT: hdfs_url})
         props.update(
             {constant.ConfigProperities.HDFS_ENABLE_AUTH: self.enable_krb5_auth_str})
@@ -476,6 +477,9 @@ class AgencyConfig:
         #  the holding_msg_minutes
         self.holding_msg_minutes = utilities.get_item_value(
             self.config, "holding_msg_minutes", 30, False, self.section_name)
+        # the psi api token
+        self.psi_api_token = utilities.get_item_value(
+            self.config, "psi_api_token", "wedpr_psi_api_token", False, self.section_name)
         # parse the gateway config
         utilities.log_debug("load the gateway config")
         gateway_config_section_name = "[agency.gateway]"
@@ -583,13 +587,21 @@ class AgencyConfig:
                              config_file_list=config_file_list,
                              agency=self.agency_name)
 
-    def get_wedpr_site_properties(self, node_index: int) -> {}:
+    def to_properties(self) -> {}:
+        props = {}
+        props.update(
+            {constant.ConfigProperities.WEDPR_AGENCY: self.agency_name})
+        props.update(
+            {constant.ConfigProperities.PSI_API_TOKEN: self.psi_api_token})
+        return props
+
+    def get_wedpr_site_properties(self, deploy_ip: str, node_index: int) -> {}:
         """
         get the site config properties
         :param node_index: the node index of the same ip
         :return: the properties
         """
-        props = {}
+        props = self.to_properties()
         # the zone config
         props.update(self.env_config.to_properties())
         # the user config
@@ -599,37 +611,38 @@ class AgencyConfig:
         # the blockchain config
         props.update(self.blockchain_config.to_properties())
         # the service config
-        props.update(self.site_config.to_properties(node_index))
+        props.update(self.site_config.to_properties(deploy_ip, node_index))
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
         return props
 
-    def get_jupyter_worker_properties(self, node_index: int) -> {}:
+    def get_jupyter_worker_properties(self, deploy_ip: str, node_index: int) -> {}:
         """
         get the jupyter worker properties according to the config
         :param node_index: the node index of the same ip
         :return: the properties
         """
-        props = {}
+        props = self.to_properties()
         # the zone config
         props.update(self.env_config.to_properties())
         # the service config
-        props.update(self.jupyter_worker_config.to_properties(node_index))
+        props.update(self.jupyter_worker_config.to_properties(
+            deploy_ip, node_index))
         return props
 
-    def get_pir_properties(self, node_index: int):
+    def get_pir_properties(self, deploy_ip: str, node_index: int):
         """
         get the pir worker properties according to the config
         :param node_index: the node index of the same ip
         :return: the properties
         """
-        props = {}
+        props = self.to_properties()
         # the zone config
         props.update(self.env_config.to_properties())
         # the sql config
         props.update(self.sql_storage_config.to_properties())
         # the service config
-        props.update(self.pir_config.to_properties(node_index))
+        props.update(self.pir_config.to_properties(deploy_ip, node_index))
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
         return props
@@ -674,7 +687,8 @@ class WeDPRDeployConfig:
             self.config, "agency", None, False, "[[agency]]")
         for agency_object in agency_list_object:
             agency_config = AgencyConfig(
-                config=agency_object, env_config=self.env_config,
+                config=agency_object,
+                env_config=self.env_config,
                 blockchain_config=self.blockchain_config,
                 component_switch=self.component_switch)
             self.agency_list[agency_config.agency_name] = agency_config

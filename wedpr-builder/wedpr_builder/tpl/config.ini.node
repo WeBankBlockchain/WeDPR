@@ -18,7 +18,7 @@
 [rpc]
     listen_ip=0.0.0.0
     listen_port=10200
-    token = ppcs_psi_apikey
+    token = wedpr_psi_api_token
     thread_count=4
     ; ssl or sm ssl
     sm_ssl=false

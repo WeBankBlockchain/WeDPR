@@ -2,6 +2,8 @@ package com.webank.wedpr.components.user.controller;
 
 import com.webank.wedpr.common.utils.Constant;
 import com.webank.wedpr.common.utils.WeDPRResponse;
+import com.webank.wedpr.components.crypto.CryptoToolkit;
+import com.webank.wedpr.components.crypto.CryptoToolkitFactory;
 import com.webank.wedpr.components.token.auth.model.UserJwtConfig;
 import com.webank.wedpr.components.user.helper.TokenImageHelper;
 import com.webank.wedpr.components.user.requests.UserRegisterRequest;
@@ -10,6 +12,7 @@ import com.webank.wedpr.components.user.response.WedprPublicKeyResponse;
 import com.webank.wedpr.components.user.service.WedprGroupDetailService;
 import com.webank.wedpr.components.user.service.WedprUserRoleService;
 import com.webank.wedpr.components.user.service.WedprUserService;
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -42,8 +45,15 @@ public class WedprUserRegisterController {
     @Autowired private WedprUserRoleService wedprUserRoleService;
 
     @Autowired private WedprGroupDetailService wedprGroupDetailService;
-
     private final UserJwtConfig userJwtConfig = new UserJwtConfig();
+
+    @PostConstruct
+    public void init() throws Exception {
+        logger.info("init WedprUserRegisterController");
+        CryptoToolkit cryptoToolkit = CryptoToolkitFactory.build();
+        userJwtConfig.setHexPublicKey(cryptoToolkit.getHexPublicKey(userJwtConfig.getPrivateKey()));
+        logger.info("init WedprUserRegisterController success");
+    }
 
     /**
      * 用户注册
@@ -59,7 +69,7 @@ public class WedprUserRegisterController {
 
     @GetMapping("/pub")
     public WeDPRResponse publicKeyController() {
-        String publicKey = userJwtConfig.getPublicKey();
+        String publicKey = userJwtConfig.getHexPublicKey();
         if (!StringUtils.startsWithIgnoreCase(publicKey, "04")) {
             publicKey = "04" + publicKey;
         }

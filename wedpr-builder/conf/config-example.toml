@@ -33,6 +33,7 @@ sm_crypto = false
 name = "agency0"
 #the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
 holding_msg_minutes = 30
+psi_api_token = "wedpr_psi_api_token_agency0"
 
     [agency.gateway]
     deploy_ip=["127.0.0.1:2"]
@@ -156,6 +157,7 @@ holding_msg_minutes = 30
 name = "agency1"
 #the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
 holding_msg_minutes = 30
+psi_api_token = "wedpr_psi_api_token_agency1"
 
     [agency.gateway]
     deploy_ip=["127.0.0.1:2"]

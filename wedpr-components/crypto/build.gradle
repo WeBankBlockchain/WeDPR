@@ -5,4 +5,7 @@ plugins {
 dependencies{
     api project(":wedpr-common-utils")
     api ("org.bouncycastle:bcprov-jdk18on:${bcprovVersion}")
+    api ("org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:${bcosSDKVersion}"){
+        exclude group: "org.slf4j"
+    }
 }

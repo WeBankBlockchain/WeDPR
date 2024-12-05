@@ -17,7 +17,8 @@ class WeDPRGatewayConfigGenerator:
 
     def __init__(self, config: WeDPRDeployConfig, output_dir: str):
         self.config = config
-        self.output_dir = output_dir
+        self.output_dir = os.path.join(
+            output_dir, self.config.env_config.deploy_dir)
         self.binary_name = constant.ConfigInfo.ppc_gateway_binary_name
         self.service_type = constant.ServiceInfo.gateway_service_type
 

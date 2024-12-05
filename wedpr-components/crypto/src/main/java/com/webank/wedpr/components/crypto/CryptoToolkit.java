@@ -14,13 +14,18 @@
  */
 package com.webank.wedpr.components.crypto;
 
+import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+
 public class CryptoToolkit {
     private final SymmetricCrypto symmetricCrypto;
     private final HashCrypto hashCrypto;
+    private final CryptoSuite cryptoSuite;
 
-    public CryptoToolkit(SymmetricCrypto symmetricCrypto, HashCrypto hashCrypto) {
+    public CryptoToolkit(
+            SymmetricCrypto symmetricCrypto, HashCrypto hashCrypto, CryptoSuite cryptoSuite) {
         this.symmetricCrypto = symmetricCrypto;
         this.hashCrypto = hashCrypto;
+        this.cryptoSuite = cryptoSuite;
     }
 
     public String encrypt(String plain) throws Exception {
@@ -33,5 +38,13 @@ public class CryptoToolkit {
 
     public String hash(String input) throws Exception {
         return this.hashCrypto.hash(input);
+    }
+
+    public String getHexPublicKey(String hexPrivateKey) {
+        String hexPubKey = cryptoSuite.loadKeyPair(hexPrivateKey).getHexPublicKey();
+        if (hexPubKey.startsWith("04")) {
+            return hexPubKey;
+        }
+        return "04" + hexPubKey;
     }
 }

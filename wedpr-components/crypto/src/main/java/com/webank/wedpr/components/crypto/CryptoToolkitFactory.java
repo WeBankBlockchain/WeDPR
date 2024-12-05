@@ -20,6 +20,8 @@ import com.webank.wedpr.components.crypto.impl.AESCrypto;
 import com.webank.wedpr.components.crypto.impl.HashCryptoImpl;
 import java.security.SecureRandom;
 import java.util.Base64;
+import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.v3.model.CryptoType;
 
 public class CryptoToolkitFactory {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -49,8 +51,17 @@ public class CryptoToolkitFactory {
         return new HashCryptoImpl(algorithmType);
     }
 
+    public static CryptoSuite buildCryptoSuite(int cryptoType) {
+        return new CryptoSuite(cryptoType);
+    }
+
+    // default use sm2 crypto suite
+    public static CryptoSuite buildCryptoSuite() {
+        return new CryptoSuite(CryptoType.SM_TYPE);
+    }
+
     public static CryptoToolkit build() throws Exception {
-        return new CryptoToolkit(buildSymmetricCrypto(), buildHashCrypto());
+        return new CryptoToolkit(buildSymmetricCrypto(), buildHashCrypto(), buildCryptoSuite());
     }
 
     public static String hash(String input) throws Exception {
