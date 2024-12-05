@@ -18,10 +18,11 @@ class ServiceInfo:
     gateway_service_type = "wedpr-gateway"
     wedpr_site_service = "wedpr-site"
     wedpr_pir_service = "wedpr-pir"
+    wedpr_model_service = "wedpr-model"
     wedpr_jupyter_worker_service = "wedpr-jupyter-worker"
     supported_service_type = [node_service_type, gateway_service_type,
                               wedpr_site_service, wedpr_pir_service,
-                              wedpr_jupyter_worker_service]
+                              wedpr_jupyter_worker_service, wedpr_model_service]
 
 
 def get_abs_path(file_path, tpl_abs_path="wedpr_builder/tpl/"):
@@ -54,8 +55,23 @@ class ConfigInfo:
     wedpr_pir_config_path = get_abs_path("pir/conf")
     pir_config_list = ["application-wedpr.properties", "wedpr.properties"]
 
+    wedpr_model_config_path = get_abs_path("model/conf")
+    wedpr_model_config_list = ["application.yml"]
+    wedpr_model_common_dir = "ppc_common"
+    wedpr_model_source_dir = "ppc_model"
+
     wedpr_jupyter_worker_config_path = get_abs_path("worker/conf")
     jupyter_config_list = ["application-wedpr.properties", "wedpr.properties"]
+    # the docker config
+    docker_tpl_path = get_abs_path("docker/")
+    default_docker_work_dir = "/data/home/wedpr/"
+    wedpr_worker_docker_dir = "wedpr-worker"
+    wedpr_pir_docker_dir = "wedpr-pir"
+    wedpr_site_docker_dir = "wedpr-site"
+
+    @staticmethod
+    def get_docker_path(file_path: str):
+        return os.path.join(ConfigInfo.default_docker_work_dir, file_path)
 
 
 class CommandInfo:
@@ -72,6 +88,7 @@ class ConfigProperities:
     USER_JWT_SESSION = "USER_JWT_SESSION_KEY"
     # the mysql configuration
     MYSQL_URL = "MYSQL_URL"
+    SQLALCHEMY_URL = "SQLALCHEMY_URL"
     MYSQL_USER = "MYSQL_USER"
     MYSQL_PASSWORD = "MYSQL_PASSWORD"
     # the blockchain configuration
@@ -92,6 +109,24 @@ class ConfigProperities:
     HDFS_USER = "HDFS_USER"
     HDFS_HOME = "HDFS_HOME"
     HDFS_ENTRYPOINT = "HDFS_ENTRYPOINT"
+    HDFS_WEBFS_ENTRYPOINT = "HDFS_WEBFS_ENTRYPOINT"
     # the hdfs auth configuration
     HDFS_ENABLE_AUTH = "HDFS_ENABLE_AUTH"
     HDFS_AUTH_PRINCIPAL = "HDFS_AUTH_PRINCIPAL"
+    HDFS_AUTH_PASSWORD = "HDFS_AUTH_PASSWORD"
+    HDFS_HOSTNAME_OVERRIDE = "HDFS_HOSTNAME_OVERRIDE"
+    #### the docker related vars ###
+    # specify the docker image desc, include: org/docker_name:version
+    WEDPR_IMAGE_DESC = "WEDPR_IMAGE_DESC"
+    # specify the conf path to mount
+    WEDPR_CONFIG_DIR = "WEDPR_CONFIG_DIR"
+    # specify the mounted docker conf path
+    DOCKER_CONF_PATH = "DOCKER_CONF_PATH"
+    # specify the log path to mount
+    WEDPR_LOG_DIR = "WEDPR_LOG_DIR"
+    # specify the mounted docker log path
+    DOCKER_LOG_PATH = "DOCKER_LOG_PATH"
+    # specify the exposed docker port list
+    WEDPR_DOCKER_EXPORSE_PORT_LIST = "WEDPR_DOCKER_EXPORSE_PORT_LIST"
+    # the created docker name
+    WEDPR_DOCKER_NAME = "WEDPR_DOCKER_NAME"

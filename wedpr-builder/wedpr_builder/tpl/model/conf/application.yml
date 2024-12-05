@@ -1,0 +1,41 @@
+HOST: "0.0.0.0"
+HTTP_PORT: ${WEDPR_SERVER_LISTEN_PORT}
+
+WEDPR_ZONE: "${WEDPR_ZONE}"
+AGENCY_ID: "${WEDPR_AGENCY}"
+
+PUBLIC_KEY_LENGTH: 2048
+
+MAX_MESSAGE_LENGTH_MB: 100
+TASK_TIMEOUT_H: 1800
+
+DB_TYPE: "mysql"
+#SQLALCHEMY_DATABASE_URI: "mysql://root:wedpr@127.0.0.1:3306/wedpr?autocommit=true&charset=utf8mb4"
+SQLALCHEMY_DATABASE_URI: "${SQLALCHEMY_URL}"
+
+# interagency services
+#HDFS_URL: "http://127.0.0.1:50070"
+HDFS_URL: "${HDFS_WEBFS_ENTRYPOINT}"
+STORAGE_TYPE: "HDFS"
+HDFS_USER: "${HDFS_USER}"
+HDFS_HOME: "${HDFS_HOME}"
+HDFS_ENABLE_AUTH: ${HDFS_ENABLE_AUTH}
+# the hdfs auth principal
+#HDFS_AUTH_PRINCIPAL: "root@NODE.DC1.CONSUL"
+HDFS_AUTH_PRINCIPAL: "${HDFS_AUTH_PRINCIPAL}"
+# the auth password
+HDFS_AUTH_PASSWORD: "${HDFS_AUTH_PASSWORD}"
+# the host name override
+HDFS_HOSTNAME_OVERRIDE: "${HDFS_HOSTNAME_OVERRIDE}"
+
+JOB_TEMP_DIR: ".cache/job"
+
+# the transport config
+transport_threadpool_size: 4
+transport_node_id: "${WEDPR_NODE_ID}"
+transport_gateway_targets: "${GATEWAY_TARGET}"
+transport_host_ip: "${WEDPR_TRANSPORT_HOST_IP}"
+transport_listen_port: ${WEDPR_SERVER_LISTEN_PORT}
+
+# the log retriever config
+LOG_PATH: "logs/model/wedpr-model.log"

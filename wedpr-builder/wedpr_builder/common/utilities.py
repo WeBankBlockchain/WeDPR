@@ -155,7 +155,6 @@ def substitute_configurations(config_properities: {}, config_file: str):
         command = "sed -i %s 's/%s/%s/g' %s" % \
                   (option, config_key_var,
                    value, config_file)
-        log_debug(f"* to execute command: {command}")
         (ret, output) = execute_command_and_getoutput(command)
         if ret is False:
             raise Exception(

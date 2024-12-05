@@ -1,12 +1,26 @@
 [env]
+#### define the binary path ###
 # the binary path for ppc-pro-node and ppc-gateway-service
 binary_path = "bin/"
 # the dist path for wedpr-site
 wedpr_site_dist_path = "wedpr-site/dist/"
 # the dist path for wedpr-dir
 wedpr_pir_dist_path = "wedpr-pir/dist/"
+# the wedpr model source path,
+# pls clone from https://github.com/WeBankBlockchain/WeDPR-Component
+wedpr_model_source_path = "WeDPR-Component/python/"
+
 # use docker mode or not
 docker_mode = true
+
+#### define the docker images desc ###
+wedpr_cpp_component_image_desc = "wedpr-cpp-component:latest"
+wedpr_jupyter_worker_image_desc = "wedpr-jupyter-worker:latest"
+wedpr_model_image_desc = "wedpr-model-service:latest"
+wedpr_site_image_desc = "wedpr-site:latest"
+wedpr_pir_image_desc = "wedpr-pir:latest"
+
+
 deploy_dir = "wedpr-example"
 # the wedpr zone(used to distinguish different privacy computing environments)
 zone = "wedpr.zone.example"
@@ -69,6 +83,7 @@ psi_api_token = "wedpr_psi_api_token_agency0"
         home = "/user/wedpr/agency0"
         name_node = "127.0.0.1"
         name_node_port = 9000
+        webfs_port = 50700
         token = ""
         # enable auth or not, default is false
         enable_krb5_auth = false
@@ -82,6 +97,8 @@ psi_api_token = "wedpr_psi_api_token_agency0"
         krb5_conf_path = "conf/krb5.conf"
         # keytab path
         krb5_keytab_path = ""
+        # auth host name override
+        auth_host_name_override = ""
 
     # the agency mysql configuration
     [agency.mysql]
@@ -103,13 +120,17 @@ psi_api_token = "wedpr_psi_api_token_agency0"
         # the pir deploy ip
         deploy_ip=["127.0.0.1:2"]
         # the server start port
-        server_start_port = "27000"
+        server_start_port = "17000"
+    # configuration for wedpr model
+    [agency.model]
+        deploy_ip = ["127.0.0.1:2"]
+        server_start_port = "18000"
 
     # configuration for wedpr worker
     [agency.jupyter_worker]
         deploy_ip = ["127.0.0.1:2"]
         # the server start port
-        server_start_port = "28000"
+        server_start_port = "19000"
 
     # configuration for the wedpr nodes
     [[agency.node]]
@@ -193,6 +214,7 @@ psi_api_token = "wedpr_psi_api_token_agency1"
         home = "/user/wedpr/agency1"
         name_node = "127.0.0.1"
         name_node_port = 9000
+        webfs_port = 50700
         token = ""
         # enable auth or not, default is false
         enable_krb5_auth = false
@@ -204,6 +226,9 @@ psi_api_token = "wedpr_psi_api_token_agency1"
         ccache_path = "/tmp/krb5cc_ppc_node"
         # the krb5 conf path
         krb5_conf_path = "conf/krb5.conf"
+        # auth host name override
+        auth_host_name_override = ""
+
     # the agency mysql configuration
     [agency.mysql]
         host = "127.0.0.1"
@@ -217,20 +242,25 @@ psi_api_token = "wedpr_psi_api_token_agency1"
         # the site deploy ip
         deploy_ip=["127.0.0.1:2"]
         # the server port
-        server_start_port = "16000"
+        server_start_port = "26000"
 
     # configuration for wedpr pir
     [agency.pir]
         # the pir deploy ip
         deploy_ip=["127.0.0.1:2"]
         # the server start port
-        server_start_port = "27100"
+        server_start_port = "27000"
+
+    # configuration for wedpr model
+    [agency.model]
+        deploy_ip = ["127.0.0.1:2"]
+        server_start_port = "28000"
 
     # configuration for wedpr worker
     [agency.jupyter_worker]
         deploy_ip = ["127.0.0.1:2"]
         # the server start port
-        server_start_port = "28100"
+        server_start_port = "29000"
 
     # configuration for the wedpr nodes
     [[agency.node]]

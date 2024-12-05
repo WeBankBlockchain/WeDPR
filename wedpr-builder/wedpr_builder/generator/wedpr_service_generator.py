@@ -77,6 +77,8 @@ class WedprServiceGenerator:
         utilities.mkdir(node_path)
         # copy configuration into the dest path
         command = f"cp -r {service_config.tpl_config_file_path} {node_path}"
+        if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
+            command = f"cp {service_config.tpl_config_file_path}/* {node_path}"
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
             raise Exception(f"copy configuration failed, reason: {output}")
@@ -87,17 +89,22 @@ class WedprServiceGenerator:
         # copy the shell-scripts(start.sh and stop.sh)
         dist_path = self.config.env_config.get_dist_path_by_service_type(
             service_config.service_type)
-        if dist_path is not None:
-            self.__generate_shell_script__(dist_path, node_path)
-            self.__copy_binary__(dist_path, node_path)
+        self.__generate_shell_scripts__(dist_path, node_path)
+        self.__copy_binary__(dist_path, node_path)
         # substitute the configuration
         config_properties = self.get_properties(
             deploy_ip, agency_config, node_index)
         for config_file in service_config.config_file_list:
             config_path = os.path.join(node_path, "conf", config_file)
+            if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
+                config_path = os.path.join(node_path, config_file)
             utilities.substitute_configurations(config_properties, config_path)
 
-    def __generate_shell_script__(self, shell_path, dst_path):
+    @abstractmethod
+    def __generate_shell_scripts__(self, dist_path, dst_path):
+        pass
+
+    def __generate_shell_scripts_impl__(self, shell_path, dst_path):
         # no need to copy the shell script in docker mode
         if self.config.env_config.docker_mode is True:
             utilities.log_info(
@@ -114,12 +121,17 @@ class WedprServiceGenerator:
                             f"hell_path: {shell_path}, "
                             f"dst_path: {dst_path}, reason: {output}")
 
+    @abstractmethod
     def __copy_binary__(self, dist_path, dst_path):
+        pass
+
+    def __copy_java_binary__(self, dist_path, dst_path):
         if self.config.env_config.docker_mode is True:
             utilities.log_info(
                 "* no need to copy the dist/lib, dist/apps for docker-mode!")
+            return
         if os.path.exists(dist_path) is False:
-            raise Excpetion(f"The specified dst_path {dst_path} not exists! "
+            raise Exception(f"The specified dst_path {dst_path} not exists! "
                             f"Please check and replace with a valid path!")
         lib_path = os.path.join(dist_path, "lib")
         if os.path.exists(lib_path) is False:
@@ -163,6 +175,16 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
                  deploy_path: str):
         super().__init__(config, deploy_path)
 
+    def __generate_shell_scripts__(self, dist_path, dst_path):
+        utilities.log_info(
+            f"* generate shell script, dist_path: {dist_path}, dst_path: {dst_path}")
+        self.__generate_shell_scripts_impl__(dist_path, dst_path)
+        utilities.log_info(
+            f"* generate shell script success, dist_path: {dist_path}, dst_path: {dst_path}")
+
+    def __copy_binary__(self, dist_path, dst_path):
+        self.__copy_java_binary__(dist_path, dst_path)
+
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
@@ -173,11 +195,64 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
         return agency_config.site_config
 
 
+class WedprModelServiceGenerator(WedprServiceGenerator):
+    def __init__(self, config: WeDPRDeployConfig, deploy_path: str):
+        super().__init__(config, deploy_path)
+
+    def __copy_binary__(self, dist_path, dst_path):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* no need to copy the wedpr-model source code for docker-mode!")
+            return
+        # check dist_path existence
+        if os.path.exists(dist_path) is False:
+            raise Exception(f"The specified dst_path {dst_path} not exists! "
+                            f"Please check and replace with a valid path!")
+        # check ppc-common
+        src_common_path = os.path.join(
+            dist_path, constant.ConfigInfo.wedpr_model_common_dir)
+        if os.path.exists(src_common_path) is False:
+            raise Exception(f"The specified ppc_common_path {src_common_path} not exists! "
+                            f"Please check and replace with a valid path!")
+        # check ppc-model
+        src_model_path = os.path.join(
+            dist_path, constant.ConfigInfo.wedpr_model_source_dir)
+        if os.path.exists(src_model_path) is False:
+            raise Exception(f"The specified ppc_model_path {src_model_path} not exists! "
+                            f"Please check and replace with a valid path!")
+        # copy ppc-common and ppc-model
+        command = f"cp -r {src_common_path} {dst_path} && cp -r {src_model_path} {dst_path}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(f"* copy source files for wedpr-model, "
+                            f"dist_path: {dist_path}, "
+                            f"dst_path: {dst_path}, reason: {output}")
+
+    def __generate_shell_scripts__(self, dist_path, dst_path):
+        self.__generate_shell_scripts_impl__(
+            os.path.join(dist_path, constant.ConfigInfo.wedpr_model_source_dir, "tools"), dst_path)
+
+    def get_properties(
+            self, deploy_ip: str,
+            agency_config: AgencyConfig,
+            node_index: int) -> {}:
+        return agency_config.get_wedpr_model_properties(deploy_ip, node_index)
+
+    def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
+        return agency_config.model_service_config
+
+
 class WedprPirServiceGenerator(WedprServiceGenerator):
     def __init__(self,
                  config: WeDPRDeployConfig,
                  deploy_path: str):
         super().__init__(config, deploy_path)
+
+    def __copy_binary__(self, dist_path, dst_path):
+        self.__copy_java_binary__(dist_path, dst_path)
+
+    def __generate_shell_scripts__(self, dist_path, dst_path):
+        self.__generate_shell_scripts_impl__(dist_path, dst_path)
 
     def get_properties(
             self, deploy_ip: str,
@@ -188,12 +263,20 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.pir_config
 
+# use docker
+
 
 class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
     def __init__(self,
                  config: WeDPRDeployConfig,
                  deploy_path: str):
         super().__init__(config, deploy_path)
+
+    def __generate_shell_scripts__(self, dist_path, dst_path):
+        return
+
+    def __copy_binary__(self, dist_path, dst_path):
+        return
 
     def get_properties(
             self, deploy_ip: str,

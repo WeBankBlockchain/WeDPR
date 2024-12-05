@@ -9,6 +9,7 @@ from wedpr_builder.config.wedpr_deploy_config import ComponentSwitch
 from wedpr_builder.generator.wedpr_service_generator import WedprSiteServiceGenerator
 from wedpr_builder.generator.wedpr_service_generator import WedprPirServiceGenerator
 from wedpr_builder.generator.wedpr_service_generator import WedprJupyterWorkerServiceGenerator
+from wedpr_builder.generator.wedpr_service_generator import WedprModelServiceGenerator
 from argparse import RawTextHelpFormatter
 import sys
 import toml
@@ -21,7 +22,8 @@ def parse_command():
                 "python3 build_wedpr.py -t wedpr-node\n " \
                 "* generate gateway config:\t python3 build_wedpr.py -t wedpr-gateway\n " \
                 "* generate wedpr-site config:\t python3 build_wedpr.py -t wedpr-site\n " \
-                "* generate wedpr-pir config:\t python3 build_wedpr.py -t wedpr-pir\n " \
+                "* generate wedpr-pir config:\t python3 build_wedpr.py -t wedpr-pir\n" \
+                "* generate wedpr-model service config:\t python3 build_wedpr.py -t wedpr-model\n " \
                 "* generate wedpr-jupyter-worker config:\t python3 build_wedpr.py -t wedpr-jupyter-worker\n " \
                 "* generate gateway config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-gateway -d wedpr-generated\n " \
                 "* generate node config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-node -d wedpr-generated"
@@ -93,6 +95,13 @@ def generate_node_config(args, toml_config):
         config = WeDPRDeployConfig(toml_config, component_switch)
         pir_generator = WedprPirServiceGenerator(config, args.output)
         pir_generator.generate_config()
+    # the model service generator
+    if service_type == constant.ServiceInfo.wedpr_model_service:
+        component_switch = ComponentSwitch(model_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
+        model_service_generator = WedprModelServiceGenerator(
+            config, args.output)
+        model_service_generator.generate_config()
     # the jupyter worker config generator
     if service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
         component_switch = ComponentSwitch(jupyter_must_exists=True)
