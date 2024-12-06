@@ -32,6 +32,14 @@ ENTRYPOINT ["/bin/bash", "/data/home/wedpr/wedpr-pir/start.sh", "true"]
 FROM wedpr-image:latest as wedpr-site
 LABEL maintainer service@webank.com
 
+# install the requirements
+COPY depends/requirements.txt /root/requirements.txt
+# install the requirements
+RUN pip install --no-cache-dir -i https://pypi.mirrors.ustc.edu.cn/simple/ -r root/requirements.txt
+
+# TODO: use the non-test pip after uploaded
+RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr_mpc_generator
+
 RUN mkdir -p /data/home/wedpr
 COPY --from=builder /WeDPR/wedpr-site/dist/ /data/home/wedpr/wedpr-site
 # TODO: fetch the web package from github tag

@@ -1,0 +1,2 @@
+sqlparse~=0.4.1
+sqlvalidator==0.0.17

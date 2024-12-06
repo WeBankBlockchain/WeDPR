@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as wedpr_image
+FROM ubuntu:18.04 as wedpr-image
 
 # install python and java
 RUN apt-get update && apt-get install -y tzdata language-pack-zh* \
