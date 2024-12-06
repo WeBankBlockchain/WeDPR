@@ -9,7 +9,10 @@ class ShellScriptGenerator:
     """
     generate the shell-scripts
     """
-    def generate_ip_shell_scripts(script_output_dir, start_shell_script_name, stop_shell_script_name):
+    def generate_ip_shell_scripts(
+            script_output_dir: str,
+            start_shell_script_name,
+            stop_shell_script_name):
         start_all_path = os.path.join(
             script_output_dir, start_shell_script_name)
         utilities.mkdir(script_output_dir)

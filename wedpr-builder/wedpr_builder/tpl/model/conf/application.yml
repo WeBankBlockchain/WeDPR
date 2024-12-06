@@ -38,4 +38,4 @@ transport_host_ip: "${WEDPR_TRANSPORT_HOST_IP}"
 transport_listen_port: ${WEDPR_SERVER_LISTEN_PORT}
 
 # the log retriever config
-LOG_PATH: "logs/model/wedpr-model.log"
+LOG_PATH: "logs/wedpr-model.log"

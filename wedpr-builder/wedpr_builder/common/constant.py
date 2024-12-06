@@ -18,11 +18,14 @@ class ServiceInfo:
     gateway_service_type = "wedpr-gateway"
     wedpr_site_service = "wedpr-site"
     wedpr_pir_service = "wedpr-pir"
+    wedpr_mpc_service = "wedpr-mpc-service"
     wedpr_model_service = "wedpr-model"
     wedpr_jupyter_worker_service = "wedpr-jupyter-worker"
     supported_service_type = [node_service_type, gateway_service_type,
                               wedpr_site_service, wedpr_pir_service,
-                              wedpr_jupyter_worker_service, wedpr_model_service]
+                              wedpr_jupyter_worker_service,
+                              wedpr_model_service,
+                              wedpr_mpc_service]
 
 
 def get_abs_path(file_path, tpl_abs_path="wedpr_builder/tpl/"):
@@ -68,6 +71,10 @@ class ConfigInfo:
     wedpr_worker_docker_dir = "wedpr-worker"
     wedpr_pir_docker_dir = "wedpr-pir"
     wedpr_site_docker_dir = "wedpr-site"
+
+    wedpr_gateway_service_dir = "wedpr-gateway-service"
+    wedpr_node_service_dir = "wedpr-pro-node-service"
+    wedpr_mpc_service_dir = "wedpr-mpc-service"
     docker_file_list = ["create_docker.sh",
                         "start_docker.sh", "stop_docker.sh"]
 
@@ -132,3 +139,4 @@ class ConfigProperities:
     WEDPR_DOCKER_EXPORSE_PORT_LIST = "WEDPR_DOCKER_EXPORSE_PORT_LIST"
     # the created docker name
     WEDPR_DOCKER_NAME = "WEDPR_DOCKER_NAME"
+    EXTENDED_MOUNT_CONF = "EXTENDED_MOUNT_CONF"

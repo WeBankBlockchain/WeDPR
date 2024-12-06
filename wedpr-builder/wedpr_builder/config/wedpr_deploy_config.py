@@ -13,13 +13,15 @@ class ComponentSwitch:
                  site_must_exists: bool = False,
                  pir_must_exists: bool = False,
                  jupyter_must_exists: bool = False,
-                 model_must_exists: bool = False):
+                 model_must_exists: bool = False,
+                 mpc_service_must_exists: bool = False):
         self.node_must_exists = node_must_exists
         self.gateway_must_exists = gateway_must_exists
         self.site_must_exists = site_must_exists
         self.pir_must_exists = pir_must_exists
         self.jupyter_must_exists = jupyter_must_exists
         self.model_must_exists = model_must_exists
+        self.mpc_service_must_exists = mpc_service_must_exists
 
 
 class PeerInfo:
@@ -50,7 +52,7 @@ class EnvConfig:
             self.config, self.section_name, "deploy_dir", None, True)
         # zone
         self.zone = utilities.get_value(
-            self.config, self.section_name, "zone", None, True)
+            self.config, self.section_name, "zone", "default", True)
         # wedpr_site_dist_path
         self.wedpr_site_dist_path = utilities.get_value(
             self.config, self.section_name,
@@ -70,18 +72,31 @@ class EnvConfig:
             self.config, self.section_name, "wedpr_jupyter_worker_image_desc",
             None, self.component_switch.jupyter_must_exists)
         # the cpp component image desc
-        self.wedpr_cpp_component_image_desc = utilities.get_value(
-            self.config, self.section_name, "wedpr_cpp_component_image_desc", None,
-            (self.component_switch.gateway_must_exists or self.component_switch.node_must_exists))
+        self.wedpr_gateway_service_image_desc = utilities.get_value(
+            self.config, self.section_name, "wedpr_gateway_service_image_desc", None,
+            self.component_switch.gateway_must_exists and self.docker_mode is True)
+        # the node service image desc
+        self.wedpr_node_service_image_desc = utilities.get_value(
+            self.config, self.section_name,
+            "wedpr_node_service_image_desc", None,
+            self.component_switch.node_must_exists and self.docker_mode is True)
+        # the mpc service image desc
+        self.wedpr_mpc_service_image_desc = utilities.get_value(
+            self.config, self.section_name,
+            "wedpr_mpc_service_image_desc", None,
+            self.docker_mode is True and self.component_switch.mpc_service_must_exists)
         # the model image desc
         self.wedpr_model_image_desc = utilities.get_value(
-            self.config, self.section_name, "wedpr_model_image_desc", None, self.component_switch.model_must_exists)
+            self.config, self.section_name, "wedpr_model_image_desc", None,
+            self.component_switch.model_must_exists)
         # the pir image
         self.wedpr_pir_image_desc = utilities.get_value(
-            self.config, self.section_name, "wedpr_pir_image_desc", None, self.component_switch.pir_must_exists)
+            self.config, self.section_name, "wedpr_pir_image_desc", None,
+            self.component_switch.pir_must_exists)
         # the site image
         self.wedpr_site_image_desc = utilities.get_value(
-            self.config, self.section_name, "wedpr_site_image_desc", None, self.component_switch.site_must_exists)
+            self.config, self.section_name, "wedpr_site_image_desc", None,
+            self.component_switch.site_must_exists)
 
     # Note: jupyter only use docker mode
     def get_dist_path_by_service_type(self, service_type: str) -> str:
@@ -102,9 +117,12 @@ class EnvConfig:
             return self.wedpr_pir_image_desc
         if service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
             return self.wedpr_jupyter_worker_image_desc
-        if service_type == constant.ServiceInfo.gateway_service_type or \
-                service_type == constant.ServiceInfo.node_service_type:
-            return self.wedpr_cpp_component_image_desc
+        if service_type == constant.ServiceInfo.gateway_service_type:
+            return self.wedpr_gateway_service_image_desc
+        if service_type == constant.ServiceInfo.node_service_type:
+            return self.wedpr_node_service_image_desc
+        if service_type == constant.ServiceInfo.wedpr_mpc_service:
+            return self.wedpr_mpc_service_image_desc
         return None
 
     def __repr__(self):
@@ -162,9 +180,13 @@ class GatewayConfig:
     the gateway config
     """
 
-    def __init__(self, agency_name: str, holding_msg_minutes: int,
+    def __init__(self, agency_name: str,
+                 env_config: EnvConfig,
+                 holding_msg_minutes: int,
                  config, config_section: str, must_exist: bool):
         self.config = config
+        self.service_type = constant.ServiceInfo.gateway_service_type
+        self.env_config = env_config
         self.config_section = config_section
         self.holding_msg_minutes = holding_msg_minutes
         self.agency_name = agency_name
@@ -350,7 +372,7 @@ class ServiceConfig:
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
         # set the docker name
-        docker_name = f"{self.service_type}-node-{node_index}"
+        docker_name = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props
@@ -494,10 +516,14 @@ class NodeConfig:
     the ppc-node config
     """
 
-    def __init__(self, agency_name: str, holding_msg_minutes: int, gateway_targets,
+    def __init__(self, agency_name: str,
+                 env_config: EnvConfig,
+                 holding_msg_minutes: int, gateway_targets,
                  hdfs_storage_config: HDFSStorageConfig, config, must_exist: bool):
         self.config = config
         self.section_name = "[[agency.node]]."
+        self.service_type = constant.ServiceInfo.node_service_type
+        self.env_config = env_config
         self.holding_msg_minutes = holding_msg_minutes
         # the hdfs config
         self.hdfs_storage_config = hdfs_storage_config
@@ -599,7 +625,8 @@ class AgencyConfig:
         self.gateway_config = None
         if gateway_config_object is not None:
             self.gateway_config = GatewayConfig(
-                self.agency_name, self.holding_msg_minutes, gateway_config_object,
+                self.agency_name, self.env_config,
+                self.holding_msg_minutes, gateway_config_object,
                 gateway_config_section_name, self.component_switch.gateway_must_exists)
         utilities.log_debug("load the gateway config success")
 
@@ -657,6 +684,7 @@ class AgencyConfig:
         for node_object in node_config_list:
             node_config = NodeConfig(
                 agency_name=self.agency_name,
+                env_config=self.env_config,
                 holding_msg_minutes=self.holding_msg_minutes,
                 hdfs_storage_config=self.hdfs_storage_config,
                 config=node_object,
@@ -711,6 +739,8 @@ class AgencyConfig:
             {constant.ConfigProperities.WEDPR_AGENCY: self.agency_name})
         props.update(
             {constant.ConfigProperities.PSI_API_TOKEN: self.psi_api_token})
+        # EXTENDED_MOUNT_CONF default is empty string
+        props.update({constant.ConfigProperities.EXTENDED_MOUNT_CONF: ""})
         return props
 
     def get_wedpr_model_properties(self, deploy_ip: str, node_index: int) -> {}:
@@ -725,13 +755,67 @@ class AgencyConfig:
         props.update(self.model_service_config.to_properties(
             deploy_ip, node_index))
         # the config mount information
-        props.update({constant.ConfigProperities.WEDPR_CONFIG_DIR: ""})
         props.update(
-            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path("model")})
+            {constant.ConfigProperities.WEDPR_CONFIG_DIR: "application.yml"})
+        props.update(
+            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path("model/application.yml")})
+        # the extended mount info
+        local_path = "${SHELL_FOLDER}/logging.conf"
+        docker_path = constant.ConfigInfo.get_docker_path("model/logging.conf")
+        extended_mount_info = f" -v {local_path}:{docker_path} "
+        local_path = "${SHELL_FOLDER}/wedpr_sdk_log_config.ini"
+        docker_path = constant.ConfigInfo.get_docker_path(
+            "model/wedpr_sdk_log_config.ini")
+        extended_mount_info = f"{extended_mount_info} -v {local_path}:{docker_path} "
+        props.update(
+            {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_info})
         # set the log mount information
         props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
         props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
                      constant.ConfigInfo.get_docker_path("model/logs")})
+        return props
+
+    @staticmethod
+    def generate_cpp_component_docker_properties(
+            prefix_path, zone_name: str, service_type: str, env_config,
+            exposed_port_list: str, node_index: int):
+        props = {}
+        # the config mount info
+        props.update(
+            {constant.ConfigProperities.WEDPR_CONFIG_DIR: "config.ini"})
+        path = constant.ConfigInfo.get_docker_path(f"{prefix_path}/config.ini")
+        props.update(
+            {constant.ConfigProperities.DOCKER_CONF_PATH: path})
+        # set the extended mont config
+        local_mount_dir = '${SHELL_FOLDER}/conf'
+        remote_mount_dir = constant.ConfigInfo.get_docker_path(
+            f"{prefix_path}/conf")
+        extended_mount_conf = f" -v {local_mount_dir}:{remote_mount_dir} "
+        # nodes.json for gateway service
+        if service_type == constant.ServiceInfo.gateway_service_type:
+            node_connection_file = "nodes.json"
+            local_mount_dir = '${SHELL_FOLDER}/%s' % node_connection_file
+            remote_mount_dir = constant.ConfigInfo.get_docker_path(
+                f"{prefix_path}/{node_connection_file}")
+            extended_mount_conf = f"{extended_mount_conf} -v {local_mount_dir}:{remote_mount_dir} "
+        props.update(
+            {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_conf})
+        # specify the conf path to mount
+        props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
+        props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
+                      constant.ConfigInfo.get_docker_path(f"{prefix_path}/logs")})
+        # set the image desc for docker mode
+        image_desc = env_config.get_image_desc_by_service_name(service_type)
+        if image_desc is not None:
+            props.update(
+                {constant.ConfigProperities.WEDPR_IMAGE_DESC: image_desc})
+        # set the exposed port
+        props.update(
+            {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
+        # set the docker name
+        docker_name = f"{service_type}-{zone_name}-node{node_index}"
+        props.update(
+            {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props
 
     def __generate_java_service_docker_properties__(self, prefix_path) -> {}:

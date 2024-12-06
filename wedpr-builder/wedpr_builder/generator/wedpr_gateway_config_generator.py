@@ -8,6 +8,8 @@ from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 from wedpr_builder.generator.binary_generator import BinaryGenerator
 from wedpr_builder.generator.cert_generator import CertGenerator
 from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
+from wedpr_builder.config.wedpr_deploy_config import AgencyConfig
+from wedpr_builder.config.wedpr_deploy_config import GatewayConfig
 
 
 class WeDPRGatewayConfigGenerator:
@@ -47,15 +49,71 @@ class WeDPRGatewayConfigGenerator:
             "* generate gateway config success, deploy_dir: %s" % self.config.env_config.deploy_dir)
         return True
 
-    def __generate_single_gateway_config__(self, gateway_config, connection_config, connection_config_path_list):
+    def __copy_binary__(self, agency_name, ip):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* No need to copy binary for enable docker mode")
+            return True
+        # generate the binary
+        binary_path = os.path.join(
+            self.config.env_config.binary_path, self.binary_name)
+        dst_binary_path = os.path.join(
+            self.__generate_ip_shell_scripts_output_path__(
+                agency_name, ip),
+            self.binary_name)
+        return BinaryGenerator.generate_binary(
+            binary_path, dst_binary_path)
+
+    def __generate_shell_scripts__(self, agency_name, ip, node_name):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* No need to copy the shell scripts for enable docker mode")
+            return True
+        return ShellScriptGenerator.generate_node_shell_scripts(
+            self.__generate_node_path__(
+                agency_name, ip, node_name), self.binary_name)
+
+    def __generate_docker_config__(
+            self, gateway_config: GatewayConfig,
+            node_path, exposed_port_list, node_index):
+        if self.config.env_config.docker_mode is False:
+            return True
+        # copy the docker files
+        command = f"cp {constant.ConfigInfo.docker_tpl_path}/*.sh {node_path}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(f"Copy docker tpl file  from "
+                            f"{constant.ConfigInfo.docker_tpl_path} to {node_path} "
+                            f"failed, reason: {output}")
+        props = AgencyConfig.generate_cpp_component_docker_properties(
+            constant.ConfigInfo.wedpr_gateway_service_dir,
+            self.config.env_config.zone,
+            gateway_config.service_type, self.config.env_config,
+            exposed_port_list, node_index)
+        # substitute
+        for file in constant.ConfigInfo.docker_file_list:
+            utilities.substitute_configurations(
+                props, os.path.join(node_path, file))
+        return True
+
+    def __generate_ip_shell_scripts__(self, agency_name, ip):
+        if self.config.env_config.docker_mode is True:
+            return True
+        return ShellScriptGenerator.generate_ip_shell_scripts(
+            self.__generate_ip_shell_scripts_output_path__(
+                agency_name, ip), "start_all.sh", "stop_all.sh")
+
+    def __generate_single_gateway_config__(
+            self, gateway_config, connection_config,
+            connection_config_path_list):
         # load the config from tpl_config_path
         utilities.log_info("* generate config for ppc-gateway")
         for ip_str in gateway_config.deploy_ip:
             ip_array = ip_str.split(":")
             ip = ip_array[0]
             # generate the shell scripts for the given ip
-            ret = ShellScriptGenerator.generate_ip_shell_scripts(
-                self.__generate_ip_shell_scripts_output_path__(gateway_config.agency_name, ip), "start_all.sh", "stop_all.sh")
+            ret = self.__generate_ip_shell_scripts__(
+                gateway_config.agency_name, ip)
             if ret is False:
                 return False
             node_count = 1
@@ -78,19 +136,14 @@ class WeDPRGatewayConfigGenerator:
                 self.__generate_gateway_config_content__(
                     gateway_config, config_content, listen_port, grpc_listen_port)
                 # generate the binary
-                binary_path = os.path.join(
-                    self.config.env_config.binary_path, self.binary_name)
-                dst_binary_path = os.path.join(
-                    self.__generate_ip_shell_scripts_output_path__(
-                        gateway_config.agency_name, ip),
-                    self.binary_name)
-                ret = BinaryGenerator.generate_binary(
-                    binary_path, dst_binary_path)
+                ret = self.__copy_binary__(gateway_config.agency_name, ip)
                 if ret is False:
                     return False
                 # generate the ini config
+                node_path = self.__generate_node_path__(
+                    gateway_config.agency_name, ip, node_name)
                 ini_config_output_path = os.path.join(
-                    self.__generate_node_path__(gateway_config.agency_name, ip, node_name), constant.ConfigInfo.config_ini_file)
+                    node_path, constant.ConfigInfo.config_ini_file)
                 ret = utilities.store_config(
                     config_content, "ini", ini_config_output_path, "config.ini")
                 if ret is False:
@@ -104,10 +157,14 @@ class WeDPRGatewayConfigGenerator:
                     utilities.log_error(
                         "* generate config for ppc-gateway failed for generate the node config failed")
                     return False
-                ret = ShellScriptGenerator.generate_node_shell_scripts(self.__generate_node_path__(
-                    gateway_config.agency_name, ip, node_name), self.binary_name)
+                ret = self.__generate_shell_scripts__(
+                    gateway_config.agency_name, ip, node_name)
                 if ret is False:
                     return False
+                # try to generate docker config in the docker mode
+                exposed_port = f"-p {listen_port}:{listen_port} -p {grpc_listen_port}:{grpc_listen_port}"
+                self.__generate_docker_config__(
+                    gateway_config, node_path, exposed_port, node_index)
                 utilities.print_badge("* generate config for ppc-gateway%s success" %
                                       (node_name))
         utilities.log_info("* generate config for ppc-gateway success")
@@ -127,7 +184,7 @@ class WeDPRGatewayConfigGenerator:
     def __generate_ca_cert_path__(self):
         return os.path.join(self.output_dir, self.service_type, "ca")
 
-    def __generate_node_path__(self, agency_name, ip, node_name):
+    def __generate_node_path__(self, agency_name: str, ip, node_name):
         return os.path.join(self.output_dir, agency_name, ip, self.service_type, node_name)
 
     def __generate_conf_output_path__(self, agency_name, ip, node_name):

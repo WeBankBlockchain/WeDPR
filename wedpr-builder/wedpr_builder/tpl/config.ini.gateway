@@ -42,7 +42,6 @@
     ;format=%Severity%|ppcs-gateway|system-id|%TimeStamp%|%ThreadName%-%ThreadID%|%Message%
     format=%Severity%|%TimeStamp%|%Message%
     enable_rotate_by_hour=true
-    log_name_pattern=ppcs-gateway.log
     ; Y,m,d,H,M,S are supported, N is the sequence number log_%Y%m%d.%H%M%S.%N.log
     rotate_name_pattern=log_%Y%m%d.%H%M.log
     ; if archive_path is empty, the archive function will be disabled

@@ -9,6 +9,7 @@ from wedpr_builder.generator.cert_generator import CertGenerator
 from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
 from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 from wedpr_builder.config.wedpr_deploy_config import AgencyConfig
+from wedpr_builder.config.wedpr_deploy_config import NodeConfig
 
 
 class WeDPRNodeConfigGenerator:
@@ -22,6 +23,13 @@ class WeDPRNodeConfigGenerator:
             output_dir, self.config.env_config.deploy_dir)
         self.binary_name = constant.ConfigInfo.ppc_node_binary_name
         self.service_type = constant.ServiceInfo.node_service_type
+
+    def __generate_ip_shell_scripts__(self, agency_name, ip):
+        if self.config.env_config.docker_mode is True:
+            return True
+        return ShellScriptGenerator.generate_ip_shell_scripts(
+            self.__generate_ip_output_path__(agency_name, ip),
+            "start_all.sh", "stop_all.sh")
 
     def generate_node_config(self):
         utilities.print_badge("* generate_node_config")
@@ -40,8 +48,8 @@ class WeDPRNodeConfigGenerator:
                     ip_array = ip_str.split(":")
                     ip = ip_array[0]
                     # generate the shell scripts for the given ip
-                    ret = ShellScriptGenerator.generate_ip_shell_scripts(
-                        self.__generate_ip_output_path__(node_config.agency_name, ip), "start_all.sh", "stop_all.sh")
+                    ret = self.__generate_ip_shell_scripts__(
+                        node_config.agency_name, ip)
                     node_count = 1
                     if len(ip_array) >= 2:
                         node_count = int(ip_array[1])
@@ -54,19 +62,59 @@ class WeDPRNodeConfigGenerator:
         utilities.print_badge("* generate_node_config success")
         return True
 
-    def __generate_single_node_config__(
-            self, agency_config: AgencyConfig,
-            node_config, ip, node_name, agency_name, node_index):
-        utilities.print_badge("* generate node config for %s, ip: %s, agency: %s" %
-                              (node_name, ip, agency_name))
+    def __copy_binary__(self, agency_name, ip):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* No need to copy binary for enable docker mode")
+            return True
         # copy the binary
         binary_path = os.path.join(
             self.config.env_config.binary_path, self.binary_name)
         dst_binary_path = os.path.join(
             self.__generate_ip_output_path__(agency_name, ip), self.binary_name)
-        ret = BinaryGenerator.generate_binary(binary_path, dst_binary_path)
+        return BinaryGenerator.generate_binary(binary_path, dst_binary_path)
+
+    def __generate_node_shell_scripts__(self, agency_name, ip, node_name):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* No need to copy shell scripts for enable docker mode")
+            return True
+        return ShellScriptGenerator.generate_node_shell_scripts(
+            self.__generate_node_path__(agency_name, ip, node_name), self.binary_name)
+
+    def __generate_docker_config__(
+            self, node_path,
+            node_config: NodeConfig,
+            exposed_port_list,
+            node_index):
+        if self.config.env_config.docker_mode is False:
+            return True
+        # copy the docker files
+        command = f"cp {constant.ConfigInfo.docker_tpl_path}/*.sh {node_path}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
-            return False
+            raise Exception(f"Copy docker tpl file  from "
+                            f"{constant.ConfigInfo.docker_tpl_path} to {node_path} "
+                            f"failed, reason: {output}")
+        props = AgencyConfig.generate_cpp_component_docker_properties(
+            constant.ConfigInfo.wedpr_node_service_dir,
+            self.config.env_config.zone,
+            node_config.service_type, self.config.env_config,
+            exposed_port_list, node_index)
+        # substitute
+        for file in constant.ConfigInfo.docker_file_list:
+            utilities.substitute_configurations(
+                props, os.path.join(node_path, file))
+        return True
+
+    def __generate_single_node_config__(
+            self, agency_config: AgencyConfig,
+            node_config, ip, node_name, agency_name, node_index):
+        utilities.print_badge("* generate node config for %s, ip: %s, agency: %s" %
+                              (node_name, ip, agency_name))
+        ret = self.__copy_binary__(agency_name, ip)
+        if ret is False:
+            return ret
         # generate the node config
         node_path = self.__generate_node_path__(
             agency_name, ip, node_name)
@@ -88,10 +136,16 @@ class WeDPRNodeConfigGenerator:
             utilities.log_error("* generate node config, ip: %s failed for generate rpc cert failed" %
                                 (ip))
             return False
-        ret = ShellScriptGenerator.generate_node_shell_scripts(
-            self.__generate_node_path__(agency_name, ip, node_name), self.binary_name)
+        ret = self.__generate_node_shell_scripts__(agency_name, ip, node_name)
         if ret is False:
-            return False
+            return
+        # generate the docker config
+        rpc_listen_port = node_config.rpc_config.listen_port + node_index
+        transport_listen_port = node_config.grpc_listen_port + node_index
+        exposed_port_list = f" -p {rpc_listen_port}:{rpc_listen_port} " \
+                            f"-p {transport_listen_port}:{transport_listen_port}"
+        self.__generate_docker_config__(
+            node_path, node_config, exposed_port_list, node_index)
         utilities.print_badge("* generate node config %s, ip: %s.%s success" %
                               (node_name, agency_name, ip))
         return True

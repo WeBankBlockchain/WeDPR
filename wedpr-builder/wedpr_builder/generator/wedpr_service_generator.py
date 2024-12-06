@@ -68,7 +68,7 @@ class WedprServiceGenerator:
         node_name = f"{service_config.service_type}-node{node_index}"
         node_path = self.__get_deploy_path__(
             agency_name, deploy_ip, node_name, service_config.service_type)
-        utilities.print_badge(f"* generate wedpr-site config, "
+        utilities.print_badge(f"* generate {service_config.service_type} config, "
                               f"deploy_ip: {deploy_ip}, "
                               f"node_index: {node_index}, "
                               f"node_path: {node_path}")
