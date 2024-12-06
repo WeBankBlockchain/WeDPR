@@ -313,7 +313,7 @@ class ServiceConfig:
         props = {}
         start_port = self.server_start_port + 2 * node_index
         # nodeid
-        node_id = f"{self.service_type}_{self.env_config.zone}_node{node_index}"
+        node_id = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
         # gateway target
         props.update(
@@ -339,10 +339,18 @@ class ServiceConfig:
                 {constant.ConfigProperities.WEDPR_IMAGE_DESC: image_desc})
         # set the exposed port
         exposed_port_list = f"-p {start_port}:{start_port} -p {start_port + 1}:{start_port + 1}"
+        # default expose 20 ports for jupyter use
+        # reserver 100 ports for jupyter use
+        jupyter_start_port = start_port + 100
+        default_jupyter_max_num = 20
+        if self.service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
+            start_port = jupyter_start_port + default_jupyter_max_num * node_index
+            end_port = start_port + default_jupyter_max_num
+            exposed_port_list = f"{exposed_port_list} -p {start_port}-{end_port}:{start_port}-{end_port}"
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
         # set the docker name
-        docker_name = f"{self.service_type}_node_{node_index}"
+        docker_name = f"{self.service_type}-node-{node_index}"
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props
@@ -719,22 +727,23 @@ class AgencyConfig:
         # the config mount information
         props.update({constant.ConfigProperities.WEDPR_CONFIG_DIR: ""})
         props.update(
-            {constant.ConfigProperities.DOCKER_LOG_PATH: constant.ConfigInfo.get_docker_path("model")})
+            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path("model")})
         # set the log mount information
-        props.update({constant.ConfigProperities.WEDPR_LOG_DIR, "logs"})
-        props.update({constant.ConfigProperities.DOCKER_LOG_PATH,
+        props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
+        props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
                      constant.ConfigInfo.get_docker_path("model/logs")})
         return props
 
-    def __generate_java_service_docker_properties(prefix_path, self) -> {}:
+    def __generate_java_service_docker_properties__(self, prefix_path) -> {}:
         props = {}
         # the config mount info
         props.update({constant.ConfigProperities.WEDPR_CONFIG_DIR: "conf"})
+        path = constant.ConfigInfo.get_docker_path(f"{prefix_path}/conf")
         props.update(
-            {constant.ConfigProperities.DOCKER_LOG_PATH: constant.ConfigInfo.get_docker_path(f"{prefix_path}/conf")})
+            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path(f"{prefix_path}/conf")})
         # specify the conf path to mount
-        props.update({constant.ConfigProperities.WEDPR_LOG_DIR, "logs"})
-        props.update({constant.ConfigProperities.DOCKER_LOG_PATH,
+        props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
+        props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
                      constant.ConfigInfo.get_docker_path(f"{prefix_path}/logs")})
         return props
 
@@ -757,7 +766,7 @@ class AgencyConfig:
         props.update(self.site_config.to_properties(deploy_ip, node_index))
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
-        props.update(self.__generate_java_service_docker_properties(
+        props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_site_docker_dir))
         return props
 
@@ -773,7 +782,7 @@ class AgencyConfig:
         # the service config
         props.update(self.jupyter_worker_config.to_properties(
             deploy_ip, node_index))
-        props.update(self.__generate_java_service_docker_properties(
+        props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_worker_docker_dir))
         return props
 
@@ -792,7 +801,7 @@ class AgencyConfig:
         props.update(self.pir_config.to_properties(deploy_ip, node_index))
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
-        props.update(self.__generate_java_service_docker_properties(
+        props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_pir_docker_dir))
         return props
 

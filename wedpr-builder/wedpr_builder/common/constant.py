@@ -68,6 +68,8 @@ class ConfigInfo:
     wedpr_worker_docker_dir = "wedpr-worker"
     wedpr_pir_docker_dir = "wedpr-pir"
     wedpr_site_docker_dir = "wedpr-site"
+    docker_file_list = ["create_docker.sh",
+                        "start_docker.sh", "stop_docker.sh"]
 
     @staticmethod
     def get_docker_path(file_path: str):

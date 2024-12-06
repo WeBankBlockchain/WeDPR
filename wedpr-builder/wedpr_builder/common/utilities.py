@@ -152,9 +152,10 @@ def substitute_configurations(config_properities: {}, config_file: str):
             value = config_value.replace("/", "\/")
             value = value.replace("&", '\&')
         config_key_var = '${%s}' % config_key
-        command = "sed -i %s 's/%s/%s/g' %s" % \
+        command = "sed -i %s 's/%s/%s/g' %s && rm -rf %s.bkp" % \
                   (option, config_key_var,
-                   value, config_file)
+                   value, config_file, config_file)
+
         (ret, output) = execute_command_and_getoutput(command)
         if ret is False:
             raise Exception(

@@ -7,6 +7,7 @@ from wedpr_builder.config.wedpr_deploy_config import AgencyConfig
 from wedpr_builder.config.wedpr_deploy_config import ServiceConfig
 from wedpr_builder.common import utilities
 from wedpr_builder.common import constant
+from wedpr_builder.generator.docker_generator import DockerGenerator
 
 
 class WedprServiceGenerator:
@@ -37,7 +38,8 @@ class WedprServiceGenerator:
     def __generate_service_config__(
             self, agency_config: AgencyConfig,
             service_config: ServiceConfig):
-        utilities.print_badge(f"* generate wedpr-site config, deploy_dir: "
+        utilities.print_badge(f"* generate {service_config.service_type} config, "
+                              f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
                               f"service_config: {service_config}")
         for ip_str in service_config.deploy_ip_list:
@@ -52,7 +54,8 @@ class WedprServiceGenerator:
                     service_config=service_config,
                     agency_name=service_config.agency,
                     deploy_ip=ip, node_index=i)
-        utilities.print_badge(f"* generate wedpr-site config success, deploy_dir: "
+        utilities.print_badge(f"* generate {service_config.service_type} config success, "
+                              f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
                               f"service_type: {service_config.service_type}")
 
@@ -94,11 +97,34 @@ class WedprServiceGenerator:
         # substitute the configuration
         config_properties = self.get_properties(
             deploy_ip, agency_config, node_index)
+        # the docker mode case
+        self.__generate_docker_scripts__(
+            node_path, config_properties, service_config)
         for config_file in service_config.config_file_list:
             config_path = os.path.join(node_path, "conf", config_file)
             if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
                 config_path = os.path.join(node_path, config_file)
             utilities.substitute_configurations(config_properties, config_path)
+
+    def __generate_docker_scripts__(
+            self, node_path: str,
+            config_props: {},
+            service_config: ServiceConfig):
+        # Note: jupyter only support docker mode
+        if self.config.env_config.docker_mode is False \
+                and service_config.service_type != \
+                constant.ServiceInfo.wedpr_jupyter_worker_service:
+            return
+        self.__generate_docker_scripts_impl__(node_path, config_props)
+
+    def __generate_docker_scripts_impl__(self, node_path, config_props: dict):
+        utilities.log_info(
+            f"* generate docker scripts, node_path: {node_path}")
+        docker_generater = DockerGenerator(node_path,
+                                           constant.ConfigInfo.docker_tpl_path)
+        docker_generater.generate_config(config_props)
+        utilities.log_info(
+            f"* generate docker scripts success, node_path: {node_path}")
 
     @abstractmethod
     def __generate_shell_scripts__(self, dist_path, dst_path):

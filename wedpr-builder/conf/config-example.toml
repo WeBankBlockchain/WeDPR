@@ -1,14 +1,14 @@
 [env]
 #### define the binary path ###
 # the binary path for ppc-pro-node and ppc-gateway-service
-binary_path = "bin/"
+binary_path = "/data/home/wedpr/WeDPR-Component/cpp/build/bin"
 # the dist path for wedpr-site
-wedpr_site_dist_path = "wedpr-site/dist/"
+wedpr_site_dist_path = "/data/home/wedpr/WeDPR/wedpr-site/dist/"
 # the dist path for wedpr-dir
-wedpr_pir_dist_path = "wedpr-pir/dist/"
+wedpr_pir_dist_path = "/data/home/wedpr/WeDPR/wedpr-pir/dist/"
 # the wedpr model source path,
 # pls clone from https://github.com/WeBankBlockchain/WeDPR-Component
-wedpr_model_source_path = "WeDPR-Component/python/"
+wedpr_model_source_path = "/data/home/wedpr/WeDPR-Component/python/"
 
 # use docker mode or not
 docker_mode = true
@@ -128,7 +128,7 @@ psi_api_token = "wedpr_psi_api_token_agency0"
 
     # configuration for wedpr worker
     [agency.jupyter_worker]
-        deploy_ip = ["127.0.0.1:2"]
+        deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "19000"
 
@@ -258,7 +258,7 @@ psi_api_token = "wedpr_psi_api_token_agency1"
 
     # configuration for wedpr worker
     [agency.jupyter_worker]
-        deploy_ip = ["127.0.0.1:2"]
+        deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "29000"
 
