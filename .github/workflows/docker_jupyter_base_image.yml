@@ -31,10 +31,10 @@ jobs:
       - name: Build and Push wedpr-jupyter-image images
         run: |
           echo "* Manual build wedpr-jupyter-image image, docker version: ${{ github.event.inputs.tags }}"
-          DOCKER_TAG="wedpr-jupyter-image:${{ github.event.inputs.tags }}"
+          DOCKER_TAG="fiscoorg/wedpr-jupyter-image:${{ github.event.inputs.tags }}"
           echo "* Begin to build ${DOCKER_TAG}"
-          cd WeDPR/docker-files/base
-          docker build docker build -t ${DOCKER_TAG} .
+          cd docker-files/base
+          docker build -t ${DOCKER_TAG} .
           echo "* Build ${DOCKER_TAG} success"
           docker push ${DOCKER_TAG}
           echo "* Push ${DOCKER_TAG} success"

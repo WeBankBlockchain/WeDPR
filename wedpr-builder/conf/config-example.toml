@@ -14,13 +14,13 @@ wedpr_model_source_path = "/data/home/wedpr/WeDPR-Component/python/"
 docker_mode = true
 
 #### define the docker images desc ###
-wedpr_gateway_service_image_desc = "wedpr-gateway-service:latest"
-wedpr_node_service_image_desc = "wedpr-pro-node-service:latest"
-wedpr_mpc_service_image_desc = "wedpr-mpc-service:latest"
-wedpr_jupyter_worker_image_desc = "wedpr-jupyter-worker:latest"
-wedpr_model_image_desc = "wedpr-model-service:latest"
-wedpr_site_image_desc = "wedpr-site:latest"
-wedpr_pir_image_desc = "wedpr-pir:latest"
+wedpr_gateway_service_image_desc = "fiscoorg/wedpr-gateway-service:latest"
+wedpr_node_service_image_desc = "fiscoorg/wedpr-pro-node-service:latest"
+wedpr_mpc_service_image_desc = "fiscoorg/wedpr-mpc-service:latest"
+wedpr_jupyter_worker_image_desc = "fiscoorg/wedpr-jupyter-worker:latest"
+wedpr_model_image_desc = "fiscoorg/wedpr-model-service:latest"
+wedpr_site_image_desc = "fiscoorg/wedpr-site:latest"
+wedpr_pir_image_desc = "fiscoorg/wedpr-pir:latest"
 
 
 deploy_dir = "wedpr-example"
