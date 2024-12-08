@@ -13,6 +13,8 @@ on:
       - "python/**"
       - "Changelog.md"
       - "README.md"
+    types:
+      - closed
   release:
     types: [prereleased]
     
@@ -28,7 +30,7 @@ env:
 
 jobs:
   build_docker:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
