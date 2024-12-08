@@ -1,0 +1,81 @@
+name: WeDPR docker ci
+on:
+  push:
+    paths-ignore:
+      - "docs/**"
+      - "Changelog.md"
+      - "README.md"
+    tags:
+      - 'v3.*.*'
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "Changelog.md"
+      - "README.md"
+  release:
+    types: [prereleased]
+    
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUST_BACKTRACE: 1
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
+  ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
+
+jobs:
+  build_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get branch name
+        uses: nelonoel/branch-name@v1.0.1
+      - name: Fetch tag
+        run: |
+          git fetch --tags --force
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_FISCOPR_USER }}
+          password: ${{ secrets.DOCKER_FISCOPR_TOKEN }}
+      - name: Get git tag
+        uses: little-core-labs/get-git-tag@v3.0.1
+        id: tag_data
+        with:
+          tagRegex: (.*)  # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
+          tagRegexGroup: 1 # Optional. Default is 1.
+      # the wedpr-jupyter-worker image
+      - name: Build and Push wedpr-jupyter-worker images
+        run: |
+          [[ ${{github.ref}} == */tags/* ]] && JUPYTER_DOCKER_TAG="${GIT_TAG_NAME}" || JUPYTER_DOCKER_TAG="${BRANCH_NAME}"
+          JUPYTER_DOCKER_TAG="fiscoorg/wedpr-jupyter-worker:${JUPYTER_DOCKER_TAG}"
+          echo "* Begin to build wedpr-jupyter-worker docker: ${JUPYTER_DOCKER_TAG}"
+          cd WeDPR/docker-files/site
+          docker build --target wedpr-jupyter-worker -t ${JUPYTER_DOCKER_TAG} .
+          echo "* Build wedpr-jupyter-worker docker: ${JUPYTER_DOCKER_TAG} success"
+          docker push ${JUPYTER_DOCKER_TAG}
+          echo "* Push wedpr-jupyter-worker docker: ${JUPYTER_DOCKER_TAG} success"
+      # the wedpr-pir image
+      - name: Build and Push  wedpr-pir images
+        run: |
+          [[ ${{github.ref}} == */tags/* ]] && PIR_DOCKER_TAG="${GIT_TAG_NAME}" || PIR_DOCKER_TAG="${BRANCH_NAME}"
+          PIR_DOCKER_TAG="fiscoorg/wedpr-pir:${PIR_DOCKER_TAG}"
+          echo "* Begin to build  wedpr-pir docker: ${PIR_DOCKER_TAG}"
+          cd WeDPR-Component/docker-files/cpp/
+          docker build --target wedpr-pir -t ${PIR_DOCKER_TAG} .
+          echo "* Build  wedpr-pir docker: ${PIR_DOCKER_TAG} success"
+          docker push ${PIR_DOCKER_TAG}
+          echo "* Push  wedpr-pir docker: ${PIR_DOCKER_TAG} success"
+      # the wedpr-site image
+      - name: Build and Push wedpr-site images
+          [[ ${{github.ref}} == */tags/* ]] && SITE_DOCKER_TAG="${GIT_TAG_NAME}" || SITE_DOCKER_TAG="${BRANCH_NAME}"
+          SITE_DOCKER_TAG="fiscoorg/wedpr-site:${SITE_DOCKER_TAG}"
+          echo "* Begin to build wedpr-site docker: ${SITE_DOCKER_TAG}"
+          cd WeDPR-Component/docker-files/cpp/
+          docker build --target wedpr-site -t ${SITE_DOCKER_TAG} .
+          echo "* Build wedpr-site docker: ${SITE_DOCKER_TAG} success"
+          docker push ${SITE_DOCKER_TAG}
+          echo "* Push wedpr-sitedocker: ${SITE_DOCKER_TAG} success"
