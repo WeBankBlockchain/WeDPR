@@ -27,6 +27,8 @@ env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
   ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
 
 jobs:
   build_docker:
@@ -41,8 +43,9 @@ jobs:
         run: |
           git fetch --tags --force
       - name: Login to Docker Hub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # upgrade to v3
         with:
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKER_FISCOPR_USER }}
           password: ${{ secrets.DOCKER_FISCOPR_TOKEN }}
       - name: Get git tag
