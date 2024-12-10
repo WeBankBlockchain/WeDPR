@@ -7,7 +7,7 @@ import com.webank.wedpr.components.db.mapper.service.publish.dao.ServiceAuthMapp
 import com.webank.wedpr.components.hook.ServiceHook;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.helper.PublishServiceHelper;
-import com.webank.wedpr.components.publish.hook.PirServicePublishCallback;
+import com.webank.wedpr.components.publish.hook.ServicePublishCallback;
 import com.webank.wedpr.components.publish.sync.PublishSyncer;
 import com.webank.wedpr.components.publish.sync.PublishSyncerCommitHandler;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
@@ -47,10 +47,15 @@ public class ServicePublisherLoader {
     @PostConstruct
     public void init() {
         logger.info("Register serviceCallback");
-        serviceHook.registerServiceCallback(
-                PublishServiceHelper.PublishType.PIR.getType(),
-                new PirServicePublishCallback(
-                        loadBalancer, new WeDPRResponseFactory(), serviceAuthMapper));
+
+        ServicePublishCallback callback =
+                new ServicePublishCallback(
+                        loadBalancer, new WeDPRResponseFactory(), serviceAuthMapper);
+
+        for (PublishServiceHelper.PublishType publishType :
+                PublishServiceHelper.PublishType.values()) {
+            serviceHook.registerServiceCallback(publishType.getType(), callback);
+        }
         logger.info("Register serviceCallback success");
     }
 

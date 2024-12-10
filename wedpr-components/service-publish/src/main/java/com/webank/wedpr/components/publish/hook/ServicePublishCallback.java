@@ -25,6 +25,7 @@ import com.webank.wedpr.components.http.client.HttpClientImpl;
 import com.webank.wedpr.components.loadbalancer.LoadBalancer;
 import com.webank.wedpr.components.publish.config.ServicePublisherConfig;
 import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
+import com.webank.wedpr.components.publish.helper.PublishServiceHelper;
 import com.webank.wedpr.sdk.jni.transport.model.ServiceMeta;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
-public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
-    private static final Logger logger = LoggerFactory.getLogger(PirServicePublishCallback.class);
+public class ServicePublishCallback implements ServiceHook.ServiceCallback {
+    private static final Logger logger = LoggerFactory.getLogger(ServicePublishCallback.class);
 
     private final LoadBalancer loadBalancer;
     private final BaseResponseFactory responseFactory;
     private final ServiceAuthMapper serviceAuthMapper;
 
-    public PirServicePublishCallback(
+    public ServicePublishCallback(
             LoadBalancer loadBalancer,
             BaseResponseFactory responseFactory,
             ServiceAuthMapper serviceAuthMapper) {
@@ -71,50 +72,56 @@ public class PirServicePublishCallback implements ServiceHook.ServiceCallback {
     @Override
     public void onPublish(Object serviceInfo) throws Exception {
         PublishCreateRequest publishedServiceInfo = (PublishCreateRequest) serviceInfo;
-        ServiceMeta.EntryPointMeta selectedEntryPoint =
-                loadBalancer.selectService(
-                        LoadBalancer.Policy.ROUND_ROBIN,
-                        Common.getServiceName(
-                                WeDPRCommonConfig.getAgency(), ServiceName.PIR.getValue()),
-                        WeDPRCommonConfig.getWedprZone(),
-                        null);
-        if (selectedEntryPoint == null) {
-            throw new WeDPRException(
-                    "Publish service "
-                            + publishedServiceInfo.getServiceId()
-                            + " failed for not found "
-                            + publishedServiceInfo.getServiceId()
-                            + " service!");
-        }
-        String url =
-                selectedEntryPoint.getUrl(ServicePublisherConfig.getPirPublishServiceUriPath());
-        logger.info("onPublish, serviceInfo: {}, target: {}", publishedServiceInfo.toString(), url);
-        HttpClientImpl httpClient =
-                new HttpClientImpl(
-                        url,
-                        ServicePublisherConfig.getMaxTotalConnection(),
-                        ServicePublisherConfig.buildConfig(),
-                        responseFactory);
-        BaseResponse response = httpClient.executePost(publishedServiceInfo, HttpStatus.OK.value());
-        if (response == null) {
-            throw new WeDPRException(
-                    "publish service: "
-                            + publishedServiceInfo.getServiceId()
-                            + " for no response received!");
-        }
-        if (!response.statusOk()) {
-            throw new WeDPRException(
-                    "publish service: "
-                            + publishedServiceInfo.getServiceId()
-                            + " failed, response: "
-                            + response.serialize());
+        if (publishedServiceInfo.getPublishType() == PublishServiceHelper.PublishType.PIR) {
+            ServiceMeta.EntryPointMeta selectedEntryPoint =
+                    loadBalancer.selectService(
+                            LoadBalancer.Policy.ROUND_ROBIN,
+                            Common.getServiceName(
+                                    WeDPRCommonConfig.getAgency(), ServiceName.PIR.getValue()),
+                            WeDPRCommonConfig.getWedprZone(),
+                            null);
+            if (selectedEntryPoint == null) {
+                throw new WeDPRException(
+                        "Publish service "
+                                + publishedServiceInfo.getServiceId()
+                                + " failed for not found "
+                                + publishedServiceInfo.getServiceId()
+                                + " service!");
+            }
+            String url =
+                    selectedEntryPoint.getUrl(ServicePublisherConfig.getPirPublishServiceUriPath());
+            logger.info(
+                    "onPublish, serviceInfo: {}, target: {}", publishedServiceInfo.toString(), url);
+            HttpClientImpl httpClient =
+                    new HttpClientImpl(
+                            url,
+                            ServicePublisherConfig.getMaxTotalConnection(),
+                            ServicePublisherConfig.buildConfig(),
+                            responseFactory);
+            BaseResponse response =
+                    httpClient.executePost(publishedServiceInfo, HttpStatus.OK.value());
+            if (response == null) {
+                throw new WeDPRException(
+                        "publish service: "
+                                + publishedServiceInfo.getServiceId()
+                                + " for no response received!");
+            }
+            if (!response.statusOk()) {
+                throw new WeDPRException(
+                        "publish service: "
+                                + publishedServiceInfo.getServiceId()
+                                + " failed, response: "
+                                + response.serialize());
+            }
+            logger.info(
+                    "pir onPublish success, service: {}, target: {}",
+                    publishedServiceInfo.getServiceId(),
+                    url);
         }
         // register auth information
         batchInsertServiceAuthInfo(publishedServiceInfo.getServiceId(), publishedServiceInfo);
         logger.info(
-                "onPublish success, service: {}, target: {}",
-                publishedServiceInfo.getServiceId(),
-                url);
+                "onPublish success, service: {}, target: {}", publishedServiceInfo.getServiceId());
     }
 
     @Override
