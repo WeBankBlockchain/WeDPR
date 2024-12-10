@@ -18,6 +18,7 @@ import com.webank.wedpr.components.publish.entity.request.PublishCreateRequest;
 import com.webank.wedpr.components.publish.entity.request.PublishSearchRequest;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishCreateResponse;
 import com.webank.wedpr.components.publish.entity.response.WedprPublishSearchResponse;
+import com.webank.wedpr.components.publish.helper.PublishServiceHelper;
 import com.webank.wedpr.components.publish.service.WedprPublishedServiceService;
 import com.webank.wedpr.components.publish.sync.api.PublishSyncerApi;
 import java.util.Arrays;
@@ -71,9 +72,9 @@ public class WedprPublishedServiceServiceImpl implements WedprPublishedServiceSe
         publishCreate.checkServiceConfig(datasetMapper, username, WeDPRCommonConfig.getAgency());
         publishCreate.setStatus(ServiceStatus.Publishing.getStatus());
         this.publishedServiceMapper.insertServiceInfo(publishCreate);
-        boolean hasHook = this.serviceHook.onPublish(publishCreate.getServiceType(), publishCreate);
-        // without hook, set the status to success directly
-        if (!hasHook) {
+        this.serviceHook.onPublish(publishCreate.getServiceType(), publishCreate);
+        // non-pir service publish, set the status to success directly
+        if (!publishCreate.getPublishType().equals(PublishServiceHelper.PublishType.PIR)) {
             PublishedServiceInfo updatedServiceInfo =
                     new PublishedServiceInfo(publishCreate.getServiceId());
             updatedServiceInfo.setServiceStatus(ServiceStatus.PublishSuccess);

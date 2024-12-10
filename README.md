@@ -1,6 +1,6 @@
 # WeDPR
 
-![](https://wedpr-lab.readthedocs.io/zh_CN/latest/_static/images/wedpr_logo.png)
+![](./static/images/wedpr_logo.png)
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/webankblockchain/wedpr/badge?s=a4c3fb6ffd39e7618378fe13b6bd06c5846cc103)](https://www.codefactor.io/repository/github/webankblockchain/wedpr)
