@@ -1,0 +1,18 @@
+FROM centos:7
+
+ENV PPC_MPC_LIB=/data/app/wedpr/scripts/wedpr-mpc:/data/app/wedpr/scripts/wedpr-mpc/local/lib/:/usr/local/lib/
+ENV PPC_MPC_NO_GATEWAY_LIB=/data/app/wedpr/scripts/wedpr-mpc-no-gateway:/data/app/wedpr/scripts/wedpr-mpc-no-gateway/local/lib/:/usr/local/lib/
+
+COPY ./config/mpc-node-conf.tar.gz /data/app/wedpr/scripts/
+COPY ./config/ssl_cert.tar.gz /data/app/wedpr/scripts/
+COPY ./config/CentOS-Base.repo /etc/yum.repos.d/
+COPY ./config/CentOS-SCLo-scl.repo /etc/yum.repos.d/
+COPY ./config/CentOS-SCLo-scl-rh.repo /etc/yum.repos.d/
+COPY ./config/.gitconfig /root/
+COPY ./scripts/build-mpc-base.sh /data/app/wedpr/scripts/
+COPY ./scripts/wedpr-mpc-node.sh /data/app/wedpr/scripts/
+
+WORKDIR /data/app/wedpr
+
+RUN cd /data/app/wedpr/scripts/ && \
+    bash build-mpc-base.sh

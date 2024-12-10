@@ -1,0 +1,16 @@
+# FROM fiscoorg/wedpr-image:v3.0.0
+FROM ubuntu:18.04
+
+ENV PPC_MPC_LIB=/data/app/wedpr/scripts/wedpr-mpc:/data/app/wedpr/scripts/wedpr-mpc/local/lib/:/usr/local/lib/
+ENV PPC_MPC_NO_GATEWAY_LIB=/data/app/wedpr/scripts/wedpr-mpc-no-gateway:/data/app/wedpr/scripts/wedpr-mpc-no-gateway/local/lib/:/usr/local/lib/
+
+COPY ./config/mpc-node-conf.tar.gz /data/app/wedpr/scripts/
+COPY ./config/ssl_cert.tar.gz /data/app/wedpr/scripts/
+COPY ./config/.gitconfig /root/
+COPY ./scripts/build-mpc-base-ubuntu.sh /data/app/wedpr/scripts/
+COPY ./scripts/wedpr-mpc-node.sh /data/app/wedpr/scripts/
+
+WORKDIR /data/app/wedpr
+
+RUN cd /data/app/wedpr/scripts/ && \
+    bash build-mpc-base-ubuntu.sh
