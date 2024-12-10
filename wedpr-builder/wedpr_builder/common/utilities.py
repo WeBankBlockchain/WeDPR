@@ -10,7 +10,7 @@ import string
 
 
 logging.basicConfig(format='%(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 
 def log_error(error_msg):

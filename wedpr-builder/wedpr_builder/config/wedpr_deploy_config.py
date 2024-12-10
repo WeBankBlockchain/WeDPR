@@ -324,6 +324,7 @@ class ServiceConfig:
         self.server_start_port = int(utilities.get_item_value(
             self.config, "server_start_port",
             0, must_exist, config_section))
+        self.server_backend_list = []
 
     def __repr__(self):
         return f"**ServiceConfig: deploy_ip: {self.deploy_ip_list}, " \
@@ -331,9 +332,19 @@ class ServiceConfig:
                f"server_start_port: {self.server_start_port}," \
                f"service_type: {self.service_type} \n**"
 
+    def to_nginx_properties(self):
+        props = {}
+        nginx_backend_setting = ""
+        for backend in self.server_backend_list:
+            nginx_backend_setting = f"{nginx_backend_setting}{backend};\\n\\t"
+        props.update({constant.ConfigProperities.NGINX_BACKEND_SERVER_LIST:
+                      nginx_backend_setting})
+        return props
+
     def to_properties(self, deploy_ip, node_index: int) -> {}:
         props = {}
         start_port = self.server_start_port + 2 * node_index
+        self.server_backend_list.append(f"{deploy_ip}:{start_port}")
         # nodeid
         node_id = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
@@ -852,6 +863,12 @@ class AgencyConfig:
         props.update(self.hdfs_storage_config.to_properties())
         props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_site_docker_dir))
+        # add nginx configuration mount
+        local_mount_path = '${SHELL_FOLDER}/conf/nginx.conf'
+        remote_mount_path = "/etc/nginx/nginx.conf"
+        extended_mount_conf = f" -v {local_mount_path}:{remote_mount_path}"
+        props.update(
+            {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_conf})
         return props
 
     def get_jupyter_worker_properties(self, deploy_ip: str, node_index: int) -> {}:

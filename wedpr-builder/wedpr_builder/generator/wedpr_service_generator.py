@@ -35,6 +35,10 @@ class WedprServiceGenerator:
             service_config = self.get_service_config(agency_config)
             self.__generate_service_config__(agency_config, service_config)
 
+    @abstractmethod
+    def generate_nginx_config(self, node_path: str, server_config: ServiceConfig):
+        pass
+
     def __generate_service_config__(
             self, agency_config: AgencyConfig,
             service_config: ServiceConfig):
@@ -42,6 +46,7 @@ class WedprServiceGenerator:
                               f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
                               f"service_config: {service_config}")
+        node_path_list = []
         for ip_str in service_config.deploy_ip_list:
             ip_array = ip_str.split(":")
             ip = ip_array[0]
@@ -49,11 +54,14 @@ class WedprServiceGenerator:
             if len(ip_array) > 1:
                 count = int(ip_array[1])
             for i in range(count):
-                self.__generate_single_site_config(
+                node_path = self.__generate_single_site_config(
                     agency_config=agency_config,
                     service_config=service_config,
                     agency_name=service_config.agency,
                     deploy_ip=ip, node_index=i)
+                node_path_list.append(node_path)
+        for node_path in node_path_list:
+            self.generate_nginx_config(node_path, service_config)
         utilities.print_badge(f"* generate {service_config.service_type} config success, "
                               f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
@@ -105,6 +113,7 @@ class WedprServiceGenerator:
             if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
                 config_path = os.path.join(node_path, config_file)
             utilities.substitute_configurations(config_properties, config_path)
+        return node_path
 
     def __generate_docker_scripts__(
             self, node_path: str,
@@ -211,6 +220,21 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
     def __copy_binary__(self, dist_path, dst_path):
         self.__copy_java_binary__(dist_path, dst_path)
 
+    def generate_nginx_config(self, node_path: str, server_config: ServiceConfig):
+        utilities.log_info(f"* generate nginx for {node_path}")
+        # copy the nginx config
+        command = f"cp {constant.ConfigInfo.nginx_tpl_path}/* {node_path}/conf"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(f"Generate nginx config failed when execute command: {command}, "
+                            f"error: {output}")
+        props = server_config.to_nginx_properties()
+        for config_file in constant.ConfigInfo.nginx_config_file_list:
+            config_path = os.path.join(node_path, "conf", config_file)
+            utilities.substitute_configurations(props, config_path)
+        utilities.log_info(f"* generate nginx for {node_path} success")
+        return
+
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
@@ -267,6 +291,9 @@ class WedprModelServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.model_service_config
 
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+        return
+
 
 class WedprPirServiceGenerator(WedprServiceGenerator):
     def __init__(self,
@@ -289,9 +316,11 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.pir_config
 
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+        return
+
+
 # use docker
-
-
 class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
     def __init__(self,
                  config: WeDPRDeployConfig,
@@ -312,3 +341,6 @@ class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.jupyter_worker_config
+
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+        return

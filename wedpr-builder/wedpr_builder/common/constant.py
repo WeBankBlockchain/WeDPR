@@ -77,6 +77,9 @@ class ConfigInfo:
     wedpr_mpc_service_dir = "wedpr-mpc-service"
     docker_file_list = ["create_docker.sh",
                         "start_docker.sh", "stop_docker.sh"]
+    # the nginx config
+    nginx_tpl_path = get_abs_path("nginx/")
+    nginx_config_file_list = ["nginx.conf"]
 
     @staticmethod
     def get_docker_path(file_path: str):
@@ -140,3 +143,5 @@ class ConfigProperities:
     # the created docker name
     WEDPR_DOCKER_NAME = "WEDPR_DOCKER_NAME"
     EXTENDED_MOUNT_CONF = "EXTENDED_MOUNT_CONF"
+    # the nginx configuration
+    NGINX_BACKEND_SERVER_LIST = "NGINX_BACKEND_SERVER_LIST"
