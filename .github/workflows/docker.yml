@@ -7,6 +7,8 @@ on:
       - "README.md"
     tags:
       - 'v3.*.*'
+    branches:
+      - feature-milestone2
   pull_request:
     paths-ignore:
       - "docs/**"
@@ -27,8 +29,6 @@ env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
   ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
 
 jobs:
   build_docker:
