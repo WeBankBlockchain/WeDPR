@@ -50,6 +50,16 @@ class ConfigInfo:
     start_all_tpl_path = get_abs_path("start_all.sh")
     stop_all_tpl_path = get_abs_path("stop_all.sh")
 
+    # the exec_all_tpl_paths
+    exec_all_tpl_path = get_abs_path("exec_all_bash.sh")
+    create_all_dockers_shell = "create_all_dockers.sh"
+    start_all_dockers_shell = "start_all_dockers.sh"
+    stop_all_dockers_shell = "stop_all_dockers.sh"
+
+    start_docker_shell = "start_docker.sh"
+    create_docker_shell = "create_docker.sh"
+    stop_docker_shell = "stop_docker.sh"
+
     # the site config path
     wedpr_site_config_path = get_abs_path("site/conf")
     site_config_list = ["application-wedpr.properties",
@@ -134,6 +144,7 @@ class ConfigProperities:
     WEDPR_CONFIG_DIR = "WEDPR_CONFIG_DIR"
     # specify the mounted docker conf path
     DOCKER_CONF_PATH = "DOCKER_CONF_PATH"
+    BASE_SHELL_SCRIPT_NAME = "BASE_SHELL_SCRIPT_NAME"
     # specify the log path to mount
     WEDPR_LOG_DIR = "WEDPR_LOG_DIR"
     # specify the mounted docker log path

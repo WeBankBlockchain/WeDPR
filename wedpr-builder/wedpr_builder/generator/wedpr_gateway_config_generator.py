@@ -10,6 +10,7 @@ from wedpr_builder.generator.cert_generator import CertGenerator
 from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
 from wedpr_builder.config.wedpr_deploy_config import AgencyConfig
 from wedpr_builder.config.wedpr_deploy_config import GatewayConfig
+from wedpr_builder.generator.docker_generator import DockerGenerator
 
 
 class WeDPRGatewayConfigGenerator:
@@ -97,11 +98,13 @@ class WeDPRGatewayConfigGenerator:
         return True
 
     def __generate_ip_shell_scripts__(self, agency_name, ip):
+        output_path = self.__generate_ip_shell_scripts_output_path__(
+            agency_name, ip)
         if self.config.env_config.docker_mode is True:
+            DockerGenerator.generate_shell_scripts(output_path)
             return True
         return ShellScriptGenerator.generate_ip_shell_scripts(
-            self.__generate_ip_shell_scripts_output_path__(
-                agency_name, ip), "start_all.sh", "stop_all.sh")
+            output_path, "start_all.sh", "stop_all.sh")
 
     def __generate_single_gateway_config__(
             self, gateway_config, connection_config,

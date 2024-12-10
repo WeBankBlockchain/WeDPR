@@ -54,12 +54,15 @@ class WedprServiceGenerator:
             if len(ip_array) > 1:
                 count = int(ip_array[1])
             for i in range(count):
-                node_path = self.__generate_single_site_config(
+                node_path = self.__generate_single_site_config__(
                     agency_config=agency_config,
                     service_config=service_config,
                     agency_name=service_config.agency,
                     deploy_ip=ip, node_index=i)
                 node_path_list.append(node_path)
+            # generate the ip shell scripts
+            self.__generate_docker_ip_shell_scripts__(self.__get_deploy_path__(
+                agency_config.agency_name, ip, None, service_config.service_type))
         for node_path in node_path_list:
             self.generate_nginx_config(node_path, service_config)
         utilities.print_badge(f"* generate {service_config.service_type} config success, "
@@ -67,7 +70,12 @@ class WedprServiceGenerator:
                               f"{self.config.env_config.deploy_dir}, "
                               f"service_type: {service_config.service_type}")
 
-    def __generate_single_site_config(
+    def __generate_docker_ip_shell_scripts__(self, ip_dir):
+        if self.config.env_config.docker_mode is False:
+            return
+        DockerGenerator.generate_shell_scripts(ip_dir)
+
+    def __generate_single_site_config__(
             self, agency_config:  AgencyConfig,
             service_config: ServiceConfig,
             agency_name: str,
@@ -200,8 +208,11 @@ class WedprServiceGenerator:
 
     def __get_deploy_path__(self, agency: str, ip: str,
                             node_name: str, service_type: str):
+        if node_name is not None:
+            return os.path.join(self.deploy_path, agency,
+                                ip, service_type, node_name)
         return os.path.join(self.deploy_path, agency,
-                            ip, service_type, node_name)
+                            ip, service_type)
 
 
 class WedprSiteServiceGenerator(WedprServiceGenerator):
