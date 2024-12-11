@@ -15,10 +15,11 @@ STATUS_STOPPED="Stopped"
 start_success_log="start.*success"
 ENABLE_DOCKER_MODE="false"
 
-#if [ "${JAVA_HOME}" = "" ];then
-#    JAVA_HOME=/nemo/jdk8u382-b05
-#    echo "JAVA_HOME has not been configured, set  to default: ${JAVA_HOME}"
-#fi
+start_log="start.out"
+if [ "${ENABLE_DOCKER_MODE}" = "true" ]; then
+  start_log="logs/start.out"
+fi
+
 
 JAVA_CMD=$JAVA_HOME/bin/java
 if [ ! -f "${JAVA_HOME}" ];then
@@ -50,17 +51,17 @@ JAVA_OPTS+=" -DserviceName=${SERVER_NAME}"
 JAVA_OPTS+=" -DserviceConfigPath=${CONFIG_PATH}"
 run_app()
 {
-    if [ "$ENABLE_DOCKER_MODE" = "true" ]; then
-        exec ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1
+    if [ "${ENABLE_DOCKER_MODE}" = "true" ]; then
+        exec ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > ${start_log}  2>&1
     else
-        nohup ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > start.out 2>&1 &
+        nohup ${JAVA_CMD} $JAVA_OPTS -cp $CLASSPATH $APP_MAIN > ${start_log} 2>&1 &
     fi
 }
 
 app_status()
 {
     if [ ! -z "$(app_pid)" ]; then
-        if [ ! -z "$(grep -i "${start_success_log}" start.out)" ]; then
+        if [ ! -z "$(grep -i "${start_success_log}" ${start_log})" ]; then
             echo ${STATUS_RUNNING}
         else
             echo ${STATUS_STARTING}
@@ -92,7 +93,7 @@ before_start()
 }
 
 start(){
-    rm -f start.out
+    rm -f ${start_log}
     run_app
     LOG_INFO "${APP_MAIN} booting up .."
     try_times=45

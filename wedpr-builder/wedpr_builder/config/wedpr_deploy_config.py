@@ -406,7 +406,8 @@ class ServiceConfig:
     def to_properties(self, deploy_ip, node_index: int) -> {}:
         props = {}
         server_start_port = self.server_start_port + 3 * node_index
-        self.server_backend_list.append(f"{deploy_ip}:{server_start_port}")
+        self.server_backend_list.append(
+            f"server {deploy_ip}:{server_start_port}")
         # nodeid
         node_id = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
