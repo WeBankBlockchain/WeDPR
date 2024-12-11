@@ -59,6 +59,7 @@ class WedprServiceGenerator:
                               f"{self.config.env_config.deploy_dir}, "
                               f"service_config: {service_config}")
         node_path_list = []
+        nginx_listen_port = []
         for ip_str in service_config.deploy_ip_list:
             ip_array = ip_str.split(":")
             ip = ip_array[0]
@@ -72,6 +73,8 @@ class WedprServiceGenerator:
                     agency_name=service_config.agency,
                     deploy_ip=ip, node_index=i)
                 node_path_list.append(node_path)
+                nginx_listen_port.append(
+                    service_config.get_nginx_listen_port(i))
             # generate the ip shell scripts
             output_path = self.__get_deploy_path__(
                 agency_config.agency_name, ip, None, service_config.service_type)
@@ -79,8 +82,11 @@ class WedprServiceGenerator:
             # generate the init scripts
             self.generate_init_scripts(os.path.join(
                 output_path, "init"), agency_list, agency_config)
+        i = 0
         for node_path in node_path_list:
-            self.generate_nginx_config(node_path, service_config)
+            self.generate_nginx_config(
+                node_path, service_config, nginx_listen_port[i])
+            i += 1
         utilities.print_badge(f"* generate {service_config.service_type} config success, "
                               f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
@@ -274,15 +280,16 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
     def __copy_binary__(self, dist_path, dst_path):
         self.__copy_java_binary__(dist_path, dst_path)
 
-    def generate_nginx_config(self, node_path: str, server_config: ServiceConfig):
-        utilities.log_info(f"* generate nginx for {node_path}")
+    def generate_nginx_config(self, node_path: str, server_config: ServiceConfig, nginx_listen_port: int):
+        utilities.log_info(
+            f"* generate nginx for {node_path}, nginx_listen_port: {nginx_listen_port}")
         # copy the nginx config
         command = f"cp {constant.ConfigInfo.nginx_tpl_path}/* {node_path}/conf"
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
             raise Exception(f"Generate nginx config failed when execute command: {command}, "
                             f"error: {output}")
-        props = server_config.to_nginx_properties()
+        props = server_config.to_nginx_properties(nginx_listen_port)
         for config_file in constant.ConfigInfo.nginx_config_file_list:
             config_path = os.path.join(node_path, "conf", config_file)
             utilities.substitute_configurations(props, config_path)
@@ -348,7 +355,7 @@ class WedprModelServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.model_service_config
 
-    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig, listen_port: int):
         return
 
 
@@ -376,7 +383,7 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.pir_config
 
-    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig, listen_port: int):
         return
 
 
@@ -405,5 +412,5 @@ class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.jupyter_worker_config
 
-    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig):
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig, listen_port: int):
         return

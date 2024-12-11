@@ -151,6 +151,7 @@ class BlockchainConfig:
             self.config, section_name, "sequencer_contract_address", None, True)
 
     def __repr__(self):
+
         return f"**BlockchainConfig: blockchain_group: {self.blockchain_group}, " \
                f"blockchain_peers: [{','.join(self.blockchain_peers)}], " \
                f"blockchain_cert_path: {self.blockchain_cert_path}**\n"
@@ -170,9 +171,10 @@ class BlockchainConfig:
             constant.ConfigProperities.WEDPR_SEQUENCER_CONTRACT_ADDRESS:
             self.sequencer_contract_address})
         # the blockchain peers
-        blockchain_peers_info = ','.join(map(str, self.blockchain_peers))
+        quoted_peers = [f'"{peer}"' for peer in self.blockchain_peers]
+        blockchain_peers_info = ','.join(map(str, quoted_peers))
         properties.update({constant.ConfigProperities.BLOCKCHAIN_PEERS:
-                           f"[{blockchain_peers_info}]"})
+                           f'[{blockchain_peers_info}]'})
         return properties
 
 
@@ -387,18 +389,23 @@ class ServiceConfig:
                f"server_start_port: {self.server_start_port}," \
                f"service_type: {self.service_type} \n**"
 
-    def to_nginx_properties(self):
+    def get_nginx_listen_port(self, node_index):
+        return self.server_start_port + 3 * node_index + 2
+
+    def to_nginx_properties(self, nginx_listen_port):
         props = {}
         nginx_backend_setting = ""
         for backend in self.server_backend_list:
             nginx_backend_setting = f"{nginx_backend_setting}{backend};\\n\\t"
         props.update({constant.ConfigProperities.NGINX_BACKEND_SERVER_LIST:
                       nginx_backend_setting})
+        props.update(
+            {constant.ConfigProperities.NGINX_PORT: nginx_listen_port})
         return props
 
     def to_properties(self, deploy_ip, node_index: int) -> {}:
         props = {}
-        server_start_port = self.server_start_port + 2 * node_index
+        server_start_port = self.server_start_port + 3 * node_index
         self.server_backend_list.append(f"{deploy_ip}:{server_start_port}")
         # nodeid
         node_id = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
@@ -417,8 +424,9 @@ class ServiceConfig:
         props.update(
             {constant.ConfigProperities.WEDPR_SERVER_LISTEN_PORT: server_start_port})
         # transport listen_port
+        transport_port = server_start_port + 1
         props.update(
-            {constant.ConfigProperities.WEDPR_TRANSPORT_LISTEN_PORT: server_start_port + 1})
+            {constant.ConfigProperities.WEDPR_TRANSPORT_LISTEN_PORT: transport_port})
         # set the image desc for docker mode
         image_desc = self.env_config.get_image_desc_by_service_name(
             self.service_type)
@@ -426,7 +434,11 @@ class ServiceConfig:
             props.update(
                 {constant.ConfigProperities.WEDPR_IMAGE_DESC: image_desc})
         # set the exposed port
-        exposed_port_list = f"-p {server_start_port}:{server_start_port} -p {server_start_port + 1}:{server_start_port + 1}"
+        exposed_port_list = f"-p {server_start_port}:{server_start_port} -p {transport_port}:{transport_port}"
+        # expose the nginx port
+        if self.service_type == constant.ServiceInfo.wedpr_site_service:
+            nginx_port = server_start_port + 2
+            exposed_port_list = f"{exposed_port_list} -p {nginx_port}:{nginx_port}"
         # default expose 20 ports for jupyter use
         # reserver 100 ports for jupyter use
         jupyter_start_port = server_start_port + 100
@@ -443,7 +455,7 @@ class ServiceConfig:
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
         # set the docker name
-        docker_name = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
+        docker_name = f"{self.agency}-{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props
@@ -848,6 +860,7 @@ class AgencyConfig:
 
     @staticmethod
     def generate_cpp_component_docker_properties(
+            agency_name: str,
             prefix_path, zone_name: str, service_type: str, env_config,
             exposed_port_list: str, node_index: int):
         props = {}
@@ -884,7 +897,7 @@ class AgencyConfig:
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
         # set the docker name
-        docker_name = f"{service_type}-{zone_name}-node{node_index}"
+        docker_name = f"{agency_name}-{service_type}-{zone_name}-node{node_index}"
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props

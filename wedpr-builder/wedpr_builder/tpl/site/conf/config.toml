@@ -18,8 +18,8 @@ useSMCrypto = "false"                       # RPC SM crypto type
 
 [network]
 messageTimeout = "10000"
-defaultGroup="group0"                            # Console default group to connect
-peers=["127.0.0.1:20200", "127.0.0.1:20201"]    # The peer list to connect
+defaultGroup="${BLOCKCHAIN_GROUP_ID}"                            # Console default group to connect
+peers=${BLOCKCHAIN_PEERS}    # The peer list to connect
 
 [account]
 keyStoreDir = "account"         # The directory to load/store the account file, default is "account"

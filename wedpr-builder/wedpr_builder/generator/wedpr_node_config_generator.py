@@ -100,6 +100,7 @@ class WeDPRNodeConfigGenerator:
                             f"{constant.ConfigInfo.docker_tpl_path} to {node_path} "
                             f"failed, reason: {output}")
         props = AgencyConfig.generate_cpp_component_docker_properties(
+            node_config.agency_name,
             constant.ConfigInfo.wedpr_node_service_dir,
             self.config.env_config.zone,
             node_config.service_type, self.config.env_config,

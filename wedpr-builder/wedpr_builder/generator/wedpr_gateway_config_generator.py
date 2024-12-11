@@ -87,6 +87,7 @@ class WeDPRGatewayConfigGenerator:
                             f"{constant.ConfigInfo.docker_tpl_path} to {node_path} "
                             f"failed, reason: {output}")
         props = AgencyConfig.generate_cpp_component_docker_properties(
+            gateway_config.agency_name,
             constant.ConfigInfo.wedpr_gateway_service_dir,
             self.config.env_config.zone,
             gateway_config.service_type, self.config.env_config,
