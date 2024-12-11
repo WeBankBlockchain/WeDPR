@@ -58,8 +58,7 @@ RUN pip install --no-cache-dir -i https://pypi.mirrors.ustc.edu.cn/simple/ -r ro
 RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr_mpc_generator
 
 # install nginx
-RUN apt-get update && apt-get install --no-install-recommends -y nginx; \
- echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN apt-get update && apt-get install --no-install-recommends -y nginx
 
 RUN mkdir -p /data/home/wedpr
 COPY --from=builder /WeDPR/wedpr-site/dist/ /data/home/wedpr/wedpr-site
