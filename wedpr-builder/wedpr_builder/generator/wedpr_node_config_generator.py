@@ -170,7 +170,7 @@ class WeDPRNodeConfigGenerator:
         # load the rpc config
         self.__generate_rpc_config__(
             config_content, node_config.rpc_config,
-            agency_config.psi_api_token,  node_index)
+            agency_config.wedpr_api_token,  node_index)
         # load the transport config
         self.__generate_transport_config__(config_content,
                                            node_config, node_id, ip, node_index)

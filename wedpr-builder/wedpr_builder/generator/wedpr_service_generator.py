@@ -141,7 +141,8 @@ class WedprServiceGenerator:
             node_path, config_properties, service_config)
         for config_file in service_config.config_file_list:
             config_path = os.path.join(node_path, "conf", config_file)
-            if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
+            if service_config.service_type == constant.ServiceInfo.wedpr_model_service \
+                    or service_config.service_type == constant.ServiceInfo.wedpr_mpc_service:
                 config_path = os.path.join(node_path, config_file)
             utilities.substitute_configurations(config_properties, config_path)
         return node_path
@@ -387,7 +388,61 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
         return
 
 
+class WedprMPCServiceGenerator(WedprServiceGenerator):
+    def __init__(self,
+                 config: WeDPRDeployConfig,
+                 deploy_path: str):
+        super().__init__(config, deploy_path)
+
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        return
+
+    def __copy_binary__(self, source_binary_path, node_path):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* enable docker mode, no need to copy the binary")
+            return
+        dst_binary_path = os.path.join(
+            node_path, "../", constant.ConfigInfo.mpc_binary_name)
+        command = f"cp {source_binary_path} {dst_binary_path}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(
+                f"* Copy binary {source_binary_path}=>{dst_binary_path} failed, error: {output}")
+
+    def __generate_shell_scripts__(self, dist_path, node_path):
+        if self.config.env_config.docker_mode is True:
+            utilities.log_info(
+                "* enable docker mode, no need to copy the scripts")
+            return
+        command = f"cp -r {constant.ConfigInfo.scripts_tpl_path}/* {node_path}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(
+                f"* generate shell scripts to {node_path} failed, error: {output}")
+        # substitute
+        props = {}
+        props.update(
+            {constant.ConfigProperities.BINARY_NAME: constant.ConfigInfo.mpc_binary_name})
+        for file in constant.ConfigInfo.scripts_file_list:
+            file_path = os.path.join(node_path, file)
+            utilities.substitute_configurations(props, file_path)
+
+    def get_properties(
+            self, deploy_ip: str,
+            agency_config: AgencyConfig,
+            node_index: int) -> {}:
+        return agency_config.get_mpc_properties(deploy_ip, node_index)
+
+    def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
+        return agency_config.mpc_config
+
+    def generate_nginx_config(self,  node_path: str, server_config: ServiceConfig, listen_port: int):
+        return
+
 # use docker
+
+
 class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
     def __init__(self,
                  config: WeDPRDeployConfig,

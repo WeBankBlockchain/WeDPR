@@ -2,6 +2,8 @@
 #### define the binary path ###
 # the binary path for ppc-pro-node and ppc-gateway-service
 binary_path = "/data/home/wedpr/WeDPR-Component/cpp/build/bin"
+# the spdz path
+spdz_home = ""
 # the dist path for wedpr-site
 wedpr_site_dist_path = "/data/home/wedpr/WeDPR/wedpr-site/dist/"
 # the dist path for wedpr-dir
@@ -54,7 +56,7 @@ sm_crypto = false
 name = "agency0"
 #the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
 holding_msg_minutes = 30
-psi_api_token = "wedpr_psi_api_token_agency0"
+wedpr_api_token = ""
 
     [agency.gateway]
     deploy_ip=["127.0.0.1:2"]
@@ -126,11 +128,17 @@ psi_api_token = "wedpr_psi_api_token_agency0"
         deploy_ip = ["127.0.0.1:2"]
         server_start_port = "18000"
 
-    # configuration for wedpr worker
+    # configuration for wedpr jupyter worker
     [agency.jupyter_worker]
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "19000"
+
+    # configuration for mpc
+    [agency.mpc]
+        deploy_ip = ["127.0.0.1:1"]
+        # the server start port
+        server_start_port = "20000"
 
     # configuration for the wedpr nodes
     [[agency.node]]
@@ -185,7 +193,7 @@ psi_api_token = "wedpr_psi_api_token_agency0"
 name = "agency1"
 #the time of the gateway holding and waiting to dispatcher the unsynced task, in minutes
 holding_msg_minutes = 30
-psi_api_token = "wedpr_psi_api_token_agency1"
+wedpr_api_token = ""
 
     [agency.gateway]
     deploy_ip=["127.0.0.1:2"]
@@ -256,11 +264,17 @@ psi_api_token = "wedpr_psi_api_token_agency1"
         deploy_ip = ["127.0.0.1:2"]
         server_start_port = "28000"
 
-    # configuration for wedpr worker
+    # configuration for wedpr jupyter worker
     [agency.jupyter_worker]
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "29000"
+
+    # configuration for mpc
+    [agency.mpc]
+        deploy_ip = ["127.0.0.1:1"]
+        # the server start port
+        server_start_port = "30000"
 
     # configuration for the wedpr nodes
     [[agency.node]]
@@ -310,20 +324,3 @@ psi_api_token = "wedpr_psi_api_token_agency1"
             user = "wedpr"
             password = ""
             database = ""
-
-        # the hdfs storage config
-        [agency.node.hdfs_storage]
-            user = "root"
-            name_node = "127.0.0.1"
-            name_node_port = 9000
-            token = ""
-            # enable auth or not, default is false
-            enable_krb5_auth = false
-            # the hdfs kerberos auth principal, used when enable_krb5_auth
-            auth_principal = "root@NODE.DC1.CONSUL"
-            # the hdfs kerberos auth password, used when enable_krb5_auth
-            auth_password = ""
-            # the ccache path, used when enable_krb5_auth
-            ccache_path = "/tmp/krb5cc_ppc_node"
-            # the krb5 conf path
-            krb5_conf_path = "conf/krb5.conf"

@@ -18,7 +18,7 @@ class ServiceInfo:
     gateway_service_type = "wedpr-gateway"
     wedpr_site_service = "wedpr-site"
     wedpr_pir_service = "wedpr-pir"
-    wedpr_mpc_service = "wedpr-mpc-service"
+    wedpr_mpc_service = "wedpr-mpc"
     wedpr_model_service = "wedpr-model"
     wedpr_jupyter_worker_service = "wedpr-jupyter-worker"
     supported_service_type = [node_service_type, gateway_service_type,
@@ -38,6 +38,7 @@ class ConfigInfo:
     tpl_abs_path = "wedpr_builder/tpl/"
     ppc_gateway_binary_name = "ppc-gateway-service"
     ppc_node_binary_name = "ppc-pro-node"
+    mpc_binary_name = "wedpr-mpc"
     hdfs_key_tab_file_name = "hdfs-wedpr.keytab"
 
     node_config_tpl_path = get_abs_path("config.ini.node")
@@ -81,6 +82,7 @@ class ConfigInfo:
     wedpr_worker_docker_dir = "wedpr-worker"
     wedpr_pir_docker_dir = "wedpr-pir"
     wedpr_site_docker_dir = "wedpr-site"
+    wedpr_mpc_docker_dir = "wedpr-mpc-service"
 
     wedpr_gateway_service_dir = "wedpr-gateway-service"
     wedpr_node_service_dir = "wedpr-pro-node-service"
@@ -100,6 +102,14 @@ class ConfigInfo:
     # the site init conf
     init_tpl_path = get_abs_path("init/")
     init_file_path_list = ["site_init.sh"]
+    # the mpc config
+    mpc_tpl_path = get_abs_path("mpc/")
+    mpc_config_file_list = ["config.ini"]
+    # the scripts
+    scripts_tpl_path = get_abs_path("scripts/")
+    scripts_file_list = ["start.sh", "stop.sh"]
+    # the default path for docker
+    default_spdz_home = "/data/app/wedpr/scripts/wedpr-mpc-no-gateway"
 
     @staticmethod
     def get_docker_path(file_path: str):
@@ -133,7 +143,7 @@ class ConfigProperities:
     WEDPR_RECORDER_CONTRACT_ADDRESS = "WEDPR_RECORDER_CONTRACT_ADDRESS"
     WEDPR_SEQUENCER_CONTRACT_ADDRESS = "WEDPR_SEQUENCER_CONTRACT_ADDRESS"
     # the psi configuration
-    PSI_API_TOKEN = "PSI_API_TOKEN"
+    WEDPR_API_TOKEN = "WEDPR_API_TOKEN"
     # the transport configuration
     WEDPR_NODE_ID = "WEDPR_NODE_ID"
     GATEWAY_TARGET = "GATEWAY_TARGET"
@@ -141,11 +151,15 @@ class ConfigProperities:
     WEDPR_TRANSPORT_LISTEN_PORT = "WEDPR_TRANSPORT_LISTEN_PORT"
     # the service configuration
     WEDPR_SERVER_LISTEN_PORT = "WEDPR_SERVER_LISTEN_PORT"
+    # the mpc spdz listen port
+    WEDPR_MPC_SPDZ_LISTEN_PORT = "WEDPR_MPC_SPDZ_LISTEN_PORT"
     # the hdfs configuration
     HDFS_USER = "HDFS_USER"
     HDFS_HOME = "HDFS_HOME"
     HDFS_ENTRYPOINT = "HDFS_ENTRYPOINT"
     HDFS_WEBFS_ENTRYPOINT = "HDFS_WEBFS_ENTRYPOINT"
+    HDFS_NAMENODE_HOST = "HDFS_NAMENODE_HOST"
+    HDFS_NAMENODE_PORT = "HDFS_NAMENODE_PORT"
     # the hdfs auth configuration
     HDFS_ENABLE_AUTH = "HDFS_ENABLE_AUTH"
     HDFS_AUTH_PRINCIPAL = "HDFS_AUTH_PRINCIPAL"
@@ -171,3 +185,6 @@ class ConfigProperities:
     # the nginx configuration
     NGINX_BACKEND_SERVER_LIST = "NGINX_BACKEND_SERVER_LIST"
     NGINX_PORT = "NGINX_PORT"
+    # the binary_name
+    BINARY_NAME = "BINARY_NAME"
+    MPC_SPDZ_HOME = "MPC_SPDZ_HOME"

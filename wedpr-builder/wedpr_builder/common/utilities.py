@@ -30,7 +30,7 @@ def log_debug(error_msg):
 
 
 def get_item_value(config, key, default_value, must_exist, desc):
-    if key in config:
+    if config is not None and key in config:
         return config[key]
     if must_exist:
         raise Exception("the value for %s.%s must be set" % (desc, key))

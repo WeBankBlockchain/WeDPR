@@ -10,6 +10,7 @@ from wedpr_builder.generator.wedpr_service_generator import WedprSiteServiceGene
 from wedpr_builder.generator.wedpr_service_generator import WedprPirServiceGenerator
 from wedpr_builder.generator.wedpr_service_generator import WedprJupyterWorkerServiceGenerator
 from wedpr_builder.generator.wedpr_service_generator import WedprModelServiceGenerator
+from wedpr_builder.generator.wedpr_service_generator import WedprMPCServiceGenerator
 from argparse import RawTextHelpFormatter
 import sys
 import toml
@@ -21,6 +22,7 @@ def parse_command():
     help_info = "examples:\n * generate node config:\t " \
                 "python3 build_wedpr.py -t wedpr-node\n " \
                 "* generate gateway config:\t python3 build_wedpr.py -t wedpr-gateway\n " \
+                "* generate mpc config:\t python3 build_wedpr.py -t wedpr-mpc\n " \
                 "* generate wedpr-site config:\t python3 build_wedpr.py -t wedpr-site\n " \
                 "* generate wedpr-pir config:\t python3 build_wedpr.py -t wedpr-pir\n" \
                 "* generate wedpr-model service config:\t python3 build_wedpr.py -t wedpr-model\n " \
@@ -107,6 +109,13 @@ def generate_node_config(args, toml_config):
         model_service_generator = WedprModelServiceGenerator(
             config, args.output)
         model_service_generator.generate_config()
+    # the mpc service generator
+    if service_type == constant.ServiceInfo.wedpr_mpc_service:
+        component_switch = ComponentSwitch(mpc_service_must_exists=True)
+        config = WeDPRDeployConfig(toml_config, component_switch)
+        mpc_service_generator = WedprMPCServiceGenerator(
+            config, args.output)
+        mpc_service_generator.generate_config()
     # Note: the jupyter config is generated with the site config
     """
     # the jupyter worker config generator
