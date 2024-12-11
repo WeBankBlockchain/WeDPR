@@ -1031,8 +1031,8 @@ class WeDPRDeployConfig:
         self.gateway_sm_ssl = utilities.get_value(
             self.config, crypto_section, "gateway_sm_ssl", False, False)
         # the rpc disable ssl or not
-        self.rpc_disable_ssl = utilities.get_value(
-            self.config, crypto_section, "rpc_disable_ssl", False, False)
+        # self.rpc_disable_ssl = utilities.get_value(
+        #    self.config, crypto_section, "rpc_disable_ssl", False, False)
         # the rpc use sm-ssl or not
         self.rpc_sm_ssl = utilities.get_value(
             self.config, crypto_section, "rpc_sm_ssl", False, False)

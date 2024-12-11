@@ -47,8 +47,6 @@ gateway_disable_ssl = false
 gateway_sm_ssl = false
 # the rpc use sm-ssl or not
 rpc_sm_ssl = false
-# the rpc disable ssl or not
-rpc_disable_ssl = true
 # use sm-crypto or not
 sm_crypto = false
 

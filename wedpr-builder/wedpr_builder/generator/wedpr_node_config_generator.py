@@ -233,8 +233,8 @@ class WeDPRNodeConfigGenerator:
         config_content[section_name]["sm_ssl"] = utilities.convert_bool_to_str(
             self.config.rpc_sm_ssl)
         # disable_ssl
-        config_content[section_name]["disable_ssl"] = utilities.convert_bool_to_str(
-            self.config.rpc_disable_ssl)
+        # config_content[section_name]["disable_ssl"] = utilities.convert_bool_to_str(
+        #    self.config.rpc_disable_ssl)
         config_content[section_name]["token"] = psi_token
 
     def __generate_storage_config__(self, config_content, storage_config):
