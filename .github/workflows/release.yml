@@ -31,12 +31,21 @@ jobs:
       - name: prepare wedpr-builder tgz
         run: |
           tar -cvzf wedpr-builder.tar.gz wedpr-builder
+          tar -cvzf wedpr-sol.tar.gz wedpr-sol
       - name: Upload wedpr-builder
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: wedpr-builder.tar.gz
           asset_name: wedpr-builder.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: Upload wedpr-sol
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: wedpr-sol.tar.gz
+          asset_name: wedpr-sol.tar.gz
           tag: ${{ github.ref }}
           overwrite: true
 

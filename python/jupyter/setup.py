@@ -27,7 +27,7 @@ class bdist_egg_disabled(bdist_egg):
 setup_args = dict(
     name='wedpr-authenticator',
     packages=find_packages(),
-    version="1.0.0.dev-20241124",
+    version="3.0.0-20241124",
     description="WeDPR Authenticator: Authenticate JupyterHub users with wedpr providers",
     long_description_content_type="text/markdown",
     author="WeDPR Team",
