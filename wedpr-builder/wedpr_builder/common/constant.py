@@ -91,6 +91,15 @@ class ConfigInfo:
     nginx_tpl_path = get_abs_path("nginx/")
     nginx_config_file_list = ["nginx.conf"]
 
+    # the init db file path
+    pwd_path = os.getcwd()
+    db_dir_name = "db"
+    db_file_path = os.path.join(pwd_path, db_dir_name)
+    dml_sql_file = "wedpr_dml.sql"
+    # the site init conf
+    init_tpl_path = get_abs_path("init/")
+    init_file_path_list = ["site_init.sh"]
+
     @staticmethod
     def get_docker_path(file_path: str):
         return os.path.join(ConfigInfo.default_docker_work_dir, file_path)
@@ -113,6 +122,10 @@ class ConfigProperities:
     SQLALCHEMY_URL = "SQLALCHEMY_URL"
     MYSQL_USER = "MYSQL_USER"
     MYSQL_PASSWORD = "MYSQL_PASSWORD"
+    # the mysql var used for init script
+    MYSQL_HOST = "MYSQL_HOST"
+    MYSQL_PORT = "MYSQL_PORT"
+    MYSQL_DATABASE = "MYSQL_DATABASE"
     # the blockchain configuration
     BLOCKCHAIN_GROUP_ID = "BLOCKCHAIN_GROUP_ID"
     BLOCKCHAIN_PEERS = "BLOCKCHAIN_PEERS"

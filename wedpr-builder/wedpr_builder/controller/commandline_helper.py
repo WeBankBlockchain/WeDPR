@@ -24,7 +24,6 @@ def parse_command():
                 "* generate wedpr-site config:\t python3 build_wedpr.py -t wedpr-site\n " \
                 "* generate wedpr-pir config:\t python3 build_wedpr.py -t wedpr-pir\n" \
                 "* generate wedpr-model service config:\t python3 build_wedpr.py -t wedpr-model\n " \
-                "* generate wedpr-jupyter-worker config:\t python3 build_wedpr.py -t wedpr-jupyter-worker\n " \
                 "* generate gateway config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-gateway -d wedpr-generated\n " \
                 "* generate node config:\t python3 build_wedpr.py -o genconfig -c config.toml -t wedpr-node -d wedpr-generated"
     parser = argparse.ArgumentParser(
@@ -85,8 +84,14 @@ def generate_node_config(args, toml_config):
             sys.exit(-1)
     # the site config generator
     if service_type == constant.ServiceInfo.wedpr_site_service:
-        component_switch = ComponentSwitch(site_must_exists=True)
+        # default generate the jupyter config
+        component_switch = ComponentSwitch(
+            site_must_exists=True, jupyter_must_exists=True)
         config = WeDPRDeployConfig(toml_config, component_switch)
+        jupyter_generator = WedprJupyterWorkerServiceGenerator(
+            config, args.output)
+        jupyter_generator.generate_config()
+        # Note: generate site config after jupyter config generate success
         site_generator = WedprSiteServiceGenerator(config, args.output)
         site_generator.generate_config()
     # the pir service generator
@@ -102,6 +107,8 @@ def generate_node_config(args, toml_config):
         model_service_generator = WedprModelServiceGenerator(
             config, args.output)
         model_service_generator.generate_config()
+    # Note: the jupyter config is generated with the site config
+    """
     # the jupyter worker config generator
     if service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
         component_switch = ComponentSwitch(jupyter_must_exists=True)
@@ -109,6 +116,7 @@ def generate_node_config(args, toml_config):
         jupyter_generator = WedprJupyterWorkerServiceGenerator(
             config, args.output)
         jupyter_generator.generate_config()
+    """
 
 
 def execute_command(args):

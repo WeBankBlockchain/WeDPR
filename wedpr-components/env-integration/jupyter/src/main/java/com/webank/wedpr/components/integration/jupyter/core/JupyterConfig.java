@@ -22,7 +22,7 @@ import org.apache.http.client.config.RequestConfig;
 public class JupyterConfig {
 
     private static Integer MAX_JUPYTER_PER_HOST =
-            WeDPRConfig.apply("wedpr.jupyter.max_count_per_host", 3);
+            WeDPRConfig.apply("wedpr.jupyter.max_count_per_host", 10);
     private static String JUPYTER_HOST_CONFIGURATION_KEY =
             WeDPRConfig.apply("wedpr.jupyter.host_configuration_key", "jupyter_entrypoints");
     private static String JUPYTER_ENTRYPOINT_SPLITTER = ";";

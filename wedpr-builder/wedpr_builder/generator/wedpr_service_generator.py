@@ -30,17 +30,29 @@ class WedprServiceGenerator:
         pass
 
     def generate_config(self):
+        agency_list = self.config.agency_list.keys()
         for agency in self.config.agency_list.keys():
             agency_config = self.config.agency_list.get(agency)
             service_config = self.get_service_config(agency_config)
-            self.__generate_service_config__(agency_config, service_config)
+            self.__generate_service_config__(
+                agency_config, agency_list, service_config)
 
     @abstractmethod
     def generate_nginx_config(self, node_path: str, server_config: ServiceConfig):
         pass
 
+    @abstractmethod
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        """
+        generate the init scripts
+        :param agency_config:
+        :return:
+        """
+        pass
+
     def __generate_service_config__(
             self, agency_config: AgencyConfig,
+            agency_list,
             service_config: ServiceConfig):
         utilities.print_badge(f"* generate {service_config.service_type} config, "
                               f"agency: {agency_config.agency_name}, deploy_dir: "
@@ -54,15 +66,19 @@ class WedprServiceGenerator:
             if len(ip_array) > 1:
                 count = int(ip_array[1])
             for i in range(count):
-                node_path = self.__generate_single_site_config__(
+                node_path = self.__generate_single_node_config__(
                     agency_config=agency_config,
                     service_config=service_config,
                     agency_name=service_config.agency,
                     deploy_ip=ip, node_index=i)
                 node_path_list.append(node_path)
             # generate the ip shell scripts
-            self.__generate_docker_ip_shell_scripts__(self.__get_deploy_path__(
-                agency_config.agency_name, ip, None, service_config.service_type))
+            output_path = self.__get_deploy_path__(
+                agency_config.agency_name, ip, None, service_config.service_type)
+            self.__generate_docker_ip_shell_scripts__(output_path)
+            # generate the init scripts
+            self.generate_init_scripts(os.path.join(
+                output_path, "init"), agency_list, agency_config)
         for node_path in node_path_list:
             self.generate_nginx_config(node_path, service_config)
         utilities.print_badge(f"* generate {service_config.service_type} config success, "
@@ -75,7 +91,7 @@ class WedprServiceGenerator:
             return
         DockerGenerator.generate_shell_scripts(ip_dir)
 
-    def __generate_single_site_config__(
+    def __generate_single_node_config__(
             self, agency_config:  AgencyConfig,
             service_config: ServiceConfig,
             agency_name: str,
@@ -113,6 +129,7 @@ class WedprServiceGenerator:
         # substitute the configuration
         config_properties = self.get_properties(
             deploy_ip, agency_config, node_index)
+
         # the docker mode case
         self.__generate_docker_scripts__(
             node_path, config_properties, service_config)
@@ -221,6 +238,32 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
                  deploy_path: str):
         super().__init__(config, deploy_path)
 
+    # generate the init scripts
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        utilities.log_info(
+            f"* Generate init scripts for wedpr-site, init_dir: {init_dir}")
+        utilities.mkdir(init_dir)
+        # copy the db scripts
+        command = f"cp -r {constant.ConfigInfo.db_file_path} {init_dir}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(
+                f"Copy database init files failed, error: {output}")
+        # copy the init files
+        command = f"cp {constant.ConfigInfo.init_tpl_path}/* {init_dir}"
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(f"Generate init file failed, error: {output}")
+        # substitute the content
+        storage_props = agency_config.sql_storage_config.to_properties()
+        for file in constant.ConfigInfo.init_file_path_list:
+            file_path = os.path.join(init_dir, file)
+            utilities.substitute_configurations(storage_props, file_path)
+            utilities.log_info(f"* Generate init script: {file_path} success")
+        # update the dml
+        agency_config.update_dml(agency_list, init_dir)
+        utilities.log_info("* Generate init scripts for wedpr-site success")
+
     def __generate_shell_scripts__(self, dist_path, dst_path):
         utilities.log_info(
             f"* generate shell script, dist_path: {dist_path}, dst_path: {dst_path}")
@@ -259,6 +302,9 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
 class WedprModelServiceGenerator(WedprServiceGenerator):
     def __init__(self, config: WeDPRDeployConfig, deploy_path: str):
         super().__init__(config, deploy_path)
+
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        return
 
     def __copy_binary__(self, dist_path, dst_path):
         if self.config.env_config.docker_mode is True:
@@ -312,6 +358,9 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
                  deploy_path: str):
         super().__init__(config, deploy_path)
 
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        return
+
     def __copy_binary__(self, dist_path, dst_path):
         self.__copy_java_binary__(dist_path, dst_path)
 
@@ -337,6 +386,9 @@ class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
                  config: WeDPRDeployConfig,
                  deploy_path: str):
         super().__init__(config, deploy_path)
+
+    def generate_init_scripts(self, init_dir, agency_list, agency_config: AgencyConfig):
+        return
 
     def __generate_shell_scripts__(self, dist_path, dst_path):
         return

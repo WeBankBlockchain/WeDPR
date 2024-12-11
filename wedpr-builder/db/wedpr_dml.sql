@@ -1,10 +1,6 @@
 -- the Wizard algorithm template
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_algorithm_templates", '{"version":"1.0","templates":[{"name":"PSI","title":"数据对齐","supportable":true,"enable":true,"participateNumber":"2+","detail":"","version":"1.0"},{"name":"PIR","title":"匿踪查询","supportable":true,"enable":true,"participateNumber":"1","detail":"","version":"1.0"},{"name":"SQL","title":"联表分析","supportable":true,"enable":true,"participateNumber":"1+","detail":"","version":"1.0"},{"name":"MPC","title":"自定义计算","supportable":true,"enable":true,"participateNumber":"1+","detail":"","version":"1.0"},{"name":"XGB_TRAINING","title":"SecureLGBM训练","supportable":true,"enable":true,"participateNumber":"1+","needTagsProvider":true,"detail":"","version":"1.0"},{"name":"XGB_PREDICTING","title":"SecureLGBM预测","supportable":true,"enable":true,"participateNumber":"1+","needTagsProvider":true,"detail":"","version":"1.0"},{"name":"LR_TRAINING","title":"SecureLR建模","supportable":true,"enable":true,"participateNumber":"1+","needTagsProvider":true,"detail":"","version":"1.0"},{"name":"LR_PREDICTING","title":"SecureLR预测","supportable":true,"enable":true,"participateNumber":"1+","needTagsProvider":true,"detail":"","version":"1.0"},{"name":"PREPROCESSING","title":"数据预处理","supportable":true,"detail":"","version":"1.0"},{"name":"FEATURE_ENGINEERING","title":"特征工程","supportable":true,"detail":"","version":"1.0"}]}');
 
-
--- the jupyter related host settings
--- insert into `wedpr_config_table`(`config_key`, `config_value`) values("jupyter_entrypoints", '{"hostSettings":[{"entryPoint":"192.168.0.238:14000","maxJupyterCount":5,"jupyterStartPort":14000}]}');
-
 -- the  jupyter related code template
 -- command to create user
 insert into `wedpr_config_table`(`config_key`, `config_value`) values("wedpr_create_user", 'useradd -m ${user_name}');
@@ -42,3 +38,6 @@ insert into wedpr_user (username, password, status) values('admin', '{bcrypt}$2a
 insert into wedpr_user_role(username, role_id) values ('admin', '1');
 insert into wedpr_role_permission (role_id, role_name, permission_id) values ('1', 'admin_user', '1');
 insert into wedpr_role_permission (role_id, role_name, permission_id) values ('2', 'original_user', '2');
+
+-- the jupyter related host settings
+-- insert into `wedpr_config_table`(`config_key`, `config_value`) values("jupyter_entrypoints", '{"hostSettings":[{"entryPoint":"192.168.0.238:14000","maxJupyterCount":5,"jupyterStartPort":14000}]}');
