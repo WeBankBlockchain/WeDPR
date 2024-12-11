@@ -1,0 +1,67 @@
+name: Build and Publish Binary
+on:
+  push:
+    branches-ignore:
+      - "**"
+  release:
+    types: [published, created]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUST_BACKTRACE: 1
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
+  ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
+
+
+jobs:
+  upload-wedpr-builder:
+    name: upload-wedpr-builder
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 5
+      - name: prepare wedpr-builder tgz
+        run: |
+          tar -cvzf wedpr-builder.tar.gz wedpr-builder
+      - name: Upload wedpr-builder
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: wedpr-builder.tar.gz
+          asset_name: wedpr-builder.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  upload-web:
+    name: upload-web
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-13]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.17.0'
+      - name: build web
+        run: |
+          cd wedpr-web && npm install && npm run build:pro
+          mv wedpr-web wedpr-web.bak && mv wedpr-web/dist wedpr-web
+          tar -cvzf wedpr-web.tar.gz wedpr-web
+      - name: Upload wedpr-web
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: wedpr-web.tar.gz
+          asset_name: wedpr-web.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
