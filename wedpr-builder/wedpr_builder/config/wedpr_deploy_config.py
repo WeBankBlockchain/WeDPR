@@ -389,6 +389,9 @@ class ServiceConfig:
         self.server_start_port = int(utilities.get_item_value(
             self.config, "server_start_port",
             0, must_exist, config_section))
+        # the external ip, mpc service need this config when deploy to different agencies
+        self.external_ip = utilities.get_item_value(
+            self.config, "external_ip", "", False, config_section)
         self.server_backend_list = []
         self.jupyter_infos = JupyterInfos()
 
@@ -420,7 +423,7 @@ class ServiceConfig:
             {constant.ConfigProperities.NGINX_PORT: nginx_listen_port})
         return props
 
-    def to_properties(self, deploy_ip, node_index: int) -> {}:
+    def to_properties(self, deploy_ip, node_index: int, agency_index: int = 0) -> {}:
         props = {}
         server_start_port = self.server_start_port + 3 * node_index
         self.server_backend_list.append(
@@ -474,11 +477,18 @@ class ServiceConfig:
                 entry_point=entry_point,
                 jupyter_external_ip=jupyter_external_ip,
                 start_port=begin_port))
+        # use host for mpc service
         if self.service_type == constant.ServiceInfo.wedpr_mpc_service:
-            spdz_listen_port = server_start_port + 2
+            spdz_start_port = self.server_start_port + 2
             props.update(
-                {constant.ConfigProperities.WEDPR_MPC_SPDZ_LISTEN_PORT: spdz_listen_port})
-            exposed_port_list = f"{exposed_port_list} -p {spdz_listen_port}:{spdz_listen_port}"
+                {constant.ConfigProperities.WEDPR_MPC_SPDZ_LISTEN_PORT: spdz_start_port})
+            exposed_port_list = "--net host "
+            # set the external ip
+            external_ip = self.external_ip
+            if self.external_ip is None or len(self.external_ip) == 0:
+                external_ip = deploy_ip
+            props.update(
+                {constant.ConfigProperities.WEDPR_MPC_SPDZ_EXTERNAL_IP: external_ip})
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
 
@@ -945,7 +955,7 @@ class AgencyConfig:
             {constant.ConfigProperities.WEDPR_DOCKER_NAME: docker_name})
         return props
 
-    def __generate_java_service_docker_properties__(self, prefix_path) -> {}:
+    def __generate_java_service_docker_properties__(self, prefix_path, mount_log: bool = False) -> {}:
         props = {}
         # the config mount info
         props.update({constant.ConfigProperities.WEDPR_CONFIG_DIR: "conf"})
@@ -956,6 +966,13 @@ class AgencyConfig:
         props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
         props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
                      constant.ConfigInfo.get_docker_path(f"{prefix_path}/logs")})
+        if mount_log:
+            local_log_path = "${SHELL_FOLDER}/log"
+            docker_log_path = constant.ConfigInfo.get_docker_path(
+                f"{prefix_path}/log")
+            extra_mount_info = f"-v {local_log_path}:{docker_log_path}"
+            props.update(
+                {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extra_mount_info})
         return props
 
     def get_wedpr_site_properties(self, deploy_ip: str, node_index: int) -> {}:
@@ -978,11 +995,12 @@ class AgencyConfig:
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
         props.update(self.__generate_java_service_docker_properties__(
-            constant.ConfigInfo.wedpr_site_docker_dir))
+            constant.ConfigInfo.wedpr_site_docker_dir, True))
         # add nginx configuration mount
         local_mount_path = '${SHELL_FOLDER}/conf/nginx.conf'
         remote_mount_path = "/etc/nginx/nginx.conf"
-        extended_mount_conf = f" -v {local_mount_path}:{remote_mount_path}"
+        extended_mount_conf = f" -v {local_mount_path}:{remote_mount_path} " \
+                              f"{props.get(constant.ConfigProperities.EXTENDED_MOUNT_CONF)}"
         props.update(
             {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_conf})
         return props
@@ -1000,7 +1018,7 @@ class AgencyConfig:
         props.update(self.jupyter_worker_config.to_properties(
             deploy_ip, node_index))
         props.update(self.__generate_java_service_docker_properties__(
-            constant.ConfigInfo.wedpr_worker_docker_dir))
+            constant.ConfigInfo.wedpr_worker_docker_dir, False))
         return props
 
     def get_pir_properties(self, deploy_ip: str, node_index: int):
@@ -1019,15 +1037,16 @@ class AgencyConfig:
         # the hdfs config
         props.update(self.hdfs_storage_config.to_properties())
         props.update(self.__generate_java_service_docker_properties__(
-            constant.ConfigInfo.wedpr_pir_docker_dir))
+            constant.ConfigInfo.wedpr_pir_docker_dir, True))
         return props
 
-    def get_mpc_properties(self, deploy_ip: str, node_index: int):
+    def get_mpc_properties(self, deploy_ip: str, node_index: int, agency_index: int):
         props = self.to_properties()
         # the zone config
         props.update(self.env_config.to_properties())
         # the service config
-        props.update(self.mpc_config.to_properties(deploy_ip, node_index))
+        props.update(self.mpc_config.to_properties(
+            deploy_ip, node_index, agency_index))
         props.update(self.hdfs_storage_config.to_properties())
         # the config mount info
         docker_prefix_path = constant.ConfigInfo.wedpr_mpc_docker_dir

@@ -85,7 +85,7 @@ wedpr_api_token = ""
         home = "/user/wedpr/agency0"
         name_node = "127.0.0.1"
         name_node_port = 9000
-        webfs_port = 50700
+        webfs_port = 50070
         token = ""
         # enable auth or not, default is false
         enable_krb5_auth = false
@@ -140,6 +140,7 @@ wedpr_api_token = ""
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "20000"
+        external_ip = ""
 
     # configuration for the wedpr nodes
     [[agency.node]]
@@ -223,7 +224,7 @@ wedpr_api_token = ""
         home = "/user/wedpr/agency1"
         name_node = "127.0.0.1"
         name_node_port = 9000
-        webfs_port = 50700
+        webfs_port = 50070
         token = ""
         # enable auth or not, default is false
         enable_krb5_auth = false
@@ -277,6 +278,7 @@ wedpr_api_token = ""
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "30000"
+        external_ip = ""
 
     # configuration for the wedpr nodes
     [[agency.node]]
