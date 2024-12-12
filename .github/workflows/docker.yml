@@ -8,7 +8,6 @@ on:
     tags:
       - 'v3.*.*'
     branches:
-      - feature-milestone2
       - main
   release:
     types: [prereleased]

@@ -1,4 +1,6 @@
 #!/bin/sh
+SHELL_FOLDER=$(cd $(dirname $0);pwd)
+cd ${SHELL_FOLDER}
 
 if [[ $# -lt 5 ]] ; then
     echo "Usage: bash ${0} DB_IP DB_PORT DB_USER DB_PASSWORD DB_NAME"

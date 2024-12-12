@@ -15,5 +15,5 @@ RUN chmod -R 777  /home/share/
 RUN pip install --no-cache-dir -i https://pypi.mirrors.ustc.edu.cn/simple/ -r root/requirements.txt
 
 # TODO: use the non-test pip after uploaded
-RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr-authenticator==1.0.0.dev-20241124
-RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr-ml-toolkit==1.0.0.dev-20241201
+RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr-authenticator
+RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr-ml-toolkit
