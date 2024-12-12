@@ -390,7 +390,7 @@ class ServiceConfig:
             return ""
         jupyter_setting = "'%s'" % self.jupyter_infos.to_string()
         utilities.log_info(f"* jupyter_setting: {jupyter_setting}")
-        sql = 'insert into \`wedpr_config_table\`(\`config_key\`, \`config_valule\`) values(\\\"jupyter_entrypoints\\\", %s);' % jupyter_setting
+        sql = 'insert into \`wedpr_config_table\`(\`config_key\`, \`config_value\`) values(\\\"jupyter_entrypoints\\\", %s);' % jupyter_setting
         return sql
 
     def __repr__(self):
