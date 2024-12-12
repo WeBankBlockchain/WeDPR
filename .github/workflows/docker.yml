@@ -29,6 +29,8 @@ env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   ACTIONS_RUNNER_FORCED_INTERNAL_NODE_VERSION: node16
   ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
+  DOCKER_USER_NAME: ${{ secrets.DOCKER_FISCOPR_USER }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_FISCOPR_TOKEN }}
 
 jobs:
   build_docker:
@@ -45,8 +47,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3
         with:
-          username: ${{ secrets.DOCKER_FISCOPR_USER }}
-          password: ${{ secrets.DOCKER_FISCOPR_TOKEN }}
+          username: ${{ env.DOCKER_USER_NAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
       - name: Get git tag
         uses: little-core-labs/get-git-tag@v3.0.1
         id: tag_data
