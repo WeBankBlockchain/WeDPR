@@ -41,7 +41,7 @@ FROM fiscoorg/wedpr-image:v3.0.0 as wedpr-pir
 LABEL maintainer service@webank.com
 
 RUN mkdir -p /data/home/wedpr
-COPY --from=builder /WeDPR/wedpr-pir/dist/ /data/app/wedpr-pir
+COPY --from=builder /WeDPR/wedpr-pir/dist/ /data/home/wedpr/wedpr-pir
 ENTRYPOINT ["/bin/bash", "/data/home/wedpr/wedpr-pir/start.sh", "true"]
 
 # the wedpr-site

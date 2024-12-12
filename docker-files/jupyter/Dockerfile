@@ -1,4 +1,4 @@
-FROM ficoorg/wedpr-image:v3.0.0 as  wedpr-jupyter-image
+FROM fiscoorg/wedpr-image:v3.0.0 as  wedpr-jupyter-image
 
 ENV LANG zh_CN.UTF-8
 ENV LANGUAGE zh_CN.UTF-8

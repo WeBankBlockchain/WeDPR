@@ -867,6 +867,7 @@ class AgencyConfig:
             {constant.ConfigProperities.WEDPR_API_TOKEN: self.wedpr_api_token})
         # EXTENDED_MOUNT_CONF default is empty string
         props.update({constant.ConfigProperities.EXTENDED_MOUNT_CONF: ""})
+        props.update({constant.ConfigProperities.DOCKER_CMD:  ""})
         return props
 
     def get_wedpr_model_properties(self, deploy_ip: str, node_index: int) -> {}:
@@ -887,18 +888,23 @@ class AgencyConfig:
             {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path("model/application.yml")})
         # the extended mount info
         local_path = "${SHELL_FOLDER}/logging.conf"
-        docker_path = constant.ConfigInfo.get_docker_path("model/logging.conf")
+        docker_path = constant.ConfigInfo.get_docker_path(os.path.join(
+            constant.ConfigInfo.wedpr_model_docker_dir, "logging.conf"))
         extended_mount_info = f" -v {local_path}:{docker_path} "
         local_path = "${SHELL_FOLDER}/wedpr_sdk_log_config.ini"
         docker_path = constant.ConfigInfo.get_docker_path(
-            "model/wedpr_sdk_log_config.ini")
+            os.path.join(constant.ConfigInfo.wedpr_model_docker_dir, "wedpr_sdk_log_config.ini"))
         extended_mount_info = f"{extended_mount_info} -v {local_path}:{docker_path} "
+        # set the working directory
+        working_dir = constant.ConfigInfo.get_docker_path(
+            constant.ConfigInfo.wedpr_model_docker_dir)
+        extended_mount_info = f"{extended_mount_info} -w {working_dir}"
         props.update(
             {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_info})
         # set the log mount information
         props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "logs"})
         props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
-                     constant.ConfigInfo.get_docker_path("model/logs")})
+                     constant.ConfigInfo.get_docker_path(f"{constant.ConfigInfo.wedpr_model_docker_dir}/logs")})
         return props
 
     @staticmethod
@@ -907,26 +913,20 @@ class AgencyConfig:
             prefix_path, zone_name: str, service_type: str, env_config,
             exposed_port_list: str, node_index: int):
         props = {}
-        # the config mount info
+        # the config mount info: mount the whole directory
         props.update(
-            {constant.ConfigProperities.WEDPR_CONFIG_DIR: "config.ini"})
-        path = constant.ConfigInfo.get_docker_path(f"{prefix_path}/config.ini")
+            {constant.ConfigProperities.WEDPR_CONFIG_DIR: ""})
+        path = constant.ConfigInfo.get_docker_path(f"{prefix_path}/")
         props.update(
             {constant.ConfigProperities.DOCKER_CONF_PATH: path})
-        # set the extended mont config
-        local_mount_dir = '${SHELL_FOLDER}/conf'
-        remote_mount_dir = constant.ConfigInfo.get_docker_path(
-            f"{prefix_path}/conf")
-        extended_mount_conf = f" -v {local_mount_dir}:{remote_mount_dir} "
-        # nodes.json for gateway service
-        if service_type == constant.ServiceInfo.gateway_service_type:
-            node_connection_file = "nodes.json"
-            local_mount_dir = '${SHELL_FOLDER}/%s' % node_connection_file
-            remote_mount_dir = constant.ConfigInfo.get_docker_path(
-                f"{prefix_path}/{node_connection_file}")
-            extended_mount_conf = f"{extended_mount_conf} -v {local_mount_dir}:{remote_mount_dir} "
+        # set the working directory
+        working_dir = constant.ConfigInfo.get_docker_path(f"{prefix_path}")
+        extended_mount_conf = f" -w {working_dir}"
         props.update(
             {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_conf})
+        # specify the cmd
+        props.update(
+            {constant.ConfigProperities.DOCKER_CMD: f"{constant.ConfigInfo.cpp_component_cmd}"})
         # specify the log path to mount
         props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "log"})
         props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
@@ -1032,9 +1032,9 @@ class AgencyConfig:
         # the config mount info
         docker_prefix_path = constant.ConfigInfo.wedpr_mpc_docker_dir
         props.update(
-            {constant.ConfigProperities.WEDPR_CONFIG_DIR: "config.ini"})
+            {constant.ConfigProperities.WEDPR_CONFIG_DIR: ""})
         path = constant.ConfigInfo.get_docker_path(
-            f"{docker_prefix_path}/config.ini")
+            f"{docker_prefix_path}")
         props.update(
             {constant.ConfigProperities.DOCKER_CONF_PATH: path})
 
@@ -1042,6 +1042,14 @@ class AgencyConfig:
         props.update({constant.ConfigProperities.WEDPR_LOG_DIR: "log"})
         props.update({constant.ConfigProperities.DOCKER_LOG_PATH:
                       constant.ConfigInfo.get_docker_path(f"{docker_prefix_path}/log")})
+        # specify the extended mount info
+        working_directory = constant.ConfigInfo.get_docker_path(
+            docker_prefix_path)
+        props.update(
+            {constant.ConfigProperities.EXTENDED_MOUNT_CONF: f" -w {working_directory}"})
+        # specify the docker command
+        props.update(
+            {constant.ConfigProperities.DOCKER_CMD: constant.ConfigInfo.cpp_component_cmd})
         return props
 
     def __update_dml__(self, sql, dml_file_path, use_double_quote=False):

@@ -33,7 +33,7 @@ jobs:
           echo "* Manual build wedpr-jupyter-image image, docker version: ${{ github.event.inputs.tags }}"
           DOCKER_TAG="fiscoorg/wedpr-jupyter-image:${{ github.event.inputs.tags }}"
           echo "* Begin to build ${DOCKER_TAG}"
-          cd docker-files/base
+          cd docker-files/jupyter
           docker build -t ${DOCKER_TAG} .
           echo "* Build ${DOCKER_TAG} success"
           docker push ${DOCKER_TAG}

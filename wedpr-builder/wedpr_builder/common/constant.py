@@ -83,6 +83,7 @@ class ConfigInfo:
     wedpr_pir_docker_dir = "wedpr-pir"
     wedpr_site_docker_dir = "wedpr-site"
     wedpr_mpc_docker_dir = "wedpr-mpc-service"
+    wedpr_model_docker_dir = "wedpr-model"
 
     wedpr_gateway_service_dir = "wedpr-gateway-service"
     wedpr_node_service_dir = "wedpr-pro-node-service"
@@ -110,6 +111,7 @@ class ConfigInfo:
     scripts_file_list = ["start.sh", "stop.sh"]
     # the default path for docker
     default_spdz_home = "/data/app/wedpr/scripts/wedpr-mpc-no-gateway"
+    cpp_component_cmd = " -c config.ini "
 
     @staticmethod
     def get_docker_path(file_path: str):
@@ -177,6 +179,7 @@ class ConfigProperities:
     WEDPR_LOG_DIR = "WEDPR_LOG_DIR"
     # specify the mounted docker log path
     DOCKER_LOG_PATH = "DOCKER_LOG_PATH"
+    DOCKER_CMD = "DOCKER_CMD"
     # specify the exposed docker port list
     WEDPR_DOCKER_EXPORSE_PORT_LIST = "WEDPR_DOCKER_EXPORSE_PORT_LIST"
     # the created docker name

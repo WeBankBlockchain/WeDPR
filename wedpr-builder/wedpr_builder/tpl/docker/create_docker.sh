@@ -15,7 +15,7 @@ if [[ "${confirm}" == "Y" || "${confirm}" == "y" ]]; then
   LOG_INFO "* Pull image ${WEDPR_IMAGE_DESC}"
   docker pull ${WEDPR_IMAGE_DESC}
   LOG_INFO "* Pull image ${WEDPR_IMAGE_DESC} success, begin to create docker"
-  docker run -d ${WEDPR_DOCKER_EXPORSE_PORT_LIST} -v ${SHELL_FOLDER}/${WEDPR_CONFIG_DIR}:${DOCKER_CONF_PATH} -v ${SHELL_FOLDER}/${WEDPR_LOG_DIR}:${DOCKER_LOG_PATH} ${EXTENDED_MOUNT_CONF} --name ${WEDPR_DOCKER_NAME} ${WEDPR_IMAGE_DESC}
+  docker run -d ${WEDPR_DOCKER_EXPORSE_PORT_LIST} -v ${SHELL_FOLDER}/${WEDPR_CONFIG_DIR}:${DOCKER_CONF_PATH} -v ${SHELL_FOLDER}/${WEDPR_LOG_DIR}:${DOCKER_LOG_PATH} ${EXTENDED_MOUNT_CONF} --name ${WEDPR_DOCKER_NAME} ${WEDPR_IMAGE_DESC} ${DOCKER_CMD}
   LOG_INFO "Create docker: ${WEDPR_DOCKER_NAME} success"
 else
   LOG_INFO "Exit without create docker ${WEDPR_DOCKER_NAME}"

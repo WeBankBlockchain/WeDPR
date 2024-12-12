@@ -118,7 +118,8 @@ class WedprServiceGenerator:
         utilities.mkdir(node_path)
         # copy configuration into the dest path
         command = f"cp -r {service_config.tpl_config_file_path} {node_path}"
-        if service_config.service_type == constant.ServiceInfo.wedpr_model_service:
+        if service_config.service_type == constant.ServiceInfo.wedpr_model_service \
+                or service_config.service_type == constant.ServiceInfo.wedpr_mpc_service:
             command = f"cp {service_config.tpl_config_file_path}/* {node_path}"
         (ret, output) = utilities.execute_command_and_getoutput(command)
         if ret is False:
