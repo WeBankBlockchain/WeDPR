@@ -343,9 +343,11 @@ class SingleJupyterInfo:
             self,
             entry_point: str,
             start_port: int,
+            jupyter_external_ip: str,
             max_jupyter_count: int = 10):
         self.entryPoint = entry_point
         self.jupyterStartPort = start_port
+        self.jupyterExternalIp = jupyter_external_ip
         self.maxJupyterCount = max_jupyter_count
 
     def __repr__(self):
@@ -356,6 +358,8 @@ class SingleJupyterInfo:
     def as_dict(self):
         result = {}
         result.update({"\"entryPoint\"": f"\"{self.entryPoint}\""})
+        result.update(
+            {"\"jupyterExternalIp\"": f"\"{self.jupyterExternalIp}\""})
         result.update({"\"jupyterStartPort\"": f"{self.jupyterStartPort}"})
         result.update({"\"maxJupyterCount\"": f"{self.maxJupyterCount}"})
         return result
@@ -377,6 +381,9 @@ class ServiceConfig:
         self.agency = agency
         self.tpl_config_file_path = tpl_config_file_path
         self.config_file_list = config_file_list
+        # the jupyter external ip
+        self.jupyter_external_ip = utilities.get_item_value(
+            self.config, "jupyter_external_ip", None, False, config_section)
         self.deploy_ip_list = utilities.get_item_value(
             self.config, "deploy_ip", [], must_exist, config_section)
         self.server_start_port = int(utilities.get_item_value(
@@ -454,14 +461,18 @@ class ServiceConfig:
         # reserver 100 ports for jupyter use
         jupyter_start_port = server_start_port + 100
         default_jupyter_max_num = 20
+        jupyter_external_ip = self.jupyter_external_ip
+        if jupyter_external_ip is None or len(jupyter_external_ip) == 0:
+            jupyter_external_ip = deploy_ip
         if self.service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
             begin_port = jupyter_start_port + default_jupyter_max_num * node_index
             end_port = begin_port + default_jupyter_max_num
             exposed_port_list = f"{exposed_port_list} -p {begin_port}-{end_port}:{begin_port}-{end_port}"
-            entry_point = f"http://{deploy_ip}:{server_start_port}"
+            entry_point = f"{deploy_ip}:{server_start_port}"
             # add the SingleJupyterInfo
             self.jupyter_infos.jupyters.append(SingleJupyterInfo(
                 entry_point=entry_point,
+                jupyter_external_ip=jupyter_external_ip,
                 start_port=begin_port))
         if self.service_type == constant.ServiceInfo.wedpr_mpc_service:
             spdz_listen_port = server_start_port + 2

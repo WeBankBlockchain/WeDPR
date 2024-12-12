@@ -28,6 +28,7 @@ public class JupyterSetting {
     private String listenIp = JupyterConfig.getDefaultJupyterListenIp();
     private Integer listenPort;
     private String noteBookPath;
+    private String hostIp;
 
     public JupyterSetting() {}
 

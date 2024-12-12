@@ -133,6 +133,7 @@ wedpr_api_token = ""
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "19000"
+        jupyter_external_ip = ""
 
     # configuration for mpc
     [agency.mpc]
@@ -269,6 +270,7 @@ wedpr_api_token = ""
         deploy_ip = ["127.0.0.1:1"]
         # the server start port
         server_start_port = "29000"
+        jupyter_external_ip = ""
 
     # configuration for mpc
     [agency.mpc]

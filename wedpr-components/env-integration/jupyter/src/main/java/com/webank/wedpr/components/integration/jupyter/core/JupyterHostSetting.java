@@ -23,9 +23,9 @@ import com.webank.wedpr.components.integration.jupyter.dao.JupyterMapper;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 @Data
 public class JupyterHostSetting {
@@ -33,12 +33,24 @@ public class JupyterHostSetting {
 
     @Data
     public static class SingleHostSetting {
+        // the client entryPoint
+        private String jupyterExternalIp;
         // the entry point of the host
         private String entryPoint;
         // the limitation
         private Integer maxJupyterCount = JupyterConfig.getMaxJupyterPerHost();
         // the startPort
         private Integer jupyterStartPort = JupyterConfig.getDefaultJupyterStartPort();
+
+        public String getJupyterExternalIp() {
+            if (StringUtils.isBlank(jupyterExternalIp)) {
+                if (StringUtils.isBlank(entryPoint)) {
+                    return entryPoint;
+                }
+                return entryPoint.split(":")[0];
+            }
+            return jupyterExternalIp;
+        }
     }
 
     private List<SingleHostSetting> hostSettings = new ArrayList<>();
@@ -75,6 +87,8 @@ public class JupyterHostSetting {
                 allocatedHost.toString());
 
         JupyterSetting jupyterSetting = new JupyterSetting(userName, listenPort);
+        // set the host ip
+        jupyterSetting.setHostIp(allocatedHost.getJupyterExternalIp());
         // insert the information
         JupyterInfoDO allocatedJupyter = new JupyterInfoDO();
         allocatedJupyter.setAgency(agency);
@@ -98,7 +112,7 @@ public class JupyterHostSetting {
     }
 
     public static JupyterHostSetting deserialize(String data) throws Exception {
-        if (StringUtils.isEmpty(data)) {
+        if (StringUtils.isBlank(data)) {
             return null;
         }
         return ObjectMapperFactory.getObjectMapper().readValue(data, JupyterHostSetting.class);
