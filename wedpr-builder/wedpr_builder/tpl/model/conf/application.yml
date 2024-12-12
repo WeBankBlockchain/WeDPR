@@ -35,7 +35,7 @@ transport_threadpool_size: 4
 transport_node_id: "${WEDPR_NODE_ID}"
 transport_gateway_targets: "${GATEWAY_TARGET}"
 transport_host_ip: "${WEDPR_TRANSPORT_HOST_IP}"
-transport_listen_port: ${WEDPR_SERVER_LISTEN_PORT}
+transport_listen_port: ${WEDPR_TRANSPORT_LISTEN_PORT}
 
 # the log retriever config
 LOG_PATH: "logs/wedpr-model.log"

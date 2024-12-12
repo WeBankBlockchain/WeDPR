@@ -872,6 +872,7 @@ class AgencyConfig:
 
     def get_wedpr_model_properties(self, deploy_ip: str, node_index: int) -> {}:
         props = self.to_properties()
+        prefix_path = constant.ConfigInfo.wedpr_model_docker_dir
         # the zone config
         props.update(self.env_config.to_properties())
         # the sql config
@@ -885,19 +886,18 @@ class AgencyConfig:
         props.update(
             {constant.ConfigProperities.WEDPR_CONFIG_DIR: "application.yml"})
         props.update(
-            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path("model/application.yml")})
+            {constant.ConfigProperities.DOCKER_CONF_PATH: constant.ConfigInfo.get_docker_path(f"{prefix_path}/application.yml")})
         # the extended mount info
         local_path = "${SHELL_FOLDER}/logging.conf"
         docker_path = constant.ConfigInfo.get_docker_path(os.path.join(
-            constant.ConfigInfo.wedpr_model_docker_dir, "logging.conf"))
+            prefix_path, "logging.conf"))
         extended_mount_info = f" -v {local_path}:{docker_path} "
         local_path = "${SHELL_FOLDER}/wedpr_sdk_log_config.ini"
         docker_path = constant.ConfigInfo.get_docker_path(
-            os.path.join(constant.ConfigInfo.wedpr_model_docker_dir, "wedpr_sdk_log_config.ini"))
+            os.path.join(prefix_path, "wedpr_sdk_log_config.ini"))
         extended_mount_info = f"{extended_mount_info} -v {local_path}:{docker_path} "
         # set the working directory
-        working_dir = constant.ConfigInfo.get_docker_path(
-            constant.ConfigInfo.wedpr_model_docker_dir)
+        working_dir = constant.ConfigInfo.get_docker_path(prefix_path)
         extended_mount_info = f"{extended_mount_info} -w {working_dir}"
         props.update(
             {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_info})
