@@ -398,16 +398,25 @@ export default {
           this.jobInfo.sql = sql
         }
         // 查询任务模型和结果
-        if (this.jobStatusInfo.status === 'RunSuccess' && this.receiverList.includes(this.agencyId)) {
-          if ([jobEnum.XGB_TRAINING, jobEnum.XGB_PREDICTING, jobEnum.LR_TRAINING, jobEnum.LR_PREDICTING].includes(this.jobInfo.jobType)) {
+        if (this.jobStatusInfo.status === 'RunSuccess') {
+          if (
+            [jobEnum.XGB_TRAINING, jobEnum.XGB_PREDICTING, jobEnum.LR_TRAINING, jobEnum.LR_PREDICTING].includes(this.jobInfo.jobType) &&
+            this.receiverList.includes(this.agencyId)
+          ) {
             this.getJobResult()
-          } else {
+          }
+          if (
+            [jobEnum.PIR, jobEnum.PSI, jobEnum.MPC, jobEnum.SQL].includes(this.jobInfo.jobType) &&
+            this.jobInfo.owner === this.userId &&
+            this.jobInfo.ownerAgency === this.agencyId
+          ) {
             // pir psi sql mpc 直接展示任务结果
             if (resultFileInfo) {
               this.resultFileInfo = resultFileInfo
             }
           }
         }
+
         this.startInterVal()
       } else {
         this.jobInfo = {}
