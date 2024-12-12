@@ -5,6 +5,7 @@ import os.path
 from wedpr_builder.common import utilities
 from wedpr_builder.common import constant
 from wedpr_builder.config.wedpr_user_config import UserJWTConfig
+import json
 
 
 class ComponentSwitch:
@@ -300,7 +301,52 @@ class StorageConfig:
         properties.update({constant.ConfigProperities.MYSQL_USER: self.user})
         properties.update(
             {constant.ConfigProperities.MYSQL_PASSWORD: self.password})
+        # mysql host
+        properties.update({constant.ConfigProperities.MYSQL_HOST: self.host})
+        properties.update({constant.ConfigProperities.MYSQL_PORT: self.port})
+        properties.update(
+            {constant.ConfigProperities.MYSQL_DATABASE: self.database})
         return properties
+
+
+class JupyterInfos:
+    def __init__(self):
+        self.jupyters = []
+
+    def to_string(self) -> str:
+        """
+        convert to json string
+        :return:
+        """
+        dict_result = {}
+        jupyter_dict_array = []
+        for jupyter in self.jupyters:
+            jupyter_dict_array.append(jupyter.as_dict())
+        dict_result.update({"hostSettings": jupyter_dict_array})
+        return json.dumps(dict_result)
+
+
+class SingleJupyterInfo:
+    def __init__(
+            self,
+            entry_point: str,
+            start_port: int,
+            max_jupyter_count: int = 10):
+        self.entryPoint = entry_point
+        self.jupyterStartPort = start_port
+        self.maxJupyterCount = max_jupyter_count
+
+    def __repr__(self):
+        return f"entryPoint: {self.entryPoint}, " \
+               f"jupyterStartPort: {self.jupyterStartPort}," \
+               f" maxJupyterCount: {self.maxJupyterCount}"
+
+    def as_dict(self):
+        result = {}
+        result.update({"\"entryPoint\"": f"\"{self.entryPoint}\""})
+        result.update({"\"jupyterStartPort\"": f"{self.jupyterStartPort}"})
+        result.update({"\"maxJupyterCount\"": f"{self.maxJupyterCount}"})
+        return result
 
 
 class ServiceConfig:
@@ -324,16 +370,36 @@ class ServiceConfig:
         self.server_start_port = int(utilities.get_item_value(
             self.config, "server_start_port",
             0, must_exist, config_section))
+        self.server_backend_list = []
+        self.jupyter_infos = JupyterInfos()
+
+    def to_jupyter_sql(self):
+        if self.service_type != constant.ServiceInfo.wedpr_jupyter_worker_service:
+            return ""
+        jupyter_setting = "'%s'" % self.jupyter_infos.to_string()
+        utilities.log_info(f"* jupyter_setting: {jupyter_setting}")
+        sql = 'insert into \`wedpr_config_table\`(\`config_key\`, \`config_valule\`) values(\\\"jupyter_entrypoints\\\", %s);' % jupyter_setting
+        return sql
 
     def __repr__(self):
         return f"**ServiceConfig: deploy_ip: {self.deploy_ip_list}, " \
-               f"agency: {self.agency}" \
+               f"agency: {self.agency}, " \
                f"server_start_port: {self.server_start_port}," \
                f"service_type: {self.service_type} \n**"
 
+    def to_nginx_properties(self):
+        props = {}
+        nginx_backend_setting = ""
+        for backend in self.server_backend_list:
+            nginx_backend_setting = f"{nginx_backend_setting}{backend};\\n\\t"
+        props.update({constant.ConfigProperities.NGINX_BACKEND_SERVER_LIST:
+                      nginx_backend_setting})
+        return props
+
     def to_properties(self, deploy_ip, node_index: int) -> {}:
         props = {}
-        start_port = self.server_start_port + 2 * node_index
+        server_start_port = self.server_start_port + 2 * node_index
+        self.server_backend_list.append(f"{deploy_ip}:{server_start_port}")
         # nodeid
         node_id = f"{self.service_type}-{self.env_config.zone}-node{node_index}"
         props.update({constant.ConfigProperities.WEDPR_NODE_ID: node_id})
@@ -349,10 +415,10 @@ class ServiceConfig:
             {constant.ConfigProperities.WEDPR_TRANSPORT_HOST_IP: host_ip})
         # the server listen port
         props.update(
-            {constant.ConfigProperities.WEDPR_SERVER_LISTEN_PORT: start_port})
+            {constant.ConfigProperities.WEDPR_SERVER_LISTEN_PORT: server_start_port})
         # transport listen_port
         props.update(
-            {constant.ConfigProperities.WEDPR_TRANSPORT_LISTEN_PORT: start_port + 1})
+            {constant.ConfigProperities.WEDPR_TRANSPORT_LISTEN_PORT: server_start_port + 1})
         # set the image desc for docker mode
         image_desc = self.env_config.get_image_desc_by_service_name(
             self.service_type)
@@ -360,15 +426,20 @@ class ServiceConfig:
             props.update(
                 {constant.ConfigProperities.WEDPR_IMAGE_DESC: image_desc})
         # set the exposed port
-        exposed_port_list = f"-p {start_port}:{start_port} -p {start_port + 1}:{start_port + 1}"
+        exposed_port_list = f"-p {server_start_port}:{server_start_port} -p {server_start_port + 1}:{server_start_port + 1}"
         # default expose 20 ports for jupyter use
         # reserver 100 ports for jupyter use
-        jupyter_start_port = start_port + 100
+        jupyter_start_port = server_start_port + 100
         default_jupyter_max_num = 20
         if self.service_type == constant.ServiceInfo.wedpr_jupyter_worker_service:
-            start_port = jupyter_start_port + default_jupyter_max_num * node_index
-            end_port = start_port + default_jupyter_max_num
-            exposed_port_list = f"{exposed_port_list} -p {start_port}-{end_port}:{start_port}-{end_port}"
+            begin_port = jupyter_start_port + default_jupyter_max_num * node_index
+            end_port = begin_port + default_jupyter_max_num
+            exposed_port_list = f"{exposed_port_list} -p {begin_port}-{end_port}:{begin_port}-{end_port}"
+            entry_point = f"http://{deploy_ip}:{server_start_port}"
+            # add the SingleJupyterInfo
+            self.jupyter_infos.jupyters.append(SingleJupyterInfo(
+                entry_point=entry_point,
+                start_port=begin_port,))
         props.update(
             {constant.ConfigProperities.WEDPR_DOCKER_EXPORSE_PORT_LIST: exposed_port_list})
         # set the docker name
@@ -852,6 +923,12 @@ class AgencyConfig:
         props.update(self.hdfs_storage_config.to_properties())
         props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_site_docker_dir))
+        # add nginx configuration mount
+        local_mount_path = '${SHELL_FOLDER}/conf/nginx.conf'
+        remote_mount_path = "/etc/nginx/nginx.conf"
+        extended_mount_conf = f" -v {local_mount_path}:{remote_mount_path}"
+        props.update(
+            {constant.ConfigProperities.EXTENDED_MOUNT_CONF: extended_mount_conf})
         return props
 
     def get_jupyter_worker_properties(self, deploy_ip: str, node_index: int) -> {}:
@@ -888,6 +965,36 @@ class AgencyConfig:
         props.update(self.__generate_java_service_docker_properties__(
             constant.ConfigInfo.wedpr_pir_docker_dir))
         return props
+
+    def __update_dml__(self, sql, dml_file_path, use_double_quote=False):
+        command = "echo '%s' >> %s" % (sql, dml_file_path)
+        if use_double_quote:
+            command = "echo \"%s\" >> %s" % (sql, dml_file_path)
+        (ret, output) = utilities.execute_command_and_getoutput(command)
+        if ret is False:
+            raise Exception(
+                f"update dml file {dml_file_path} failed for {output}")
+
+    def update_dml(self, agency_list, init_path):
+        """
+        update the dml information
+        :param agency_list:
+        :param init_path:
+        :return:
+        """
+        sql = "\n"
+        # set the agency information
+        for agency in agency_list:
+            sql = f'{sql}insert into `wedpr_agency_table`(`name`, `cnName`, `desc`, `meta`) ' \
+                  f'values("{agency}", "{agency}", "{agency}", "{agency}");\n'
+        dml_file_path = os.path.join(
+            init_path, constant.ConfigInfo.db_dir_name, constant.ConfigInfo.dml_sql_file)
+        self.__update_dml__(sql, dml_file_path)
+        # set the jupyter setting
+        if self.jupyter_worker_config is None:
+            raise Exception("Must set the jupyter worker configuration!")
+        sql = self.jupyter_worker_config.to_jupyter_sql()
+        self.__update_dml__(sql, dml_file_path, True)
 
     def __repr__(self):
         return f"agency: {self.agency_name}, gateway_config: {self.gateway_config}, " \

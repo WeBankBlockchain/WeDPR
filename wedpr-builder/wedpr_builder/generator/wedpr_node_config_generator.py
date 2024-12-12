@@ -10,6 +10,7 @@ from wedpr_builder.generator.shell_script_generator import ShellScriptGenerator
 from wedpr_builder.config.wedpr_deploy_config import WeDPRDeployConfig
 from wedpr_builder.config.wedpr_deploy_config import AgencyConfig
 from wedpr_builder.config.wedpr_deploy_config import NodeConfig
+from wedpr_builder.generator.docker_generator import DockerGenerator
 
 
 class WeDPRNodeConfigGenerator:
@@ -25,10 +26,12 @@ class WeDPRNodeConfigGenerator:
         self.service_type = constant.ServiceInfo.node_service_type
 
     def __generate_ip_shell_scripts__(self, agency_name, ip):
+        output_path = self.__generate_ip_output_path__(agency_name, ip)
         if self.config.env_config.docker_mode is True:
+            DockerGenerator.generate_shell_scripts(output_path)
             return True
         return ShellScriptGenerator.generate_ip_shell_scripts(
-            self.__generate_ip_output_path__(agency_name, ip),
+            output_path,
             "start_all.sh", "stop_all.sh")
 
     def generate_node_config(self):

@@ -50,6 +50,16 @@ class ConfigInfo:
     start_all_tpl_path = get_abs_path("start_all.sh")
     stop_all_tpl_path = get_abs_path("stop_all.sh")
 
+    # the exec_all_tpl_paths
+    exec_all_tpl_path = get_abs_path("exec_all_bash.sh")
+    create_all_dockers_shell = "create_all_dockers.sh"
+    start_all_dockers_shell = "start_all_dockers.sh"
+    stop_all_dockers_shell = "stop_all_dockers.sh"
+
+    start_docker_shell = "start_docker.sh"
+    create_docker_shell = "create_docker.sh"
+    stop_docker_shell = "stop_docker.sh"
+
     # the site config path
     wedpr_site_config_path = get_abs_path("site/conf")
     site_config_list = ["application-wedpr.properties",
@@ -77,6 +87,18 @@ class ConfigInfo:
     wedpr_mpc_service_dir = "wedpr-mpc-service"
     docker_file_list = ["create_docker.sh",
                         "start_docker.sh", "stop_docker.sh"]
+    # the nginx config
+    nginx_tpl_path = get_abs_path("nginx/")
+    nginx_config_file_list = ["nginx.conf"]
+
+    # the init db file path
+    pwd_path = os.getcwd()
+    db_dir_name = "db"
+    db_file_path = os.path.join(pwd_path, db_dir_name)
+    dml_sql_file = "wedpr_dml.sql"
+    # the site init conf
+    init_tpl_path = get_abs_path("init/")
+    init_file_path_list = ["site_init.sh"]
 
     @staticmethod
     def get_docker_path(file_path: str):
@@ -100,6 +122,10 @@ class ConfigProperities:
     SQLALCHEMY_URL = "SQLALCHEMY_URL"
     MYSQL_USER = "MYSQL_USER"
     MYSQL_PASSWORD = "MYSQL_PASSWORD"
+    # the mysql var used for init script
+    MYSQL_HOST = "MYSQL_HOST"
+    MYSQL_PORT = "MYSQL_PORT"
+    MYSQL_DATABASE = "MYSQL_DATABASE"
     # the blockchain configuration
     BLOCKCHAIN_GROUP_ID = "BLOCKCHAIN_GROUP_ID"
     BLOCKCHAIN_PEERS = "BLOCKCHAIN_PEERS"
@@ -131,6 +157,7 @@ class ConfigProperities:
     WEDPR_CONFIG_DIR = "WEDPR_CONFIG_DIR"
     # specify the mounted docker conf path
     DOCKER_CONF_PATH = "DOCKER_CONF_PATH"
+    BASE_SHELL_SCRIPT_NAME = "BASE_SHELL_SCRIPT_NAME"
     # specify the log path to mount
     WEDPR_LOG_DIR = "WEDPR_LOG_DIR"
     # specify the mounted docker log path
@@ -140,3 +167,5 @@ class ConfigProperities:
     # the created docker name
     WEDPR_DOCKER_NAME = "WEDPR_DOCKER_NAME"
     EXTENDED_MOUNT_CONF = "EXTENDED_MOUNT_CONF"
+    # the nginx configuration
+    NGINX_BACKEND_SERVER_LIST = "NGINX_BACKEND_SERVER_LIST"

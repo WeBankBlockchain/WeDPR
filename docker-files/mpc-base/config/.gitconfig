@@ -1,0 +1,11 @@
+[pager]
+    branch = false
+[url "https://mirror.ghproxy.com/github.com"]
+insteadOf = https://github.com
+[http]
+    version = HTTP/1.1
+        postBuffer = 524288000
+[https]
+        sslVerify = false
+[core]
+        editor = vim
