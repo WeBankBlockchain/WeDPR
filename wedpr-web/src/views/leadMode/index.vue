@@ -264,7 +264,7 @@
         <formCard style="width: 870px" key="SQL" class="sql-card" title="编写SQL语句" v-if="selectedAlg.value === jobEnum.SQL">
           <el-form-item label="" prop="sql" label-width="0">
             <div class="sql-container">
-              <div class="lead"><img src="~Assets/images/icon_guide.png" /> 语法指引及示例下载</div>
+              <div class="lead" @click="goLead"><img src="~Assets/images/icon_guide.png" /> 语法指引及示例下载</div>
               <div class="modify-container">
                 <editorCom v-model="jobSettingForm.sql" lang="sql" />
               </div>
@@ -274,7 +274,7 @@
         <formCard style="width: 870px" key="Python" class="sql-card" title="编写Python语句" v-if="selectedAlg.value === jobEnum.MPC">
           <el-form-item label="" prop="python" label-width="0">
             <div class="sql-container">
-              <div class="lead"><img src="~Assets/images/icon_guide.png" /> 语法指引及示例下载</div>
+              <div class="lead" @click="goLead"><img src="~Assets/images/icon_guide.png" /> 语法指引及示例下载</div>
               <div class="modify-container">
                 <editorCom v-model="jobSettingForm.python" lang="python" />
               </div>
@@ -621,6 +621,9 @@ export default {
     }
   },
   methods: {
+    goLead() {
+      window.open('https://wedpr-document.readthedocs.io/zh-cn/latest/docs/manual/wepdr_mpc_dev.html')
+    },
     // 根据ids获取数据集详情 来回显
     async getListDetail(params) {
       const datasetIdList = params.map((v) => v.datasetID)
