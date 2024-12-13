@@ -16,13 +16,13 @@ wedpr_model_source_path = "/data/home/wedpr/WeDPR-Component/python/"
 docker_mode = true
 
 #### define the docker images desc ###
-wedpr_gateway_service_image_desc = "fiscoorg/wedpr-gateway-service:latest"
-wedpr_node_service_image_desc = "fiscoorg/wedpr-pro-node-service:latest"
-wedpr_mpc_service_image_desc = "fiscoorg/wedpr-mpc-service:latest"
-wedpr_jupyter_worker_image_desc = "fiscoorg/wedpr-jupyter-worker:latest"
-wedpr_model_image_desc = "fiscoorg/wedpr-model-service:latest"
-wedpr_site_image_desc = "fiscoorg/wedpr-site:latest"
-wedpr_pir_image_desc = "fiscoorg/wedpr-pir:latest"
+wedpr_gateway_service_image_desc = "fiscoorg/wedpr-gateway-service:v3.0.0"
+wedpr_node_service_image_desc = "fiscoorg/wedpr-pro-node-service:v3.0.0"
+wedpr_mpc_service_image_desc = "fiscoorg/wedpr-mpc-service:v3.0.0"
+wedpr_jupyter_worker_image_desc = "fiscoorg/wedpr-jupyter-worker:v3.0.0"
+wedpr_model_image_desc = "fiscoorg/wedpr-model-service:v3.0.0"
+wedpr_site_image_desc = "fiscoorg/wedpr-site:v3.0.0"
+wedpr_pir_image_desc = "fiscoorg/wedpr-pir:v3.0.0"
 
 
 deploy_dir = "wedpr-example"
@@ -107,7 +107,7 @@ wedpr_api_token = ""
         host = "127.0.0.1"
         port = "3306"
         user = "root"
-        password = "Admin123!"
+        password = ""
         database = "agency0"
 
     #configuration for wedpr site
