@@ -20,7 +20,7 @@ class bdist_egg_disabled(bdist_egg):
 setup_args = dict(
     name='wedpr_mpc_generator',
     packages=find_packages(),
-    version="3.0.0-20241206",
+    version="3.0.0-20250108",
     description="wedpr-mpc-generator: The mpc generator for WeDPR",
     long_description_content_type="text/markdown",
     author="WeDPR Development Team",
