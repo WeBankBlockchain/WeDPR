@@ -22,7 +22,8 @@ class WedprServiceGenerator:
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
+            node_index: int,
+            agency_index: int = 0) -> {}:
         pass
 
     @abstractmethod
@@ -31,11 +32,13 @@ class WedprServiceGenerator:
 
     def generate_config(self):
         agency_list = self.config.agency_list.keys()
+        agency_index = 0
         for agency in self.config.agency_list.keys():
             agency_config = self.config.agency_list.get(agency)
             service_config = self.get_service_config(agency_config)
             self.__generate_service_config__(
-                agency_config, agency_list, service_config)
+                agency_config, agency_list, service_config, agency_index)
+            agency_index += 1
 
     @abstractmethod
     def generate_nginx_config(self, node_path: str, server_config: ServiceConfig):
@@ -53,7 +56,7 @@ class WedprServiceGenerator:
     def __generate_service_config__(
             self, agency_config: AgencyConfig,
             agency_list,
-            service_config: ServiceConfig):
+            service_config: ServiceConfig, agency_index: int):
         utilities.print_badge(f"* generate {service_config.service_type} config, "
                               f"agency: {agency_config.agency_name}, deploy_dir: "
                               f"{self.config.env_config.deploy_dir}, "
@@ -71,7 +74,8 @@ class WedprServiceGenerator:
                     agency_config=agency_config,
                     service_config=service_config,
                     agency_name=service_config.agency,
-                    deploy_ip=ip, node_index=i)
+                    deploy_ip=ip, node_index=i,
+                    agency_index=agency_index)
                 node_path_list.append(node_path)
                 nginx_listen_port.append(
                     service_config.get_nginx_listen_port(i))
@@ -102,13 +106,15 @@ class WedprServiceGenerator:
             service_config: ServiceConfig,
             agency_name: str,
             deploy_ip: str,
-            node_index: int):
+            node_index: int,
+            agency_index: int):
         node_name = f"{service_config.service_type}-node{node_index}"
         node_path = self.__get_deploy_path__(
             agency_name, deploy_ip, node_name, service_config.service_type)
         utilities.print_badge(f"* generate {service_config.service_type} config, "
                               f"deploy_ip: {deploy_ip}, "
                               f"node_index: {node_index}, "
+                              f"agency_index: {agency_index},"
                               f"node_path: {node_path}")
         if os.path.exists(node_path) is True:
             raise Exception(f"The path {node_path} already exists!"
@@ -135,7 +141,7 @@ class WedprServiceGenerator:
         self.__copy_binary__(dist_path, node_path)
         # substitute the configuration
         config_properties = self.get_properties(
-            deploy_ip, agency_config, node_index)
+            deploy_ip, agency_config, node_index, agency_index)
 
         # the docker mode case
         self.__generate_docker_scripts__(
@@ -301,7 +307,7 @@ class WedprSiteServiceGenerator(WedprServiceGenerator):
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
+            node_index: int, agency_index: int = 0) -> {}:
         return agency_config.get_wedpr_site_properties(deploy_ip, node_index)
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
@@ -351,7 +357,7 @@ class WedprModelServiceGenerator(WedprServiceGenerator):
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
+            node_index: int, agency_index: int = 0) -> {}:
         return agency_config.get_wedpr_model_properties(deploy_ip, node_index)
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
@@ -379,7 +385,7 @@ class WedprPirServiceGenerator(WedprServiceGenerator):
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
+            node_index: int, agency_index: int = 0) -> {}:
         return agency_config.get_pir_properties(deploy_ip, node_index)
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
@@ -432,8 +438,9 @@ class WedprMPCServiceGenerator(WedprServiceGenerator):
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
-        return agency_config.get_mpc_properties(deploy_ip, node_index)
+            node_index: int, agency_index: int = 0) -> {}:
+        return agency_config.get_mpc_properties(
+            deploy_ip, node_index, agency_index)
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:
         return agency_config.mpc_config
@@ -462,7 +469,7 @@ class WedprJupyterWorkerServiceGenerator(WedprServiceGenerator):
     def get_properties(
             self, deploy_ip: str,
             agency_config: AgencyConfig,
-            node_index: int) -> {}:
+            node_index: int, agency_index: int = 0) -> {}:
         return agency_config.get_jupyter_worker_properties(deploy_ip, node_index)
 
     def get_service_config(self, agency_config: AgencyConfig) -> ServiceConfig:

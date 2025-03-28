@@ -19,7 +19,7 @@ from sqlparse.exceptions import SQLParseError
 from sqlparse.sql import Comparison, Identifier, Function
 from sqlparse.tokens import Punctuation, Operator, Name, Token
 
-# from mpc_generator import mpc_func_str
+from mpc_generator import mpc_func_str
 from mpc_generator.mpc_exception import MpcCodeGenException, MpcCodeGenErrorCode
 
 class SqlPattern(Enum):

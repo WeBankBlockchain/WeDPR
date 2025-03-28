@@ -53,9 +53,7 @@ COPY depends/requirements.txt /root/requirements.txt
 # install the requirements
 RUN pip install --no-cache-dir -i https://pypi.mirrors.ustc.edu.cn/simple/ -r root/requirements.txt
 
-# TODO: use the non-test pip after uploaded
-
-RUN pip install --no-cache-dir -i https://test.pypi.org/simple/ wedpr_mpc_generator
+RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple wedpr_mpc_generator
 
 # install nginx
 RUN apt-get update && apt-get install --no-install-recommends -y nginx

@@ -83,7 +83,7 @@ class ConfigInfo:
     wedpr_pir_docker_dir = "wedpr-pir"
     wedpr_site_docker_dir = "wedpr-site"
     wedpr_mpc_docker_dir = "wedpr-mpc-service"
-    wedpr_model_docker_dir = "wedpr-model"
+    wedpr_model_docker_dir = "wedpr-model/ppc_model"
 
     wedpr_gateway_service_dir = "wedpr-gateway-service"
     wedpr_node_service_dir = "wedpr-pro-node-service"
@@ -111,6 +111,7 @@ class ConfigInfo:
     scripts_file_list = ["start.sh", "stop.sh"]
     # the default path for docker
     default_spdz_home = "/data/app/wedpr/scripts/wedpr-mpc-no-gateway"
+    default_mpc_server_start_port = 37000
     cpp_component_cmd = " -c config.ini "
 
     @staticmethod
@@ -155,6 +156,7 @@ class ConfigProperities:
     WEDPR_SERVER_LISTEN_PORT = "WEDPR_SERVER_LISTEN_PORT"
     # the mpc spdz listen port
     WEDPR_MPC_SPDZ_LISTEN_PORT = "WEDPR_MPC_SPDZ_LISTEN_PORT"
+    WEDPR_MPC_SPDZ_EXTERNAL_IP = "WEDPR_MPC_SPDZ_EXTERNAL_IP"
     # the hdfs configuration
     HDFS_USER = "HDFS_USER"
     HDFS_HOME = "HDFS_HOME"
