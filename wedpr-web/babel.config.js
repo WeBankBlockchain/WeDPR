@@ -11,8 +11,6 @@ if (process.env.NODE_ENV === 'production') {
   ])
 }
 module.exports = {
-  presets: [
-    '@vue/cli-plugin-babel/preset'
-  ],
-  plugins: [...prodPlugin]
+  presets: ['@vue/cli-plugin-babel/preset'],
+  plugins: [...prodPlugin, '@babel/plugin-transform-class-static-block']
 }
